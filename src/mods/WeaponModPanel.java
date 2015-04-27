@@ -1,4 +1,4 @@
-package main;
+package mods;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -12,6 +12,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import etc.Constants;
+import etc.UIBuilder;
+
+
+import weapons.WeaponPanel;
 
 
 public class WeaponModPanel extends JPanel implements ActionListener {

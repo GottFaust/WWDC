@@ -1,4 +1,4 @@
-package main;
+package mods;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -24,6 +24,12 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import etc.Constants;
+import etc.UIBuilder;
+
+
+import weapons.WeaponPanel;
 
 public class ModManagerPanel extends JPanel implements ActionListener, ListSelectionListener {
   

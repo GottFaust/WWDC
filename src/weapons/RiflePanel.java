@@ -1,6 +1,8 @@
-package main;
+package weapons;
 
-public class ShotgunPanel extends WeaponPanel {
+import etc.Constants;
+
+public class RiflePanel extends WeaponPanel {
   
   /**
    * ____________________________________________________________
@@ -11,8 +13,8 @@ public class ShotgunPanel extends WeaponPanel {
   /**
    * CTOR
    */
-  public ShotgunPanel(){
-    weaponType = Constants.SHOTGUN;
+  public RiflePanel(){
+    weaponType = Constants.RIFLE;
     Init();
     buildUI();
   }

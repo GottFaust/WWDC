@@ -1,4 +1,4 @@
-package main;
+package options;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +13,10 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import etc.Constants;
+import etc.UIBuilder;
+
 
 public class ColorOptionsPanel extends JPanel implements ActionListener, ChangeListener {
   

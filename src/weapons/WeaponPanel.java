@@ -1,4 +1,4 @@
-package main;
+package weapons;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -20,6 +20,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import etc.Constants;
+import etc.UIBuilder;
+
+import mods.Mod;
+import mods.WeaponModPanel;
 
 public class WeaponPanel extends JPanel implements ActionListener {
   
@@ -443,6 +449,20 @@ public class WeaponPanel extends JPanel implements ActionListener {
     weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
     damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     totalModCostField.setText("0");
+  }
+  
+  /**
+   * Returns the active mods in a formatted string
+   */
+  public String getModsOutput(){
+    return  "\n"+modOne+"["+modOnePanel.getModRank()+"], "+
+            modTwo+"["+modTwoPanel.getModRank()+"], "+
+            modThree+"["+modThreePanel.getModRank()+"], "+
+            modFour+"["+modFourPanel.getModRank()+"]\n"+
+            modFive+"["+modFivePanel.getModRank()+"], "+
+            modSix+"["+modSixPanel.getModRank()+"], "+
+            modSeven+"["+modSevenPanel.getModRank()+"], "+
+            modEight+"["+modEightPanel.getModRank()+"]";
   }
   
   /**
@@ -901,7 +921,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /**
    * updates the mod costs
    */
-  protected void calculateModCosts(){
+  public void calculateModCosts(){
     try{
       int totalModCost = 0;
       totalModCost += modOnePanel.getModCost();
@@ -921,7 +941,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /**
    * Updates the Mod Drop Down Options
    */
-  protected void updateDropDownContents(){
+  public void updateDropDownContents(){
     
     selectedMods.clear();
     selectedMods.add(modOne);

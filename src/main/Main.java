@@ -2,6 +2,8 @@ package main;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +31,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import etc.Constants;
+import etc.DPSGraphPanel;
+import etc.UIBuilder;
+
+import mods.Mod;
+import mods.ModManagerPanel;
+
+import ttk.TTKManagerPanel;
+import ttk.TTKTarget;
+import weapons.PistolPanel;
+import weapons.RiflePanel;
+import weapons.ShotgunPanel;
+import weapons.WeaponPanel;
+
+import options.ColorOptionsPanel;
+
 public class Main {
   
   /**
@@ -49,7 +67,7 @@ public class Main {
   protected static JButton clearOutputButton = new JButton("Clear Output");
   
   /** JTextAreas **/
-  protected static JTextArea output = new JTextArea();
+  public static JTextArea output = new JTextArea();
   
   /** JTabbedPanes **/
   protected static JTabbedPane weaponPane = new JTabbedPane();
@@ -89,7 +107,7 @@ public class Main {
   protected static Boolean modManagerInit = false;
   protected static Boolean targetManagerInit = false;
   protected static Boolean colorOptionsInit = false;
-  protected static JCheckBox advancedTTKBox = new JCheckBox("Advanced TTK");
+  protected static JCheckBox advancedTTKBox = new JCheckBox("Run TTK");
   
   /** Data **/
   
@@ -103,8 +121,9 @@ public class Main {
   /** Base Values **/
   
   protected static boolean useComplexTTK = true;
-  protected static int complexTTKIterations = 10000;
-  protected static int complexTTKCompletions = 0;
+  public static int complexTTKIterations = 10000;
+  public static int complexTTKCompletions = 0;
+  public static String longestTTKName = "";
   protected static int maxTTKTime = 300000;
   
   protected static double CONTINUOUS_MULT = 4.0;
@@ -474,7 +493,7 @@ public class Main {
     buttonPanel.add(clearOutputButton);
     buttonPanel.add(advancedTTKBox);
     
-    advancedTTKBox.setToolTipText("Warning: This will cause a significantly higher performance hit than sandard TTK.");
+    advancedTTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
     advancedTTKBox.setSelected(useComplexTTK);
     
     JPanel graphPanel = new JPanel();
@@ -549,14 +568,14 @@ public class Main {
     calculateBurstDamagePerSecond();
     
     //Calculate Time To Kill Values
-    if(!useComplexTTK){
-      for(TTKTarget target : theTTKManager.targets){
-        target.runSimpleTTK();
-      }
-    }else{
+    if(useComplexTTK){
       complexTTKCompletions = 0;
       for(TTKTarget target : theTTKManager.targets){
         target.runAdvancedTTK();
+        String name = target.name+"["+target.currentLevel+"]";
+        if(name.length() > longestTTKName.length()){
+          longestTTKName = name;
+        }
       }
       int ttkCount = theTTKManager.targets.size();
       maxTTKTime = ttkCount * 60000;
@@ -917,20 +936,6 @@ public class Main {
       continuousDrainRate = fireRate;
       fireRate = CONTINUOUS_MULT;
       damageMult *= continuousDrainRate;
-//      rawDamage /= CONTINUOUS_MULT;
-//      impactDamage /= CONTINUOUS_MULT;
-//      punctureDamage /= CONTINUOUS_MULT;
-//      slashDamage /= CONTINUOUS_MULT;
-//      fireDamage /= CONTINUOUS_MULT;
-//      iceDamage /= CONTINUOUS_MULT;
-//      electricDamage /= CONTINUOUS_MULT;
-//      toxinDamage /= CONTINUOUS_MULT;
-//      blastDamage /= CONTINUOUS_MULT;
-//      magneticDamage /= CONTINUOUS_MULT;
-//      gasDamage /= CONTINUOUS_MULT;
-//      radiationDamage /= CONTINUOUS_MULT;
-//      corrosiveDamage /= CONTINUOUS_MULT;
-//      viralDamage /= CONTINUOUS_MULT;
     }else if(weaponMode.equals(Constants.CHARGE)){
       double fireRateAddition = 60.0 / chargeTime / 60.0;
       fireRate += fireRateAddition;
@@ -2419,7 +2424,7 @@ public class Main {
   /**
    * Calculates the average time to kill a target with the supplied stats
    */
-  protected static double calculateTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
+  public static double calculateTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
     
   //Target Data
     double targetMaxShields = shields;
@@ -3082,7 +3087,7 @@ public class Main {
   /**
    * Calculates a random time to kill a target with the supplied stats
    */
-  protected static double calculateRandomizedTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
+  public static double calculateRandomizedTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
     
     //Target Data
     double targetMaxShields = shields;
@@ -4136,15 +4141,33 @@ public class Main {
     output.append("\nBurst Damage Per Second to Infested :: "+f.format(infestedBurstDamagePerSecond));
     
     output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-    if(!useComplexTTK){
-      for(TTKTarget target : theTTKManager.targets){
-        output.append(target.printSimpleData());
+    output.append(selectedWeapon.getModsOutput());
+    
+    if(useComplexTTK){
+      output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+      String ttkTableHeader = "\nTarget Name";
+      Font font = Main.output.getFont();
+      FontMetrics metric = Main.output.getFontMetrics(font);
+      int spaceWidth = metric.stringWidth(".");
+      int nameFieldWidth = metric.stringWidth(longestTTKName);
+      double nameDiff = (nameFieldWidth - metric.stringWidth("Target Name"))/spaceWidth;
+      nameDiff = Math.ceil(nameDiff);
+      nameDiff += 2;
+      for(int i = 0; i < nameDiff; i++){
+        ttkTableHeader += ".";
       }
-      output.append("\n---------------------------------------------------------");
-    }else{
+      ttkTableHeader += "|........TTK.......|....MinTTK.....|....MaxTTK";
+      output.append(ttkTableHeader);
+      String ttkTableSep = "\n";
+      spaceWidth = metric.stringWidth("-");
+      int headerWidth = metric.stringWidth(ttkTableHeader);
+      int headerLength = headerWidth/spaceWidth;
+      for(int i = 0; i < headerLength; i++){
+        ttkTableSep += "-";
+      }
+      output.append(ttkTableSep);
       for(TTKTarget target : theTTKManager.targets){
         output.append(target.printAdvancedData());
-        output.append("\n---------------------------------------------------------");
       }
     }
     

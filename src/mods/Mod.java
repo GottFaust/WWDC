@@ -1,7 +1,10 @@
-package main;
+package mods;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import etc.Constants;
+
 
 public class Mod implements Comparable {
   

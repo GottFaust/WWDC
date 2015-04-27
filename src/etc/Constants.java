@@ -1,4 +1,4 @@
-package main;
+package etc;
 
 import java.awt.Color;
 
@@ -62,7 +62,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.6.6 /wfg/ BETA";
+  public static final String APP_VERSION = "v0.6.7";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";

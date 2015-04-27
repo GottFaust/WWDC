@@ -1,4 +1,4 @@
-package main;
+package ttk;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -24,6 +24,10 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import etc.Constants;
+import etc.UIBuilder;
+
 
 
 public class TTKManagerPanel extends JPanel implements ActionListener, ListSelectionListener  {

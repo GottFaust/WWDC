@@ -1,4 +1,4 @@
-package main;
+package etc;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -49,21 +49,21 @@ public class UIBuilder {
    * ____________________________________________________________
    */
   /** Background Colors **/
-  protected static Color CONTAINER_BACKGROUND = new Color(44,44,44);
-  protected static Color TEXT_AREA_BACKGROUND = new Color(0,0,0);
-  protected static Color BUTTON_BACKGROUND = new Color(0,0,0);
-  protected static Color GRAPH_DEMARCATION_COLOR = Color.GRAY;
+  public static Color CONTAINER_BACKGROUND = new Color(44,44,44);
+  public static Color TEXT_AREA_BACKGROUND = new Color(0,0,0);
+  public static Color BUTTON_BACKGROUND = new Color(0,0,0);
+  public static Color GRAPH_DEMARCATION_COLOR = Color.GRAY;
   
   /** Foreground Colors **/
-  protected static Color TEXT_FOREGROUND = new Color(0,255,0);
-  protected static Color BUTTON_FOREGROUND = new Color(0,255,0);
-  protected static Color LABEL_FOREGROUND = new Color(0,204,0);
+  public static Color TEXT_FOREGROUND = new Color(0,255,0);
+  public static Color BUTTON_FOREGROUND = new Color(0,255,0);
+  public static Color LABEL_FOREGROUND = new Color(0,204,0);
   
   /** Misc Colors **/
-  protected static Color BORDER_COLOR = Color.ORANGE;
-  protected static Color LIGHER_BORDER_COLOR = Color.GREEN;
-  protected static Color CURRENT_GRAPH_COLOR = Color.YELLOW;
-  protected static Color PREVIOUS_GRAPH_COLOR = Color.GRAY;
+  public static Color BORDER_COLOR = Color.ORANGE;
+  public static Color LIGHER_BORDER_COLOR = Color.GREEN;
+  public static Color CURRENT_GRAPH_COLOR = Color.YELLOW;
+  public static Color PREVIOUS_GRAPH_COLOR = Color.GRAY;
   
   /** Fonts **/
   public static final Font FIELD_FONT = new Font ("Verdana", Font.PLAIN, 9);
@@ -248,6 +248,8 @@ public class UIBuilder {
    * @param area
    */
   public static void textAreaInit(JTextArea area){
+    Font f = new Font("Arial", Font.PLAIN, 13);
+    area.setFont(f);
     area.setBackground(TEXT_AREA_BACKGROUND);
     area.setForeground(TEXT_FOREGROUND);
   }

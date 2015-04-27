@@ -1,8 +1,13 @@
-package main;
+package ttk;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Vector;
+
+import main.Main;
+import mods.Mod;
 
 
 public class TTKTarget implements Comparable{
@@ -120,31 +125,76 @@ public class TTKTarget implements Comparable{
    * @return advanced TTK
    */
   public String printAdvancedData(){
-    DecimalFormat f = new DecimalFormat("#.###");
-    String returnStr = "";
+    DecimalFormat f = new DecimalFormat("00.00");
+    Font font = Main.output.getFont();
+    FontMetrics metric = Main.output.getFontMetrics(font);
+    String displayName = name+"["+currentLevel+"]";
+    String returnStr = "\n"+displayName;
+    String TTKStr = "";
+    String minTTKStr = "";
+    String maxTTKStr = "";
     if(TTK > 3600.0){
-      returnStr = "\nTime to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(TTK/36000.0)+" hours";
+      TTKStr += f.format(TTK/36000.0)+" hrs";
     }else if(TTK > 60.0){
-      returnStr = "\nTime to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(TTK/60.0)+" minutes";
+      TTKStr += f.format(TTK/60.0)+" min";
     }else{
-      returnStr = "\nTime to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(TTK)+" seconds";
+      TTKStr += f.format(TTK)+" sec";
     }
     
     if(minTTK > 3600.0){
-      returnStr += "\nMinimum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(minTTK/36000.0)+" hours";
+      minTTKStr += f.format(minTTK/36000.0)+" hrs";
     }else if(minTTK > 60.0){
-      returnStr += "\nMinimum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(minTTK/60.0)+" minutes";
+      minTTKStr += f.format(minTTK/60.0)+" min";
     }else{
-      returnStr += "\nMinimum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(minTTK)+" seconds";
+      minTTKStr += f.format(minTTK)+" sec";
     }
     
     if(maxTTK > 3600.0){
-      returnStr += "\nMaximum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(maxTTK/36000.0)+" hours";
+      maxTTKStr += f.format(maxTTK/36000.0)+" hrs";
     }else if(maxTTK > 60.0){
-      returnStr += "\nMaximum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(maxTTK/60.0)+" minutes";
+      maxTTKStr += f.format(maxTTK/60.0)+" min";
     }else{
-      returnStr += "\nMaximum Time to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(maxTTK)+" seconds";
+      maxTTKStr += f.format(maxTTK)+" sec";
     }
+    int spaceWidth = metric.stringWidth(".");
+    int nameFieldWidth = metric.stringWidth(Main.longestTTKName);
+    int ttkFieldWidth = metric.stringWidth("XXXXXXXXXXX");
+    double nameDiff = (nameFieldWidth - metric.stringWidth(displayName))/spaceWidth;
+    nameDiff = Math.ceil(nameDiff);
+    nameDiff += 2;
+    for(int i = 0; i < nameDiff; i++){
+      returnStr += ".";
+    }
+    returnStr += "|";
+    double ttkDiff = (ttkFieldWidth - metric.stringWidth(TTKStr))/spaceWidth;
+    ttkDiff /= 2.0;
+    ttkDiff = Math.ceil(ttkDiff);
+    for(int i = 0; i < (ttkDiff); i++){
+      returnStr += ".";
+    }
+    returnStr += TTKStr;
+    for(int i = 0; i < (ttkDiff); i++){
+      returnStr += ".";
+    }
+    returnStr += "|";
+    double minTTkDiff = (ttkFieldWidth - metric.stringWidth(minTTKStr))/spaceWidth;
+    minTTkDiff /= 2.0;
+    minTTkDiff = Math.ceil(minTTkDiff);
+    for(int i = 0; i < (minTTkDiff); i++){
+      returnStr += ".";
+    }
+    returnStr += minTTKStr;
+    for(int i = 0; i < (minTTkDiff); i++){
+      returnStr += ".";
+    }
+    returnStr += "|";
+    double maxTTKDiff = (ttkFieldWidth - metric.stringWidth(maxTTKStr))/spaceWidth;
+    maxTTKDiff /= 2.0;
+    maxTTKDiff = Math.ceil(maxTTKDiff);
+    for(int i = 0; i < (maxTTKDiff); i++){
+      returnStr += ".";
+    }
+    returnStr += maxTTKStr;
     return returnStr;
   }
   
