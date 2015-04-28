@@ -33,6 +33,10 @@ public class Constants {
   public static final String MOD_TYPE_RECOIL = "RecoilBonus";
   public static final String MOD_TYPE_SPREAD = "SpreadBonus";
   public static final String MOD_TYPE_SILENCE = "Silence";
+  public static final String MOD_TYPE_FLAT_DAMAGE = "FlatDamageBonus";
+  public static final String MOD_TYPE_DEAD_AIM = "DeadAim";
+  public static final String MOD_TYPE_FLAT_STATUS = "FlatStatusBonus";
+  public static final String MOD_TYPE_FLAT_MAG = "FlatMagBonus";
   
   /** Damage Types **/
   public static final String PHYSICAL_WEAPON_DAMAGE = "Physical";
@@ -62,7 +66,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.6.7";
+  public static final String APP_VERSION = "v0.6.8";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -182,9 +186,12 @@ public class Constants {
                                             "Convulsion,Pistol,5,1,LightningDamage,0.15,~,6",
                                             "Critical Delay,Rifle,5,2,CritChance,FireRate,0.08,-0.06,~,4",
                                             "Cryo Rounds,Rifle,5,1,IceDamage,0.15,D,6",
+                                            "Deadly Sequence,Rifle,3,1,CritChance,0.5,V,4",
                                             "Deep Freeze,Pistol,5,1,IceDamage,0.15,D,6",
                                             "Disruptor,Shotgun,5,1,ImpactDamage,0.05,~,4",
                                             "Eagle Eye,Rifle,3,1,Zoom,0.0,~,4",
+                                            "Entropy Burst,Rifle,3,1,FlatStatusBonus,0.05,V,4",
+                                            "Erroding Blight,Pistol,3,1,MagCap,0.5,D,4",
                                             "Expel Corpus,Pistol,5,1,CorpusDamage,0.05,V,4",
                                             "Expel Grineer,Pistol,5,1,GrineerDamage,0.05,V,4",
                                             "Expel Infested,Pistol,5,1,InfestedDamage,0.05,V,4",
@@ -207,6 +214,7 @@ public class Constants {
                                             "Incendiary Coat,Shotgun,5,1,FireDamage,0.15,~,6",
                                             "Infected Clip,Rifle,5,1,ToxinDamage,0.15,~,6",
                                             "Jolt,Pistol,3,2,LightningDamage,StatusChance,0.15,0.15,V,4",
+                                            "Lasting Purity,Rifle,3,1,DeadAim,0.15,~,4",
                                             "Lethal Torrent,Pistol,5,2,FireRate,Multishot,0.1,0.1,V,6",
                                             "Magazine Warp,Rifle,5,1,MagCap,0.05,~,4",
                                             "Magnum Force,Pistol,10,2,DamageBonus,AccuracyBonus,0.06,-0.03,V,4",
@@ -238,6 +246,7 @@ public class Constants {
                                             "Seeker,Pistol,5,1,ObjectPierce,0.0,~,10",
                                             "Seeking Force,Shotgun,5,1,ObjectPierce,0.0,~,10",
                                             "Serration,Rifle,10,1,DamageBonus,0.15,V,4",
+                                            "Shattering Justice,Shotgun,3,1,FlatStatusBonus,0.05,~,4",
                                             "Shell Compression,Shotgun,5,1,AmmoCap,0.05,~,2",
                                             "Shell Shock,Shotgun,3,2,LightningDamage,StatusChance,0.15,0.15,V,4",
                                             "Shotgun Mutation,Shotgun,3,1,AmmoMutator,0.0,~,4",
@@ -251,8 +260,9 @@ public class Constants {
                                             "Split Chamber,Rifle,5,1,Multishot,0.15,V,10",
                                             "Stabilizer,Rifle,3,1,RecoilBonus,-0.15,~,6",
                                             "Steady hands,Pistol,3,1,RecoilBonus,-0.15,~,6",
+                                            "Stinging Truth,Pistol,3,1,FlatMagBonus,0.1,D,4",
                                             "Stormbringer,Rifle,5,1,LightningDamage,0.15,~,6",
-                                            "Sunning Speed,Pistol,3,2,StatusChance,ReladSpeed,0.025,0.1,~,6",
+                                            "Stunning Speed,Pistol,3,2,StatusChance,ReladSpeed,0.025,0.1,~,6",
                                             "Sure Shot,Pistol,5,1,StatusChance,0.025,D,2",
                                             "Tactical Pump,Shotgun,5,1,ReladSpeed,0.05,~,2",
                                             "Tainted Clip,Pistol,5,2,MagCap,ReladSpeed,0.1,-0.05,~,6",
@@ -260,7 +270,7 @@ public class Constants {
                                             "Tainted Shell,Shotgun,10,2,SpreadBonus,FireRate,-0.07,-0.06,D,4",
                                             "Target Cracker,Pistol,5,1,CritMultiplier,0.1,V,4",
                                             "Thermite Rounds,Rifle,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
-                                            "Thunderbolt,Rifle,3,1,MiscDamage,2.0,V,6",
+                                            "Thunderbolt,Rifle,0,1,FlatDamageBonus,2.0,V,9",
                                             "Toxic Barrage,Shotgun,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
                                             "Trick Mag,Pistol,5,1,AmmoCap,0.15,~,2",
                                             "Vicious Spread,Shotgun,5,2,DamageBonus,SpreadBonus,0.15,0.1,V,4",

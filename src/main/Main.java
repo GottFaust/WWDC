@@ -155,9 +155,12 @@ public class Main {
   protected static double firstShotDamageMult = 1.0;
   protected static double statusChance = 0.0;
   protected static double damageMult = 1.0;
+  protected static double deadAimMult = 1.0;
+  protected static double flatDamageBonus = 0.0;
   protected static int mag = 0;
   protected static int ammoCap = 0;
   protected static int burstCount = 0;
+  
   
   /** Calculated Values **/
   protected static int finalMag = 0;
@@ -189,6 +192,8 @@ public class Main {
   protected static double finalFirstShotDamageMult = 1.0;
   protected static double finalStatusChance = 0.0;
   protected static double finalDamageMult = 1.0;
+  protected static double finalDeadAimMult = 1.0;
+  protected static double finalFlatDamageBonus = 0.0;
   protected static double finalCorpusMult = 1.0;
   protected static double finalGrineerMult = 1.0;
   protected static double finalInfestedMult = 1.0;
@@ -629,6 +634,8 @@ public class Main {
     firstShotDamageMult = 1.0;
     statusChance = 0.0;
     damageMult = 1.0;
+    deadAimMult = 1.0;
+    flatDamageBonus = 0.0;
     mag = 0;
     ammoCap = 0;
     burstCount = 0;
@@ -661,6 +668,8 @@ public class Main {
     finalFirstShotDamageMult = 1.0;
     finalStatusChance = 0.0;
     finalDamageMult = 1.0;
+    finalDeadAimMult = 1.0;
+    finalFlatDamageBonus = 0.0;
     finalCorpusMult = 1.0;
     finalGrineerMult = 1.0;
     finalInfestedMult = 1.0;
@@ -998,6 +1007,10 @@ public class Main {
     Vector<Double> corpusMods = new Vector<Double>();
     Vector<Double> grineerMods = new Vector<Double>();
     Vector<Double> infestedMods = new Vector<Double>();
+    Vector<Double> flatDamageMods = new Vector<Double>();
+    Vector<Double> deadAimMods = new Vector<Double>();
+    Vector<Double> flatStatusMods = new Vector<Double>();
+    Vector<Double> flatMagMods = new Vector<Double>();
     
     //Check for combined elements
     Mod primeMod = null;
@@ -1617,12 +1630,27 @@ public class Main {
       if(tempMod.effectTypes.contains(Constants.MOD_TYPE_INFESTED_DAMAGE)){
         infestedMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_INFESTED_DAMAGE)))*(1.0+modRanks.get(i)));
       }
+      if(tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_DAMAGE)){
+        flatDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_DAMAGE)))*(1.0+modRanks.get(i)));
+      }
+      if(tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_STATUS)){
+        flatStatusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_STATUS)))*(1.0+modRanks.get(i)));
+      }
+      if(tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_MAG)){
+        flatMagMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_MAG)))*(1.0+modRanks.get(i)));
+      }
+      if(tempMod.effectTypes.contains(Constants.MOD_TYPE_DEAD_AIM)){
+        deadAimMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DEAD_AIM)))*(1.0+modRanks.get(i)));
+      }
     }
     
     //Calculate finals
     finalMag = mag;
     for(int i = 0; i < magMods.size(); i++){
       finalMag += mag*magMods.get(i);
+    }
+    for(int i = 0; i < flatMagMods.size(); i++){
+      finalMag += flatMagMods.get(i);
     }
     
     finalAmmo = ammoCap;
@@ -1638,6 +1666,16 @@ public class Main {
     finalCritMult = critMult;
     for(int i = 0; i < critMultMods.size(); i++){
       finalCritMult += critMult*critMultMods.get(i);
+    }
+    
+    finalFlatDamageBonus = flatDamageBonus;
+    for(int i = 0; i < flatDamageMods.size(); i++){
+      finalFlatDamageBonus += flatDamageMods.get(i);
+    }
+    
+    finalDeadAimMult = deadAimMult;
+    for(int i = 0; i < deadAimMods.size(); i++){
+      finalDeadAimMult += deadAimMult*deadAimMods.get(i);
     }
     
     finalDamageMult = damageMult;
@@ -1676,9 +1714,12 @@ public class Main {
     }
     
     finalReloadTime = reloadTime;
+    double reloadSpeedMult = 1.0;
     for(int i = 0; i < reloadTimeMods.size(); i++){
-      finalReloadTime -= reloadTime*reloadTimeMods.get(i);
+      //finalReloadTime -= reloadTime*reloadTimeMods.get(i);
+      reloadSpeedMult += reloadTimeMods.get(i);
     }
+    finalReloadTime /= reloadSpeedMult;
     
     finalProjectileCount = projectileCount;
     for(int i = 0; i < projectileCountMods.size(); i++){
@@ -1693,6 +1734,9 @@ public class Main {
     finalStatusChance = statusChance;
     for(int i = 0; i < statusChanceMods.size(); i++){
       finalStatusChance += statusChance*statusChanceMods.get(i);
+    }
+    for(int i = 0; i < flatStatusMods.size(); i++){
+      finalStatusChance += flatStatusMods.get(i);
     }
     
     if(damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)){
@@ -1880,19 +1924,19 @@ public class Main {
   protected static void calculateDamagePerShot(){
     
     //Calculate base damage per shot values
-    impactDamagePerShot = (finalImpactDamage * finalProjectileCount);
-    punctureDamagePerShot = (finalPunctureDamage * finalProjectileCount);
-    slashDamagePerShot = (finalSlashDamage * finalProjectileCount);
-    fireDamagePerShot = (finalFireDamage * finalProjectileCount);
-    iceDamagePerShot = (finalIceDamage * finalProjectileCount);
-    electricDamagePerShot = (finalElectricDamage * finalProjectileCount);
-    toxinDamagePerShot = (finalToxinDamage * finalProjectileCount);
-    blastDamagePerShot = (finalBlastDamage * finalProjectileCount);
-    magneticDamagePerShot = (finalMagneticDamage * finalProjectileCount);
-    gasDamagePerShot = (finalGasDamage * finalProjectileCount);
-    radiationDamagePerShot = (finalRadiationDamage * finalProjectileCount);
-    corrosiveDamagePerShot = (finalCorrosiveDamage * finalProjectileCount);
-    viralDamagePerShot = (finalViralDamage * finalProjectileCount);
+    impactDamagePerShot = (finalImpactDamage * finalProjectileCount) * finalDeadAimMult;
+    punctureDamagePerShot = (finalPunctureDamage * finalProjectileCount) * finalDeadAimMult;
+    slashDamagePerShot = (finalSlashDamage * finalProjectileCount) * finalDeadAimMult;
+    fireDamagePerShot = (finalFireDamage * finalProjectileCount) * finalDeadAimMult;
+    iceDamagePerShot = (finalIceDamage * finalProjectileCount) * finalDeadAimMult;
+    electricDamagePerShot = (finalElectricDamage * finalProjectileCount) * finalDeadAimMult;
+    toxinDamagePerShot = (finalToxinDamage * finalProjectileCount) * finalDeadAimMult;
+    blastDamagePerShot = (finalBlastDamage * finalProjectileCount) * finalDeadAimMult;
+    magneticDamagePerShot = (finalMagneticDamage * finalProjectileCount) * finalDeadAimMult;
+    gasDamagePerShot = (finalGasDamage * finalProjectileCount) * finalDeadAimMult;
+    radiationDamagePerShot = (finalRadiationDamage * finalProjectileCount) * finalDeadAimMult;
+    corrosiveDamagePerShot = (finalCorrosiveDamage * finalProjectileCount) * finalDeadAimMult;
+    viralDamagePerShot = (finalViralDamage * finalProjectileCount) * finalDeadAimMult;
     rawDamagePerShot =  impactDamagePerShot +
                         punctureDamagePerShot +
                         slashDamagePerShot +
@@ -2244,9 +2288,9 @@ public class Main {
     sinewDamagePerSecond = sinewDamagePerMinute / 60.0;
     
     //Add in DoTs
-    double rawBase = (rawDamage * finalDamageMult) * finalProjectileCount;
+    double rawBase = ((rawDamage * finalDamageMult) * finalProjectileCount) * finalDeadAimMult;
     double critBase = rawBase * finalCritMult;
-    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);// / finalProjectileCount;
+    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);
     double bleedDamage =  DoTBase * 0.35;
     double poisonDamage = DoTBase * 0.5;
     if(poisonDamage < 10.0){
@@ -2312,9 +2356,9 @@ public class Main {
     sinewBurstDamagePerSecond = sinewDamagePerIteration * burstTime;
     
     //Add in DoTs
-    double rawBase = (rawDamage * finalDamageMult) * finalProjectileCount;
+    double rawBase = ((rawDamage * finalDamageMult) * finalProjectileCount) * finalDeadAimMult;
     double critBase = rawBase * finalCritMult;
-    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);// / finalProjectileCount;
+    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);
     double bleedDamage =  DoTBase * 0.35;
     double poisonDamage = DoTBase * 0.5;
     if(poisonDamage < 10.0){
@@ -2478,9 +2522,9 @@ public class Main {
     double shieldViralMult = 1.0;
     double shieldMagneticMult = 1.0;
     double typeMult = 1.0;
-    double rawBase = (rawDamage * finalDamageMult) * finalProjectileCount;
+    double rawBase = ((rawDamage * finalDamageMult) * finalProjectileCount) * finalDeadAimMult;
     double critBase = rawBase * finalCritMult;
-    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);// / finalProjectileCount;
+    double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots) + rawFirstShotDamage) / finalMag);
     
     //Health Mults
     if(targetSurface.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)){
@@ -3141,7 +3185,7 @@ public class Main {
     double shieldViralMult = 1.0;
     double shieldMagneticMult = 1.0;
     double typeMult = 1.0;
-    double DoTBase = (rawDamage * finalDamageMult);
+    double DoTBase = (rawDamage * finalDamageMult) * finalDeadAimMult;
     
     //Health Mults
     if(targetSurface.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)){
