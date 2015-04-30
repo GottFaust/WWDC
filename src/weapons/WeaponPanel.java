@@ -307,6 +307,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     weaponModeBox.addItem(Constants.CONTINUOUS);
     weaponModeBox.addItem(Constants.FULL_AUTO);
     weaponModeBox.addItem(Constants.FULL_AUTO_RAMP_UP);
+    weaponModeBox.addItem(Constants.FULL_AUTO_BULLET_RAMP);
     weaponModeBox.addItem(Constants.SEMI_AUTO);
     
     damageTypeBox.addItem(Constants.PHYSICAL_WEAPON_DAMAGE);

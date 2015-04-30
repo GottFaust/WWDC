@@ -180,6 +180,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modEffects.add(Constants.MOD_TYPE_CRIT_CHANCE);
     modEffects.add(Constants.MOD_TYPE_CRIT_MULTIPLIER);
     modEffects.add(Constants.MOD_TYPE_STATUS_CHANCE);
+    modEffects.add(Constants.MOD_TYPE_STATUS_DURATION);
     modEffects.add(Constants.MOD_TYPE_FIRST_SHOT_DAMAGE);
     modEffects.add(Constants.MOD_TYPE_ZOOM);
     modEffects.add(Constants.MOD_TYPE_OBJECT_PIERCE);

@@ -154,6 +154,7 @@ public class Main {
   protected static double projectileCount = 0.0;
   protected static double firstShotDamageMult = 1.0;
   protected static double statusChance = 0.0;
+  protected static double statusDuration = 1.0;
   protected static double damageMult = 1.0;
   protected static double deadAimMult = 1.0;
   protected static double flatDamageBonus = 0.0;
@@ -191,6 +192,7 @@ public class Main {
   protected static double finalProjectileCount = 0.0;
   protected static double finalFirstShotDamageMult = 1.0;
   protected static double finalStatusChance = 0.0;
+  protected static double finalStatusDuration = 1.0;
   protected static double finalDamageMult = 1.0;
   protected static double finalDeadAimMult = 1.0;
   protected static double finalFlatDamageBonus = 0.0;
@@ -633,6 +635,7 @@ public class Main {
     projectileCount = 0.0;
     firstShotDamageMult = 1.0;
     statusChance = 0.0;
+    statusDuration = 1.0;
     damageMult = 1.0;
     deadAimMult = 1.0;
     flatDamageBonus = 0.0;
@@ -667,6 +670,7 @@ public class Main {
     finalProjectileCount = 0.0;
     finalFirstShotDamageMult = 1.0;
     finalStatusChance = 0.0;
+    finalStatusDuration = 0.0;
     finalDamageMult = 1.0;
     finalDeadAimMult = 1.0;
     finalFlatDamageBonus = 0.0;
@@ -1004,6 +1008,7 @@ public class Main {
     Vector<Double> projectileCountMods = new Vector<Double>();
     Vector<Double> firstShotDamageMods = new Vector<Double>();
     Vector<Double> statusChanceMods = new Vector<Double>();
+    Vector<Double> statusDurationMods = new Vector<Double>();
     Vector<Double> corpusMods = new Vector<Double>();
     Vector<Double> grineerMods = new Vector<Double>();
     Vector<Double> infestedMods = new Vector<Double>();
@@ -1621,6 +1626,9 @@ public class Main {
       if(tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_CHANCE)){
         statusChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_CHANCE)))*(1.0+modRanks.get(i)));
       }
+      if(tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_DURATION)){
+        statusDurationMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_DURATION)))*(1.0+modRanks.get(i)));
+      }
       if(tempMod.effectTypes.contains(Constants.MOD_TYPE_CORPUS_DAMAGE)){
         corpusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CORPUS_DAMAGE)))*(1.0+modRanks.get(i)));
       }
@@ -1737,6 +1745,11 @@ public class Main {
     }
     for(int i = 0; i < flatStatusMods.size(); i++){
       finalStatusChance += flatStatusMods.get(i);
+    }
+    
+    finalStatusDuration = statusDuration;
+    for(int i = 0; i < statusDurationMods.size(); i++){
+      finalStatusDuration += statusDuration * statusDurationMods.get(i);
     }
     
     if(damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)){
@@ -1879,7 +1892,7 @@ public class Main {
       double rawFireTime = numBursts / finalFireRate;
       double rawBurstTime = burstCount / finalBurstFireRate;
       finalIterationTime = (rawBurstTime * numBursts) + rawFireTime + finalReloadTime;
-    }else if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
+    }else if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
       double baseFireDelay = 60.0 / finalFireRate / 60.0;
       double firstFireDelay = baseFireDelay * 5;
       double secondFireDelay = baseFireDelay * 4;
@@ -2400,6 +2413,7 @@ public class Main {
     double stacksPerShot = 1.0 * procRate;
     double reloadTimeMilliseconds = finalReloadTime * 1000.0;
     double stackTotal = 0.0;
+    double moddedDuration = duration * finalStatusDuration;
     int averageStacks = 0;
     int reloadTimeCounter = 0;
     int shotCounter = 0;
@@ -2419,7 +2433,7 @@ public class Main {
           for(int p = 0; p < finalProjectileCount; p++){
             stackTotal += stacksPerShot;
             if(stackTotal > 1.0){
-              stackVec.add(duration);
+              stackVec.add(moddedDuration);
               stackTotal--;
             }
           }
@@ -2468,6 +2482,7 @@ public class Main {
   /**
    * Calculates the average time to kill a target with the supplied stats
    */
+  //Deprecated
   public static double calculateTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
     
   //Target Data
@@ -3186,6 +3201,7 @@ public class Main {
     double shieldMagneticMult = 1.0;
     double typeMult = 1.0;
     double DoTBase = (rawDamage * finalDamageMult) * finalDeadAimMult;
+    double localProjectileCount = 1.0;
     
     //Health Mults
     if(targetSurface.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)){
@@ -3375,9 +3391,7 @@ public class Main {
     //Simulation Data
     double millisceondsPerShot = 1000.0 / finalFireRate;
     double millisecondMult = 1.0;
-    //double procsPerShot = 1.0 * finalStatusChance;
     double reloadTimeMilliseconds = finalReloadTime * 1000.0;
-    double stackTotal = 0.0;
     int reloadTimeCounter = 0;
     int shotCounter = 2147483000;
     int iterations = 0;
@@ -3411,7 +3425,7 @@ public class Main {
     double baseRadiationDamage = finalRadiationDamage;
     double baseViralDamage = finalViralDamage;
     
-    if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
+    if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
       millisecondMult = 5.0;
     }
     Random rng = new Random();
@@ -3423,14 +3437,17 @@ public class Main {
         shotCounter++;
         //is it time to fire a new projectile?
         if(shotCounter >= (millisceondsPerShot*millisecondMult)){
-          if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
+          if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
             millisecondMult--;
             if(millisecondMult < 1.0){
               millisecondMult = 1.0;
             }
           }
-          
-          for(int p = 0; p < finalProjectileCount; p++){
+          localProjectileCount = finalProjectileCount;
+          if(weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
+            localProjectileCount /= millisecondMult;
+          }
+          for(int p = 0; p < localProjectileCount; p++){
             double localCritMult = 1.0;
             //Is this a crit?
             double crit = rng.nextDouble();
@@ -3619,7 +3636,8 @@ public class Main {
                     localSlashMult = armorSlashMult;
                   }
                   double bleedDamage = (((DoTBase * localCritMult) * typeMult) * localSlashMult) * 0.35;
-                  slashStacks.add(new DoTPair(bleedDamage,5));
+                  int slashDuration = (int)(Math.round(5 * finalStatusDuration));
+                  slashStacks.add(new DoTPair(bleedDamage,slashDuration));
                   targetCurrentHealth -= bleedDamage;
                   //Decrement proc chances
                   localImpactProcChance *= 0.5;
@@ -3638,8 +3656,9 @@ public class Main {
                     }
                     localFireArmorReduciton = fireArmorReduction;
                   }
-                  Double heatDamage = ((((DoTBase * localCritMult) * typeMult) * localFireMult) * localFireArmorReduciton) * 0.5;
-                  fireStacks.add(new DoTPair(heatDamage,5));
+                  double heatDamage = ((((DoTBase * localCritMult) * typeMult) * localFireMult) * localFireArmorReduciton) * 0.5;
+                  int heatDuration = (int)(Math.round(5 * finalStatusDuration));
+                  fireStacks.add(new DoTPair(heatDamage,heatDuration));
                   targetCurrentHealth -= heatDamage;
                   //Decrement proc chances
                   localImpactProcChance *= 0.5;
@@ -3649,7 +3668,8 @@ public class Main {
                 }
               }else if(proc.equals(Constants.ICE_WEAPON_DAMAGE)){
                 if(rng.nextDouble() <= localElementalProcChance){
-                  iceStacks.add(6);
+                  int iceDuration = (int)(Math.round(6 * finalStatusDuration));
+                  iceStacks.add(iceDuration);
                   //Decrement proc chances
                   localImpactProcChance *= 0.5;
                   localPunctureProcChance *= 0.5;
@@ -3658,7 +3678,6 @@ public class Main {
                 }
               }else if(proc.equals(Constants.ELECTRIC_WEAPON_DAMAGE)){
                 if(rng.nextDouble() <= localElementalProcChance){
-                  //electricStacks.add(1);
                   double localElectricMult = electricMult;
                   double localElectricArmorReduction = 1.0;
                   if(targetAdjustedMaxArmor > 0.0){
@@ -3685,7 +3704,8 @@ public class Main {
                     localToxinArmorReduction = toxinArmorReduction;
                   }
                   double poisonDamage = ((((DoTBase * localCritMult) * typeMult) * localToxinMult) * localToxinArmorReduction) * 0.5;
-                  toxinStacks.add(new DoTPair(poisonDamage,7));
+                  int toxinDuration = (int)(Math.round(7 * finalStatusDuration));
+                  toxinStacks.add(new DoTPair(poisonDamage,toxinDuration));
                   if(poisonDamage < 10.0){
                     poisonDamage = 10.0;
                   }
@@ -3723,7 +3743,8 @@ public class Main {
                     localGasArmorReduction = gasArmorReduction;
                   }
                   double poisonDamage = ((((DoTBase * localCritMult) * typeMult) * localGasMult) * localGasArmorReduction) * 0.5;
-                  gasStacks.add(new DoTPair(poisonDamage,7));
+                  int gasDuration = (int)(Math.round(7 * finalStatusDuration));
+                  gasStacks.add(new DoTPair(poisonDamage,gasDuration));
                   if(poisonDamage < 10.0){
                     poisonDamage = 10.0;
                   }
@@ -3784,7 +3805,7 @@ public class Main {
         if(reloadTimeCounter >= reloadTimeMilliseconds){
           reloading = false;
           reloadTimeCounter = 0;
-          if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
+          if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
             millisecondMult = 5.0;
           }
         }
