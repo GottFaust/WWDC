@@ -949,6 +949,8 @@ public class Main {
       continuousDrainRate = fireRate;
       fireRate = CONTINUOUS_MULT;
       damageMult *= continuousDrainRate;
+      //statusChance = (continuousDrainRate / (statusChance * 100.0)) / 100.0;
+      statusChance /= CONTINUOUS_MULT;
     }else if(weaponMode.equals(Constants.CHARGE)){
       double fireRateAddition = 60.0 / chargeTime / 60.0;
       fireRate += fireRateAddition;
@@ -1881,11 +1883,9 @@ public class Main {
     }
     
     if(weaponMode.equals(Constants.CONTINUOUS)){
+      //finalStatusChance = (finalStatusChance * continuousDrainRate) / CONTINUOUS_MULT;
       finalNormalShots = (finalNormalShots / continuousDrainRate) * CONTINUOUS_MULT;
       finalCritShots = (finalCritShots / continuousDrainRate) * CONTINUOUS_MULT;
-    }
-    
-    if(weaponMode.equals(Constants.CONTINUOUS)){
       finalIterationTime = (finalMag / continuousDrainRate) + finalReloadTime;
     }else if(weaponMode.equals(Constants.BURST)){
       double numBursts = finalMag / burstCount;
