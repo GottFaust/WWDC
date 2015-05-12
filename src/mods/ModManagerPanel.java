@@ -265,6 +265,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modTypeBox.addItem(Constants.PISTOL);
     modTypeBox.addItem(Constants.RIFLE);
     modTypeBox.addItem(Constants.SHOTGUN);
+    modTypeBox.addItem(Constants.ARCGUN);
     
     modPolarityBox.addItem(Constants.NONE);
     modPolarityBox.addItem(Constants.DASH);

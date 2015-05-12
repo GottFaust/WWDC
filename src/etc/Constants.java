@@ -95,6 +95,7 @@ public class Constants {
   public static final String SHOTGUN = "Shotgun";
   public static final String RIFLE = "Rifle";
   public static final String PISTOL = "Pistol";
+  public static final String ARCGUN = "ArcGun";
   
   /** Mod Effect Count **/
   public static final String SINGLE = "Single";
@@ -206,7 +207,7 @@ public class Constants {
                                             "Fast Hands,Rifle,5,1,ReladSpeed,0.05,~,2",
                                             "Firestorm,Rifle,3,1,MiscDamage,0.0,V,6",
                                             "Flechette,Shotgun,5,1,PunctureDamage,0.05,~,4",
-                                            "Frail Momemtum,Shotgun,5,2,FireRate,DamageBonus,0.15,-0.025,V,4",
+                                            "Frail Momentum,Shotgun,5,2,FireRate,DamageBonus,0.15,-0.025,V,4",
                                             "Fridgid Blast,Shotgun,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
                                             "Frostbite,Pistol,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
                                             "Full Contact,Shotgun,5,1,ImpactDamage,0.2,~,6",
@@ -297,5 +298,17 @@ public class Constants {
                                             "Vile Acceleration,Rifle,5,2,FireRate,DamageBonus,0.15,-0.025,V,4",
                                             "Vile Precision,Rifle,5,2,RecoilBonus,FireRate,-0.1,-0.06,~,6",
                                             "Vital Sense,Rifle,5,1,CritMultiplier,0.2,V,4",
-                                            "Wildfire,Rifle,3,2,FireDamage,MagCap,0.15,0.05,V,6"};
+                                            "Wildfire,Rifle,3,2,FireDamage,MagCap,0.15,0.05,V,6",
+                                            "Automatic Trigger,ArcGun,5,1,FireRate,0.075,V,10",
+                                            "Combustion Rounds,ArcGun,5,1,FireDamage,0.2,V,4",
+                                            "Dual Rounds,ArcGun,5,1,Multishot,0.05,V,6",
+                                            "Electrified Barrel,ArcGun,5,1,LightningDamage,0.2,~,4",
+                                            "Hollowed Bullets,ArcGun,3,1,CritMultiplier,0.15,V,4",
+                                            "Magazine Extension,ArcGun,5,1,MagCap,0.1,~,4",
+                                            "Magma Chamber,ArcGun,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
+                                            "Modified Munitions,ArcGun,5,1,StatusChance,0.1,D,4",
+                                            "Parallax Scope,ArcGun,3,1,CritChance,0.2,~,4",
+                                            "Polar Magazine,ArcGun,5,1,IceDamage,0.2,D,4",
+                                            "Rubedo-Lined Barrel,ArcGun,5,1,DamageBonus,0.1,V,6",
+                                            "Venomous Clip,ArcGun,5,1,ToxinDamage,0.2,D,6"};
 }
