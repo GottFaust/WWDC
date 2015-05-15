@@ -1373,11 +1373,11 @@ public class Main {
       slash.finalBase *= finalDamageMult;
     }
     
-    slash.finalBase = fire.base;
+    fire.finalBase = fire.base;
     for(int i = 0; i < fireDamageMods.size(); i++){
-      slash.finalBase += raw.base*fireDamageMods.get(i);
+      fire.finalBase += raw.base*fireDamageMods.get(i);
     }
-    slash.finalBase *= finalDamageMult;
+    fire.finalBase *= finalDamageMult;
     
     ice.finalBase = ice.base;
     for(int i = 0; i < iceDamageMods.size(); i++){
@@ -1518,7 +1518,7 @@ public class Main {
     if(slash.finalBase > 0.0){
       slashStacks = calculateAverageStacks(finalStatusChance, 6.0);
     }
-    if(slash.finalBase > 0.0){
+    if(fire.finalBase > 0.0){
       fireStacks = calculateAverageStacks(finalStatusChance, 6.0);
     }
     if(toxin.finalBase > 0.0){
@@ -1538,7 +1538,7 @@ public class Main {
     impact.perShot = (impact.finalBase * finalProjectileCount) * finalDeadAimMult;
     puncture.perShot = (puncture.finalBase * finalProjectileCount) * finalDeadAimMult;
     slash.perShot = (slash.finalBase * finalProjectileCount) * finalDeadAimMult;
-    fire.perShot = (slash.finalBase * finalProjectileCount) * finalDeadAimMult;
+    fire.perShot = (fire.finalBase * finalProjectileCount) * finalDeadAimMult;
     ice.perShot = (ice.finalBase * finalProjectileCount) * finalDeadAimMult;
     electric.perShot = (electric.finalBase * finalProjectileCount) * finalDeadAimMult;
     toxin.perShot = (toxin.finalBase * finalProjectileCount) * finalDeadAimMult;
@@ -2400,10 +2400,8 @@ public class Main {
   protected static void displayColorOptions(){
     if(!colorOptionsInit){
       colorOptionsInit = true;
-      //theColorPanel.Init();
       colorOptionsFrame.add(theColorPanel);
       colorOptionsFrame.pack();
-      //colorOptionsFrame.addWindowListener(new ModWindowListener());
       colorOptionsFrame.setTitle("Color Options");
       colorOptionsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
