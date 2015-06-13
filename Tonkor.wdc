@@ -2,11 +2,11 @@ Rifle
 Serration,10,None
 Split Chamber,5,None
 Heavy Caliber,10,None
-Infected Clip,5,None
-Malignant Force,3,None
 Point Strike,5,None
 Vital Sense,5,None
-Critical Delay,5,None
+High Voltage,3,None
+Infected Clip,5,None
+Hammer Shot,3,None
 Semi-Auto
 Blast
 Tonkor
@@ -20,7 +20,7 @@ Tonkor
 
 2
 2
-40
+2
 2
 35
 2.5

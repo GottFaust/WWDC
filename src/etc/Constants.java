@@ -68,7 +68,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.7.1";
+  public static final String APP_VERSION = "v0.7.2";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -159,10 +159,10 @@ public class Constants {
                                                     PREVIOUS_GRAPH_COLOR_NAME+";124,124,124"};
   
   /** Default TTK Targets **/
-  public static final String[] baseTTKTargets = { "Corpus Tech,15,95,0,700,250,CorpusFlesh,FerriteArmor,ProtoShield,Corpus",
-                                                  "Toxic Ancient,1,95,0,400,0,Fossilized,FerriteArmor,Shields,Infested",
-                                                  "Heavy Gunner,8,95,500,300,0,CloneFlesh,FerriteArmor,Shields,Grineer",
-                                                  "Fusion Moa,15,95,0,250,250,Robotic,FerriteArmor,Shields,Corpus"};
+  public static final String[] baseTTKTargets = { "Corpus Tech,15,95,0,700,250,CorpusFlesh,FerriteArmor,ProtoShield,Corpus,0",
+                                                  "Toxic Ancient,1,95,0,400,0,Fossilized,FerriteArmor,Shields,Infested,0",
+                                                  "Heavy Gunner,8,95,500,300,0,CloneFlesh,FerriteArmor,Shields,Grineer,0",
+                                                  "Fusion Moa,15,95,0,250,250,Robotic,FerriteArmor,Shields,Corpus,0"};
   
   /** The Default Mod DB for use if the file is missing **/
   public static final String[] baseModDB = {"Accelerated Blast,Shotgun,3,2,FireRate,PunctureDamage,0.15,0.15,V,6",

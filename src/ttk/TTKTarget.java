@@ -21,6 +21,7 @@ public class TTKTarget implements Comparable{
    * CLASS VARIABLES
    * ____________________________________________________________
    */
+  public int group = 0;
   public int baseLevel = 0;
   public int currentLevel = 0;
   public int baseArmor = 0;
@@ -61,6 +62,11 @@ public class TTKTarget implements Comparable{
     armorType = split[7];
     shieldType = split[8];
     factionType = split[9];
+    try{
+      group = Integer.parseInt(split[10]);
+    }catch(Exception ex){
+      //Legacy, default to group 0
+    }
     
     maxArmor = (int)((Math.pow((currentLevel - baseLevel),1.75) * 0.005 * baseArmor) + baseArmor);
     maxShields = (int)((Math.pow((currentLevel - baseLevel),2.0) * 0.0075 * baseShields) + baseShields);
@@ -74,7 +80,7 @@ public class TTKTarget implements Comparable{
    * @return save string
    */
   public String buildSaveString(){
-    return name+","+baseLevel+","+currentLevel+","+baseArmor+","+baseHealth+","+baseShields+","+surfaceType+","+armorType+","+shieldType+","+factionType;
+    return name+","+baseLevel+","+currentLevel+","+baseArmor+","+baseHealth+","+baseShields+","+surfaceType+","+armorType+","+shieldType+","+factionType+","+group;
   }
   
   /**
@@ -500,6 +506,8 @@ public class TTKTarget implements Comparable{
     double baseRadiationDamage = Main.radiation.finalBase;
     double baseViralDamage = Main.viral.finalBase;
     
+    double corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
+    
     if(Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
       millisecondMult = 5.0;
     }
@@ -557,6 +565,8 @@ public class TTKTarget implements Comparable{
             }
             //Armor
             targetAdjustedMaxArmor = targetMaxArmor;
+            //Adjust armor based on corrosive projection stacks
+            targetAdjustedMaxArmor *= corrosiveProjectionMult;
             if(corrosiveStacks.size() > 0){
               for(int i = 0; i < corrosiveStacks.size(); i++){
                 targetAdjustedMaxArmor *= 0.75;

@@ -18,8 +18,10 @@ import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -33,10 +35,8 @@ import etc.DPSGraphPanel;
 import damage.Damage;
 import damage.SurfaceDamage;
 import etc.UIBuilder;
-
 import mods.Mod;
 import mods.ModManagerPanel;
-
 import ttk.TTKManagerPanel;
 import ttk.TTKTarget;
 import weapons.ArcGunPanel;
@@ -44,7 +44,6 @@ import weapons.PistolPanel;
 import weapons.RiflePanel;
 import weapons.ShotgunPanel;
 import weapons.WeaponPanel;
-
 import options.ColorOptionsPanel;
 
 public class Main {
@@ -109,6 +108,10 @@ public class Main {
   protected static Boolean targetManagerInit = false;
   protected static Boolean colorOptionsInit = false;
   protected static JCheckBox advancedTTKBox = new JCheckBox("Run TTK");
+  protected static JLabel targetGroupLabel = new JLabel("Target Group:");
+  protected static JComboBox targetGroupBox = new JComboBox();
+  protected static JLabel corrosiveProjectionLabel = new JLabel("Corrosive Projection Count:");
+  protected static JComboBox corrosiveProjectionBox = new JComboBox();
   
   /** Data **/
   
@@ -260,6 +263,21 @@ public class Main {
     UIBuilder.menuItemInit(colorOptionsItem);
     UIBuilder.fileChooserInit(chooser);
     UIBuilder.checkBoxInit(advancedTTKBox);
+    UIBuilder.labelInit(corrosiveProjectionLabel);
+    UIBuilder.labelInit(targetGroupLabel);
+    UIBuilder.comboBoxInit(corrosiveProjectionBox);
+    UIBuilder.comboBoxInit(targetGroupBox);
+    
+    corrosiveProjectionBox.setPrototypeDisplayValue("XX");
+    targetGroupBox.setPrototypeDisplayValue("XX");
+    
+    for(int i = 0; i < 10; i++){
+      targetGroupBox.addItem(""+i);
+    }
+    
+    for(int i = 0; i < 9; i++){
+      corrosiveProjectionBox.addItem(""+i);
+    }
     
     try{
       File currentDirectory = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
@@ -293,6 +311,10 @@ public class Main {
     buttonPanel.add(clearButton);
     buttonPanel.add(clearOutputButton);
     buttonPanel.add(advancedTTKBox);
+    buttonPanel.add(corrosiveProjectionLabel);
+    buttonPanel.add(corrosiveProjectionBox);
+    buttonPanel.add(targetGroupLabel);
+    buttonPanel.add(targetGroupBox);
     
     advancedTTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
     advancedTTKBox.setSelected(useComplexTTK);
@@ -369,16 +391,23 @@ public class Main {
     calculateBurstDamagePerSecond();
     
     //Calculate Time To Kill Values
+    int targetGroup = Integer.parseInt((String)targetGroupBox.getSelectedItem());
+    Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
+    for(TTKTarget target: theTTKManager.targets){
+      if(target.group == targetGroup){
+        groupTargets.add(target);
+      }
+    }
     if(useComplexTTK){
       complexTTKCompletions = 0;
-      for(TTKTarget target : theTTKManager.targets){
+      for(TTKTarget target : groupTargets){
         target.runAdvancedTTK();
         String name = target.name+"["+target.currentLevel+"]";
         if(name.length() > longestTTKName.length()){
           longestTTKName = name;
         }
       }
-      int ttkCount = theTTKManager.targets.size();
+      int ttkCount = groupTargets.size();
       maxTTKTime = ttkCount * 60000;
       int ttkTimeout = 0;
       while(complexTTKCompletions < ttkCount && ttkTimeout < maxTTKTime){
@@ -2315,7 +2344,7 @@ public class Main {
     
     output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
     output.append(selectedWeapon.getModsOutput());
-    
+    output.append("\nCorrosive Projections: "+corrosiveProjectionBox.getSelectedItem());
     if(useComplexTTK){
       output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
       String ttkTableHeader = "\nTarget Name";
@@ -2339,7 +2368,14 @@ public class Main {
         ttkTableSep += "-";
       }
       output.append(ttkTableSep);
-      for(TTKTarget target : theTTKManager.targets){
+      int targetGroup = Integer.parseInt((String)targetGroupBox.getSelectedItem());
+      Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
+      for(TTKTarget target: theTTKManager.targets){
+        if(target.group == targetGroup){
+          groupTargets.add(target);
+        }
+      }
+      for(TTKTarget target : groupTargets){
         output.append(target.printAdvancedData());
       }
     }
@@ -2515,6 +2551,14 @@ public class Main {
         displayColorOptions();
       }
     }
+  }
+  
+  public static double getCorrosiveProjectionMult(){
+    double mult = 1.0 - (0.3 * Double.parseDouble((String)corrosiveProjectionBox.getSelectedItem()));
+    if(mult < 0.0){
+      mult = 0.0;
+    }
+    return mult;
   }
   
   /**

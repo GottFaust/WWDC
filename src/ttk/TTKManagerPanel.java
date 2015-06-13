@@ -47,6 +47,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JPanel baseHealthPanel = new JPanel();
   protected JPanel baseShieldsPanel = new JPanel();
   protected JPanel factionTypePanel = new JPanel();
+  protected JPanel targetGroupPanel = new JPanel();
   protected JPanel buttonPanel = new JPanel();
   
   /** Text Fields **/
@@ -65,12 +66,14 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JLabel baseHealthLabel = new JLabel("Base Health - ");
   protected JLabel baseShieldsLabel = new JLabel("Base Shields - ");
   protected JLabel factionTypeLabel = new JLabel("Facton Type - ");
+  protected JLabel targetGroupLabel = new JLabel("Target Group - ");
   
   /** Combo Boxes **/
   protected JComboBox<String> surfaceTypeBox = new JComboBox<String>();
   protected JComboBox<String> armorTypeBox = new JComboBox<String>();
   protected JComboBox<String> shieldTypeBox = new JComboBox<String>();
   protected JComboBox<String> factionTypeBox = new JComboBox<String>();
+  protected JComboBox<String> targetGroupBox = new JComboBox<String>();
   
   /** Buttons **/
   protected JButton addUpdateButton = new JButton("Add or Update");
@@ -114,6 +117,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.panelInit(baseHealthPanel);
     UIBuilder.panelInit(baseShieldsPanel);
     UIBuilder.panelInit(factionTypePanel);
+    UIBuilder.panelInit(targetGroupPanel);
     UIBuilder.panelInit(buttonPanel);
     
     UIBuilder.labelInit(nameLabel);
@@ -123,6 +127,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.labelInit(baseHealthLabel);
     UIBuilder.labelInit(baseShieldsLabel);
     UIBuilder.labelInit(factionTypeLabel);
+    UIBuilder.labelInit(targetGroupLabel);
     
     UIBuilder.listInit(targetList);
     
@@ -132,6 +137,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.comboBoxInit(factionTypeBox);
     UIBuilder.comboBoxInit(armorTypeBox);
     UIBuilder.comboBoxInit(shieldTypeBox);
+    UIBuilder.comboBoxInit(targetGroupBox);
     
     UIBuilder.textFieldInit(nameField);
     UIBuilder.numberFieldInit(baseLevelField);
@@ -148,6 +154,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     armorTypeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     shieldTypeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     factionTypeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
+    targetGroupBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     
     leftPanel.setLayout(new GridLayout(1,2,0,0));
     rightPanel.setLayout(new GridLayout(1,2,0,0));
@@ -158,6 +165,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     baseHealthPanel.setLayout(new GridLayout(1,3,0,0));
     baseShieldsPanel.setLayout(new GridLayout(1,3,0,0));
     factionTypePanel.setLayout(new GridLayout(1,2,0,0));
+    targetGroupPanel.setLayout(new GridLayout(1,2,0,0));
     buttonPanel.setLayout(new GridLayout(1,3,0,0));
     rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
     this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
@@ -193,6 +201,9 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     factionTypePanel.add(factionTypeLabel);
     factionTypePanel.add(factionTypeBox);
     
+    targetGroupPanel.add(targetGroupLabel);
+    targetGroupPanel.add(targetGroupBox);
+    
     buttonPanel.add(addUpdateButton);
     buttonPanel.add(deleteButton);
     buttonPanel.add(saveButton);
@@ -204,6 +215,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     rightPanel.add(baseHealthPanel);
     rightPanel.add(baseShieldsPanel);
     rightPanel.add(factionTypePanel);
+    rightPanel.add(targetGroupPanel);
     rightPanel.add(buttonPanel);
     
     this.add(leftPanel);
@@ -296,6 +308,10 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     for(int i = 0; i < factionTypes.size(); i++){
       factionTypeBox.addItem(factionTypes.get(i));
     }
+    
+    for(int i = 0; i < 10; i++){
+      targetGroupBox.addItem(""+i);
+    }
   }
 
   /**
@@ -346,6 +362,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     factionTypeBox.setSelectedItem(selectedTarget.factionType);
     armorTypeBox.setSelectedItem(selectedTarget.armorType);
     shieldTypeBox.setSelectedItem(selectedTarget.shieldType);
+    targetGroupBox.setSelectedItem(""+selectedTarget.group);
     
   }
   
@@ -381,6 +398,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
     String targetArmorType = (String)armorTypeBox.getSelectedItem();
     String targetShieldType = (String)shieldTypeBox.getSelectedItem();
     String targetFactionType = (String)factionTypeBox.getSelectedItem();
+    String targetGroup = (String)targetGroupBox.getSelectedItem();
     
     if(targetName.equals("")){
       targetName = "Unnamed Target";
@@ -411,7 +429,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
       targetBaseArmor = "0";
     }
     
-    return targetName+","+targetBaseLevel+","+targetCurrentLevel+","+targetBaseArmor+","+targetBaseHealth+","+targetBaseShields+","+targetSurfaceType+","+targetArmorType+","+targetShieldType+","+targetFactionType;
+    return targetName+","+targetBaseLevel+","+targetCurrentLevel+","+targetBaseArmor+","+targetBaseHealth+","+targetBaseShields+","+targetSurfaceType+","+targetArmorType+","+targetShieldType+","+targetFactionType+","+targetGroup;
   }
 
   /**
