@@ -108,9 +108,9 @@ public class Main {
   protected static Boolean targetManagerInit = false;
   protected static Boolean colorOptionsInit = false;
   protected static JCheckBox advancedTTKBox = new JCheckBox("Run TTK");
-  protected static JLabel targetGroupLabel = new JLabel("Target Group:");
+  protected static JLabel targetGroupLabel = new JLabel("Group:");
   protected static JComboBox targetGroupBox = new JComboBox();
-  protected static JLabel corrosiveProjectionLabel = new JLabel("Corrosive Projection Count:");
+  protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
   protected static JComboBox corrosiveProjectionBox = new JComboBox();
   
   /** Data **/
@@ -307,15 +307,19 @@ public class Main {
     JPanel buttonPanel = new JPanel();
     UIBuilder.panelInit(buttonPanel);
     buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-    buttonPanel.add(calculateButton);
-    buttonPanel.add(clearButton);
-    buttonPanel.add(clearOutputButton);
-    buttonPanel.add(advancedTTKBox);
     buttonPanel.add(corrosiveProjectionLabel);
     buttonPanel.add(corrosiveProjectionBox);
     buttonPanel.add(targetGroupLabel);
     buttonPanel.add(targetGroupBox);
+    buttonPanel.add(advancedTTKBox);
+    buttonPanel.add(calculateButton);
+    buttonPanel.add(clearButton);
+    buttonPanel.add(clearOutputButton);
     
+    corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
+    corrosiveProjectionBox.setToolTipText("Number of Corrosive Projection auras active.");
+    targetGroupLabel.setToolTipText("Target group to run calculations against.");
+    targetGroupBox.setToolTipText("Target group to run calculations against.");
     advancedTTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
     advancedTTKBox.setSelected(useComplexTTK);
     

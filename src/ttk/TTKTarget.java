@@ -21,6 +21,7 @@ public class TTKTarget implements Comparable{
    * CLASS VARIABLES
    * ____________________________________________________________
    */
+  //Target Stats
   public int group = 0;
   public int baseLevel = 0;
   public int currentLevel = 0;
@@ -39,6 +40,81 @@ public class TTKTarget implements Comparable{
   public double minTTK = 0.0;
   public double maxTTK = 0.0;
   public Vector<Double> TTKVec = new Vector<Double>();
+  
+  //TTKSim Stats
+  public double impactMult = 1.0;
+  public double punctureMult = 1.0;
+  public double slashMult = 1.0;
+  public double fireMult = 1.0;
+  public double iceMult = 1.0;
+  public double electricMult = 1.0;
+  public double toxinMult = 1.0;
+  public double blastMult = 1.0;
+  public double radiationMult = 1.0;
+  public double gasMult = 1.0;
+  public double corrosiveMult = 1.0;
+  public double viralMult = 1.0;
+  public double magneticMult = 1.0;
+  public double armorImpactMult = 1.0;
+  public double armorPunctureMult = 1.0;
+  public double armorSlashMult = 1.0;
+  public double armorFireMult = 1.0;
+  public double armorIceMult = 1.0;
+  public double armorElectricMult = 1.0;
+  public double armorToxinMult = 1.0;
+  public double armorBlastMult = 1.0;
+  public double armorRadiationMult = 1.0;
+  public double armorGasMult = 1.0;
+  public double armorCorrosiveMult = 1.0;
+  public double armorViralMult = 1.0;
+  public double armorMagneticMult = 1.0;
+  public double shieldImpactMult = 1.0;
+  public double shieldPunctureMult = 1.0;
+  public double shieldSlashMult = 1.0;
+  public double shieldFireMult = 1.0;
+  public double shieldIceMult = 1.0;
+  public double shieldElectricMult = 1.0;
+  public double shieldToxinMult = 1.0;
+  public double shieldBlastMult = 1.0;
+  public double shieldRadiationMult = 1.0;
+  public double shieldGasMult = 1.0;
+  public double shieldCorrosiveMult = 1.0;
+  public double shieldViralMult = 1.0;
+  public double shieldMagneticMult = 1.0;
+  public double typeMult = 1.0;
+  public double DoTBase = 0.0;
+  public double localProjectileCount = 1.0;
+  public double millisceondsPerShot = 0.0;
+  public double millisecondMult = 1.0;
+  public double reloadTimeMilliseconds = 0.0;
+  public double baseImpactDamage = 0.0;
+  public double basePunctureDamage = 0.0;
+  public double baseSlashDamage = 0.0;
+  public double baseFireDamage = 0.0;
+  public double baseIceDamage = 0.0;
+  public double baseElectricDamage = 0.0;
+  public double baseToxinDamage = 0.0;
+  public double baseBlastDamage = 0.0;
+  public double baseCorrosiveDamage = 0.0;
+  public double baseGasDamage = 0.0;
+  public double baseMagneticDamage = 0.0;
+  public double baseRadiationDamage = 0.0;
+  public double baseViralDamage = 0.0;
+  public double corrosiveProjectionMult = 0.0;
+  public Vector<Integer> impactStacks = new Vector<Integer>();
+  public Vector<Integer> punctureStacks = new Vector<Integer>();
+  public Vector<DoTPair> slashStacks = new Vector<DoTPair>();
+  public Vector<DoTPair> fireStacks = new Vector<DoTPair>();
+  public Vector<Integer> iceStacks = new Vector<Integer>();
+  public Vector<Integer> electricStacks = new Vector<Integer>();
+  public Vector<DoTPair> toxinStacks = new Vector<DoTPair>();
+  public Vector<Integer> blastStacks = new Vector<Integer>();
+  public Vector<Integer> radiationStacks = new Vector<Integer>();
+  public Vector<DoTPair> gasStacks = new Vector<DoTPair>();
+  public Vector<Integer> corrosiveStacks = new Vector<Integer>();
+  public Vector<Integer> viralStacks = new Vector<Integer>();
+  public Vector<Integer> magneticStacks = new Vector<Integer>();
+  public Random rng = new Random();
   
   /**
    * ____________________________________________________________
@@ -87,11 +163,219 @@ public class TTKTarget implements Comparable{
    * Runs an advanced TTK calculation
    */
   public void runAdvancedTTK(){
+    
+    //Health Mults
+    if(surfaceType.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)){
+      impactMult = 0.75;
+      punctureMult = 1.0;
+      slashMult = 1.25;
+      fireMult = 1.25;
+      iceMult = 1.0;
+      electricMult = 1.0;
+      toxinMult = 1.0;
+      blastMult = 1.0;
+      radiationMult = 1.0;
+      gasMult = 0.5;
+      corrosiveMult = 1.0;
+      viralMult = 1.75;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_MECHANICAL)){
+      impactMult = 1.25;
+      punctureMult = 1.0;
+      slashMult = 1.0;
+      fireMult = 1.0;
+      iceMult = 1.0;
+      electricMult = 1.5;
+      toxinMult = 0.75;
+      blastMult = 1.75;
+      radiationMult = 1.0;
+      gasMult = 1.0;
+      corrosiveMult = 1.0;
+      viralMult = 0.75;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_CORPUS_FLESH)){
+      impactMult = 0.75;
+      punctureMult = 1.0;
+      slashMult = 1.25;
+      fireMult = 1.0;
+      iceMult = 1.0;
+      electricMult = 1.0;
+      toxinMult = 1.5;
+      blastMult = 1.0;
+      radiationMult = 1.0;
+      gasMult = 0.75;
+      corrosiveMult = 1.0;
+      viralMult = 1.5;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_INFESTED_FLESH)){
+      impactMult = 1.0;
+      punctureMult = 1.0;
+      slashMult = 1.5;
+      fireMult = 1.5;
+      iceMult = 0.5;
+      electricMult = 1.0;
+      toxinMult = 1.0;
+      blastMult = 1.0;
+      radiationMult = 1.0;
+      gasMult = 1.5;
+      corrosiveMult = 1.0;
+      viralMult = 1.0;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_FOSSILIZED)){
+      impactMult = 1.0;
+      punctureMult = 1.0;
+      slashMult = 1.15;
+      fireMult = 1.0;
+      iceMult = 0.75;
+      electricMult = 1.0;
+      toxinMult = 0.5;
+      blastMult = 1.5;
+      radiationMult = 0.25;
+      gasMult = 1.0;
+      corrosiveMult = 1.75;
+      viralMult = 1.0;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_SINEW)){
+      impactMult = 1.0;
+      punctureMult = 1.25;
+      slashMult = 1.0;
+      fireMult = 1.0;
+      iceMult = 1.25;
+      electricMult = 1.0;
+      toxinMult = 1.0;
+      blastMult = 0.5;
+      radiationMult = 1.5;
+      gasMult = 1.0;
+      corrosiveMult = 1.0;
+      viralMult = 1.0;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_ROBOTIC)){
+      impactMult = 1.0;
+      punctureMult = 1.25;
+      slashMult = 0.75;
+      fireMult = 1.0;
+      iceMult = 1.0;
+      electricMult = 1.5;
+      toxinMult = 0.75;
+      blastMult = 1.0;
+      radiationMult = 1.25;
+      gasMult = 1.0;
+      corrosiveMult = 1.0;
+      viralMult = 1.0;
+      magneticMult = 1.0;
+    }else if(surfaceType.equals(Constants.ENEMY_SURFACE_INFESTED)){
+      impactMult = 1.0;
+      punctureMult = 1.0;
+      slashMult = 1.25;
+      fireMult = 1.25;
+      iceMult = 1.0;
+      electricMult = 1.0;
+      toxinMult = 1.0;
+      blastMult = 1.0;
+      radiationMult = 0.5;
+      gasMult = 1.75;
+      corrosiveMult = 1.0;
+      viralMult = 0.5;
+      magneticMult = 1.0;
+    }
+    
+    //Armor Mults
+    if(armorType.equals(Constants.ENEMY_SURFACE_FERRITE_ARMOR)){
+      armorImpactMult = 1.0;
+      armorPunctureMult = 1.5;
+      armorSlashMult = 0.85;
+      armorFireMult = 1.0;
+      armorIceMult = 1.0;
+      armorElectricMult = 1.0;
+      armorToxinMult = 1.25;
+      armorBlastMult = 0.75;
+      armorRadiationMult = 1.0;
+      armorGasMult = 1.0;
+      armorCorrosiveMult = 1.75;
+      armorViralMult = 1.0;
+      armorMagneticMult = 1.0;
+    }else if(armorType.equals(Constants.ENEMY_SURFACE_ALLOY_ARMOR)){
+      armorImpactMult = 1.0;
+      armorPunctureMult = 1.15;
+      armorSlashMult = 0.5;
+      armorFireMult = 1.0;
+      armorIceMult = 1.25;
+      armorElectricMult = 0.5;
+      armorToxinMult = 1.0;
+      armorBlastMult = 1.0;
+      armorRadiationMult = 1.75;
+      armorGasMult = 1.0;
+      armorCorrosiveMult = 1.0;
+      armorViralMult = 1.0;
+      armorMagneticMult = 0.5;
+    }
+    
+    //Shield Mults
+    if(shieldType.equals(Constants.ENEMY_SURFACE_SHIELDS)){
+      shieldImpactMult = 1.5;
+      shieldPunctureMult = 0.85;
+      shieldSlashMult = 1.0;
+      shieldFireMult = 1.0;
+      shieldIceMult = 1.0;
+      shieldElectricMult = 1.0;
+      shieldToxinMult = 1.0;
+      shieldBlastMult = 1.0;
+      shieldRadiationMult = 0.75;
+      shieldGasMult = 1.0;
+      shieldCorrosiveMult = 1.0;
+      shieldViralMult = 1.0;
+      shieldMagneticMult = 1.75;
+    }else if(shieldType.equals(Constants.ENEMY_SURFACE_PROTO_SHIELD)){
+      shieldImpactMult = 1.15;
+      shieldPunctureMult = 0.5;
+      shieldSlashMult = 1.0;
+      shieldFireMult = 0.5;
+      shieldIceMult = 1.0;
+      shieldElectricMult = 1.0;
+      shieldToxinMult = 1.25;
+      shieldBlastMult = 1.0;
+      shieldRadiationMult = 1.0;
+      shieldGasMult = 1.0;
+      shieldCorrosiveMult = 0.5;
+      shieldViralMult = 1.0;
+      shieldMagneticMult = 1.75;
+    }
+    
+    if(factionType.equals(Constants.ENEMY_TYPE_INFESTED)){
+      typeMult = Main.finalInfestedMult;
+    }else if(factionType.equals(Constants.ENEMY_TYPE_GRINEER)){
+      typeMult = Main.finalGrineerMult;
+    }else if(factionType.equals(Constants.ENEMY_TYPE_CORPUS)){
+      typeMult = Main.finalCorpusMult;
+    }
+    
+    //Simulation Data
+    millisceondsPerShot = 1000.0 / Main.finalFireRate;
+    millisecondMult = 1.0;
+    reloadTimeMilliseconds = Main.finalReloadTime * 1000.0;
+    
+    baseImpactDamage = Main.impact.finalBase;
+    basePunctureDamage = Main.puncture.finalBase;
+    baseSlashDamage = Main.slash.finalBase;
+    baseFireDamage = Main.fire.finalBase;
+    baseIceDamage = Main.ice.finalBase;
+    baseElectricDamage = Main.electric.finalBase;
+    baseToxinDamage = Main.toxin.finalBase;
+    baseBlastDamage = Main.blast.finalBase;
+    baseCorrosiveDamage = Main.corrosive.finalBase;
+    baseGasDamage = Main.gas.finalBase;
+    baseMagneticDamage = Main.magnetic.finalBase;
+    baseRadiationDamage = Main.radiation.finalBase;
+    baseViralDamage = Main.viral.finalBase;
+    
+    corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
+    DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
+    
     Runnable advancedTTKRun = new Runnable(){
       public void run() {
         clearValues();
         for(int i = 0; i < Main.complexTTKIterations; i++){
-          TTKVec.add(calculateRandomizedTimeToKill(maxShields, maxHealth, maxArmor, surfaceType, armorType, shieldType, factionType));
+          TTKVec.add(calculateRandomizedTimeToKill());
         }
         for(Double d : TTKVec){
           TTK += d;
@@ -226,292 +510,35 @@ public class TTKTarget implements Comparable{
   /**
    * Calculates a random time to kill a target with the supplied stats
    */
-  public static double calculateRandomizedTimeToKill(int shields, int health, int armor, String surface, String armorType, String shieldType, String type){
+  public double calculateRandomizedTimeToKill(){
     
-    //Target Data
-    double targetMaxShields = shields;
-    double targetAdjustedMaxShields = targetMaxShields;
-    double targetCurrentShields = targetMaxShields;
-    double targetMaxHealth = health;
-    double targetAdjustedMaxHealth = health;
-    double targetCurrentHealth = health;
-    double targetMaxArmor = armor;
-    double targetAdjustedMaxArmor = armor;
-    String targetSurface = surface;
-    String armorSurface = armorType;
-    String shieldSurface = shieldType;
-    String targetType = type;
-    double impactMult = 1.0;
-    double punctureMult = 1.0;
-    double slashMult = 1.0;
-    double fireMult = 1.0;
-    double iceMult = 1.0;
-    double electricMult = 1.0;
-    double toxinMult = 1.0;
-    double blastMult = 1.0;
-    double radiationMult = 1.0;
-    double gasMult = 1.0;
-    double corrosiveMult = 1.0;
-    double viralMult = 1.0;
-    double magneticMult = 1.0;
-    double armorImpactMult = 1.0;
-    double armorPunctureMult = 1.0;
-    double armorSlashMult = 1.0;
-    double armorFireMult = 1.0;
-    double armorIceMult = 1.0;
-    double armorElectricMult = 1.0;
-    double armorToxinMult = 1.0;
-    double armorBlastMult = 1.0;
-    double armorRadiationMult = 1.0;
-    double armorGasMult = 1.0;
-    double armorCorrosiveMult = 1.0;
-    double armorViralMult = 1.0;
-    double armorMagneticMult = 1.0;
-    double shieldImpactMult = 1.0;
-    double shieldPunctureMult = 1.0;
-    double shieldSlashMult = 1.0;
-    double shieldFireMult = 1.0;
-    double shieldIceMult = 1.0;
-    double shieldElectricMult = 1.0;
-    double shieldToxinMult = 1.0;
-    double shieldBlastMult = 1.0;
-    double shieldRadiationMult = 1.0;
-    double shieldGasMult = 1.0;
-    double shieldCorrosiveMult = 1.0;
-    double shieldViralMult = 1.0;
-    double shieldMagneticMult = 1.0;
-    double typeMult = 1.0;
-    double DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-    double localProjectileCount = 1.0;
-    
-    //Health Mults
-    if(targetSurface.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)){
-      impactMult = 0.75;
-      punctureMult = 1.0;
-      slashMult = 1.25;
-      fireMult = 1.25;
-      iceMult = 1.0;
-      electricMult = 1.0;
-      toxinMult = 1.0;
-      blastMult = 1.0;
-      radiationMult = 1.0;
-      gasMult = 0.5;
-      corrosiveMult = 1.0;
-      viralMult = 1.75;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_MECHANICAL)){
-      impactMult = 1.25;
-      punctureMult = 1.0;
-      slashMult = 1.0;
-      fireMult = 1.0;
-      iceMult = 1.0;
-      electricMult = 1.5;
-      toxinMult = 0.75;
-      blastMult = 1.75;
-      radiationMult = 1.0;
-      gasMult = 1.0;
-      corrosiveMult = 1.0;
-      viralMult = 0.75;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_CORPUS_FLESH)){
-      impactMult = 0.75;
-      punctureMult = 1.0;
-      slashMult = 1.25;
-      fireMult = 1.0;
-      iceMult = 1.0;
-      electricMult = 1.0;
-      toxinMult = 1.5;
-      blastMult = 1.0;
-      radiationMult = 1.0;
-      gasMult = 0.75;
-      corrosiveMult = 1.0;
-      viralMult = 1.5;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_INFESTED_FLESH)){
-      impactMult = 1.0;
-      punctureMult = 1.0;
-      slashMult = 1.5;
-      fireMult = 1.5;
-      iceMult = 0.5;
-      electricMult = 1.0;
-      toxinMult = 1.0;
-      blastMult = 1.0;
-      radiationMult = 1.0;
-      gasMult = 1.5;
-      corrosiveMult = 1.0;
-      viralMult = 1.0;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_FOSSILIZED)){
-      impactMult = 1.0;
-      punctureMult = 1.0;
-      slashMult = 1.15;
-      fireMult = 1.0;
-      iceMult = 0.75;
-      electricMult = 1.0;
-      toxinMult = 0.5;
-      blastMult = 1.5;
-      radiationMult = 0.25;
-      gasMult = 1.0;
-      corrosiveMult = 1.75;
-      viralMult = 1.0;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_SINEW)){
-      impactMult = 1.0;
-      punctureMult = 1.25;
-      slashMult = 1.0;
-      fireMult = 1.0;
-      iceMult = 1.25;
-      electricMult = 1.0;
-      toxinMult = 1.0;
-      blastMult = 0.5;
-      radiationMult = 1.5;
-      gasMult = 1.0;
-      corrosiveMult = 1.0;
-      viralMult = 1.0;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_ROBOTIC)){
-      impactMult = 1.0;
-      punctureMult = 1.25;
-      slashMult = 0.75;
-      fireMult = 1.0;
-      iceMult = 1.0;
-      electricMult = 1.5;
-      toxinMult = 0.75;
-      blastMult = 1.0;
-      radiationMult = 1.25;
-      gasMult = 1.0;
-      corrosiveMult = 1.0;
-      viralMult = 1.0;
-      magneticMult = 1.0;
-    }else if(targetSurface.equals(Constants.ENEMY_SURFACE_INFESTED)){
-      impactMult = 1.0;
-      punctureMult = 1.0;
-      slashMult = 1.25;
-      fireMult = 1.25;
-      iceMult = 1.0;
-      electricMult = 1.0;
-      toxinMult = 1.0;
-      blastMult = 1.0;
-      radiationMult = 0.5;
-      gasMult = 1.75;
-      corrosiveMult = 1.0;
-      viralMult = 0.5;
-      magneticMult = 1.0;
-    }
-    
-    //Armor Mults
-    if(armorSurface.equals(Constants.ENEMY_SURFACE_FERRITE_ARMOR)){
-      armorImpactMult = 1.0;
-      armorPunctureMult = 1.5;
-      armorSlashMult = 0.85;
-      armorFireMult = 1.0;
-      armorIceMult = 1.0;
-      armorElectricMult = 1.0;
-      armorToxinMult = 1.25;
-      armorBlastMult = 0.75;
-      armorRadiationMult = 1.0;
-      armorGasMult = 1.0;
-      armorCorrosiveMult = 1.75;
-      armorViralMult = 1.0;
-      armorMagneticMult = 1.0;
-    }else if(armorSurface.equals(Constants.ENEMY_SURFACE_ALLOY_ARMOR)){
-      armorImpactMult = 1.0;
-      armorPunctureMult = 1.15;
-      armorSlashMult = 0.5;
-      armorFireMult = 1.0;
-      armorIceMult = 1.25;
-      armorElectricMult = 0.5;
-      armorToxinMult = 1.0;
-      armorBlastMult = 1.0;
-      armorRadiationMult = 1.75;
-      armorGasMult = 1.0;
-      armorCorrosiveMult = 1.0;
-      armorViralMult = 1.0;
-      armorMagneticMult = 0.5;
-    }
-    
-    //Shield Mults
-    if(shieldSurface.equals(Constants.ENEMY_SURFACE_SHIELDS)){
-      shieldImpactMult = 1.5;
-      shieldPunctureMult = 0.85;
-      shieldSlashMult = 1.0;
-      shieldFireMult = 1.0;
-      shieldIceMult = 1.0;
-      shieldElectricMult = 1.0;
-      shieldToxinMult = 1.0;
-      shieldBlastMult = 1.0;
-      shieldRadiationMult = 0.75;
-      shieldGasMult = 1.0;
-      shieldCorrosiveMult = 1.0;
-      shieldViralMult = 1.0;
-      shieldMagneticMult = 1.75;
-    }else if(shieldType.equals(Constants.ENEMY_SURFACE_PROTO_SHIELD)){
-      shieldImpactMult = 1.15;
-      shieldPunctureMult = 0.5;
-      shieldSlashMult = 1.0;
-      shieldFireMult = 0.5;
-      shieldIceMult = 1.0;
-      shieldElectricMult = 1.0;
-      shieldToxinMult = 1.25;
-      shieldBlastMult = 1.0;
-      shieldRadiationMult = 1.0;
-      shieldGasMult = 1.0;
-      shieldCorrosiveMult = 0.5;
-      shieldViralMult = 1.0;
-      shieldMagneticMult = 1.75;
-    }
-    
-    if(targetType.equals(Constants.ENEMY_TYPE_INFESTED)){
-      typeMult = Main.finalInfestedMult;
-    }else if(targetType.equals(Constants.ENEMY_TYPE_GRINEER)){
-      typeMult = Main.finalGrineerMult;
-    }else if(targetType.equals(Constants.ENEMY_TYPE_CORPUS)){
-      typeMult = Main.finalCorpusMult;
-    }
-    
-    //Simulation Data
-    double millisceondsPerShot = 1000.0 / Main.finalFireRate;
-    double millisecondMult = 1.0;
-    double reloadTimeMilliseconds = Main.finalReloadTime * 1000.0;
+    double targetAdjustedMaxShields = maxShields;
+    double targetCurrentShields = maxShields;
+    double targetAdjustedMaxHealth = maxHealth;
+    double targetCurrentHealth = maxHealth;
+    double targetAdjustedMaxArmor = maxArmor;
     int reloadTimeCounter = 0;
     int shotCounter = 2147483000;
     int iterations = 0;
     int timeToKill = 0;
     boolean reloading = false;
-    Vector<Integer> impactStacks = new Vector<Integer>();
-    Vector<Integer> punctureStacks = new Vector<Integer>();
-    Vector<DoTPair> slashStacks = new Vector<DoTPair>();
-    Vector<DoTPair> fireStacks = new Vector<DoTPair>();
-    Vector<Integer> iceStacks = new Vector<Integer>();
-    Vector<Integer> electricStacks = new Vector<Integer>();
-    Vector<DoTPair> toxinStacks = new Vector<DoTPair>();
-    Vector<Integer> blastStacks = new Vector<Integer>();
-    Vector<Integer> radiationStacks = new Vector<Integer>();
-    Vector<DoTPair> gasStacks = new Vector<DoTPair>();
-    Vector<Integer> corrosiveStacks = new Vector<Integer>();
-    Vector<Integer> viralStacks = new Vector<Integer>();
-    Vector<Integer> magneticStacks = new Vector<Integer>();
-    
-    double baseImpactDamage = Main.impact.finalBase;
-    double basePunctureDamage = Main.puncture.finalBase;
-    double baseSlashDamage = Main.slash.finalBase;
-    double baseFireDamage = Main.fire.finalBase;
-    double baseIceDamage = Main.ice.finalBase;
-    double baseElectricDamage = Main.electric.finalBase;
-    double baseToxinDamage = Main.toxin.finalBase;
-    double baseBlastDamage = Main.blast.finalBase;
-    double baseCorrosiveDamage = Main.corrosive.finalBase;
-    double baseGasDamage = Main.gas.finalBase;
-    double baseMagneticDamage = Main.magnetic.finalBase;
-    double baseRadiationDamage = Main.radiation.finalBase;
-    double baseViralDamage = Main.viral.finalBase;
-    
-    double corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
+    impactStacks = new Vector<Integer>();
+    punctureStacks = new Vector<Integer>();
+    slashStacks = new Vector<DoTPair>();
+    fireStacks = new Vector<DoTPair>();
+    iceStacks = new Vector<Integer>();
+    electricStacks = new Vector<Integer>();
+    toxinStacks = new Vector<DoTPair>();
+    blastStacks = new Vector<Integer>();
+    radiationStacks = new Vector<Integer>();
+    gasStacks = new Vector<DoTPair>();
+    corrosiveStacks = new Vector<Integer>();
+    viralStacks = new Vector<Integer>();
+    magneticStacks = new Vector<Integer>();
     
     if(Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
       millisecondMult = 5.0;
     }
-    Random rng = new Random();
     
     //Run a 600 second simulation to calculate the time to kill
     for(timeToKill=0; timeToKill < 6000000; timeToKill++){
@@ -548,7 +575,7 @@ public class TTKTarget implements Comparable{
             
             //Adjust Max Stats
             //Shields
-            targetAdjustedMaxShields = targetMaxShields;
+            targetAdjustedMaxShields = maxShields;
             if(magneticStacks.size() > 0){
               targetAdjustedMaxShields *= 0.25;
             }
@@ -556,7 +583,7 @@ public class TTKTarget implements Comparable{
               targetCurrentShields = targetAdjustedMaxShields;
             }
             //Health
-            targetAdjustedMaxHealth = targetMaxHealth;
+            targetAdjustedMaxHealth = maxHealth;
             if(viralStacks.size() > 0){
               targetAdjustedMaxHealth *= 0.5;
             }
@@ -564,7 +591,7 @@ public class TTKTarget implements Comparable{
               targetCurrentHealth = targetAdjustedMaxHealth;
             }
             //Armor
-            targetAdjustedMaxArmor = targetMaxArmor;
+            targetAdjustedMaxArmor = maxArmor;
             //Adjust armor based on corrosive projection stacks
             targetAdjustedMaxArmor *= corrosiveProjectionMult;
             if(corrosiveStacks.size() > 0){
