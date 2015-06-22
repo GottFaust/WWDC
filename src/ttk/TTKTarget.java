@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import etc.Constants;
-
+import etc.TTKNamePair;
 import main.Main;
 import main.Main.DoTPair;
 import mods.Mod;
@@ -406,6 +406,25 @@ public class TTKTarget implements Comparable{
       returnStr = "\nTime to Kill a lvl "+currentLevel+" " + name + " :: "+f.format(TTK)+" seconds";
     }
     return returnStr;
+  }
+  
+  public TTKNamePair getTTKNamePair(){
+    String nam = "";
+    for(char c : name.toCharArray()){
+      if(Character.isUpperCase(c)){
+        try{
+          int charIndex = name.indexOf(c);
+          if(!Character.isUpperCase(name.charAt(charIndex+1))){
+            nam += name.substring(charIndex,charIndex+2);
+          }else{
+            nam += c;
+          }
+        }catch(Exception ex){
+          nam += c;
+        }
+      }
+    }
+    return new TTKNamePair(nam, TTK);
   }
   
   /**

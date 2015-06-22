@@ -32,6 +32,8 @@ import javax.swing.JTextArea;
 
 import etc.Constants;
 import etc.DPSGraphPanel;
+import etc.TTKGraphPanel;
+import etc.TTKNamePair;
 import damage.Damage;
 import damage.SurfaceDamage;
 import etc.UIBuilder;
@@ -70,6 +72,7 @@ public class Main {
   
   /** JTabbedPanes **/
   protected static JTabbedPane weaponPane = new JTabbedPane();
+  protected static JTabbedPane graphPane = new JTabbedPane();
   
   /** JScrollPanes **/
   protected static JScrollPane outputScroll = new JScrollPane(output);
@@ -85,7 +88,8 @@ public class Main {
   protected static ModManagerPanel theModManager = null;
   protected static TTKManagerPanel theTTKManager = null;
   protected static ColorOptionsPanel theColorPanel = null;
-  protected static DPSGraphPanel graph = new DPSGraphPanel();
+  protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
+  protected static TTKGraphPanel ttkGraph = new TTKGraphPanel();
   
   /** JMenuBar **/
   protected static JMenuBar mainMenuBar = new JMenuBar();
@@ -254,6 +258,7 @@ public class Main {
     UIBuilder.textAreaInit(output);
     UIBuilder.scrollPaneInit(outputScroll);
     UIBuilder.tabbedPaneInit(weaponPane);
+    UIBuilder.tabbedPaneInit(graphPane);
     UIBuilder.menuBarInit(mainMenuBar);
     UIBuilder.menuInit(fileMenu);
     UIBuilder.menuItemInit(modMenu);
@@ -295,6 +300,7 @@ public class Main {
     modMenu.addActionListener(action);
     TTKMenu.addActionListener(action);
     colorOptionsItem.addActionListener(action);
+    targetGroupBox.addActionListener(action);
     
     mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.Y_AXIS));
     bottomPanel.setLayout(new BoxLayout(bottomPanel,BoxLayout.Y_AXIS));
@@ -303,6 +309,9 @@ public class Main {
     weaponPane.add(shotgunPanel, Constants.SHOTGUN);
     weaponPane.add(pistolPanel, Constants.PISTOL);
     weaponPane.add(arcGunPanel, Constants.ARCGUN);
+    
+    graphPane.add(dpsGraph, "DPS");
+    graphPane.add(ttkGraph, "TTK");
     
     JPanel buttonPanel = new JPanel();
     UIBuilder.panelInit(buttonPanel);
@@ -323,16 +332,10 @@ public class Main {
     advancedTTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
     advancedTTKBox.setSelected(useComplexTTK);
     
-    JPanel graphPanel = new JPanel();
-    graphPanel.setLayout(new GridLayout(1,1,0,0));
-    UIBuilder.panelInit(graphPanel);
-    UIBuilder.createTitledLineBorder(graphPanel, "DPS Graph");
-    graphPanel.add(graph);
-    
     JPanel dataPanel = new JPanel();
     UIBuilder.panelInit(dataPanel);
     dataPanel.setLayout(new GridLayout(1,2,0,0));
-    dataPanel.add(graphPanel);
+    dataPanel.add(graphPane);
     dataPanel.add(outputScroll);
     
     outputScroll.getViewport().setPreferredSize(new Dimension(400,250));
@@ -2379,27 +2382,31 @@ public class Main {
           groupTargets.add(target);
         }
       }
+      Vector<TTKNamePair> TTKGraphVec = new Vector<TTKNamePair>();
       for(TTKTarget target : groupTargets){
         output.append(target.printAdvancedData());
+        TTKGraphVec.add(target.getTTKNamePair());
       }
+      //Update the TTK Graph
+      ttkGraph.updateGraph(TTKGraphVec);
     }
     
-    //Update the Graph
-    graph.updateDPS(raw.perSecond, 
-                    cloneFlesh.perSecond, 
-                    ferrite.perSecond, 
-                    alloy.perSecond, 
-                    mechanical.perSecond, 
-                    corpusFlesh.perSecond, 
-                    shield.perSecond, 
-                    protoShield.perSecond, 
-                    robotic.perSecond, 
-                    infestedFlesh.perSecond, 
-                    fossilized.perSecond, 
-                    sinew.perSecond, 
-                    infested.perSecond, 
-                    grineer.perSecond, 
-                    corpus.perSecond);
+    //Update the DPS Graph
+    dpsGraph.updateDPS( raw.perSecond, 
+                        cloneFlesh.perSecond, 
+                        ferrite.perSecond, 
+                        alloy.perSecond, 
+                        mechanical.perSecond, 
+                        corpusFlesh.perSecond, 
+                        shield.perSecond, 
+                        protoShield.perSecond, 
+                        robotic.perSecond, 
+                        infestedFlesh.perSecond, 
+                        fossilized.perSecond, 
+                        sinew.perSecond, 
+                        infested.perSecond, 
+                        grineer.perSecond, 
+                        corpus.perSecond);
   }
   
   /**
@@ -2488,18 +2495,20 @@ public class Main {
       if(e.getSource().equals(calculateButton)){
         calculateDPS();
       }else if(e.getSource().equals(advancedTTKBox)){
-        
         useComplexTTK = advancedTTKBox.isSelected();
-          
+      }else if(e.getSource().equals(targetGroupBox)){
+        ttkGraph.clear();
       }else if(e.getSource().equals(clearButton)){
         riflePanel.clear();
         shotgunPanel.clear();
         pistolPanel.clear();
         output.setText("");
-        graph.clear();
+        dpsGraph.clear();
+        ttkGraph.clear();
       }else if(e.getSource().equals(clearOutputButton)){
         output.setText("");
-        graph.clear();
+        dpsGraph.clear();
+        ttkGraph.clear();
       }else if(e.getSource().equals(loadItem)){
         int returnVal = chooser.showOpenDialog(mainPanel);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
