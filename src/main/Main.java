@@ -111,7 +111,8 @@ public class Main {
   protected static Boolean modManagerInit = false;
   protected static Boolean targetManagerInit = false;
   protected static Boolean colorOptionsInit = false;
-  protected static JCheckBox advancedTTKBox = new JCheckBox("Run TTK");
+  protected static JCheckBox TTKBox = new JCheckBox("TTK");
+  protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
   protected static JLabel targetGroupLabel = new JLabel("Group:");
   protected static JComboBox targetGroupBox = new JComboBox();
   protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
@@ -267,7 +268,8 @@ public class Main {
     UIBuilder.menuItemInit(loadItem);
     UIBuilder.menuItemInit(colorOptionsItem);
     UIBuilder.fileChooserInit(chooser);
-    UIBuilder.checkBoxInit(advancedTTKBox);
+    UIBuilder.checkBoxInit(TTKBox);
+    UIBuilder.checkBoxInit(lightWeightTTKBox);
     UIBuilder.labelInit(corrosiveProjectionLabel);
     UIBuilder.labelInit(targetGroupLabel);
     UIBuilder.comboBoxInit(corrosiveProjectionBox);
@@ -292,7 +294,8 @@ public class Main {
     }
     
     calculateButton.addActionListener(action);
-    advancedTTKBox.addActionListener(action);
+    TTKBox.addActionListener(action);
+    lightWeightTTKBox.addActionListener(action);
     clearButton.addActionListener(action);
     clearOutputButton.addActionListener(action);
     saveItem.addActionListener(action);
@@ -320,7 +323,8 @@ public class Main {
     buttonPanel.add(corrosiveProjectionBox);
     buttonPanel.add(targetGroupLabel);
     buttonPanel.add(targetGroupBox);
-    buttonPanel.add(advancedTTKBox);
+    buttonPanel.add(TTKBox);
+    buttonPanel.add(lightWeightTTKBox);
     buttonPanel.add(calculateButton);
     buttonPanel.add(clearButton);
     buttonPanel.add(clearOutputButton);
@@ -329,8 +333,10 @@ public class Main {
     corrosiveProjectionBox.setToolTipText("Number of Corrosive Projection auras active.");
     targetGroupLabel.setToolTipText("Target group to run calculations against.");
     targetGroupBox.setToolTipText("Target group to run calculations against.");
-    advancedTTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
-    advancedTTKBox.setSelected(useComplexTTK);
+    TTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
+    lightWeightTTKBox.setToolTipText("This will have about 10% of the performance impact of normal TTK, but will be less accurate.");
+    TTKBox.setSelected(useComplexTTK);
+    lightWeightTTKBox.setSelected(!TTKBox.isSelected());
     
     JPanel dataPanel = new JPanel();
     UIBuilder.panelInit(dataPanel);
@@ -405,7 +411,7 @@ public class Main {
         groupTargets.add(target);
       }
     }
-    if(useComplexTTK){
+    if(useComplexTTK && (raw.rawPerSecond > 100.0)){
       complexTTKCompletions = 0;
       for(TTKTarget target : groupTargets){
         target.runAdvancedTTK();
@@ -2494,8 +2500,25 @@ public class Main {
     public void actionPerformed(ActionEvent e) {
       if(e.getSource().equals(calculateButton)){
         calculateDPS();
-      }else if(e.getSource().equals(advancedTTKBox)){
-        useComplexTTK = advancedTTKBox.isSelected();
+      }else if(e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)){
+        useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
+        if(e.getSource().equals(TTKBox)){
+          if(lightWeightTTKBox.isSelected()){
+            lightWeightTTKBox.setSelected(false);
+          }
+        }else{
+          if(TTKBox.isSelected()){
+            TTKBox.setSelected(false);
+          }
+          
+        }
+        if(useComplexTTK){
+          if(e.getSource().equals(TTKBox)){
+            complexTTKIterations = 10000;
+          }else{
+            complexTTKIterations = 1000;
+          }
+        }
       }else if(e.getSource().equals(targetGroupBox)){
         ttkGraph.clear();
       }else if(e.getSource().equals(clearButton)){

@@ -68,7 +68,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.7.4";
+  public static final String APP_VERSION = "v0.7.5";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -294,6 +294,7 @@ public class Constants {
                                             "Primed Chamber,Rifle,3,1,FirstShotDamage,0.25,V,4",
                                             "Primed Fast Hands,Rifle,10,1,ReladSpeed,0.05,~,2",
                                             "Primed Heated Charge,Pistol,10,1,FireDamage,0.15,~,6",
+                                            "Primed Pistol Gambit,Pistol,10,1,CritChance,0.17,V,2",
                                             "Primed Point Blank,Shotgun,10,1,DamageBonus,0.15,V,4",
                                             "Primed Ravage,Shotgun,10,1,CritMultiplier,0.1,V,4",
                                             "Quickdraw,Pistol,5,1,ReladSpeed,0.08,~,2",
