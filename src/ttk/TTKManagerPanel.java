@@ -250,9 +250,9 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
         targets.clear();
         ttkDB.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(ttkDB));
-        for(int i = 0; i < Constants.baseTTKTargets.length; i++){
-          writer.write(Constants.baseTTKTargets[i]+"\n");
-          TTKTarget target = new TTKTarget(Constants.baseTTKTargets[i]);
+        for(String targetStr : Constants.baseTTKTargets){
+          writer.write(targetStr+"\n");
+          TTKTarget target = new TTKTarget(targetStr);
           targets.add(target);
         }
         writer.close();

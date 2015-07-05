@@ -143,9 +143,9 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
         mods.clear();
         modsDB.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(modsDB));
-        for(int i = 0; i < Constants.baseModDB.length; i++){
-          writer.write(Constants.baseModDB[i]+"\n");
-          Mod mod = new Mod(Constants.baseModDB[i]);
+        for(String modStr : Constants.baseModDB){
+          writer.write(modStr+"\n");
+          Mod mod = new Mod(modStr);
           mods.add(mod);
         }
         writer.close();
