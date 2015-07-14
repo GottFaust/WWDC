@@ -45,18 +45,17 @@ public class Weapon {
     chargeTime = split[4];
     burstCount = split[5];
     burstFireRate = split[6];
-    name = split[7];
-    damage = split[8];
-    impact = split[9];
-    puncture = split[10];
-    slash = split[11];
-    fireRate = split[12];
-    magSize = split[13];
-    ammo = split[14];
-    reload = split[15];
-    crit = split[16];
-    critMult = split[17];
-    status = split[18];
-    projeciles = split[19];
+    damage = split[7];
+    impact = split[8];
+    puncture = split[9];
+    slash = split[10];
+    fireRate = split[11];
+    magSize = split[12];
+    ammo = split[13];
+    reload = split[14];
+    crit = split[15];
+    critMult = split[16];
+    status = split[17];
+    projeciles = split[18];
   }
 }
