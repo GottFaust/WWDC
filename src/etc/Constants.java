@@ -453,7 +453,7 @@ public class Constants {
                                               "Pistol,Full-Auto,Physical,Akstiletto,,,,,10.8,1.8,5.4,10,28,210,1.1,15,1.5,15,1",
                                               "Pistol,Full-Auto,Physical,AkZani,,,,,2,9.1,1.9,20,100,400,2,5,2,5,1",
                                               "Pistol,Semi-Auto,Blast,Angstrum (Single Rocket),,,,425,,,,2,3,30,2.5,5,2,10,1",
-                                              "Pistol,Charge,Blast,Angstrum (Charged),3,,,3825,,,,0,1,10,2.5,5,2,90,9",
+                                              "Pistol,Charge,Blast,Angstrum (Charged),1.5,,,1275,,,,2,1,10,2.5,5,2,90,3",
                                               "Pistol,Continuous,Fire,Atmos,1,3,25,50,9.6,1.6,4.8,5,50,210,2,5,1.5,10,1",
                                               "Pistol,Burst,Physical,Ballistica (Burst),1,4,3.33,425,2.5,20,2.5,6,16,210,2,15,1.5,10,1",
                                               "Pistol,Charge,Physical,Ballistica (Charge),1,4,,425,10,80,10,3.33,16,210,2,15,1.5,10,1",
