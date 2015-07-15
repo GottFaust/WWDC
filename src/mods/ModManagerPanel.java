@@ -95,9 +95,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JScrollPane modScroll = new JScrollPane(modList);
   
   /** Data **/
-  protected Vector<Mod> mods = new Vector<Mod>();
+  protected ModInitializer initializer;
   protected Vector<String> modEffects = new Vector<String>();
-  protected File modsDB;
   protected Mod selectedMod = null;
   protected WeaponPanel rifle;
   protected WeaponPanel shotgun;
@@ -126,40 +125,14 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   public void Init(){
     
     //Initialize The Mod Data
-    modsDB = new File("mods.db");
-    try {
-      if(modsDB.exists()){
-        mods.clear();
-        BufferedReader reader = new BufferedReader(new FileReader(modsDB));
-        String line = reader.readLine();
-        while(line != null){
-          Mod mod = new Mod(line);
-          mods.add(mod);
-          line = reader.readLine();
-        }
-        reader.close();
-        updateModList();
-      }else{
-        mods.clear();
-        modsDB.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(modsDB));
-        for(String modStr : Constants.baseModDB){
-          writer.write(modStr+"\n");
-          Mod mod = new Mod(modStr);
-          mods.add(mod);
-        }
-        writer.close();
-        updateModList();
-        rifle.Init();
-        rifle.updateDropDownContents();
-        shotgun.Init();
-        shotgun.updateDropDownContents();
-        pistol.Init();
-        pistol.updateDropDownContents();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    initializer = ModInitializer.getInstance();
+    updateModList();
+    rifle.InitMods();
+    rifle.updateDropDownContents();
+    shotgun.InitMods();
+    shotgun.updateDropDownContents();
+    pistol.InitMods();
+    pistol.updateDropDownContents();
     
     modEffects.clear();
     modEffects.add(Constants.MOD_TYPE_DAMAGE_BONUS);
@@ -370,17 +343,17 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
       
       //if it exists: up date it. Otherwise: add it.
       if(foundMod != null){
-        mods.set(mods.indexOf(foundMod), newMod);
+        initializer.mods.set(initializer.mods.indexOf(foundMod), newMod);
       }else{
-        mods.add(newMod);
+        initializer.mods.add(newMod);
       }
       
       updateModList();
       
     }else if(e.getSource().equals(deleteButton)){
       
-      if(mods.contains(selectedMod)){
-        mods.removeElement(selectedMod);
+      if(initializer.mods.contains(selectedMod)){
+        initializer.mods.removeElement(selectedMod);
       }
       updateModList();
       
@@ -417,9 +390,9 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
    */
   public Mod getModByName(String name){
     Mod localMod = null;
-    for(int i = 0; i < mods.size(); i++){
-      if(mods.get(i).name.equals(name)){
-        localMod = mods.get(i);
+    for(int i = 0; i < initializer.mods.size(); i++){
+      if(initializer.mods.get(i).name.equals(name)){
+        localMod = initializer.mods.get(i);
       }
     }
     
@@ -430,10 +403,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
    * Rebuilds the list of mods based on the stored mods vector
    */
   public void updateModList(){
-    Collections.sort(mods);
+    Collections.sort(initializer.mods);
     modListModel.clear();
-    for(int i = 0; i < mods.size(); i++){
-      modListModel.addElement(mods.get(i).name);
+    for(int i = 0; i < initializer.mods.size(); i++){
+      modListModel.addElement(initializer.mods.get(i).name);
     }
   }
   
@@ -544,20 +517,12 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   
   public void saveModDB(){
     try {
-      if(modsDB.exists()){
-        modsDB.delete();
-      }
-      modsDB.createNewFile();
-      BufferedWriter writer = new BufferedWriter(new FileWriter(modsDB));
-      for(int i = 0; i < mods.size(); i++){
-        writer.write(mods.get(i).writeOut()+"\n");
-      }
-      writer.close();
-      rifle.Init();
+      initializer.saveModDB();
+      rifle.InitMods();
       rifle.updateDropDownContents();
-      shotgun.Init();
+      shotgun.InitMods();
       shotgun.updateDropDownContents();
-      pistol.Init();
+      pistol.InitMods();
       pistol.updateDropDownContents();
     } catch (Exception e) {
       e.printStackTrace();

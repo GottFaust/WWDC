@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import etc.Constants;
 import etc.UIBuilder;
 import mods.Mod;
+import mods.ModInitializer;
 import mods.WeaponModPanel;
 
 public class WeaponPanel extends JPanel implements ActionListener {
@@ -116,7 +117,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected Vector<Mod> activeMods = new Vector<Mod>();
   protected Vector<Double> modLevels = new Vector<Double>();
   
-  protected Vector<Mod> mods = new Vector<Mod>();
+  protected ModInitializer modInit;
+  protected WeaponInitializer weapInit;
   
   protected String modOne = "--";
   protected String modTwo = "--";
@@ -128,8 +130,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected String modEight = "--";
   
   protected String weaponType = "";
-  
-  protected Vector<Weapon> weapons = new Vector<Weapon>();
   
   /**
    * ____________________________________________________________
@@ -149,55 +149,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
    */
   public void Init(){
     
-    //Initialize The Mod Data
-    File modDB = new File("mods.db");
-    try {
-      if(modDB.exists()){
-        mods.clear();
-        BufferedReader reader = new BufferedReader(new FileReader(modDB));
-        String line = reader.readLine();
-        while(line != null){
-          Mod mod = new Mod(line);
-          if(mod.type.equals(weaponType)){
-            mods.add(mod);
-          }
-          line = reader.readLine();
-        }
-        reader.close();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    try{
-      File weaponsFile = new File("weapons.db");
-      if(weaponsFile.exists()){
-        weapons.clear();
-        BufferedReader reader = new BufferedReader(new FileReader(weaponsFile));
-        String line = reader.readLine();
-        while(line != null){
-          Weapon weapon = new Weapon(line);
-          if(weapon.type.equals(weaponType)){
-            weapons.addElement(weapon);
-          }
-          line = reader.readLine();
-        }
-        reader.close();
-        updateWeaponBox();
-      }else{
-        weaponsFile.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(weaponsFile));
-        for(String weaponStr : Constants.baseWeapons){
-          writer.write(weaponStr + "\n");
-          Weapon weapon = new Weapon(weaponStr);
-          if(weapon.type.equals(weaponType)){
-            weapons.addElement(weapon);
-          }
-        }
-        writer.close();
-      }
-    }catch(Exception ex){
-      ex.printStackTrace();
-    }
+    //Initialize The Data
+    modInit = ModInitializer.getInstance();
+    weapInit = WeaponInitializer.getInstance();
+    updateWeaponBox();
+  }
+  
+  public void InitMods(){
+    modInit.initialize();
   }
   
   /**
@@ -1052,14 +1011,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
     selectedMods.add(modSeven);
     selectedMods.add(modEight);
     
-    modOnePanel.updateDropDowns(selectedMods, mods);
-    modTwoPanel.updateDropDowns(selectedMods, mods);
-    modThreePanel.updateDropDowns(selectedMods, mods);
-    modFourPanel.updateDropDowns(selectedMods, mods);
-    modFivePanel.updateDropDowns(selectedMods, mods);
-    modSixPanel.updateDropDowns(selectedMods, mods);
-    modSevenPanel.updateDropDowns(selectedMods, mods);
-    modEightPanel.updateDropDowns(selectedMods, mods);
+    modOnePanel.updateDropDowns(selectedMods, modInit.mods);
+    modTwoPanel.updateDropDowns(selectedMods, modInit.mods);
+    modThreePanel.updateDropDowns(selectedMods, modInit.mods);
+    modFourPanel.updateDropDowns(selectedMods, modInit.mods);
+    modFivePanel.updateDropDowns(selectedMods, modInit.mods);
+    modSixPanel.updateDropDowns(selectedMods, modInit.mods);
+    modSevenPanel.updateDropDowns(selectedMods, modInit.mods);
+    modEightPanel.updateDropDowns(selectedMods, modInit.mods);
   }
   
   /**
@@ -1119,9 +1078,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
    */
   public Mod getModByName(String name){
     Mod localMod = null;
-    for(int i = 0; i < mods.size(); i++){
-      if(mods.get(i).name.equals(name)){
-        localMod = mods.get(i);
+    for(int i = 0; i < modInit.mods.size(); i++){
+      if(modInit.mods.get(i).name.equals(name)){
+        localMod = modInit.mods.get(i);
       }
     }
     
@@ -1170,8 +1129,10 @@ public class WeaponPanel extends JPanel implements ActionListener {
   public void updateWeaponBox(){
     weaponBox.removeAllItems();
     weaponBox.addItem(Constants.CUSTOM_WEAPON);
-    for(Weapon weapon : weapons){
-      weaponBox.addItem(weapon.name);
+    for(Weapon weapon : weapInit.weapons){
+      if(weapon.type.equals(weaponType)){
+        weaponBox.addItem(weapon.name);
+      }
     }
   }
   
@@ -1180,7 +1141,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     if(selected.equals(Constants.CUSTOM_WEAPON)){
       setCustom();
     }else{
-      for(Weapon weapon : weapons){
+      for(Weapon weapon : weapInit.weapons){
         if(weapon.name.equals(selected)){
           selectedWeapon = weapon;
         }

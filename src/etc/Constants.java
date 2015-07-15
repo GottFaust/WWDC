@@ -309,6 +309,7 @@ public class Constants {
                                             "Scorch,Pistol,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
                                             "Seeker,Pistol,5,1,ObjectPierce,0.0,~,10",
                                             "Seeking Force,Shotgun,5,1,ObjectPierce,0.0,~,10",
+                                            "Seeking Fury,Shotgun,5,2,ObjectPierce,ReladSpeed,0.002,0.025,V,6",
                                             "Serration,Rifle,10,1,DamageBonus,0.15,V,4",
                                             "Shattering Justice,Shotgun,3,1,FlatStatusBonus,0.05,~,4",
                                             "Shell Compression,Shotgun,5,1,AmmoCap,0.05,~,2",
