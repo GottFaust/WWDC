@@ -1011,14 +1011,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
     selectedMods.add(modSeven);
     selectedMods.add(modEight);
     
-    modOnePanel.updateDropDowns(selectedMods, modInit.mods);
-    modTwoPanel.updateDropDowns(selectedMods, modInit.mods);
-    modThreePanel.updateDropDowns(selectedMods, modInit.mods);
-    modFourPanel.updateDropDowns(selectedMods, modInit.mods);
-    modFivePanel.updateDropDowns(selectedMods, modInit.mods);
-    modSixPanel.updateDropDowns(selectedMods, modInit.mods);
-    modSevenPanel.updateDropDowns(selectedMods, modInit.mods);
-    modEightPanel.updateDropDowns(selectedMods, modInit.mods);
+    modOnePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modTwoPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modThreePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modFourPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modFivePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modSixPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modSevenPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+    modEightPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
   }
   
   /**

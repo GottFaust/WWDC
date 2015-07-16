@@ -170,7 +170,7 @@ public class WeaponModPanel extends JPanel implements ActionListener {
    * @param selectedMods
    * @param mods
    */
-  public void updateDropDowns(Vector<String> selectedMods, Vector<Mod> mods){
+  public void updateDropDowns(Vector<String> selectedMods, Vector<Mod> mods, String weaponType){
     modBox.removeActionListener(this);
     try{
       modBox.removeAllItems();
@@ -182,9 +182,11 @@ public class WeaponModPanel extends JPanel implements ActionListener {
     }catch(Exception ex){
       selectedName = "--";
     }
-    for(int i=0; i<mods.size(); i++){
-      if(!selectedMods.contains(mods.get(i).name) || mods.get(i).name.equals(selectedName)){
-        modBox.addItem(mods.get(i).name);
+    for(Mod mod : mods){
+      if(!selectedMods.contains(mod.name) || mod.name.equals(selectedName)){
+        if(mod.type.equals(weaponType)){
+          modBox.addItem(mod.name);
+        }
       }
     }
     modBox.setSelectedItem(selectedName);
