@@ -287,7 +287,7 @@ public class Main {
     }
     
     try{
-      File currentDirectory = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+      File currentDirectory = new File(".");
       chooser.setCurrentDirectory(currentDirectory);
     }catch(Exception ex){
       ex.printStackTrace();

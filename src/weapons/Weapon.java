@@ -7,6 +7,8 @@ public class Weapon {
    * CLASS VARIABLES
    * ____________________________________________________________
    */
+  
+  /** Weapon parameters */
   public String mode;
   public String type;
   public String damageType;
@@ -57,5 +59,32 @@ public class Weapon {
     critMult = split[16];
     status = split[17];
     projeciles = split[18];
+  }
+  
+  /**
+   * Creates a string representation of this weapon
+   * @return the aforementioned string
+   */
+  public String writeOut(){
+    String weaponString = type + ",";
+    weaponString += mode + ",";
+    weaponString += damageType + ",";
+    weaponString += name + ",";
+    weaponString += chargeTime + ",";
+    weaponString += burstCount + ",";
+    weaponString += burstFireRate + ",";
+    weaponString += damage + ",";
+    weaponString += impact + ",";
+    weaponString += puncture + ",";
+    weaponString += slash + ",";
+    weaponString += fireRate + ",";
+    weaponString += magSize + ",";
+    weaponString += ammo + ",";
+    weaponString += reload + ",";
+    weaponString += crit + ",";
+    weaponString += critMult + ",";
+    weaponString += status + ",";
+    weaponString += projeciles;
+    return weaponString;
   }
 }

@@ -1,6 +1,5 @@
 package weapons;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,9 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -38,6 +34,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /** JPanels **/
   protected JPanel attributesPanel = new JPanel();
   protected JPanel modsPanel = new JPanel();
+  protected WeaponAttributesPanel wap = new WeaponAttributesPanel();
   protected WeaponModPanel modOnePanel = new WeaponModPanel("1",this);
   protected WeaponModPanel modTwoPanel = new WeaponModPanel("2",this);
   protected WeaponModPanel modThreePanel = new WeaponModPanel("3",this);
@@ -46,71 +43,17 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected WeaponModPanel modSixPanel = new WeaponModPanel("6",this);
   protected WeaponModPanel modSevenPanel = new WeaponModPanel("7",this);
   protected WeaponModPanel modEightPanel = new WeaponModPanel("8",this);
-  protected JPanel namePanel = new JPanel();
-  protected JPanel damagePanel = new JPanel();
-  protected JPanel impactPanel = new JPanel();
-  protected JPanel puncturePanel = new JPanel();
-  protected JPanel slashPanel = new JPanel();
-  protected JPanel fireRatePanel = new JPanel();
-  protected JPanel magSizePanel = new JPanel();
-  protected JPanel ammoPanel = new JPanel();
-  protected JPanel reloadPanel = new JPanel();
-  protected JPanel critChancePanel = new JPanel();
-  protected JPanel critMultPanel = new JPanel();
-  protected JPanel weaponModePanel = new JPanel();
   protected JPanel savedWeaponPanel = new JPanel();
-  protected JPanel damageTypePanel = new JPanel();
-  protected JPanel chargeTimePanel = new JPanel();
-  protected JPanel burstCountPanel = new JPanel();
-  protected JPanel burstFireRatePanel = new JPanel();
-  protected JPanel projectilePanel = new JPanel();
-  protected JPanel statusPanel = new JPanel();
   
   /** JComboBoxes **/
-  protected JComboBox<String> damageTypeBox = new JComboBox<String>();
-  protected JComboBox<String> weaponModeBox = new JComboBox<String>();
   protected JComboBox<String> weaponBox = new JComboBox<String>();
   
   /** JLabels **/
-  protected JLabel nameLabel = new JLabel("Name - ");
-  protected JLabel weaponModeLabel = new JLabel("Mode of Operation - ");
   protected JLabel weaponLabel = new JLabel("Weapon - ");
-  protected JLabel damageTypeLabel = new JLabel("Base Damage Type - ");
-  protected JLabel chargeTimeLabel = new JLabel("Charge Time - ");
-  protected JLabel burstCountLabel = new JLabel("Burst Count - ");
-  protected JLabel burstFireRateLabel = new JLabel("Burst Fire Rate - ");
-  protected JLabel damageLabel = new JLabel("Base Damage - ");
-  protected JLabel impactLabel = new JLabel("Impact Damage - ");
-  protected JLabel punctureLabel = new JLabel("Puncture Damage - ");
-  protected JLabel slashLabel = new JLabel("Slash Damage - ");
-  protected JLabel fireRateLabel = new JLabel("Rate of Fire - ");
-  protected JLabel magSizeLabel = new JLabel("Magazine Capacity - ");
-  protected JLabel totalAmmoLabel = new JLabel("Total Ammo - ");
-  protected JLabel reloadTimeLabel = new JLabel("Reload Time - ");
-  protected JLabel critChanceLabel = new JLabel("Crit Chance - ");
-  protected JLabel critMultiplierLabel = new JLabel("Crit Multiplier - ");
   protected JLabel totalModCostLabel = new JLabel("Total mod point cost associated with this build:");
-  protected JLabel projectileLabel = new JLabel("Projectile Count - ");
-  protected JLabel statusLabel = new JLabel("Status Chance - ");
   
   /** JTextFields **/
-  protected JTextField chargeTimeField = new JTextField(10);
-  protected JTextField burstCountField = new JTextField(10);
-  protected JTextField burstFireRateField = new JTextField(10);
-  protected JTextField nameField = new JTextField(10);
-  protected JTextField damageField = new JTextField(10);
-  protected JTextField impactField = new JTextField(10);
-  protected JTextField punctureField = new JTextField(10);
-  protected JTextField slashField = new JTextField(10);
-  protected JTextField fireRateField = new JTextField(10);
-  protected JTextField magSizeField = new JTextField(10);
-  protected JTextField ammoField = new JTextField(10);
-  protected JTextField reloadField = new JTextField(10);
-  protected JTextField critField = new JTextField(10);
-  protected JTextField multiplierField = new JTextField(10);
   protected JTextField totalModCostField = new JTextField(10);
-  protected JTextField projectileField = new JTextField(10);
-  protected JTextField statusField = new JTextField(10);
   
   /** Data **/
   protected Vector<String> selectedMods = new Vector<String>();
@@ -163,72 +106,17 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * Builds the UI
    */
   public void buildUI(){
-    UIBuilder.comboBoxInit(weaponModeBox);
-    UIBuilder.comboBoxInit(damageTypeBox);
     UIBuilder.comboBoxInit(weaponBox);
     
-    UIBuilder.labelInit(nameLabel);
-    UIBuilder.labelInit(damageLabel);
-    UIBuilder.labelInit(impactLabel);
-    UIBuilder.labelInit(punctureLabel);
-    UIBuilder.labelInit(slashLabel);
-    UIBuilder.labelInit(fireRateLabel);
-    UIBuilder.labelInit(magSizeLabel);
-    UIBuilder.labelInit(totalAmmoLabel);
-    UIBuilder.labelInit(reloadTimeLabel);
-    UIBuilder.labelInit(critChanceLabel);
-    UIBuilder.labelInit(critMultiplierLabel);
     UIBuilder.labelInit(totalModCostLabel);
-    UIBuilder.labelInit(weaponModeLabel);
     UIBuilder.labelInit(weaponLabel);
-    UIBuilder.labelInit(damageTypeLabel);
-    UIBuilder.labelInit(chargeTimeLabel);
-    UIBuilder.labelInit(burstCountLabel);
-    UIBuilder.labelInit(burstFireRateLabel);
-    UIBuilder.labelInit(projectileLabel);
-    UIBuilder.labelInit(statusLabel);
-    
-    UIBuilder.textFieldInit(nameField);
+   
     UIBuilder.textFieldInit(totalModCostField);
-    
-    UIBuilder.numberFieldInit(damageField);
-    UIBuilder.numberFieldInit(impactField);
-    UIBuilder.numberFieldInit(punctureField);
-    UIBuilder.numberFieldInit(slashField);
-    UIBuilder.numberFieldInit(fireRateField);
-    UIBuilder.numberFieldInit(magSizeField);
-    UIBuilder.numberFieldInit(ammoField);
-    UIBuilder.numberFieldInit(reloadField);
-    UIBuilder.numberFieldInit(critField);
-    UIBuilder.numberFieldInit(multiplierField);
-    UIBuilder.numberFieldInit(chargeTimeField);
-    UIBuilder.numberFieldInit(burstCountField);
-    UIBuilder.numberFieldInit(burstFireRateField);
-    UIBuilder.numberFieldInit(projectileField);
-    UIBuilder.numberFieldInit(statusField);
     
     UIBuilder.createTitledLineBorder(attributesPanel, "ATTRIBUTES");
     UIBuilder.createTitledLineBorder(modsPanel, "MODS");
     
-    UIBuilder.createSepparationBorder(namePanel);
-    UIBuilder.createSepparationBorder(damagePanel);
-    UIBuilder.createSepparationBorder(impactPanel);
-    UIBuilder.createSepparationBorder(puncturePanel);
-    UIBuilder.createSepparationBorder(slashPanel);
-    UIBuilder.createSepparationBorder(fireRatePanel);
-    UIBuilder.createSepparationBorder(magSizePanel);
-    UIBuilder.createSepparationBorder(ammoPanel);
-    UIBuilder.createSepparationBorder(reloadPanel);
-    UIBuilder.createSepparationBorder(critChancePanel);
-    UIBuilder.createSepparationBorder(critMultPanel);
-    UIBuilder.createSepparationBorder(weaponModePanel);
     UIBuilder.createSepparationBorder(savedWeaponPanel);
-    UIBuilder.createSepparationBorder(damageTypePanel);
-    UIBuilder.createSepparationBorder(chargeTimePanel);
-    UIBuilder.createSepparationBorder(burstCountPanel);
-    UIBuilder.createSepparationBorder(burstFireRatePanel);
-    UIBuilder.createSepparationBorder(projectilePanel);
-    UIBuilder.createSepparationBorder(statusPanel);
     
     UIBuilder.panelInit(attributesPanel);
     UIBuilder.panelInit(modsPanel);
@@ -240,83 +128,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.panelInit(modSixPanel);
     UIBuilder.panelInit(modSevenPanel);
     UIBuilder.panelInit(modEightPanel);
-    UIBuilder.panelInit(namePanel);
-    UIBuilder.panelInit(damagePanel);
-    UIBuilder.panelInit(impactPanel);
-    UIBuilder.panelInit(puncturePanel);
-    UIBuilder.panelInit(slashPanel);
-    UIBuilder.panelInit(fireRatePanel);
-    UIBuilder.panelInit(magSizePanel);
-    UIBuilder.panelInit(ammoPanel);
-    UIBuilder.panelInit(reloadPanel);
-    UIBuilder.panelInit(critChancePanel);
-    UIBuilder.panelInit(critMultPanel);
-    UIBuilder.panelInit(weaponModePanel);
+    
     UIBuilder.panelInit(savedWeaponPanel);
-    UIBuilder.panelInit(damageTypePanel);
-    UIBuilder.panelInit(chargeTimePanel);
-    UIBuilder.panelInit(burstCountPanel);
-    UIBuilder.panelInit(burstFireRatePanel);
-    UIBuilder.panelInit(projectilePanel);
-    UIBuilder.panelInit(statusPanel);
-    
-    nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
-    damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
-    impactLabel.setToolTipText(Constants.IMPACT_TOOL_TIP);
-    punctureLabel.setToolTipText(Constants.PUNCTURE_TOOL_TIP);
-    slashLabel.setToolTipText(Constants.SLASH_TOOL_TIP);
-    fireRateLabel.setToolTipText(Constants.FIRE_RATE_TOOL_TIP);
-    magSizeLabel.setToolTipText(Constants.MAG_SIZE_TOOL_TIP);
-    totalAmmoLabel.setToolTipText(Constants.TOTAL_AMMO_TOOL_TIP);
-    reloadTimeLabel.setToolTipText(Constants.RELOAD_TIME_TOOL_TIP);
-    critChanceLabel.setToolTipText(Constants.CRIT_CHANCE_TOOL_TIP);
-    critMultiplierLabel.setToolTipText(Constants.CRIT_MULT_TOOL_TIP);
-    weaponModeLabel.setToolTipText(Constants.WEAPON_MODE_TOOL_TIP);
-    damageTypeLabel.setToolTipText(Constants.DAMAGE_TYPE_TOOL_TIP);
-    chargeTimeLabel.setToolTipText(Constants.CHARGE_TIME_TOOL_TIP);
-    burstCountLabel.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
-    burstFireRateLabel.setToolTipText(Constants.BURST_FIRE_RATE_TOOL_TIP);
-    projectileLabel.setToolTipText(Constants.POJECTILE_TOOL_TIP);
-    statusLabel.setToolTipText(Constants.STATUS_TOOL_TIP);
-    
-    nameField.setToolTipText(Constants.NAME_TOOL_TIP);
-    damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
-    impactField.setToolTipText(Constants.IMPACT_TOOL_TIP);
-    punctureField.setToolTipText(Constants.PUNCTURE_TOOL_TIP);
-    slashField.setToolTipText(Constants.SLASH_TOOL_TIP);
-    fireRateField.setToolTipText(Constants.FIRE_RATE_TOOL_TIP);
-    magSizeField.setToolTipText(Constants.MAG_SIZE_TOOL_TIP);
-    ammoField.setToolTipText(Constants.TOTAL_AMMO_TOOL_TIP);
-    reloadField.setToolTipText(Constants.RELOAD_TIME_TOOL_TIP);
-    critField.setToolTipText(Constants.CRIT_CHANCE_TOOL_TIP);
-    multiplierField.setToolTipText(Constants.CRIT_MULT_TOOL_TIP);
-    weaponModeBox.setToolTipText(Constants.WEAPON_MODE_TOOL_TIP);
-    damageTypeBox.setToolTipText(Constants.DAMAGE_TYPE_TOOL_TIP);
-    chargeTimeField.setToolTipText(Constants.CHARGE_TIME_TOOL_TIP);
-    burstCountField.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
-    burstFireRateField.setToolTipText(Constants.BURST_FIRE_RATE_TOOL_TIP);
-    projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
-    statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
-    
-    weaponModeBox.addItem(Constants.BURST);
-    weaponModeBox.addItem(Constants.CHARGE);
-    weaponModeBox.addItem(Constants.CONTINUOUS);
-    weaponModeBox.addItem(Constants.FULL_AUTO);
-    weaponModeBox.addItem(Constants.FULL_AUTO_RAMP_UP);
-    weaponModeBox.addItem(Constants.FULL_AUTO_BULLET_RAMP);
-    weaponModeBox.addItem(Constants.SEMI_AUTO);
-    
-    damageTypeBox.addItem(Constants.PHYSICAL_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.FIRE_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.ICE_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.TOXIN_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.BLAST_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.CORROSIVE_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.GAS_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
-    damageTypeBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
     
     attributesPanel.setLayout(new BoxLayout(attributesPanel,BoxLayout.Y_AXIS));
     modsPanel.setLayout(new BoxLayout(modsPanel,BoxLayout.Y_AXIS));
@@ -328,86 +141,16 @@ public class WeaponPanel extends JPanel implements ActionListener {
     modSixPanel.setLayout(new BoxLayout(modSixPanel,BoxLayout.Y_AXIS));
     modSevenPanel.setLayout(new BoxLayout(modSevenPanel,BoxLayout.Y_AXIS));
     modEightPanel.setLayout(new BoxLayout(modEightPanel,BoxLayout.Y_AXIS));
-    namePanel.setLayout(new GridLayout(1,2,0,0));
-    damagePanel.setLayout(new GridLayout(1,2,0,0));
-    impactPanel.setLayout(new GridLayout(1,2,0,0));
-    puncturePanel.setLayout(new GridLayout(1,2,0,0));
-    slashPanel.setLayout(new GridLayout(1,2,0,0));
-    fireRatePanel.setLayout(new GridLayout(1,2,0,0));
-    magSizePanel.setLayout(new GridLayout(1,2,0,0));
-    ammoPanel.setLayout(new GridLayout(1,2,0,0));
-    reloadPanel.setLayout(new GridLayout(1,2,0,0));
-    critChancePanel.setLayout(new GridLayout(1,2,0,0));
-    critMultPanel.setLayout(new GridLayout(1,2,0,0));
-    weaponModePanel.setLayout(new GridLayout(1,2,0,0));
+    
     savedWeaponPanel.setLayout(new GridLayout(1,2,0,0));
-    damageTypePanel.setLayout(new GridLayout(1,2,0,0));
-    projectilePanel.setLayout(new GridLayout(1,2,0,0));
-    statusPanel.setLayout(new GridLayout(1,2,0,0));
-    chargeTimePanel.setLayout(new GridLayout(1,2,0,0));
-    burstCountPanel.setLayout(new GridLayout(1,2,0,0));
-    burstFireRatePanel.setLayout(new GridLayout(1,2,0,0));
     
     totalModCostField.setEditable(false);
     
-    namePanel.add(nameLabel);
-    namePanel.add(nameField);
-    damagePanel.add(damageLabel);
-    damagePanel.add(damageField);
-    impactPanel.add(impactLabel);
-    impactPanel.add(impactField);
-    puncturePanel.add(punctureLabel);
-    puncturePanel.add(punctureField);
-    slashPanel.add(slashLabel);
-    slashPanel.add(slashField);
-    fireRatePanel.add(fireRateLabel);
-    fireRatePanel.add(fireRateField);
-    magSizePanel.add(magSizeLabel);
-    magSizePanel.add(magSizeField);
-    ammoPanel.add(totalAmmoLabel);
-    ammoPanel.add(ammoField);
-    reloadPanel.add(reloadTimeLabel);
-    reloadPanel.add(reloadField);
-    critChancePanel.add(critChanceLabel);
-    critChancePanel.add(critField);
-    critMultPanel.add(critMultiplierLabel);
-    critMultPanel.add(multiplierField);
-    weaponModePanel.add(weaponModeLabel);
-    weaponModePanel.add(weaponModeBox);
     savedWeaponPanel.add(weaponLabel);
     savedWeaponPanel.add(weaponBox);
-    damageTypePanel.add(damageTypeLabel);
-    damageTypePanel.add(damageTypeBox);
-    chargeTimePanel.add(chargeTimeLabel);
-    chargeTimePanel.add(chargeTimeField);
-    burstCountPanel.add(burstCountLabel);
-    burstCountPanel.add(burstCountField);
-    burstFireRatePanel.add(burstFireRateLabel);
-    burstFireRatePanel.add(burstFireRateField);
-    projectilePanel.add(projectileLabel);
-    projectilePanel.add(projectileField);
-    statusPanel.add(statusLabel);
-    statusPanel.add(statusField);
-  
+    
     attributesPanel.add(savedWeaponPanel);
-    attributesPanel.add(namePanel);
-    attributesPanel.add(weaponModePanel);
-    attributesPanel.add(damageTypePanel);
-    attributesPanel.add(damagePanel);
-    attributesPanel.add(impactPanel);
-    attributesPanel.add(puncturePanel);
-    attributesPanel.add(slashPanel);
-    attributesPanel.add(chargeTimePanel);
-    attributesPanel.add(burstCountPanel);
-    attributesPanel.add(burstFireRatePanel);
-    attributesPanel.add(projectilePanel);
-    attributesPanel.add(statusPanel);
-    attributesPanel.add(fireRatePanel);
-    attributesPanel.add(magSizePanel);
-    attributesPanel.add(ammoPanel);
-    attributesPanel.add(reloadPanel);
-    attributesPanel.add(critChancePanel);
-    attributesPanel.add(critMultPanel);
+    attributesPanel.add(wap);
     
     JPanel modsTopPanel = new JPanel();
     UIBuilder.panelInit(modsTopPanel);
@@ -442,14 +185,12 @@ public class WeaponPanel extends JPanel implements ActionListener {
     this.add(attributesPanel);
     this.add(modsPanel);
     
-    weaponModeBox.addActionListener(this);
-    damageTypeBox.addActionListener(this);
+    wap.weaponModeBox.addActionListener(this);
+    wap.damageTypeBox.addActionListener(this);
     weaponBox.addActionListener(this);
     
     updateDropDownContents();
     
-    weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
-    damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     weaponBox.setSelectedItem(Constants.CUSTOM_WEAPON);
     totalModCostField.setText("0");
   }
@@ -530,7 +271,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return mode
    */
   public String getWeaponMode(){
-    String mode = (String)weaponModeBox.getSelectedItem();
+    String mode = (String)wap.weaponModeBox.getSelectedItem();
     return mode;
   }
   
@@ -539,7 +280,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return type
    */
   public String getDamageType(){
-    String type = (String)damageTypeBox.getSelectedItem();
+    String type = (String)wap.damageTypeBox.getSelectedItem();
     return type;
   }
   
@@ -549,7 +290,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return chargeTime
    */
   public double getChargeTime(){
-    String chargeTimeStr = chargeTimeField.getText();
+    String chargeTimeStr = wap.chargeTimeField.getText();
     if(chargeTimeStr == null || chargeTimeStr.equals("")){
       chargeTimeStr = "0";
     }
@@ -565,7 +306,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return burstFireRate
    */
   public double getBurstFireRate(){
-    String burstFireRateStr = burstFireRateField.getText();
+    String burstFireRateStr = wap.burstFireRateField.getText();
     if(burstFireRateStr == null || burstFireRateStr.equals("")){
       burstFireRateStr = "0";
     }
@@ -581,7 +322,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return burstCount
    */
   public int getBurstCount(){
-    String burstCountStr = burstCountField.getText();
+    String burstCountStr = wap.burstCountField.getText();
     if(burstCountStr == null || burstCountStr.equals("")){
       burstCountStr = "0";
     }
@@ -597,7 +338,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return name
    */
   public String getName(){
-    String name = nameField.getText();
+    String name = wap.nameField.getText();
     if(name == null || name.equals("")){
       name = "UNKNOWN";
     }
@@ -609,7 +350,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return projectiels
    */
   public double getProjectiles(){
-    String projectileStr = projectileField.getText();
+    String projectileStr = wap.projectileField.getText();
     if(projectileStr == null || projectileStr.equals("")){
       projectileStr = "0";
     }
@@ -625,7 +366,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return status
    */
   public double getStatusChance(){
-    String statusStr = statusField.getText();
+    String statusStr = wap.statusField.getText();
     if(statusStr == null || statusStr.equals("")){
       statusStr = "0";
     }
@@ -642,7 +383,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return damage
    */
   public double getBaseDamage(){
-    String damageStr = damageField.getText();
+    String damageStr = wap.damageField.getText();
     if(damageStr == null || damageStr.equals("")){
       damageStr = "0";
     }
@@ -658,7 +399,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return damage
    */
   public double getImpactDamage(){
-    String damageStr = impactField.getText();
+    String damageStr = wap.impactField.getText();
     if(damageStr == null || damageStr.equals("")){
       damageStr = "0";
     }
@@ -674,7 +415,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return damage
    */
   public double getPunctureDamage(){
-    String damageStr = punctureField.getText();
+    String damageStr = wap.punctureField.getText();
     if(damageStr == null || damageStr.equals("")){
       damageStr = "0";
     }
@@ -689,7 +430,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return damage
    */
   public double getSlashDamage(){
-    String damageStr = slashField.getText();
+    String damageStr = wap.slashField.getText();
     if(damageStr == null || damageStr.equals("")){
       damageStr = "0";
     }
@@ -705,7 +446,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return fireRate
    */
   public double getFireRate(){
-    String fireRateStr = fireRateField.getText();
+    String fireRateStr = wap.fireRateField.getText();
     if(fireRateStr == null || fireRateStr.equals("")){
       fireRateStr = "0";
     }
@@ -721,7 +462,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return magSize
    */
   public int getMagSize(){
-    String magSizeStr = magSizeField.getText();
+    String magSizeStr = wap.magSizeField.getText();
     if(magSizeStr == null || magSizeStr.equals("")){
       magSizeStr = "0";
     }
@@ -737,7 +478,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return totalAmmo
    */
   public int getTotalAmmo(){
-    String totalAmmoStr = ammoField.getText();
+    String totalAmmoStr = wap.ammoField.getText();
     if(totalAmmoStr == null || totalAmmoStr.equals("")){
       totalAmmoStr = "0";
     }
@@ -753,7 +494,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return reloadTime
    */
   public double getReloadTime(){
-    String reloadTimeStr = reloadField.getText();
+    String reloadTimeStr = wap.reloadField.getText();
     if(reloadTimeStr == null || reloadTimeStr.equals("")){
       reloadTimeStr = "0";
     }
@@ -769,7 +510,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return critChance
    */
   public double getCritChance(){
-    String critChanceStr = critField.getText();
+    String critChanceStr = wap.critField.getText();
     if(critChanceStr == null || critChanceStr.equals("")){
       critChanceStr = "0";
     }
@@ -786,7 +527,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @return critMult
    */
   public double getCritMultiplier(){
-    String critMultStr = multiplierField.getText();
+    String critMultStr = wap.multiplierField.getText();
     if(critMultStr == null || critMultStr.equals("")){
       critMultStr = "0";
     }
@@ -802,25 +543,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * Clears all selections and text
    */
   public void clear(){
-    weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
-    damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
-    nameField.setText("");
-    chargeTimeField.setText("");
-    burstCountField.setText("");
-    burstFireRateField.setText("");
-    nameField.setText("");
-    damageField.setText("");
-    impactField.setText("");
-    punctureField.setText("");
-    slashField.setText("");
-    fireRateField.setText("");
-    magSizeField.setText("");
-    ammoField.setText("");
-    reloadField.setText("");
-    critField.setText("");
-    multiplierField.setText("");
-    projectileField.setText("");
-    statusField.setText("");
+    weaponBox.setSelectedItem(Constants.CUSTOM_WEAPON);
+    wap.clear();
     modOnePanel.clear();
     modTwoPanel.clear();
     modThreePanel.clear();
@@ -835,55 +559,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * Clears everything except mods
    */
   public void setCustom(){
-    weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
-    damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
-    nameField.setText("");
-    chargeTimeField.setText("");
-    burstCountField.setText("");
-    burstFireRateField.setText("");
-    nameField.setText("");
-    damageField.setText("");
-    impactField.setText("");
-    punctureField.setText("");
-    slashField.setText("");
-    fireRateField.setText("");
-    magSizeField.setText("");
-    ammoField.setText("");
-    reloadField.setText("");
-    critField.setText("");
-    multiplierField.setText("");
-    projectileField.setText("");
-    statusField.setText("");
+    wap.setCustom();
   }
-  
-//  public void buildWeaponsDB(File file){
-//    if(file.isDirectory()){
-//      for(File child : file.listFiles()){
-//        buildWeaponsDB(child);
-//      }
-//    }else{
-//      if(file.getPath().contains(".wdc")){
-//        synchronized(weaponsDB){
-//          try{
-//            BufferedReader reader = new BufferedReader(new FileReader(file));
-//            String weapon = reader.readLine();
-//            //Skip Mods
-//            for(int i = 0; i < 8; i++){
-//              reader.readLine();
-//            }
-//            //Get the rest of the data
-//            for(int i = 0; i < 19; i++){
-//              weapon += "," + reader.readLine();
-//            }
-//            reader.close();
-//            weaponsDB.addElement(weapon);
-//          }catch(Exception ex){
-//            ex.printStackTrace();
-//          }
-//        }
-//      }
-//    }
-//  }
   
   /**
    * Loads saved weapon data from the provided file
@@ -903,25 +580,25 @@ public class WeaponPanel extends JPanel implements ActionListener {
         modSixPanel.readIn(reader.readLine());
         modSevenPanel.readIn(reader.readLine());
         modEightPanel.readIn(reader.readLine());
-        weaponModeBox.setSelectedItem(reader.readLine());
-        damageTypeBox.setSelectedItem(reader.readLine());
-        nameField.setText(reader.readLine());
-        chargeTimeField.setText(reader.readLine());
-        burstCountField.setText(reader.readLine());
-        burstFireRateField.setText(reader.readLine());
-        nameField.setText(reader.readLine());
-        damageField.setText(reader.readLine());
-        impactField.setText(reader.readLine());
-        punctureField.setText(reader.readLine());
-        slashField.setText(reader.readLine());
-        fireRateField.setText(reader.readLine());
-        magSizeField.setText(reader.readLine());
-        ammoField.setText(reader.readLine());
-        reloadField.setText(reader.readLine());
-        critField.setText(reader.readLine());
-        multiplierField.setText(reader.readLine());
-        statusField.setText(reader.readLine());
-        projectileField.setText(reader.readLine());
+        wap.weaponModeBox.setSelectedItem(reader.readLine());
+        wap.damageTypeBox.setSelectedItem(reader.readLine());
+        wap.nameField.setText(reader.readLine());
+        wap.chargeTimeField.setText(reader.readLine());
+        wap.burstCountField.setText(reader.readLine());
+        wap.burstFireRateField.setText(reader.readLine());
+        wap.nameField.setText(reader.readLine());
+        wap.damageField.setText(reader.readLine());
+        wap.impactField.setText(reader.readLine());
+        wap.punctureField.setText(reader.readLine());
+        wap.slashField.setText(reader.readLine());
+        wap.fireRateField.setText(reader.readLine());
+        wap.magSizeField.setText(reader.readLine());
+        wap.ammoField.setText(reader.readLine());
+        wap.reloadField.setText(reader.readLine());
+        wap.critField.setText(reader.readLine());
+        wap.multiplierField.setText(reader.readLine());
+        wap.statusField.setText(reader.readLine());
+        wap.projectileField.setText(reader.readLine());
         reader.close();
       }
     } catch (Exception e) {
@@ -950,25 +627,25 @@ public class WeaponPanel extends JPanel implements ActionListener {
       writer.write(modSixPanel.writeOut()+"\n");
       writer.write(modSevenPanel.writeOut()+"\n");
       writer.write(modEightPanel.writeOut()+"\n");
-      writer.write(weaponModeBox.getSelectedItem()+"\n");
-      writer.write(damageTypeBox.getSelectedItem()+"\n");
-      writer.write(nameField.getText()+"\n");
-      writer.write(chargeTimeField.getText()+"\n");
-      writer.write(burstCountField.getText()+"\n");
-      writer.write(burstFireRateField.getText()+"\n");
-      writer.write(nameField.getText()+"\n");
-      writer.write(damageField.getText()+"\n");
-      writer.write(impactField.getText()+"\n");
-      writer.write(punctureField.getText()+"\n");
-      writer.write(slashField.getText()+"\n");
-      writer.write(fireRateField.getText()+"\n");
-      writer.write(magSizeField.getText()+"\n");
-      writer.write(ammoField.getText()+"\n");
-      writer.write(reloadField.getText()+"\n");
-      writer.write(critField.getText()+"\n");
-      writer.write(multiplierField.getText()+"\n");
-      writer.write(statusField.getText()+"\n");
-      writer.write(projectileField.getText()+"\n");
+      writer.write(wap.weaponModeBox.getSelectedItem()+"\n");
+      writer.write(wap.damageTypeBox.getSelectedItem()+"\n");
+      writer.write(wap.nameField.getText()+"\n");
+      writer.write(wap.chargeTimeField.getText()+"\n");
+      writer.write(wap.burstCountField.getText()+"\n");
+      writer.write(wap.burstFireRateField.getText()+"\n");
+      writer.write(wap.nameField.getText()+"\n");
+      writer.write(wap.damageField.getText()+"\n");
+      writer.write(wap.impactField.getText()+"\n");
+      writer.write(wap.punctureField.getText()+"\n");
+      writer.write(wap.slashField.getText()+"\n");
+      writer.write(wap.fireRateField.getText()+"\n");
+      writer.write(wap.magSizeField.getText()+"\n");
+      writer.write(wap.ammoField.getText()+"\n");
+      writer.write(wap.reloadField.getText()+"\n");
+      writer.write(wap.critField.getText()+"\n");
+      writer.write(wap.multiplierField.getText()+"\n");
+      writer.write(wap.statusField.getText()+"\n");
+      writer.write(wap.projectileField.getText()+"\n");
       writer.close();
     } catch (Exception e) {
       // TODO Auto-generated catch block
@@ -1027,29 +704,29 @@ public class WeaponPanel extends JPanel implements ActionListener {
    */
   protected void updateWeaponModeOptions(String mode){
     if(mode.equals(Constants.BURST)){
-      chargeTimePanel.setVisible(false);
-      burstCountPanel.setVisible(true);
-      burstFireRatePanel.setVisible(true);
-      damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
-      damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.chargeTimePanel.setVisible(false);
+      wap.burstCountPanel.setVisible(true);
+      wap.burstFireRatePanel.setVisible(true);
+      wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
     }else if(mode.equals(Constants.CHARGE)){
-      chargeTimePanel.setVisible(true);
-      burstCountPanel.setVisible(false);
-      burstFireRatePanel.setVisible(false);
-      damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
-      damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.chargeTimePanel.setVisible(true);
+      wap.burstCountPanel.setVisible(false);
+      wap.burstFireRatePanel.setVisible(false);
+      wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
     }else if(mode.equals(Constants.CONTINUOUS)){
-      chargeTimePanel.setVisible(false);
-      burstCountPanel.setVisible(false);
-      burstFireRatePanel.setVisible(false);
-      damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
-      damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+      wap.chargeTimePanel.setVisible(false);
+      wap.burstCountPanel.setVisible(false);
+      wap.burstFireRatePanel.setVisible(false);
+      wap.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
     }else{
-      chargeTimePanel.setVisible(false);
-      burstCountPanel.setVisible(false);
-      burstFireRatePanel.setVisible(false);
-      damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
-      damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.chargeTimePanel.setVisible(false);
+      wap.burstCountPanel.setVisible(false);
+      wap.burstFireRatePanel.setVisible(false);
+      wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
     }
   }
   
@@ -1059,15 +736,15 @@ public class WeaponPanel extends JPanel implements ActionListener {
    */
   protected void updateWeaponDamageOptions(String type){
     if(type.equals(Constants.PHYSICAL_WEAPON_DAMAGE)){
-      damagePanel.setVisible(false);
-      impactPanel.setVisible(true);
-      puncturePanel.setVisible(true);
-      slashPanel.setVisible(true);
+      wap.damagePanel.setVisible(false);
+      wap.impactPanel.setVisible(true);
+      wap.puncturePanel.setVisible(true);
+      wap.slashPanel.setVisible(true);
     }else{
-      damagePanel.setVisible(true);
-      impactPanel.setVisible(false);
-      puncturePanel.setVisible(false);
-      slashPanel.setVisible(false);
+      wap.damagePanel.setVisible(true);
+      wap.impactPanel.setVisible(false);
+      wap.puncturePanel.setVisible(false);
+      wap.slashPanel.setVisible(false);
     }
   }
   
@@ -1148,24 +825,24 @@ public class WeaponPanel extends JPanel implements ActionListener {
       }
     }
     if(selectedWeapon != null){
-      weaponModeBox.setSelectedItem(selectedWeapon.mode);
-      damageTypeBox.setSelectedItem(selectedWeapon.damageType);
-      nameField.setText(selectedWeapon.name);
-      chargeTimeField.setText(selectedWeapon.chargeTime);
-      burstCountField.setText(selectedWeapon.burstCount);
-      burstFireRateField.setText(selectedWeapon.burstFireRate);
-      damageField.setText(selectedWeapon.damage);
-      impactField.setText(selectedWeapon.impact);
-      punctureField.setText(selectedWeapon.puncture);
-      slashField.setText(selectedWeapon.slash);
-      fireRateField.setText(selectedWeapon.fireRate);
-      magSizeField.setText(selectedWeapon.magSize);
-      ammoField.setText(selectedWeapon.ammo);
-      reloadField.setText(selectedWeapon.reload);
-      critField.setText(selectedWeapon.crit);
-      multiplierField.setText(selectedWeapon.critMult);
-      statusField.setText(selectedWeapon.status);
-      projectileField.setText(selectedWeapon.projeciles);
+      wap.weaponModeBox.setSelectedItem(selectedWeapon.mode);
+      wap.damageTypeBox.setSelectedItem(selectedWeapon.damageType);
+      wap.nameField.setText(selectedWeapon.name);
+      wap.chargeTimeField.setText(selectedWeapon.chargeTime);
+      wap.burstCountField.setText(selectedWeapon.burstCount);
+      wap.burstFireRateField.setText(selectedWeapon.burstFireRate);
+      wap.damageField.setText(selectedWeapon.damage);
+      wap.impactField.setText(selectedWeapon.impact);
+      wap.punctureField.setText(selectedWeapon.puncture);
+      wap.slashField.setText(selectedWeapon.slash);
+      wap.fireRateField.setText(selectedWeapon.fireRate);
+      wap.magSizeField.setText(selectedWeapon.magSize);
+      wap.ammoField.setText(selectedWeapon.ammo);
+      wap.reloadField.setText(selectedWeapon.reload);
+      wap.critField.setText(selectedWeapon.crit);
+      wap.multiplierField.setText(selectedWeapon.critMult);
+      wap.statusField.setText(selectedWeapon.status);
+      wap.projectileField.setText(selectedWeapon.projeciles);
     }
   }
   
@@ -1174,10 +851,10 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * @param e
    */
   public void actionPerformed(ActionEvent e) {
-    if(e.getSource().equals(weaponModeBox)){
-      updateWeaponModeOptions((String)weaponModeBox.getSelectedItem());
-    }else if(e.getSource().equals(damageTypeBox)){
-      updateWeaponDamageOptions((String)damageTypeBox.getSelectedItem());
+    if(e.getSource().equals(wap.weaponModeBox)){
+      updateWeaponModeOptions((String)wap.weaponModeBox.getSelectedItem());
+    }else if(e.getSource().equals(wap.damageTypeBox)){
+      updateWeaponDamageOptions((String)wap.damageTypeBox.getSelectedItem());
     }else if(e.getSource().equals(weaponBox)){
       updateFields((String)weaponBox.getSelectedItem());
     }

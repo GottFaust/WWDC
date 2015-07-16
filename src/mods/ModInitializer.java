@@ -14,15 +14,39 @@ import etc.Constants;
 
 public class ModInitializer {
   
+  /**
+   * ____________________________________________________________
+   * GLOBAL VARIABLES
+   * ____________________________________________________________
+   */
+  
+  /** Singleton instance */
   private static ModInitializer instance;
   
+  /** Mods */
   public Vector<Mod> mods = new Vector<Mod>();
+  
+  /** Mods file */
   protected File modsDB;
   
+  
+  /**
+   * ____________________________________________________________
+   * METHODS
+   * ____________________________________________________________
+   */
+  
+  /**
+   * CTOR
+   */
   private ModInitializer(){
     initialize();
   }
   
+  /**
+   * Gets the singleton Instance
+   * @return instance
+   */
   public static ModInitializer getInstance(){
     if(instance == null){
       instance = new ModInitializer();
@@ -30,6 +54,9 @@ public class ModInitializer {
     return instance;
   }
   
+  /**
+   * Initializes the mod data
+   */
   public void initialize(){
     modsDB = new File("mods.db");
     try {
@@ -60,6 +87,9 @@ public class ModInitializer {
     }
   }
   
+  /**
+   * Saves the mod data
+   */
   public void saveModDB(){
     try {
       if(modsDB.exists()){
