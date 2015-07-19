@@ -576,6 +576,34 @@ public class TTKTarget implements Comparable{
           if(Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
             localProjectileCount /= millisecondMult;
           }
+          
+          //Adjust Max Stats
+          //Shields
+          targetAdjustedMaxShields = maxShields;
+          if(magneticStacks.size() > 0){
+            targetAdjustedMaxShields *= 0.25;
+          }
+          if(targetAdjustedMaxShields < targetCurrentShields){
+            targetCurrentShields = targetAdjustedMaxShields;
+          }
+          //Health
+          targetAdjustedMaxHealth = maxHealth;
+          if(viralStacks.size() > 0){
+            targetAdjustedMaxHealth *= 0.5;
+          }
+          if(targetAdjustedMaxHealth < targetCurrentHealth){
+            targetCurrentHealth = targetAdjustedMaxHealth;
+          }
+          //Armor
+          targetAdjustedMaxArmor = maxArmor;
+          //Adjust armor based on corrosive projection stacks
+          targetAdjustedMaxArmor *= corrosiveProjectionMult;
+          if(corrosiveStacks.size() > 0){
+            for(int i = 0; i < corrosiveStacks.size(); i++){
+              targetAdjustedMaxArmor *= 0.75;
+            }
+          }
+          
           for(int p = 0; p < localProjectileCount; p++){
             double localCritMult = 1.0;
             //Is this a crit?
@@ -589,33 +617,6 @@ public class TTKTarget implements Comparable{
                 if(redCrit <= redCritChance){
                   localCritMult *= 2.0;
                 }
-              }
-            }
-            
-            //Adjust Max Stats
-            //Shields
-            targetAdjustedMaxShields = maxShields;
-            if(magneticStacks.size() > 0){
-              targetAdjustedMaxShields *= 0.25;
-            }
-            if(targetAdjustedMaxShields < targetCurrentShields){
-              targetCurrentShields = targetAdjustedMaxShields;
-            }
-            //Health
-            targetAdjustedMaxHealth = maxHealth;
-            if(viralStacks.size() > 0){
-              targetAdjustedMaxHealth *= 0.5;
-            }
-            if(targetAdjustedMaxHealth < targetCurrentHealth){
-              targetCurrentHealth = targetAdjustedMaxHealth;
-            }
-            //Armor
-            targetAdjustedMaxArmor = maxArmor;
-            //Adjust armor based on corrosive projection stacks
-            targetAdjustedMaxArmor *= corrosiveProjectionMult;
-            if(corrosiveStacks.size() > 0){
-              for(int i = 0; i < corrosiveStacks.size(); i++){
-                targetAdjustedMaxArmor *= 0.75;
               }
             }
             

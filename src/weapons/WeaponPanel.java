@@ -74,6 +74,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
   
   protected String weaponType = "";
   
+  protected boolean updatingDropDowns = false;
+  
   /**
    * ____________________________________________________________
    * METHODS
@@ -804,6 +806,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   }
   
   public void updateWeaponBox(){
+    updatingDropDowns = true;
     weaponBox.removeAllItems();
     weaponBox.addItem(Constants.CUSTOM_WEAPON);
     for(Weapon weapon : weapInit.weapons){
@@ -811,6 +814,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
         weaponBox.addItem(weapon.name);
       }
     }
+    updatingDropDowns = false;
   }
   
   public void updateFields(String selected){
@@ -856,7 +860,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
     }else if(e.getSource().equals(wap.damageTypeBox)){
       updateWeaponDamageOptions((String)wap.damageTypeBox.getSelectedItem());
     }else if(e.getSource().equals(weaponBox)){
-      updateFields((String)weaponBox.getSelectedItem());
+      if(!updatingDropDowns){
+        updateFields((String)weaponBox.getSelectedItem());
+      }
     }
   }
 }

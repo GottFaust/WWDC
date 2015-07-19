@@ -101,6 +101,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected WeaponPanel rifle;
   protected WeaponPanel shotgun;
   protected WeaponPanel pistol;
+  protected WeaponPanel arcGun;
   
   /**
    * ____________________________________________________________
@@ -111,10 +112,11 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   /**
    * CTOR
    */
-  public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel){
+  public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel, WeaponPanel arcGunPanel){
     rifle = riflePanel;
     shotgun = shotgunPanel;
     pistol = pistolPanel;
+    arcGun = arcGunPanel;
     Init();
     buildUI();
   }
@@ -133,6 +135,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     shotgun.updateDropDownContents();
     pistol.InitMods();
     pistol.updateDropDownContents();
+    arcGun.InitMods();
+    arcGun.updateDropDownContents();
     
     modEffects.clear();
     modEffects.add(Constants.MOD_TYPE_DAMAGE_BONUS);

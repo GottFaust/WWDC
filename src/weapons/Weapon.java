@@ -1,6 +1,6 @@
 package weapons;
 
-public class Weapon {
+public class Weapon implements Comparable {
 
   /**
    * ____________________________________________________________
@@ -86,5 +86,16 @@ public class Weapon {
     weaponString += status + ",";
     weaponString += projeciles;
     return weaponString;
+  }
+  
+  /**
+   * Compares this to other weapons
+   */
+  public int compareTo(Object o) {
+    if(o instanceof Weapon){
+        return this.name.compareTo(((Weapon)o).name);
+    }else{
+      return 0;
+    }
   }
 }

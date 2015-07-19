@@ -45,6 +45,7 @@ import weapons.ArcGunPanel;
 import weapons.PistolPanel;
 import weapons.RiflePanel;
 import weapons.ShotgunPanel;
+import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
 import options.ColorOptionsPanel;
 
@@ -60,6 +61,7 @@ public class Main {
   protected static JFrame mainFrame = new JFrame();
   protected static JFrame modManagerFrame = new JFrame();
   protected static JFrame targetManagerFrame = new JFrame();
+  protected static JFrame weaponManagerFrame = new JFrame();
   protected static JFrame colorOptionsFrame = new JFrame();
   
   /** JButtons **/
@@ -87,6 +89,7 @@ public class Main {
   protected static ArcGunPanel arcGunPanel;
   protected static ModManagerPanel theModManager = null;
   protected static TTKManagerPanel theTTKManager = null;
+  protected static WeaponManagerPanel theWeaponManager = null;
   protected static ColorOptionsPanel theColorPanel = null;
   protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
   protected static TTKGraphPanel ttkGraph = new TTKGraphPanel();
@@ -98,6 +101,7 @@ public class Main {
   protected static JMenu fileMenu = new JMenu("File");
   protected static JMenuItem modMenu = new JMenuItem("Mod Manager");
   protected static JMenuItem TTKMenu = new JMenuItem("Target Manager");
+  protected static JMenuItem weaponMenu = new JMenuItem("Weapon Manager");
   protected static JMenuItem saveItem = new JMenuItem("Save");
   protected static JMenuItem loadItem = new JMenuItem("Load");
   protected static JMenuItem colorOptionsItem = new JMenuItem("Color Options");
@@ -110,6 +114,7 @@ public class Main {
   protected static MainWindowListener window = new MainWindowListener();
   protected static Boolean modManagerInit = false;
   protected static Boolean targetManagerInit = false;
+  protected static Boolean weaponManagerInit = false;
   protected static Boolean colorOptionsInit = false;
   protected static JCheckBox TTKBox = new JCheckBox("TTK");
   protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
@@ -235,8 +240,9 @@ public class Main {
     shotgunPanel = new ShotgunPanel();
     pistolPanel = new PistolPanel();
     arcGunPanel = new ArcGunPanel();
-    theModManager = new ModManagerPanel(riflePanel, shotgunPanel, pistolPanel);
+    theModManager = new ModManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
     theTTKManager = new TTKManagerPanel();
+    theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
     theColorPanel = new ColorOptionsPanel();
     buildUI();
     mainFrame.setVisible(true);
@@ -264,6 +270,7 @@ public class Main {
     UIBuilder.menuInit(fileMenu);
     UIBuilder.menuItemInit(modMenu);
     UIBuilder.menuItemInit(TTKMenu);
+    UIBuilder.menuItemInit(weaponMenu);
     UIBuilder.menuItemInit(saveItem);
     UIBuilder.menuItemInit(loadItem);
     UIBuilder.menuItemInit(colorOptionsItem);
@@ -302,6 +309,7 @@ public class Main {
     loadItem.addActionListener(action);
     modMenu.addActionListener(action);
     TTKMenu.addActionListener(action);
+    weaponMenu.addActionListener(action);
     colorOptionsItem.addActionListener(action);
     targetGroupBox.addActionListener(action);
     
@@ -360,6 +368,7 @@ public class Main {
     
     mainMenuBar.add(modMenu);
     mainMenuBar.add(TTKMenu);
+    mainMenuBar.add(weaponMenu);
     
     mainFrame.setJMenuBar(mainMenuBar);
     mainFrame.add(mainPanel);
@@ -391,6 +400,7 @@ public class Main {
     
     //Calculate damage per shot
     calculateDamagePerShot();
+    
     //Calculate the damage per magazine
     calculateDamagePerIteration();
     
@@ -584,21 +594,8 @@ public class Main {
                 corrosive.base +
                 viral.base;
     
-    //Calculations based on weapon type
-    if(weaponMode.equals(Constants.CONTINUOUS)){
-      continuousDrainRate = fireRate;
-      fireRate = CONTINUOUS_MULT;
-      damageMult *= continuousDrainRate;
-      //statusChance = (continuousDrainRate / (statusChance * 100.0)) / 100.0;
-      statusChance /= CONTINUOUS_MULT;
-    }else if(weaponMode.equals(Constants.CHARGE)){
-      double fireRateAddition = 60.0 / chargeTime / 60.0;
-      fireRate += fireRateAddition;
-    }else if(weaponMode.equals(Constants.BURST)){
-      projectileCount *= burstCount;
-    }
-    
-    if(projectileCount > 1.0 && !weaponMode.equals(Constants.BURST)){
+    //Factor for multiple projectiles per shot
+    if(projectileCount > 1.0){
       raw.base /= projectileCount;
       statusChance /= projectileCount;
       impact.base /= projectileCount;
@@ -614,6 +611,19 @@ public class Main {
       radiation.base /= projectileCount;
       corrosive.base /= projectileCount;
       viral.base /= projectileCount;
+    }
+    
+    //Calculations based on weapon type
+    if(weaponMode.equals(Constants.CONTINUOUS)){
+      continuousDrainRate = fireRate;
+      fireRate = CONTINUOUS_MULT;
+      damageMult *= continuousDrainRate;
+      statusChance /= CONTINUOUS_MULT;
+    }else if(weaponMode.equals(Constants.CHARGE)){
+      double fireRateAddition = 60.0 / chargeTime / 60.0;
+      fireRate += fireRateAddition;
+    }else if(weaponMode.equals(Constants.BURST)){
+      projectileCount *= burstCount;
     }
     
     //Mod Vectors
@@ -2433,6 +2443,22 @@ public class Main {
   }
   
   /**
+   * Method to display the weapon manager
+   */
+  protected static void displayWeaponManager(){
+    
+    if(!weaponManagerInit){
+      weaponManagerInit = true;
+      weaponManagerFrame.add(theWeaponManager);
+      weaponManagerFrame.pack();
+      weaponManagerFrame.addWindowListener(new WeaponWindowListener());
+      weaponManagerFrame.setTitle("Weapon Manager");
+      weaponManagerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    weaponManagerFrame.setVisible(true);
+  }
+  
+  /**
    * Method to display the target manager
    */
   protected static void displayTargetManager(){
@@ -2464,15 +2490,22 @@ public class Main {
   /**
    * Method to toggle the enabled state of the mod manager menu item
    */
-  protected static void updateModMenuSate(boolean enabled){
+  protected static void updateModMenuState(boolean enabled){
     modMenu.setEnabled(enabled);
   }
   
   /**
-   * Method to toggle the enabled state of the mod manager menu item
+   * Method to toggle the enabled state of the target manager menu item
    */
   protected static void updateTTKMenuState(boolean enabled){
     TTKMenu.setEnabled(enabled);
+  }
+  
+  /**
+   * Method to toggle the enabled state of the weapon manager menu item
+   */
+  protected static void updateWeaponMenuState(boolean enabled){
+    weaponMenu.setEnabled(enabled);
   }
   
   /**
@@ -2579,10 +2612,13 @@ public class Main {
         }
       }else if(e.getSource().equals(modMenu)){
         displayModManager();
-        updateModMenuSate(false);
+        updateModMenuState(false);
       }else if(e.getSource().equals(TTKMenu)){
         displayTargetManager();
         updateTTKMenuState(false);
+      }else if(e.getSource().equals(weaponMenu)){
+        displayWeaponManager();
+        updateWeaponMenuState(false);
       }else if(e.getSource().equals(colorOptionsItem)){
         displayColorOptions();
       }
@@ -2653,7 +2689,7 @@ public class Main {
      * Event to indicate that the window has closed
      */
     public void windowClosed(WindowEvent e) {
-      updateModMenuSate(true);
+      updateModMenuState(true);
     }
     
 
@@ -2687,6 +2723,39 @@ public class Main {
      */
     public void windowClosed(WindowEvent e) {
       updateTTKMenuState(true);
+    }
+    
+
+    /**
+     * Unused
+     */
+    public void windowActivated(WindowEvent e) {}
+    public void windowClosing(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {}
+  }
+  
+  /**
+   * Window Listener Local Class
+   * @author GottFaust
+   *
+   */
+  protected static class WeaponWindowListener implements WindowListener{
+    
+    /**
+     * Default CTOR
+     */
+    public WeaponWindowListener(){
+      //Do Nothing
+    }
+    
+    /**
+     * Event to indicate that the window has closed
+     */
+    public void windowClosed(WindowEvent e) {
+      updateWeaponMenuState(true);
     }
     
 
