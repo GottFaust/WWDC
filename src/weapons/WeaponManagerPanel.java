@@ -234,7 +234,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String name = attributesPanel.nameField.getText();
     String chargeTime = attributesPanel.chargeTimeField.getText();
     String burstCount = attributesPanel.burstCountField.getText();
-    String burstFireRate = attributesPanel.burstCountField.getText();
+    String burstFireRate = attributesPanel.burstFireRateField.getText();
     String damage = attributesPanel.damageField.getText();
     String impact = attributesPanel.impactField.getText();
     String puncture = attributesPanel.punctureField.getText();
