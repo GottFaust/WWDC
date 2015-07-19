@@ -11,7 +11,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,12 +46,17 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected WeaponModPanel modSevenPanel = new WeaponModPanel("7",this);
   protected WeaponModPanel modEightPanel = new WeaponModPanel("8",this);
   protected JPanel savedWeaponPanel = new JPanel();
+  protected JPanel refireCancelPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> weaponBox = new JComboBox<String>();
   
+  /** JCheckBoxes **/
+  protected JCheckBox refireCancel = new JCheckBox();
+  
   /** JLabels **/
   protected JLabel weaponLabel = new JLabel("Weapon - ");
+  protected JLabel refireCancelLabel = new JLabel("Refire Cancel - ");
   protected JLabel totalModCostLabel = new JLabel("Total mod point cost associated with this build:");
   
   /** JTextFields **/
@@ -112,6 +119,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
     
     UIBuilder.labelInit(totalModCostLabel);
     UIBuilder.labelInit(weaponLabel);
+    UIBuilder.labelInit(refireCancelLabel);
+    
+    UIBuilder.checkBoxInit(refireCancel);
    
     UIBuilder.textFieldInit(totalModCostField);
     
@@ -119,6 +129,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.createTitledLineBorder(modsPanel, "MODS");
     
     UIBuilder.createSepparationBorder(savedWeaponPanel);
+    UIBuilder.createSepparationBorder(refireCancelPanel);
     
     UIBuilder.panelInit(attributesPanel);
     UIBuilder.panelInit(modsPanel);
@@ -130,7 +141,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.panelInit(modSixPanel);
     UIBuilder.panelInit(modSevenPanel);
     UIBuilder.panelInit(modEightPanel);
-    
+    UIBuilder.panelInit(refireCancelPanel);
     UIBuilder.panelInit(savedWeaponPanel);
     
     attributesPanel.setLayout(new BoxLayout(attributesPanel,BoxLayout.Y_AXIS));
@@ -145,14 +156,19 @@ public class WeaponPanel extends JPanel implements ActionListener {
     modEightPanel.setLayout(new BoxLayout(modEightPanel,BoxLayout.Y_AXIS));
     
     savedWeaponPanel.setLayout(new GridLayout(1,2,0,0));
+    refireCancelPanel.setLayout(new GridLayout(1,2,0,0));
     
     totalModCostField.setEditable(false);
     
     savedWeaponPanel.add(weaponLabel);
     savedWeaponPanel.add(weaponBox);
     
+    refireCancelPanel.add(refireCancelLabel);
+    refireCancelPanel.add(refireCancel);
+    
     attributesPanel.add(savedWeaponPanel);
     attributesPanel.add(wap);
+    attributesPanel.add(refireCancelPanel);
     
     JPanel modsTopPanel = new JPanel();
     UIBuilder.panelInit(modsTopPanel);
@@ -301,22 +317,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
       chargeTime = 0.0;
     }
     return(chargeTime);
-  }
-  
-  /**
-   * Gets the weapon's burst fire rate
-   * @return burstFireRate
-   */
-  public double getBurstFireRate(){
-    String burstFireRateStr = wap.burstFireRateField.getText();
-    if(burstFireRateStr == null || burstFireRateStr.equals("")){
-      burstFireRateStr = "0";
-    }
-    double burstFireRate = Double.parseDouble(burstFireRateStr);
-    if(burstFireRate < 0.0){
-      burstFireRate = 0.0;
-    }
-    return(burstFireRate);
   }
   
   /**
@@ -587,7 +587,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
         wap.nameField.setText(reader.readLine());
         wap.chargeTimeField.setText(reader.readLine());
         wap.burstCountField.setText(reader.readLine());
-        wap.burstFireRateField.setText(reader.readLine());
+        reader.readLine(); //DEPRECIATED
         wap.nameField.setText(reader.readLine());
         wap.damageField.setText(reader.readLine());
         wap.impactField.setText(reader.readLine());
@@ -634,7 +634,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       writer.write(wap.nameField.getText()+"\n");
       writer.write(wap.chargeTimeField.getText()+"\n");
       writer.write(wap.burstCountField.getText()+"\n");
-      writer.write(wap.burstFireRateField.getText()+"\n");
+      writer.write("DEPRECIATED\n");
       writer.write(wap.nameField.getText()+"\n");
       writer.write(wap.damageField.getText()+"\n");
       writer.write(wap.impactField.getText()+"\n");
@@ -708,27 +708,27 @@ public class WeaponPanel extends JPanel implements ActionListener {
     if(mode.equals(Constants.BURST)){
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(true);
-      wap.burstFireRatePanel.setVisible(true);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      refireCancelPanel.setVisible(true);
     }else if(mode.equals(Constants.CHARGE)){
       wap.chargeTimePanel.setVisible(true);
       wap.burstCountPanel.setVisible(false);
-      wap.burstFireRatePanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      refireCancelPanel.setVisible(false);
     }else if(mode.equals(Constants.CONTINUOUS)){
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(false);
-      wap.burstFireRatePanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+      refireCancelPanel.setVisible(false);
     }else{
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(false);
-      wap.burstFireRatePanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      refireCancelPanel.setVisible(false);
     }
   }
   
@@ -834,7 +834,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
       wap.nameField.setText(selectedWeapon.name);
       wap.chargeTimeField.setText(selectedWeapon.chargeTime);
       wap.burstCountField.setText(selectedWeapon.burstCount);
-      wap.burstFireRateField.setText(selectedWeapon.burstFireRate);
       wap.damageField.setText(selectedWeapon.damage);
       wap.impactField.setText(selectedWeapon.impact);
       wap.punctureField.setText(selectedWeapon.puncture);
@@ -864,5 +863,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
         updateFields((String)weaponBox.getSelectedItem());
       }
     }
+  }
+
+  public boolean isRefireCanceled() {
+    return refireCancel.isSelected();
   }
 }

@@ -145,7 +145,6 @@ public class Main {
   public static String weaponMode = "";
   protected static String damageType = "";
   protected static double chargeTime = 0.0;
-  protected static double burstFireRate = 0.0;
   protected static double fireRate = 0.0;
   protected static double reloadTime = 0.0;
   protected static double critChance = 0.0;
@@ -172,7 +171,6 @@ public class Main {
   public static double finalCritChance = 0.0;
   public static double finalCritMult = 0.0;
   public static double finalFireRate = 0.0;
-  protected static double finalBurstFireRate = 0.0;
   public static double finalReloadTime = 0.0;
   public static double finalProjectileCount = 0.0;
   protected static double finalFirstShotDamageMult = 1.0;
@@ -459,7 +457,6 @@ public class Main {
     weaponMode = "";
     damageType = "";
     chargeTime = 0.0;
-    burstFireRate = 0.0;
     raw.clear();
     impact.clear();
     puncture.clear();
@@ -511,7 +508,6 @@ public class Main {
     finalCritChance = 0.0;
     finalCritMult = 0.0;
     finalFireRate = 0.0;
-    finalBurstFireRate = 0.0;
     finalReloadTime = 0.0;
     finalProjectileCount = 0.0;
     finalFirstShotDamageMult = 1.0;
@@ -542,7 +538,6 @@ public class Main {
     weaponMode = selectedWeapon.getWeaponMode();
     damageType = selectedWeapon.getDamageType();
     chargeTime = selectedWeapon.getChargeTime();
-    burstFireRate = selectedWeapon.getBurstFireRate();
     fireRate = selectedWeapon.getFireRate();
     reloadTime = selectedWeapon.getReloadTime();
     critChance = selectedWeapon.getCritChance();
@@ -1350,15 +1345,6 @@ public class Main {
         finalDamageMult += damageMult*fireRateMods.get(i);
         continuousDrainRate += localContinuousDrainRate*fireRateMods.get(i);
       }
-    }else if(weaponMode.equals(Constants.BURST)){
-      finalFireRate = fireRate;
-      finalBurstFireRate = burstFireRate;
-      for(int i = 0; i < fireRateMods.size(); i++){
-        finalBurstFireRate += burstFireRate*fireRateMods.get(i);
-      }
-      for(int i = 0; i < fireRateMods.size(); i++){
-        finalFireRate += fireRate*fireRateMods.get(i);
-      }
     }else{
       finalFireRate = fireRate;
       for(int i = 0; i < fireRateMods.size(); i++){
@@ -1367,7 +1353,7 @@ public class Main {
     }
     
     //This is completely retarded, but also the current case
-    if(weaponMode.equals(Constants.SEMI_AUTO) || weaponMode.equals(Constants.BURST)){
+    if(weaponMode.equals(Constants.SEMI_AUTO)){
       if(finalFireRate > 10.0){
         finalFireRate = 10.0;
       }
@@ -1538,10 +1524,19 @@ public class Main {
       finalCritShots = (finalCritShots / continuousDrainRate) * CONTINUOUS_MULT;
       finalIterationTime = (finalMag / continuousDrainRate) + finalReloadTime;
     }else if(weaponMode.equals(Constants.BURST)){
-      double numBursts = finalMag / burstCount;
-      double rawFireTime = numBursts / finalFireRate;
-      double rawBurstTime = burstCount / finalBurstFireRate;
-      finalIterationTime = (rawBurstTime * numBursts) + rawFireTime + finalReloadTime;
+      if(selectedWeapon.isRefireCanceled()){
+        finalFireRate += fireRate;
+      }
+      double burstDelay = 0.05;
+      double burstMS = (60.0/finalFireRate)/60.0;
+      double burstIterationMS = (burstMS*burstCount)+burstDelay;
+      finalFireRate = (60.0/burstIterationMS)/60.0;
+      if(finalFireRate > 10.0){
+        finalFireRate = 10.0;
+      }
+      double numBursts = finalMag/burstCount;
+      double rawFireTime = numBursts/finalFireRate;
+      finalIterationTime = rawFireTime+finalReloadTime;
     }else if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_RAMP_UP)){
       double baseFireDelay = 60.0 / finalFireRate / 60.0;
       double firstFireDelay = baseFireDelay * 5;
@@ -2146,7 +2141,14 @@ public class Main {
     output.append("\nTotal Ammo :: "+(finalMag+finalAmmo));
     output.append("\nCrit Chance :: "+f.format(finalCritChance*100.0)+"%");
     output.append("\nCrit Damage Multiplier :: "+f.format(finalCritMult*100.0)+"%");
-    output.append("\nFire Rate :: "+f.format(finalFireRate)+" rounds per second");
+    String delimiter = "rounds";
+    String mode = selectedWeapon.getWeaponMode();
+    if(mode.equals(Constants.BURST)){
+      delimiter = "bursts";
+    }else if(mode.equals(Constants.CONTINUOUS)){
+      delimiter = "ammo drain";
+    }
+    output.append("\nFire Rate :: "+f.format(finalFireRate)+" "+delimiter+" per second");
     output.append("\nReload Time :: "+f.format(finalReloadTime)+" seconds");
     output.append("\nStatus Chance :: "+f.format(finalStatusChance*100.0)+"%");
     output.append("\nProjectiles Per Shot :: "+f.format(finalProjectileCount));

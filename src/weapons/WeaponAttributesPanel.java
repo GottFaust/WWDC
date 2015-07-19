@@ -36,7 +36,6 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel damageTypePanel = new JPanel();
   protected JPanel chargeTimePanel = new JPanel();
   protected JPanel burstCountPanel = new JPanel();
-  protected JPanel burstFireRatePanel = new JPanel();
   protected JPanel projectilePanel = new JPanel();
   protected JPanel statusPanel = new JPanel();
   
@@ -51,7 +50,6 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel damageTypeLabel = new JLabel("Base Damage Type - ");
   protected JLabel chargeTimeLabel = new JLabel("Charge Time - ");
   protected JLabel burstCountLabel = new JLabel("Burst Count - ");
-  protected JLabel burstFireRateLabel = new JLabel("Burst Fire Rate - ");
   protected JLabel damageLabel = new JLabel("Base Damage - ");
   protected JLabel impactLabel = new JLabel("Impact Damage - ");
   protected JLabel punctureLabel = new JLabel("Puncture Damage - ");
@@ -68,7 +66,6 @@ public class WeaponAttributesPanel extends JPanel {
   /** JTextFields **/
   protected JTextField chargeTimeField = new JTextField(10);
   protected JTextField burstCountField = new JTextField(10);
-  protected JTextField burstFireRateField = new JTextField(10);
   protected JTextField nameField = new JTextField(10);
   protected JTextField damageField = new JTextField(10);
   protected JTextField impactField = new JTextField(10);
@@ -119,7 +116,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(damageTypeLabel);
     UIBuilder.labelInit(chargeTimeLabel);
     UIBuilder.labelInit(burstCountLabel);
-    UIBuilder.labelInit(burstFireRateLabel);
     UIBuilder.labelInit(projectileLabel);
     UIBuilder.labelInit(statusLabel);
     
@@ -137,7 +133,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.numberFieldInit(multiplierField);
     UIBuilder.numberFieldInit(chargeTimeField);
     UIBuilder.numberFieldInit(burstCountField);
-    UIBuilder.numberFieldInit(burstFireRateField);
     UIBuilder.numberFieldInit(projectileField);
     UIBuilder.numberFieldInit(statusField);
     
@@ -156,7 +151,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(damageTypePanel);
     UIBuilder.createSepparationBorder(chargeTimePanel);
     UIBuilder.createSepparationBorder(burstCountPanel);
-    UIBuilder.createSepparationBorder(burstFireRatePanel);
     UIBuilder.createSepparationBorder(projectilePanel);
     UIBuilder.createSepparationBorder(statusPanel);
     
@@ -176,7 +170,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(damageTypePanel);
     UIBuilder.panelInit(chargeTimePanel);
     UIBuilder.panelInit(burstCountPanel);
-    UIBuilder.panelInit(burstFireRatePanel);
     UIBuilder.panelInit(projectilePanel);
     UIBuilder.panelInit(statusPanel);
     
@@ -195,7 +188,6 @@ public class WeaponAttributesPanel extends JPanel {
     damageTypeLabel.setToolTipText(Constants.DAMAGE_TYPE_TOOL_TIP);
     chargeTimeLabel.setToolTipText(Constants.CHARGE_TIME_TOOL_TIP);
     burstCountLabel.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
-    burstFireRateLabel.setToolTipText(Constants.BURST_FIRE_RATE_TOOL_TIP);
     projectileLabel.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusLabel.setToolTipText(Constants.STATUS_TOOL_TIP);
     
@@ -214,7 +206,6 @@ public class WeaponAttributesPanel extends JPanel {
     damageTypeBox.setToolTipText(Constants.DAMAGE_TYPE_TOOL_TIP);
     chargeTimeField.setToolTipText(Constants.CHARGE_TIME_TOOL_TIP);
     burstCountField.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
-    burstFireRateField.setToolTipText(Constants.BURST_FIRE_RATE_TOOL_TIP);
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
     
@@ -256,7 +247,6 @@ public class WeaponAttributesPanel extends JPanel {
     statusPanel.setLayout(new GridLayout(1,2,0,0));
     chargeTimePanel.setLayout(new GridLayout(1,2,0,0));
     burstCountPanel.setLayout(new GridLayout(1,2,0,0));
-    burstFireRatePanel.setLayout(new GridLayout(1,2,0,0));
     
     namePanel.add(nameLabel);
     namePanel.add(nameField);
@@ -288,8 +278,6 @@ public class WeaponAttributesPanel extends JPanel {
     chargeTimePanel.add(chargeTimeField);
     burstCountPanel.add(burstCountLabel);
     burstCountPanel.add(burstCountField);
-    burstFireRatePanel.add(burstFireRateLabel);
-    burstFireRatePanel.add(burstFireRateField);
     projectilePanel.add(projectileLabel);
     projectilePanel.add(projectileField);
     statusPanel.add(statusLabel);
@@ -306,7 +294,6 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(slashPanel);
     this.add(chargeTimePanel);
     this.add(burstCountPanel);
-    this.add(burstFireRatePanel);
     this.add(projectilePanel);
     this.add(statusPanel);
     this.add(fireRatePanel);
@@ -329,7 +316,6 @@ public class WeaponAttributesPanel extends JPanel {
     nameField.setText("");
     chargeTimeField.setText("");
     burstCountField.setText("");
-    burstFireRateField.setText("");
     nameField.setText("");
     damageField.setText("");
     impactField.setText("");
@@ -354,7 +340,6 @@ public class WeaponAttributesPanel extends JPanel {
     nameField.setText("");
     chargeTimeField.setText("");
     burstCountField.setText("");
-    burstFireRateField.setText("");
     nameField.setText("");
     damageField.setText("");
     impactField.setText("");

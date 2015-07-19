@@ -191,7 +191,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     attributesPanel.nameField.setText(selectedWeapon.name);
     attributesPanel.chargeTimeField.setText(selectedWeapon.chargeTime);
     attributesPanel.burstCountField.setText(selectedWeapon.burstCount);
-    attributesPanel.burstFireRateField.setText(selectedWeapon.burstFireRate);
     attributesPanel.damageField.setText(selectedWeapon.damage);
     attributesPanel.impactField.setText(selectedWeapon.impact);
     attributesPanel.punctureField.setText(selectedWeapon.puncture);
@@ -234,7 +233,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String name = attributesPanel.nameField.getText();
     String chargeTime = attributesPanel.chargeTimeField.getText();
     String burstCount = attributesPanel.burstCountField.getText();
-    String burstFireRate = attributesPanel.burstFireRateField.getText();
+    String burstFireRate = "DEPRECIATED";
     String damage = attributesPanel.damageField.getText();
     String impact = attributesPanel.impactField.getText();
     String puncture = attributesPanel.punctureField.getText();
@@ -255,11 +254,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
       double testDouble = Double.parseDouble(chargeTime);
     }catch(Exception ex){
       chargeTime = "0.0";
-    }
-    try{
-      double testDouble = Double.parseDouble(burstFireRate);
-    }catch(Exception ex){
-      burstFireRate = "0.0";
     }
     try{
       double testDouble = Double.parseDouble(damage);
