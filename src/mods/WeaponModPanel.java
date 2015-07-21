@@ -158,10 +158,19 @@ public class WeaponModPanel extends JPanel implements ActionListener {
   }
   
   /**
+   * Maxes the selected mod out
+   */
+  public void maxMod(){
+    
+    modLevel.setSelectedIndex(modLevel.getItemCount()-1);
+  }
+  
+  /**
    * Sets the selected mod
    * @param mod
    */
   public void setSelectedMod(Mod mod){
+    
     selectedMod = mod;
   }
   

@@ -66,7 +66,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.7.9";
+  public static final String APP_VERSION = "v0.8.0";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -407,7 +407,7 @@ public class Constants {
                                               "Rifle,Charge,Physical,Opticor,1.25,5,14,,50,425,25,1,5,540,2,15,2,15,1",
                                               "Rifle,Continuous,Physical,Panthera (Secondary Attack),1.5,3,6.7,650,0,0,225,1.7,60,540,2,0,0,10,1",
                                               "Rifle,Semi-Auto,Physical,Panthera,1.5,3,6.7,650,20,10,70,1.7,60,540,2,0,0,10,1",
-                                              "Rifle,Burst,Toxin,Paracyst,,4,8.3,25,8.3,38.5,8.2,3.9,60,540,2,5,2,15,1",
+                                              "Rifle,Burst,Toxin,Paracyst,,4,,25,8.3,38.5,8.2,8.3,60,540,2,5,2,15,1",
                                               "Rifle,Charge,Physical,Paris (Charged),1,3,6.7,300,9,144,27,1,1,72,0.7,30,2,10,1",
                                               "Rifle,Charge,Physical,Paris Prime (Charged),1,3,6.7,300,5,160,35,1,1,72,0.7,45,2,20,1",
                                               "Rifle,Semi-Auto,Physical,Paris Prime,0.5,3,6.7,300,2.5,80,17.5,1,1,72,0.7,45,2,20,1",

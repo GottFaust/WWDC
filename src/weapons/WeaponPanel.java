@@ -1,5 +1,7 @@
 package weapons;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,12 +14,15 @@ import java.io.FileWriter;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import etc.Constants;
 import etc.UIBuilder;
@@ -57,10 +62,13 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /** JLabels **/
   protected JLabel weaponLabel = new JLabel("Weapon - ");
   protected JLabel refireCancelLabel = new JLabel("Refire Cancel - ");
-  protected JLabel totalModCostLabel = new JLabel("Total mod point cost associated with this build:");
+  protected JLabel totalModCostLabel = new JLabel("Total mod cost:");
   
   /** JTextFields **/
   protected JTextField totalModCostField = new JTextField(10);
+  
+  /** JButtons **/
+  protected JButton maxModsButton = new JButton("Max Mods");
   
   /** Data **/
   protected Vector<String> selectedMods = new Vector<String>();
@@ -124,6 +132,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.checkBoxInit(refireCancel);
    
     UIBuilder.textFieldInit(totalModCostField);
+    
+    UIBuilder.buttonInit(maxModsButton);
     
     UIBuilder.createTitledLineBorder(attributesPanel, "ATTRIBUTES");
     UIBuilder.createTitledLineBorder(modsPanel, "MODS");
@@ -193,6 +203,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
     
     totalModCostPanel.add(totalModCostLabel);
     totalModCostPanel.add(totalModCostField);
+    totalModCostPanel.add(Box.createRigidArea(new Dimension(5,0)));
+    totalModCostPanel.add(maxModsButton);
     
     modsPanel.add(modsTopPanel);
     modsPanel.add(modsBottomPanel);
@@ -206,6 +218,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     wap.weaponModeBox.addActionListener(this);
     wap.damageTypeBox.addActionListener(this);
     weaponBox.addActionListener(this);
+    maxModsButton.addActionListener(this);
     
     updateDropDownContents();
     
@@ -766,6 +779,25 @@ public class WeaponPanel extends JPanel implements ActionListener {
     return localMod;
   }
   
+  /**
+   * Maxes all selected mods
+   */
+  public void maxMods(){
+    
+    modOnePanel.maxMod();
+    modTwoPanel.maxMod();
+    modThreePanel.maxMod();
+    modFourPanel.maxMod();
+    modFivePanel.maxMod();
+    modSixPanel.maxMod();
+    modSevenPanel.maxMod();
+    modEightPanel.maxMod();
+  }
+  
+  /**
+   * Updates the mod panels
+   * @param panel
+   */
   public void updateModPanel(WeaponModPanel panel){
     Mod selectedMod = null;
     if(panel.equals(modOnePanel)){
@@ -805,6 +837,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
     calculateModCosts();
   }
   
+  /**
+   * Updates the weapon box
+   */
   public void updateWeaponBox(){
     updatingDropDowns = true;
     weaponBox.removeAllItems();
@@ -817,6 +852,10 @@ public class WeaponPanel extends JPanel implements ActionListener {
     updatingDropDowns = false;
   }
   
+  /**
+   * Updates the fields with the selected weapon's stats
+   * @param selected weapon
+   */
   public void updateFields(String selected){
     Weapon selectedWeapon = null;
     if(selected.equals(Constants.CUSTOM_WEAPON)){
@@ -862,9 +901,15 @@ public class WeaponPanel extends JPanel implements ActionListener {
       if(!updatingDropDowns){
         updateFields((String)weaponBox.getSelectedItem());
       }
+    }else if(e.getSource().equals(maxModsButton)){
+      maxMods();
     }
   }
 
+  /**
+   * Returns whether this weapon is refire canceled or not
+   * @return canceled?
+   */
   public boolean isRefireCanceled() {
     return refireCancel.isSelected();
   }
