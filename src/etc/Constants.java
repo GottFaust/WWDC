@@ -66,7 +66,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.8.1";
+  public static final String APP_VERSION = "v0.8.2";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";

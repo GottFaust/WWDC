@@ -1382,7 +1382,11 @@ public class Main {
       finalStatusChance += statusChance*statusChanceMods.get(i);
     }
     for(int i = 0; i < flatStatusMods.size(); i++){
-      finalStatusChance += flatStatusMods.get(i);
+      double localStatus = flatStatusMods.get(i);
+      if(projectileCount > 1.0){
+        localStatus /= projectileCount;
+      }
+      finalStatusChance += localStatus;
     }
     
     finalStatusDuration = statusDuration;
