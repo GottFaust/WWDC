@@ -16,6 +16,7 @@ public class SurfaceDamage {
   public double perMinute;
   public double perSecond;
   public double rawPerSecond;
+
   
   /**
    * ____________________________________________________________

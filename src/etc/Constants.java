@@ -36,6 +36,7 @@ public class Constants {
   public static final String MOD_TYPE_DEAD_AIM = "DeadAim";
   public static final String MOD_TYPE_FLAT_STATUS = "FlatStatusBonus";
   public static final String MOD_TYPE_FLAT_MAG = "FlatMagBonus";
+  public static final String MOD_TYPE_MUNITIONS = "Munitions";
   
   /** Damage Types **/
   public static final String PHYSICAL_WEAPON_DAMAGE = "Physical";
@@ -66,7 +67,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.8.2";
+  public static final String APP_VERSION = "Unofficial v0.8.5";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -98,6 +99,8 @@ public class Constants {
   /** Mod Effect Count **/
   public static final String SINGLE = "Single";
   public static final String DOUBLE = "Double";
+  public static final String TRIPLE = "Triple";
+  public static final String QUAD = "Quad";
   
   /** Mod Polarities **/
   public static final String NONE = "None";
@@ -358,7 +361,24 @@ public class Constants {
                                             "Polar Magazine,ArcGun,5,1,IceDamage,0.2,D,4",
                                             "Rubedo-Lined Barrel,ArcGun,5,1,DamageBonus,0.1,V,6",
                                             "Venomous Clip,ArcGun,5,1,ToxinDamage,0.2,D,6",
-                                            "Depleted Reload,Rifle,5,2,MagCap,ReladSpeed,-0.1,0.08,~,2"};
+                                            "Depleted Reload,Rifle,5,2,MagCap,ReladSpeed,-0.1,0.08,~,2",
+  											"Primed Target Cracker,Pistol,10,1,CritMultiplier,0.1,V,4",
+  											"Vigilante Armaments,Rifle,5,1,Multishot,0.1,~,4",
+  											"Vigilante Armaments,Shotgun,5,1,Multishot,0.1,~,4",
+  											"Primed Quickdraw,Pistol,10,1,ReladSpeed,0.08,~,2",
+  											"Primed Slip Magazine,Pistol,10,1,MagCap,0.05,~,4",
+  											"Auger Pact,Pistol,5,1,DamageBonus,0.15,V,2",
+  											"Hydraulic Crosshairs,Pistol,5,1,CritChance,0.225,V,2",
+  											"Argon Scope,Rifle,5,1,CritChance,0.225,V,2",
+  											"Laser Sight,Shotgun,5,1,CritChance,0.2,V,4",
+  											"Bladed Rounds,Rifle,5,1,CritMultiplier,0.2,V,4",
+  											"Shrapnel Shot,Shotgun,5,1,CritMultiplier,0.165,V,4",
+  											"Sharpened Bullets,Pistol,5,1,CritMultiplier,0.125,V,2",
+  											"Hunter Munitions,Rifle,0,1,Munitions,1,V,9",
+  											"Hunter Munitions,Shotgun,0,1,Munitions,1,V,9",
+  											"Primed Shred,Rifle,10,2,FireRate,ObjectPierce,0.05,0.0,V,6",
+  											"Primed Cryo Rounds,Rifle,10,1,IceDamage,0.15,D,6",
+  											"Chilling Reload,Shotgun,3,2,IceDamage,ReladSpeed,0.15,0.1,V,2"};
   
   /** Default Weapons for use if the file is missing **/
   public static final String[] baseWeapons = {"Pistol,Semi-Auto,Toxin,Acrid,,,,35,,,,6.7,15,210,1.2,5,2,10,1",

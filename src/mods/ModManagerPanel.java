@@ -50,10 +50,16 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JPanel effectCountPanel = new JPanel();
   protected JPanel effectOnePanel = new JPanel();
   protected JPanel effectTwoPanel = new JPanel();
+  protected JPanel effectThreePanel = new JPanel();
+  protected JPanel effectFourPanel = new JPanel();
   protected JPanel effectOneTypePanel = new JPanel();
   protected JPanel effectOnePowerPanel = new JPanel();
   protected JPanel effectTwoTypePanel = new JPanel();
   protected JPanel effectTwoPowerPanel = new JPanel();
+  protected JPanel effectThreeTypePanel = new JPanel();
+  protected JPanel effectThreePowerPanel = new JPanel();
+  protected JPanel effectFourTypePanel = new JPanel();
+  protected JPanel effectFourPowerPanel = new JPanel();
   protected JPanel buttonPanel = new JPanel();
   
   /** JButtons **/
@@ -67,6 +73,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JComboBox<String> modEffectCountBox = new JComboBox<String>();
   protected JComboBox<String> modEffectOneBox = new JComboBox<String>();
   protected JComboBox<String> modEffectTwoBox = new JComboBox<String>();
+  protected JComboBox<String> modEffectThreeBox = new JComboBox<String>();
+  protected JComboBox<String> modEffectFourBox = new JComboBox<String>();
   
   /** JLabels **/
   protected JLabel nameLabel = new JLabel("Name - ");
@@ -79,6 +87,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JLabel modPowerOneLabel = new JLabel("Base Effect Power - ");
   protected JLabel modEffectTwoLabel = new JLabel("Effect Type - ");
   protected JLabel modPowerTwoLabel = new JLabel("Base Effect Power - ");
+  protected JLabel modEffectThreeLabel = new JLabel("Effect Type - ");
+  protected JLabel modPowerThreeLabel = new JLabel("Base Effect Power - ");
+  protected JLabel modEffectFourLabel = new JLabel("Effect Type - ");
+  protected JLabel modPowerFourLabel = new JLabel("Base Effect Power - ");
   
   /** JTextFields **/
   protected JTextField nameField = new JTextField(10);
@@ -86,6 +98,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JTextField costField = new JTextField(10);
   protected JTextField modPowerOneField = new JTextField(10);
   protected JTextField modPowerTwoField = new JTextField(10);
+  protected JTextField modPowerThreeField = new JTextField(10);
+  protected JTextField modPowerFourField = new JTextField(10);
   
   /** JLists **/
   protected DefaultListModel modListModel = new DefaultListModel();
@@ -172,14 +186,19 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modEffects.add(Constants.MOD_TYPE_DEAD_AIM);
     modEffects.add(Constants.MOD_TYPE_FLAT_STATUS);
     modEffects.add(Constants.MOD_TYPE_FLAT_MAG);
+    modEffects.add(Constants.MOD_TYPE_MUNITIONS);
     Collections.sort(modEffects);
     
     modEffectOneBox.removeAllItems();
     modEffectTwoBox.removeAllItems();
+    modEffectThreeBox.removeAllItems();
+    modEffectFourBox.removeAllItems();
     
     for(int i = 0; i < modEffects.size(); i++){
       modEffectOneBox.addItem(modEffects.get(i));
       modEffectTwoBox.addItem(modEffects.get(i));
+      modEffectThreeBox.addItem(modEffects.get(i));
+      modEffectFourBox.addItem(modEffects.get(i));
     }
   }
   
@@ -196,10 +215,16 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.panelInit(effectCountPanel);
     UIBuilder.panelInit(effectOnePanel);
     UIBuilder.panelInit(effectTwoPanel);
+    UIBuilder.panelInit(effectThreePanel);
+    UIBuilder.panelInit(effectFourPanel);
     UIBuilder.panelInit(effectOneTypePanel);
     UIBuilder.panelInit(effectOnePowerPanel);
     UIBuilder.panelInit(effectTwoTypePanel);
     UIBuilder.panelInit(effectTwoPowerPanel);
+    UIBuilder.panelInit(effectThreeTypePanel);
+    UIBuilder.panelInit(effectThreePowerPanel);
+    UIBuilder.panelInit(effectFourTypePanel);
+    UIBuilder.panelInit(effectFourPowerPanel);
     UIBuilder.panelInit(buttonPanel);
     
     UIBuilder.labelInit(nameLabel);
@@ -212,6 +237,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.labelInit(modPowerOneLabel);
     UIBuilder.labelInit(modEffectTwoLabel);
     UIBuilder.labelInit(modPowerTwoLabel);
+    UIBuilder.labelInit(modEffectThreeLabel);
+    UIBuilder.labelInit(modPowerThreeLabel);
+    UIBuilder.labelInit(modEffectFourLabel);
+    UIBuilder.labelInit(modPowerFourLabel);
     
     UIBuilder.listInit(modList);
     
@@ -222,12 +251,16 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.comboBoxInit(modEffectCountBox);
     UIBuilder.comboBoxInit(modEffectOneBox);
     UIBuilder.comboBoxInit(modEffectTwoBox);
+    UIBuilder.comboBoxInit(modEffectThreeBox);
+    UIBuilder.comboBoxInit(modEffectFourBox);
     
     UIBuilder.textFieldInit(nameField);
     UIBuilder.numberFieldInit(ranksField);
     UIBuilder.numberFieldInit(costField);
     UIBuilder.numberFieldInit(modPowerOneField);
     UIBuilder.numberFieldInit(modPowerTwoField);
+    UIBuilder.numberFieldInit(modPowerThreeField);
+    UIBuilder.numberFieldInit(modPowerFourField);
     
     UIBuilder.buttonInit(addUpdateButton);
     UIBuilder.buttonInit(deleteButton);
@@ -238,6 +271,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modEffectCountBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     modEffectOneBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     modEffectTwoBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
+    modEffectThreeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
+    modEffectFourBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     
     modTypeBox.addItem(Constants.PISTOL);
     modTypeBox.addItem(Constants.RIFLE);
@@ -251,6 +286,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     
     modEffectCountBox.addItem(Constants.SINGLE);
     modEffectCountBox.addItem(Constants.DOUBLE);
+    modEffectCountBox.addItem(Constants.TRIPLE);
+    modEffectCountBox.addItem(Constants.QUAD);
     
     leftPanel.setLayout(new GridLayout(1,2,0,0));
     rightPanel.setLayout(new GridLayout(1,2,0,0));
@@ -262,10 +299,16 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     effectCountPanel.setLayout(new GridLayout(1,2,0,0));
     effectOnePanel.setLayout(new BoxLayout(effectOnePanel,BoxLayout.Y_AXIS));
     effectTwoPanel.setLayout(new BoxLayout(effectTwoPanel,BoxLayout.Y_AXIS));
+    effectThreePanel.setLayout(new BoxLayout(effectThreePanel,BoxLayout.Y_AXIS));
+    effectFourPanel.setLayout(new BoxLayout(effectFourPanel,BoxLayout.Y_AXIS));
     effectOneTypePanel.setLayout(new GridLayout(1,2,0,0));
     effectOnePowerPanel.setLayout(new GridLayout(1,2,0,0));
     effectTwoTypePanel.setLayout(new GridLayout(1,2,0,0));
     effectTwoPowerPanel.setLayout(new GridLayout(1,2,0,0));
+    effectThreeTypePanel.setLayout(new GridLayout(1,2,0,0));
+    effectThreePowerPanel.setLayout(new GridLayout(1,2,0,0));
+    effectFourTypePanel.setLayout(new GridLayout(1,2,0,0));
+    effectFourPowerPanel.setLayout(new GridLayout(1,2,0,0));
     buttonPanel.setLayout(new GridLayout(1,3,0,0));
     rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
     this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
@@ -273,7 +316,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     modList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
     modList.setVisibleRowCount(-1);
-    modScroll.setPreferredSize(new Dimension(150, 230));
+    modScroll.setPreferredSize(new Dimension(150, 380));
 
     leftPanel.add(modScroll);
     
@@ -297,11 +340,23 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     effectTwoTypePanel.add(modEffectTwoBox);
     effectTwoPowerPanel.add(modPowerTwoLabel);
     effectTwoPowerPanel.add(modPowerTwoField);
+    effectThreeTypePanel.add(modEffectThreeLabel);
+    effectThreeTypePanel.add(modEffectThreeBox);
+    effectThreePowerPanel.add(modPowerThreeLabel);
+    effectThreePowerPanel.add(modPowerThreeField);
+    effectFourTypePanel.add(modEffectFourLabel);
+    effectFourTypePanel.add(modEffectFourBox);
+    effectFourPowerPanel.add(modPowerFourLabel);
+    effectFourPowerPanel.add(modPowerFourField);
     
     effectOnePanel.add(effectOneTypePanel);
     effectOnePanel.add(effectOnePowerPanel);
     effectTwoPanel.add(effectTwoTypePanel);
     effectTwoPanel.add(effectTwoPowerPanel);
+    effectThreePanel.add(effectThreeTypePanel);
+    effectThreePanel.add(effectThreePowerPanel);
+    effectFourPanel.add(effectFourTypePanel);
+    effectFourPanel.add(effectFourPowerPanel);
     
     buttonPanel.add(addUpdateButton);
     buttonPanel.add(deleteButton);
@@ -315,6 +370,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     rightPanel.add(effectCountPanel);
     rightPanel.add(effectOnePanel);
     rightPanel.add(effectTwoPanel);
+    rightPanel.add(effectThreePanel);
+    rightPanel.add(effectFourPanel);
     rightPanel.add(buttonPanel);
     
     this.add(leftPanel);
@@ -368,8 +425,20 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     }else if(e.getSource().equals(modEffectCountBox)){
       if(modEffectCountBox.getSelectedItem().equals(Constants.DOUBLE)){
         effectTwoPanel.setVisible(true);
+        effectThreePanel.setVisible(false);
+        effectFourPanel.setVisible(false);
+      }else if(modEffectCountBox.getSelectedItem().equals(Constants.TRIPLE)) {
+    	  effectTwoPanel.setVisible(true);
+          effectThreePanel.setVisible(true); 
+          effectFourPanel.setVisible(false);
+      }else if(modEffectCountBox.getSelectedItem().equals(Constants.QUAD)) {
+    	  effectTwoPanel.setVisible(true);
+          effectThreePanel.setVisible(true); 
+          effectFourPanel.setVisible(true);
       }else{
         effectTwoPanel.setVisible(false);
+        effectThreePanel.setVisible(false);
+        effectFourPanel.setVisible(false);
       }
     }
   }
@@ -429,6 +498,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modEffectOneBox.setSelectedIndex(0);
     modPowerTwoField.setText("0");
     modEffectTwoBox.setSelectedIndex(0);
+    modPowerThreeField.setText("0");
+    modEffectThreeBox.setSelectedIndex(0);
+    modPowerFourField.setText("0");
+    modEffectFourBox.setSelectedIndex(0);
   }
   /**
    * Updates the values on the right side to those of the mod selected on the left side
@@ -442,27 +515,47 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modTypeBox.setSelectedItem(selectedMod.type);
     modPolarityBox.setSelectedItem(selectedMod.polarity);
     
-    if(selectedMod.effectTypes.size() > 1){
-      modEffectCountBox.setSelectedItem(Constants.DOUBLE);
-    }else{
+    if(selectedMod.effectTypes.size() == 1){
       modEffectCountBox.setSelectedItem(Constants.SINGLE);
+    }else if(selectedMod.effectTypes.size() == 2){
+      modEffectCountBox.setSelectedItem(Constants.DOUBLE);
+    }else if(selectedMod.effectTypes.size() == 3){
+        modEffectCountBox.setSelectedItem(Constants.TRIPLE);
+    }else{
+      modEffectCountBox.setSelectedItem(Constants.QUAD);
     }
     
     nameField.setText(selectedMod.name);
     ranksField.setText(""+selectedMod.ranks);
     costField.setText(""+selectedMod.baseCost);
     
-    if(modEffectCountBox.getSelectedItem().equals(Constants.DOUBLE)){
+    if(modEffectCountBox.getSelectedItem().equals(Constants.SINGLE)){    	
+      modPowerOneField.setText(""+(selectedMod.effectStrengths.get(0)*100.0));
+      modEffectOneBox.setSelectedItem(selectedMod.effectTypes.get(0));
+    }else if(modEffectCountBox.getSelectedItem().equals(Constants.DOUBLE)){
       modPowerOneField.setText(""+(selectedMod.effectStrengths.get(0)*100.0));
       modEffectOneBox.setSelectedItem(selectedMod.effectTypes.get(0));
       modPowerTwoField.setText(""+(selectedMod.effectStrengths.get(1)*100.0));
       modEffectTwoBox.setSelectedItem(selectedMod.effectTypes.get(1));
+    }else if(modEffectCountBox.getSelectedItem().equals(Constants.TRIPLE)){
+      modPowerOneField.setText(""+(selectedMod.effectStrengths.get(0)*100.0));
+      modEffectOneBox.setSelectedItem(selectedMod.effectTypes.get(0));
+      modPowerTwoField.setText(""+(selectedMod.effectStrengths.get(1)*100.0));
+      modEffectTwoBox.setSelectedItem(selectedMod.effectTypes.get(1));
+      modPowerThreeField.setText(""+(selectedMod.effectStrengths.get(2)*100.0));
+      modEffectThreeBox.setSelectedItem(selectedMod.effectTypes.get(2));	
     }else{
       modPowerOneField.setText(""+(selectedMod.effectStrengths.get(0)*100.0));
       modEffectOneBox.setSelectedItem(selectedMod.effectTypes.get(0));
+      modPowerTwoField.setText(""+(selectedMod.effectStrengths.get(1)*100.0));
+      modEffectTwoBox.setSelectedItem(selectedMod.effectTypes.get(1));
+      modPowerThreeField.setText(""+(selectedMod.effectStrengths.get(2)*100.0));
+      modEffectThreeBox.setSelectedItem(selectedMod.effectTypes.get(2));
+      modPowerFourField.setText(""+(selectedMod.effectStrengths.get(3)*100.0));
+      modEffectFourBox.setSelectedItem(selectedMod.effectTypes.get(3));
     }
   }
-  
+    
   /**
    * Builds a mod string from the current data values
    * @return the mod string
@@ -477,6 +570,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     String newModPowerOne = modPowerOneField.getText();
     String newModEffectTwo = (String)modEffectTwoBox.getSelectedItem();
     String newModPowerTwo = modPowerTwoField.getText();
+    String newModEffectThree = (String)modEffectThreeBox.getSelectedItem();
+    String newModPowerThree = modPowerThreeField.getText();
+    String newModEffectFour = (String)modEffectFourBox.getSelectedItem();
+    String newModPowerFour = modPowerFourField.getText();
     String newPolarity = (String)modPolarityBox.getSelectedItem();
     String newCost = costField.getText();
     
@@ -502,6 +599,18 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
       newModPowerTwo = "0.0";
     }
     try{
+      double newModPowerThreeDbl = Double.parseDouble(newModPowerThree);
+      newModPowerThree = ""+(newModPowerThreeDbl/100.0);
+    }catch(Exception ex){
+      newModPowerThree = "0.0";
+    }
+    try{
+        double newModPowerFourDbl = Double.parseDouble(newModPowerFour);
+        newModPowerFour = ""+(newModPowerFourDbl/100.0);
+      }catch(Exception ex){
+        newModPowerThree = "0.0";
+      }
+    try{
       int newCostInt = Integer.parseInt(newCost);
     }catch(Exception ex){
       newCost = "0";
@@ -509,7 +618,11 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     
     //Build the String
     String newModString = newName+","+newType+","+newRanks;
-    if(modEffectCountBox.getSelectedItem().equals(Constants.DOUBLE)){
+    if(modEffectCountBox.getSelectedItem().equals(Constants.QUAD)){
+      newModString += ",4,"+newModEffectOne+","+newModEffectTwo+","+newModEffectThree+","+newModEffectFour+","+newModPowerOne+","+newModPowerTwo+","+newModPowerThree+","+newModPowerFour;
+    }else if(modEffectCountBox.getSelectedItem().equals(Constants.TRIPLE)){
+      newModString += ",3,"+newModEffectOne+","+newModEffectTwo+","+newModEffectThree+","+newModPowerOne+","+newModPowerTwo+","+newModPowerThree;
+    }else if(modEffectCountBox.getSelectedItem().equals(Constants.DOUBLE)){
       newModString += ",2,"+newModEffectOne+","+newModEffectTwo+","+newModPowerOne+","+newModPowerTwo;
     }else{
       newModString += ",1,"+newModEffectOne+","+newModPowerOne;
