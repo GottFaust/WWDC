@@ -223,7 +223,7 @@ public class Main {
 
   
   public static double globalToxin; //Added this to calculate gas proc damage -o
-  public static int hunterMunitions; //Big league TTK time
+  public static int hunterMunitions;
   public static boolean headShots = false;
   public static Random rng = new Random();
   public static double bleedDoTDPS;
@@ -1982,18 +1982,25 @@ public class Main {
     
     //Add in DoTs   
     //It's all so tiresome -o
+    
     double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
     double totalElemental = Main.raw.finalBase - totalPhysical;
     double ElectricProcRate = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental))*finalStatusChance;
-    double GasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental))*finalStatusChance;
-   
+    double GasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental))*finalStatusChance;    
+    double SlashProcRate = (4 * Main.slash.finalBase) / ((4* totalPhysical) + totalElemental)*finalStatusChance;
+    
+    double hunterMult = 1;
+    if(hunterMunitions > 0) { //Need to fix because hunter munitions stacks are always on crit
+    	double hunterRatio = (finalCritChance*0.3/(finalCritChance*0.3+SlashProcRate));
+    	hunterMult = (hunterRatio*finalCritMult+(1-hunterRatio)*((finalNormalShots+finalCritShots*finalCritMult)/finalMag))/((finalNormalShots+finalCritShots*finalCritMult)/finalMag);
+    }   
     double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1+finalFirstShotDamageMult/finalMag);
     double critBase = rawBase * finalCritMult;
     double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots)) / finalMag);
     double toxinBase = (toxin.finalBase - (toxin.base * finalDamageMult))*(1+finalFirstShotDamageMult/finalMag)*(finalCritShots*finalCritMult+finalNormalShots) / finalMag;
     double heatBase = (fire.finalBase - (fire.base * finalDamageMult))*(1+finalFirstShotDamageMult/finalMag)*(finalCritShots*finalCritMult+finalNormalShots) / finalMag;
     double electricBase = (electric.finalBase - (electric.base * finalDamageMult))*(1+finalFirstShotDamageMult/finalMag)*(finalCritShots*finalCritMult+finalNormalShots) / finalMag;
-    double bleedDamage =  DoTBase * 0.35;
+    double bleedDamage =  DoTBase * 0.35 * hunterMult;
     double poisonDamage = (DoTBase + toxinBase) * 0.5;
     double heatDamage = (DoTBase + heatBase) * 0.5;
     double cloudDamage = rawBase * (0.25 * (1 + globalToxin)*(1 + globalToxin)) * (1+finalFirstShotDamageMult/finalMag)*(finalCritShots*finalCritMult+finalNormalShots) /finalMag;

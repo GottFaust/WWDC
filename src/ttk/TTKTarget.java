@@ -963,21 +963,7 @@ public class TTKTarget implements Comparable{
           if(iterations >= Main.finalMag){
             reloading = true;
             iterations = 0;
-          }
-          
-          /*
-          if(Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){  //"Kohm" reloading -o  
-          	double maxDrain = (Main.projectileCount*(Main.projectileCount+1)/2)/3;
-        	double bulletRampDrain = Math.round(iterations * (iterations+1)/2)/3;      
-        	if(bulletRampDrain > maxDrain) bulletRampDrain = maxDrain;
-        	int drained = (int)(bulletRampDrain + Math.max(0, (iterations - Main.projectileCount)) * Main.projectileCount/3) + 1;
-        	if(drained >= Main.finalMag - Main.projectileCount/3){
-        		reloading = true;
-                iterations = 0;
-        	}           
-          }
-         */ 
-          
+          }          
         }
       }
       }else{
@@ -992,7 +978,7 @@ public class TTKTarget implements Comparable{
           reloading = false;
           reloadTimeCounter = 0;
           if(Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){
-            millisecondMult = 2.0;
+            millisecondMult = 1.0;
           }
         }
       }
