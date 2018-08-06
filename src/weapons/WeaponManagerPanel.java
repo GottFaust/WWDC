@@ -197,6 +197,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     attributesPanel.slashField.setText(selectedWeapon.slash);
     attributesPanel.fireRateField.setText(selectedWeapon.fireRate);
     attributesPanel.magSizeField.setText(selectedWeapon.magSize);
+    attributesPanel.drainField.setText(selectedWeapon.drain);
     attributesPanel.ammoField.setText(selectedWeapon.ammo);
     attributesPanel.reloadField.setText(selectedWeapon.reload);
     attributesPanel.critField.setText(selectedWeapon.crit);
@@ -240,6 +241,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String slash = attributesPanel.slashField.getText();
     String fireRate = attributesPanel.fireRateField.getText();
     String magSize = attributesPanel.magSizeField.getText();
+    String drain = attributesPanel.drainField.getText();
     String ammo = attributesPanel.ammoField.getText();
     String reload = attributesPanel.reloadField.getText();
     String crit = attributesPanel.critField.getText();
@@ -312,6 +314,11 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
       magSize = "0";
     }
     try{
+        double testDouble = Double.parseDouble(drain);
+      }catch(Exception ex){
+        drain = "0";
+      }
+    try{
       int testInt = Integer.parseInt(ammo);
     }catch(Exception ex){
       ammo = "0";
@@ -341,6 +348,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+critMult;
     weaponString += ","+status;
     weaponString += ","+projeciles;
+    weaponString += ","+drain;
     return weaponString;
   }
 

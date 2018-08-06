@@ -344,6 +344,23 @@ public class WeaponPanel extends JPanel implements ActionListener {
     return(chargeTime);
   }
   
+  
+  /**
+   * Gets the weapon's ammo drain
+   * @return drain
+   */
+  public double getDrain(){
+	    String drainStr = wap.drainField.getText();
+	    if(drainStr == null || drainStr.equals("")){
+	      drainStr = "0";
+	    }
+	    double drain = Double.parseDouble(drainStr);
+	    if(drain < 0){
+	      drain = 0;
+	    }
+	    return(drain);
+	  }
+  
   /**
    * Gets the weapon's burst count
    * @return burstCount
@@ -374,7 +391,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   
   /**
    * Gets the number of projectiles
-   * @return projectiels
+   * @return projectiles
    */
   public double getProjectiles(){
     String projectileStr = wap.projectileField.getText();
@@ -626,6 +643,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
         wap.multiplierField.setText(reader.readLine());
         wap.statusField.setText(reader.readLine());
         wap.projectileField.setText(reader.readLine());
+        wap.drainField.setText(reader.readLine());
         reader.close();
       }
     } catch (Exception e) {
@@ -673,6 +691,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       writer.write(wap.multiplierField.getText()+"\n");
       writer.write(wap.statusField.getText()+"\n");
       writer.write(wap.projectileField.getText()+"\n");
+      writer.write(wap.drainField.getText()+"\n");
       writer.close();
     } catch (Exception e) {
       // TODO Auto-generated catch block
@@ -733,24 +752,28 @@ public class WeaponPanel extends JPanel implements ActionListener {
     if(mode.equals(Constants.BURST)){
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(true);
+      wap.drainPanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(true);
     }else if(mode.equals(Constants.CHARGE)){
       wap.chargeTimePanel.setVisible(true);
       wap.burstCountPanel.setVisible(false);
+      wap.drainPanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(false);
     }else if(mode.equals(Constants.CONTINUOUS)){
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(false);
+      wap.drainPanel.setVisible(true);
       wap.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(false);
     }else{
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(false);
+      wap.drainPanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(false);
@@ -891,6 +914,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       wap.slashField.setText(selectedWeapon.slash);
       wap.fireRateField.setText(selectedWeapon.fireRate);
       wap.magSizeField.setText(selectedWeapon.magSize);
+      wap.drainField.setText(selectedWeapon.drain);
       wap.ammoField.setText(selectedWeapon.ammo);
       wap.reloadField.setText(selectedWeapon.reload);
       wap.critField.setText(selectedWeapon.crit);

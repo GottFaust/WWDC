@@ -158,6 +158,7 @@ public class Main {
   protected static int mag = 0;
   protected static int ammoCap = 0;
   public static int burstCount = 0;
+  public static double drain = 1;
   
   
   /** Calculated Values **/
@@ -468,6 +469,7 @@ public class Main {
     weaponMode = "";
     damageType = "";
     chargeTime = 0.0;
+    drain = 0;
     raw.clear();
     impact.clear();
     puncture.clear();
@@ -558,6 +560,7 @@ public class Main {
     mag = selectedWeapon.getMagSize();
     ammoCap = selectedWeapon.getTotalAmmo();
     burstCount = selectedWeapon.getBurstCount();
+    drain = selectedWeapon.getDrain();
     
     if(damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)){
       impact.base = selectedWeapon.getImpactDamage();
@@ -1549,7 +1552,7 @@ public class Main {
       double rawFireTime = numBursts/finalFireRate;
       finalIterationTime = rawFireTime+finalReloadTime;
     }else if(weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)){    	
-      finalFireRate *= 0.8333333; //spool-up weapon fire rate caps at 5/6 for some reason -o
+      //finalFireRate *= 0.8333333; //spool-up weapon fire rate caps at 5/6 for some reason -o Or does it really?
       double baseFireDelay = ((1 / finalFireRate));
       double firstFireDelay = baseFireDelay * 5/2;
       double secondFireDelay = baseFireDelay * 5/3;
@@ -1558,7 +1561,11 @@ public class Main {
     	  finalMag = (int) Math.round(projectileCount + (finalMag -(projectileCount/3 -1) - (Main.projectileCount*(Main.projectileCount+1)/2)/3) / (projectileCount/3));
       }      
       finalIterationTime = (firstFireDelay + secondFireDelay + thirdFireDelay + ((finalMag - 4) * baseFireDelay)) + finalReloadTime;
-    }else{
+    }else if(weaponMode.equals(Constants.CONTINUOUS)) {
+    	finalMag /= drain;
+    	finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;  
+    }
+    else{
       finalIterationTime = ((finalMag-1) / finalFireRate) + finalReloadTime;      
     }    
     finalIterationsPerMinute = 60.0 / finalIterationTime;
@@ -2183,7 +2190,7 @@ public class Main {
     if(mode.equals(Constants.BURST)){
       delimiter = "bursts";
     }else if(mode.equals(Constants.CONTINUOUS)){
-      delimiter = "ammo drain";
+      delimiter = "ticks";
     }
     output.append("\nFire Rate :: "+f.format(finalFireRate)+" "+delimiter+" per second");
     output.append("\nReload Time :: "+f.format(finalReloadTime)+" seconds");

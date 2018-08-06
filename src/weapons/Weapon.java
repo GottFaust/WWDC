@@ -28,6 +28,7 @@ public class Weapon implements Comparable {
   public String critMult;
   public String status;
   public String projeciles;
+  public String drain;
 
   /**
    * ____________________________________________________________
@@ -59,6 +60,7 @@ public class Weapon implements Comparable {
     critMult = split[16];
     status = split[17];
     projeciles = split[18];
+    drain = split[19];
   }
   
   /**
@@ -84,7 +86,8 @@ public class Weapon implements Comparable {
     weaponString += crit + ",";
     weaponString += critMult + ",";
     weaponString += status + ",";
-    weaponString += projeciles;
+    weaponString += projeciles + ",";
+    weaponString += drain;
     return weaponString;
   }
   

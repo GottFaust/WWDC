@@ -38,6 +38,7 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel burstCountPanel = new JPanel();
   protected JPanel projectilePanel = new JPanel();
   protected JPanel statusPanel = new JPanel();
+  protected JPanel drainPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> damageTypeBox = new JComboBox<String>();
@@ -62,6 +63,7 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel critMultiplierLabel = new JLabel("Crit Multiplier - ");
   protected JLabel projectileLabel = new JLabel("Projectile Count - ");
   protected JLabel statusLabel = new JLabel("Status Chance - ");
+  protected JLabel drainLabel = new JLabel("Ammo Drain - ");
   
   /** JTextFields **/
   protected JTextField chargeTimeField = new JTextField(10);
@@ -79,6 +81,7 @@ public class WeaponAttributesPanel extends JPanel {
   protected JTextField multiplierField = new JTextField(10);
   protected JTextField projectileField = new JTextField(10);
   protected JTextField statusField = new JTextField(10);
+  protected JTextField drainField = new JTextField(10);
   
   
   /**
@@ -118,6 +121,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(burstCountLabel);
     UIBuilder.labelInit(projectileLabel);
     UIBuilder.labelInit(statusLabel);
+    UIBuilder.labelInit(drainLabel);
     
     UIBuilder.textFieldInit(nameField);
     
@@ -135,6 +139,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.numberFieldInit(burstCountField);
     UIBuilder.numberFieldInit(projectileField);
     UIBuilder.numberFieldInit(statusField);
+    UIBuilder.numberFieldInit(drainField);
     
     UIBuilder.createSepparationBorder(namePanel);
     UIBuilder.createSepparationBorder(damagePanel);
@@ -153,6 +158,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(burstCountPanel);
     UIBuilder.createSepparationBorder(projectilePanel);
     UIBuilder.createSepparationBorder(statusPanel);
+    UIBuilder.createSepparationBorder(drainPanel);
     
     UIBuilder.panelInit(this);
     UIBuilder.panelInit(namePanel);
@@ -172,6 +178,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(burstCountPanel);
     UIBuilder.panelInit(projectilePanel);
     UIBuilder.panelInit(statusPanel);
+    UIBuilder.panelInit(drainPanel);
     
     nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
     damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -190,6 +197,7 @@ public class WeaponAttributesPanel extends JPanel {
     burstCountLabel.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
     projectileLabel.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusLabel.setToolTipText(Constants.STATUS_TOOL_TIP);
+    //drainLabel.setToolTipText(Constants.DRAIN_TOOL_TIP);
     
     nameField.setToolTipText(Constants.NAME_TOOL_TIP);
     damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -208,6 +216,7 @@ public class WeaponAttributesPanel extends JPanel {
     burstCountField.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
+   //drainField.setToolTipText(Constants.DRAIN_TOOL_TIP);
     
     weaponModeBox.addItem(Constants.BURST);
     weaponModeBox.addItem(Constants.CHARGE);
@@ -237,6 +246,7 @@ public class WeaponAttributesPanel extends JPanel {
     slashPanel.setLayout(new GridLayout(1,2,0,0));
     fireRatePanel.setLayout(new GridLayout(1,2,0,0));
     magSizePanel.setLayout(new GridLayout(1,2,0,0));
+    drainPanel.setLayout(new GridLayout(1,2,0,0));
     ammoPanel.setLayout(new GridLayout(1,2,0,0));
     reloadPanel.setLayout(new GridLayout(1,2,0,0));
     critChancePanel.setLayout(new GridLayout(1,2,0,0));
@@ -262,6 +272,8 @@ public class WeaponAttributesPanel extends JPanel {
     fireRatePanel.add(fireRateField);
     magSizePanel.add(magSizeLabel);
     magSizePanel.add(magSizeField);
+    drainPanel.add(drainLabel);
+    drainPanel.add(drainField);
     ammoPanel.add(totalAmmoLabel);
     ammoPanel.add(ammoField);
     reloadPanel.add(reloadTimeLabel);
@@ -298,6 +310,7 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(statusPanel);
     this.add(fireRatePanel);
     this.add(magSizePanel);
+    this.add(drainPanel);
     this.add(ammoPanel);
     this.add(reloadPanel);
     this.add(critChancePanel);
@@ -323,6 +336,7 @@ public class WeaponAttributesPanel extends JPanel {
     slashField.setText("");
     fireRateField.setText("");
     magSizeField.setText("");
+    drainField.setText("");
     ammoField.setText("");
     reloadField.setText("");
     critField.setText("");
@@ -347,6 +361,7 @@ public class WeaponAttributesPanel extends JPanel {
     slashField.setText("");
     fireRateField.setText("");
     magSizeField.setText("");
+    drainField.setText("");
     ammoField.setText("");
     reloadField.setText("");
     critField.setText("");
