@@ -34,7 +34,7 @@ public class WeaponModPanel extends JPanel implements ActionListener {
   protected JPanel bottomPanel = new JPanel();
   
   /** JComboBoxes **/
-  protected JComboBox<String> modBox = new JComboBox<String>();
+  public JComboBox<String> modBox = new JComboBox<String>();
   protected JComboBox<String> modLevel = new JComboBox<String>();
   protected JComboBox<String> slotPolarityBox = new JComboBox<String>();
   

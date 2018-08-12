@@ -15,6 +15,7 @@ import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -61,6 +62,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected JPanel effectFourTypePanel = new JPanel();
   protected JPanel effectFourPowerPanel = new JPanel();
   protected JPanel buttonPanel = new JPanel();
+  protected JPanel filePanel = new JPanel();
   
   /** JButtons **/
   protected JButton addUpdateButton = new JButton("Add or Update");
@@ -112,10 +114,14 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   protected ModInitializer initializer;
   protected Vector<String> modEffects = new Vector<String>();
   protected Mod selectedMod = null;
-  protected WeaponPanel rifle;
-  protected WeaponPanel shotgun;
-  protected WeaponPanel pistol;
-  protected WeaponPanel arcGun;
+  public WeaponPanel rifle;
+  public WeaponPanel shotgun;
+  public WeaponPanel pistol;
+  public WeaponPanel arcGun;
+  
+  protected static JCheckBox regularMods = new JCheckBox("Regular Mods");
+  protected static JCheckBox maximizerMods = new JCheckBox("Maximizer Mods");
+  protected static String modFile = "mods.db";
   
   /**
    * ____________________________________________________________
@@ -131,25 +137,24 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     shotgun = shotgunPanel;
     pistol = pistolPanel;
     arcGun = arcGunPanel;
-    Init();
+    Init(modFile);
     buildUI();
   }
   
   /**
    * Initializes the Data
    */
-  public void Init(){
+  public void Init(String file){
     
     //Initialize The Mod Data
     initializer = ModInitializer.getInstance();
-    updateModList();
-    rifle.InitMods();
+    rifle.InitMods(file);
     rifle.updateDropDownContents();
-    shotgun.InitMods();
+    shotgun.InitMods(file);
     shotgun.updateDropDownContents();
-    pistol.InitMods();
+    pistol.InitMods(file);
     pistol.updateDropDownContents();
-    arcGun.InitMods();
+    arcGun.InitMods(file);
     arcGun.updateDropDownContents();
     
     modEffects.clear();
@@ -199,7 +204,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
       modEffectTwoBox.addItem(modEffects.get(i));
       modEffectThreeBox.addItem(modEffects.get(i));
       modEffectFourBox.addItem(modEffects.get(i));
-    }
+    }  
+    updateModList();
   }
   
   protected void buildUI(){
@@ -226,6 +232,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.panelInit(effectFourTypePanel);
     UIBuilder.panelInit(effectFourPowerPanel);
     UIBuilder.panelInit(buttonPanel);
+    UIBuilder.panelInit(filePanel);
     
     UIBuilder.labelInit(nameLabel);
     UIBuilder.labelInit(typeLabel);
@@ -265,6 +272,9 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.buttonInit(addUpdateButton);
     UIBuilder.buttonInit(deleteButton);
     UIBuilder.buttonInit(saveButton);
+    
+    UIBuilder.checkBoxInit(regularMods);
+    UIBuilder.checkBoxInit(maximizerMods);
     
     modTypeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     modPolarityBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
@@ -310,6 +320,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     effectFourTypePanel.setLayout(new GridLayout(1,2,0,0));
     effectFourPowerPanel.setLayout(new GridLayout(1,2,0,0));
     buttonPanel.setLayout(new GridLayout(1,3,0,0));
+    filePanel.setLayout(new GridLayout(1,3,0,0));
     rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
     this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
     
@@ -362,6 +373,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     buttonPanel.add(deleteButton);
     buttonPanel.add(saveButton);
     
+    filePanel.add(regularMods);
+    filePanel.add(maximizerMods);
+    
+    rightPanel.add(filePanel);
     rightPanel.add(namePanel);
     rightPanel.add(typePanel);
     rightPanel.add(polarityPanel);
@@ -382,7 +397,13 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     saveButton.addActionListener(this);
     modEffectCountBox.addActionListener(this);
     
+    regularMods.addActionListener(this);
+    maximizerMods.addActionListener(this);
+    
     modList.getSelectionModel().addListSelectionListener(this);
+    
+    regularMods.setSelected(true);
+    maximizerMods.setSelected(false);
     
     //Initialize the values
     clearValues();
@@ -439,9 +460,18 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
         effectTwoPanel.setVisible(false);
         effectThreePanel.setVisible(false);
         effectFourPanel.setVisible(false);
+      }      
+    }else if(e.getSource().equals(regularMods)){ //Switching between mod files (maximizer uses a tuned set of mods)
+            maximizerMods.setSelected(false);
+        	modFile = "mods.db";
+        	Init(modFile);
+        }else if(e.getSource().equals(maximizerMods)){
+            regularMods.setSelected(false);
+        	modFile = "maximizerMods.db";
+        	Init(modFile);
+        }
       }
-    }
-  }
+  
 
   /**
    * List Selection Listener
@@ -635,11 +665,11 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   public void saveModDB(){
     try {
       initializer.saveModDB();
-      rifle.InitMods();
+      rifle.InitMods(modFile);
       rifle.updateDropDownContents();
-      shotgun.InitMods();
+      shotgun.InitMods(modFile);
       shotgun.updateDropDownContents();
-      pistol.InitMods();
+      pistol.InitMods(modFile);
       pistol.updateDropDownContents();
     } catch (Exception e) {
       e.printStackTrace();

@@ -522,6 +522,17 @@ public class TTKTarget implements Comparable{
   }
   
   /**
+   * Gives the TTK target and time
+   */
+  public String simpleTTK() {
+	  DecimalFormat f = new DecimalFormat("00.0000");
+	  String displayName = name+"["+currentLevel+"]";
+	  String result = f.format(TTK);
+	  return displayName + "," + result;
+  }
+ 
+  
+  /**
    * builds the advanced TTK output
    * @return advanced TTK
    */
@@ -741,16 +752,25 @@ public class TTKTarget implements Comparable{
         	 tempMultishots--;
              if(rng.nextDouble() < tempMultishots) {        //multishot is not guaranteed -o         	 
             double localCritMult = 1.0;
+            
             //Is this a crit?
             double crit = rng.nextDouble();
             if(crit <= Main.finalCritChance){
-              localCritMult = Main.finalCritMult;
-              //Is this a red crit?
-              double redCritChance = Main.finalCritChance - 1.0;
-              if(redCritChance > 0.0){
-                double redCrit = rng.nextDouble();
-                if(redCrit <= redCritChance){
+              localCritMult = Main.finalCritMult;             
+              //Is this a orange crit?
+              double orangeCritChance = Main.finalCritChance - 1.0;
+              if(orangeCritChance > 0.0){
+                double orangeCrit = rng.nextDouble();
+                if(orangeCrit <= orangeCritChance){
                   localCritMult *= 2.0;
+                  //Is this red crit?
+                  double redCritChance = Main.finalCritChance - 2.0;
+                  if(redCritChance > 0.0){
+                      double redCrit = rng.nextDouble();
+                      if(redCrit <= redCritChance){
+                        localCritMult *= 3.0;
+                    }
+                  }
                 }
               }
             }            

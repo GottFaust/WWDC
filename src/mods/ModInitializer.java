@@ -40,7 +40,7 @@ public class ModInitializer {
    * CTOR
    */
   private ModInitializer(){
-    initialize();
+    initialize("mods.db");
   }
   
   /**
@@ -57,8 +57,8 @@ public class ModInitializer {
   /**
    * Initializes the mod data
    */
-  public void initialize(){
-    modsDB = new File("mods.db");
+  public void initialize(String file){	  
+    modsDB = new File(file);
     try {
       if(modsDB.exists()){
         mods.clear();
@@ -74,10 +74,20 @@ public class ModInitializer {
         mods.clear();
         modsDB.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(modsDB));
+        if(modsDB.getName() == "mods.db"){
+        }
+        if(modsDB.getName() == "mods.db") {
         for(String modStr : Constants.baseModDB){
           writer.write(modStr+"\n");
           Mod mod = new Mod(modStr);
           mods.add(mod);
+          }
+        }else {
+            for(String modStr : Constants.maximizerModDB){
+                writer.write(modStr+"\n");
+                Mod mod = new Mod(modStr);
+                mods.add(mod);
+          }
         }
         writer.close();
         

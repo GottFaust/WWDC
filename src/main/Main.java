@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Vector;
@@ -49,6 +51,7 @@ import weapons.ShotgunPanel;
 import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
 import options.ColorOptionsPanel;
+import Maximizer.Maximizer;
 
 public class Main {
   
@@ -69,6 +72,7 @@ public class Main {
   protected static JButton calculateButton = new JButton("Calculate");
   protected static JButton clearButton = new JButton("Clear");
   protected static JButton clearOutputButton = new JButton("Clear Output");
+  protected static JButton maximizeButton = new JButton("Maximize");
   
   /** JTextAreas **/
   public static JTextArea output = new JTextArea();
@@ -89,7 +93,8 @@ public class Main {
   protected static PistolPanel pistolPanel;
   protected static ArcGunPanel arcGunPanel;
   protected static ModManagerPanel theModManager = null;
-  protected static TTKManagerPanel theTTKManager = null;
+  public static TTKManagerPanel theTTKManager = null;
+  protected static Maximizer theMaximizer = null;
   protected static WeaponManagerPanel theWeaponManager = null;
   protected static ColorOptionsPanel theColorPanel = null;
   protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
@@ -120,14 +125,14 @@ public class Main {
   protected static JCheckBox TTKBox = new JCheckBox("TTK");
   protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
   protected static JLabel targetGroupLabel = new JLabel("Group:");
-  protected static JComboBox targetGroupBox = new JComboBox();
+  public static JComboBox targetGroupBox = new JComboBox();
   protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
   protected static JComboBox corrosiveProjectionBox = new JComboBox();
   
   /** Data **/
   
   /** Selected WeaponPanel **/
-  protected static WeaponPanel selectedWeapon = null;
+  public static WeaponPanel selectedWeapon = null;
   
   /** Mod Vectors **/
   protected static Vector<Mod> activeMods = new Vector<Mod>();
@@ -233,6 +238,7 @@ public class Main {
   public static double cloudDoTDPS;
   public static double electricProcDPS;
   public static double gasProcDPS;
+  public static boolean maxxing;
   
   /**
    * ____________________________________________________________
@@ -254,6 +260,7 @@ public class Main {
     theTTKManager = new TTKManagerPanel();
     theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
     theColorPanel = new ColorOptionsPanel();
+    theMaximizer = new Maximizer();
     buildUI();
     mainFrame.setVisible(true);
   }
@@ -270,6 +277,7 @@ public class Main {
     UIBuilder.panelInit(pistolPanel);
     UIBuilder.panelInit(arcGunPanel);
     UIBuilder.buttonInit(calculateButton);
+    UIBuilder.buttonInit(maximizeButton);
     UIBuilder.buttonInit(clearButton);
     UIBuilder.buttonInit(clearOutputButton);
     UIBuilder.textAreaInit(output);
@@ -311,6 +319,7 @@ public class Main {
     }
     
     calculateButton.addActionListener(action);
+    maximizeButton.addActionListener(action);
     TTKBox.addActionListener(action);
     lightWeightTTKBox.addActionListener(action);
     clearButton.addActionListener(action);
@@ -344,6 +353,7 @@ public class Main {
     buttonPanel.add(TTKBox);
     buttonPanel.add(lightWeightTTKBox);
     buttonPanel.add(calculateButton);
+    buttonPanel.add(maximizeButton);
     buttonPanel.add(clearButton);
     buttonPanel.add(clearOutputButton);
     
@@ -452,10 +462,9 @@ public class Main {
         }
       }
       System.out.println("Advanced TTK Completed in "+(ttkTimeout/1000.0)+" seconds.");
-    }
-    
+    }    
     //Print the data to the text area and render the graph
-    updateOutput();
+    if(maxxing == false) updateOutput();
   }
   
   /**
@@ -2424,7 +2433,7 @@ public class Main {
     output.append("\nTotal Damage Per Second :: "+f.format(raw.perSecond));
     output.append("\nTotal Burst Damage Per Second :: "+f.format(raw.rawPerSecond));
 
-        
+
     if(useComplexTTK){
       output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
       String ttkTableHeader = "\nTarget Name";
@@ -2482,6 +2491,7 @@ public class Main {
                         corpus.perSecond);
   }
   
+  
   /**
    * Method to display the mod manager
    */
@@ -2489,7 +2499,7 @@ public class Main {
     
     if(!modManagerInit){
       modManagerInit = true;
-      theModManager.Init();
+      theModManager.Init("mods.db");
       modManagerFrame.add(theModManager);
       modManagerFrame.pack();
       modManagerFrame.addWindowListener(new ModWindowListener());
@@ -2589,7 +2599,11 @@ public class Main {
      */
     public void actionPerformed(ActionEvent e) {
       if(e.getSource().equals(calculateButton)){
-        calculateDPS();
+    	maxxing = false;  
+        calculateDPS();        
+      }else if(e.getSource().equals(maximizeButton)) {
+    	maxxing = true;  
+    	theMaximizer.Maximizer();   //this is going to fuck my shit up
       }else if(e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)){
         useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
         if(e.getSource().equals(TTKBox)){
@@ -2599,8 +2613,7 @@ public class Main {
         }else{
           if(TTKBox.isSelected()){
             TTKBox.setSelected(false);
-          }
-          
+          }          
         }
         if(useComplexTTK){
           if(e.getSource().equals(TTKBox)){

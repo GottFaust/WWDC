@@ -81,14 +81,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected ModInitializer modInit;
   protected WeaponInitializer weapInit;
   
-  protected String modOne = "--";
-  protected String modTwo = "--";
-  protected String modThree = "--";
-  protected String modFour = "--";
-  protected String modFive = "--";
-  protected String modSix = "--";
-  protected String modSeven = "--";
-  protected String modEight = "--";
+  public String modOne = "--";
+  public String modTwo = "--";
+  public String modThree = "--";
+  public String modFour = "--";
+  public String modFive = "--";
+  public String modSix = "--";
+  public String modSeven = "--";
+  public String modEight = "--";
   
   protected String weaponType = "";
   
@@ -118,8 +118,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
     updateWeaponBox();
   }
   
-  public void InitMods(){
-    modInit.initialize();
+  public void InitMods(String file){
+    modInit.initialize(file);
   }
   
   /**
@@ -252,6 +252,62 @@ public class WeaponPanel extends JPanel implements ActionListener {
             modEight+"["+modEightPanel.getModRank()+"]";
   }
   
+  public String flatModsOutput(){
+	    return  modOne+"["+modOnePanel.getModRank()+"] "+
+	            modTwo+"["+modTwoPanel.getModRank()+"] "+
+	            modThree+"["+modThreePanel.getModRank()+"] "+
+	            modFour+"["+modFourPanel.getModRank()+"] "+ "," +
+	            modFive+"["+modFivePanel.getModRank()+"] "+
+	            modSix+"["+modSixPanel.getModRank()+"] "+
+	            modSeven+"["+modSevenPanel.getModRank()+"] "+
+	            modEight+"["+modEightPanel.getModRank()+"] ";
+	  }
+  
+  /**
+   * Counts the number of mods
+   */
+  public int countMods(){
+	  updateDropDownContents();
+	  int count = modEightPanel.modBox.getItemCount();
+	  return count;
+  }
+  
+  /**
+   *  Sets Mods for the Maximizer
+   */
+  public void setModOne (int set){
+	  modOnePanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModTwo (int set){
+	  modTwoPanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModThree (int set){
+	  modThreePanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModFour (int set){
+	  modFourPanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModFive (int set){
+	  modFivePanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModSix (int set){
+	  modSixPanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModSeven (int set){
+	  modSevenPanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  public void setModEight (int set){
+	  modEightPanel.modBox.setSelectedIndex(set);
+	  updateDropDownContents();
+  }
+  
   /**
    * Calculates the active mods
    */
@@ -291,6 +347,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       modLevels.add(Double.parseDouble(modEightPanel.getModRank()));
     }
   }
+  
   
   /**
    * Gets the weapon's active mods
