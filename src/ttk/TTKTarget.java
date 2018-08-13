@@ -890,10 +890,10 @@ public class TTKTarget implements Comparable{
             String proc = potentialProcs.get(rng.nextInt(potentialProcs.size()));            
             //Do it
                 if(proc.equals(Constants.IMPACT_WEAPON_DAMAGE)){
-                    impactStacks.add(1);                
+                    impactStacks.add((int)(Math.round(1 * Main.finalStatusDuration)));                
                 }
                 else if(proc.equals(Constants.PUNCTURE_WEAPON_DAMAGE)){
-                    punctureStacks.add(6);
+                    punctureStacks.add((int)(Math.round(6 * Main.finalStatusDuration)));
                 }
                 else if(proc.equals(Constants.SLASH_WEAPON_DAMAGE)){
                     double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35;
@@ -945,10 +945,10 @@ public class TTKTarget implements Comparable{
                   targetCurrentHealth -= poisonDamage;                  
               }
               else if(proc.equals(Constants.BLAST_WEAPON_DAMAGE)){
-                  blastStacks.add(1);                  
+                  blastStacks.add((int)(Math.round(1 * Main.finalStatusDuration)));                  
               }
               else if(proc.equals(Constants.RADIATION_WEAPON_DAMAGE)){
-                  radiationStacks.add(12);                  
+                  radiationStacks.add((int)(Math.round(12 * Main.finalStatusDuration)));                  
               }
               else if(proc.equals(Constants.GAS_WEAPON_DAMAGE)){
                   double localGasMult = toxinMult;
@@ -960,10 +960,10 @@ public class TTKTarget implements Comparable{
                   gasStacks.add(new DoTPair(poisonDamage,gasDuration));
                   targetCurrentHealth -= ((DoTBase * (1 + Main.globalToxin)) * localCritMult * typeMult * typeMult * localGasMult * headShotMult * firstShotMult * 0.5);                  
               }else if(proc.equals(Constants.MAGNETIC_WEAPON_DAMAGE)){
-                  magneticStacks.add(6);
+                  magneticStacks.add((int)(Math.round(6 * Main.finalStatusDuration)));
                 }                
               else if(proc.equals(Constants.VIRAL_WEAPON_DAMAGE)){
-                  viralStacks.add(6);
+                  viralStacks.add((int)(Math.round(6 * Main.finalStatusDuration)));
                 }               
               else if(proc.equals(Constants.CORROSIVE_WEAPON_DAMAGE)){ 
                   corrosiveStacks++;                
