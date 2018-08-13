@@ -1395,12 +1395,11 @@ public class Main {
     for(int i = 0; i < projectileCountMods.size(); i++){
       multishot += projectileCount*projectileCountMods.get(i);
       finalProjectileCount += projectileCount*projectileCountMods.get(i);
-      
-      if(weaponMode.equals(Constants.CONTINUOUS)) {
+    }    
+    if(weaponMode.equals(Constants.CONTINUOUS)) {
     	finalProjectileCount = projectileCount;
     	finalDamageMult *= multishot; //Beams don't get more projectiles, so I turned multishot into damage -o
-      }
-    }
+      }    
     finalFirstShotDamageMult = firstShotDamageMult;
     for(int i = 0; i < firstShotDamageMods.size(); i++){
       finalFirstShotDamageMult += firstShotDamageMult*firstShotDamageMods.get(i);
