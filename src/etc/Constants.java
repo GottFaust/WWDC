@@ -67,7 +67,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "Semi-official v0.9.0";
+  public static final String APP_VERSION = "Semi-official v0.9.1";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -396,7 +396,6 @@ public class Constants {
 		  "Bore,Pistol,5,1,PunctureDamage,0.2,~,6",
 		  "Breach Loader,Shotgun,5,1,PunctureDamage,0.2,~,6",
 		  "Burdened Magazine,Shotgun,5,2,MagCap,ReladSpeed,0.1,-0.03,~,6",
-		  "Charged Chamber,Rifle,3,1,FirstShotDamage,0.1,V,6",
 		  "Charged Shell,Shotgun,5,1,LightningDamage,0.15,~,6",
 		  "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
 		  "Chilling Reload,Shotgun,3,2,IceDamage,ReladSpeed,0.15,0.1,V,2",
@@ -407,9 +406,6 @@ public class Constants {
 		  "Contagious Spread,Shotgun,5,1,ToxinDamage,0.15,~,6",
 		  "Convulsion,Pistol,5,1,LightningDamage,0.15,~,6",
 		  "Crash Course,Rifle,5,1,ImpactDamage,0.2,~,6",
-		  "Creeping Bullseye,Pistol,5,2,CritChance,FireRate,0.08,-0.06,~,4",
-		  "Critical Deceleration,Shotgun,5,2,CritChance,FireRate,0.08,-0.05,V,4",
-		  "Critical Delay,Rifle,5,2,CritChance,FireRate,0.08,-0.06,~,4",
 		  "Deep Freeze,Pistol,5,1,IceDamage,0.15,D,6",
 		  "Dual Rounds,ArcGun,5,1,Multishot,0.05,V,6",
 		  "Electrified Barrel,ArcGun,5,1,LightningDamage,0.2,~,4",
@@ -427,7 +423,6 @@ public class Constants {
 		  "Hell's Chamber,Shotgun,5,1,Multishot,0.2,V,10",
 		  "Hellfire,Rifle,5,1,FireDamage,0.15,~,6",
 		  "High Voltage,Rifle,3,2,LightningDamage,StatusChance,0.15,0.15,V,4",
-		  "Hollow Point,Pistol,5,2,CritMultiplier,DamageBonus,0.1,-0.025,~,4",
 		  "Hollowed Bullets,ArcGun,3,1,CritMultiplier,0.15,V,4",
 		  "Hornet Strike,Pistol,10,1,DamageBonus,0.2,V,4",
 		  "Hunter Munitions,Rifle,0,1,Munitions,1.0,V,9",
@@ -442,7 +437,6 @@ public class Constants {
 		  "Magazine Extension,ArcGun,5,1,MagCap,0.1,~,4",
 		  "Magazine Warp,Rifle,5,1,MagCap,0.05,~,4",
 		  "Magma Chamber,ArcGun,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
-		  "Magnum Force,Pistol,10,2,DamageBonus,AccuracyBonus,0.06,-0.03,V,4",
 		  "Maim,Pistol,5,1,SlashDamage,0.2,~,6",
 		  "Malignant Force,Rifle,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
 		  "Modified Munitions,ArcGun,5,1,StatusChance,0.1,D,4",
@@ -455,7 +449,6 @@ public class Constants {
           "Primed Bane of Corpus,Rifle,10,1,CorpusDamage,0.05,V,4",
           "Primed Bane of Grineer,Rifle,10,1,GrineerDamage,0.05,V,4",
           "Primed Bane of Infested,Rifle,10,1,InfestedDamage,0.05,V,4",
-		  "Primed Chamber,Rifle,3,1,FirstShotDamage,0.25,V,4",
 		  "Primed Cryo Rounds,Rifle,10,1,IceDamage,0.15,D,6",
 		  "Primed Fast Hands,Rifle,10,1,ReladSpeed,0.05,~,2",
 		  "Primed Heated Charge,Pistol,10,1,FireDamage,0.15,~,6",
@@ -479,13 +472,10 @@ public class Constants {
 		  "Speed Trigger,Rifle,5,1,FireRate,0.1,V,4",
 		  "Split Chamber,Rifle,5,1,Multishot,0.15,V,10",
 		  "Stormbringer,Rifle,5,1,LightningDamage,0.15,~,6",
-		  "Stunning Speed,Pistol,3,2,StatusChance,ReladSpeed,0.025,0.1,~,6",
 		  "Sweeping Serration,Shotgun,5,1,SlashDamage,0.2,~,6",
 		  "Tactical Pump,Shotgun,5,1,ReladSpeed,0.05,~,2",
-		  "Tainted Clip,Pistol,5,2,MagCap,ReladSpeed,0.1,-0.05,~,6",
 		  "Tainted Mag,Rifle,10,2,MagCap,ReladSpeed,0.06,-0.03,~,4",
 		  "Thermite Rounds,Rifle,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
-		  "Thunderbolt,Rifle,0,1,FlatDamageBonus,2.0,V,9",
 		  "Toxic Barrage,Shotgun,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
 		  "Venomous Clip,ArcGun,5,1,ToxinDamage,0.2,D,6",
 		  "Vicious Spread,Shotgun,5,2,DamageBonus,SpreadBonus,0.15,0.1,V,4",
