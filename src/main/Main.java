@@ -74,6 +74,7 @@ public class Main {
 
 	protected static JLabel TTKIterationsLabel = new JLabel("Iterations:");
 	protected static JTextField TTKIterationsField = new JTextField(4);
+	
 
 	/** JTextAreas **/
 	public static JTextArea output = new JTextArea();
@@ -129,6 +130,7 @@ public class Main {
 	public static JComboBox targetGroupBox = new JComboBox();
 	protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
 	protected static JComboBox corrosiveProjectionBox = new JComboBox();
+	protected static JCheckBox headShots = new JCheckBox("Headshots");
 
 	/** Data **/
 
@@ -229,7 +231,7 @@ public class Main {
 
 	public static double globalToxin; // Added this to calculate gas proc damage -o
 	public static int hunterMunitions;
-	public static boolean headShots = false;
+	public static boolean headShot = false;
 	public static Random rng = new Random();
 	public static double bleedDoTDPS;
 	public static double poisonDoTDPS;
@@ -295,6 +297,7 @@ public class Main {
 		UIBuilder.menuItemInit(colorOptionsItem);
 		UIBuilder.fileChooserInit(chooser);
 		UIBuilder.checkBoxInit(TTKBox);
+		UIBuilder.checkBoxInit(headShots);
 		UIBuilder.checkBoxInit(lightWeightTTKBox);
 		UIBuilder.labelInit(corrosiveProjectionLabel);
 		UIBuilder.labelInit(targetGroupLabel);
@@ -355,11 +358,13 @@ public class Main {
 		buttonPanel.add(TTKIterationsLabel);
 		buttonPanel.add(TTKIterationsField);
 		buttonPanel.add(lightWeightTTKBox);
+		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
 		buttonPanel.add(clearButton);
 		buttonPanel.add(clearOutputButton);
 
+		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
 		corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
 		corrosiveProjectionBox.setToolTipText("Number of Corrosive Projection auras active.");
 		targetGroupLabel.setToolTipText("Target group to run calculations against.");
@@ -1513,10 +1518,10 @@ public class Main {
 
 		// used to be here
 
-		if (selectedWeapon.isHeadShots()) {
-			headShots = true;
+		if (headShots.isSelected()) {
+			headShot = true;
 		} else {
-			headShots = false;
+			headShot = false;
 		}
 
 		if (weaponMode.equals(Constants.BURST)) {

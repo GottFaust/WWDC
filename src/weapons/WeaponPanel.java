@@ -52,7 +52,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected WeaponModPanel modEightPanel = new WeaponModPanel("8",this);
   protected JPanel savedWeaponPanel = new JPanel();
   protected JPanel refireCancelPanel = new JPanel();
-  protected JPanel headShotsPanel = new JPanel();
+  //protected JPanel headShotsPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> weaponBox = new JComboBox<String>();
@@ -64,7 +64,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /** JLabels **/
   protected JLabel weaponLabel = new JLabel("Weapon - ");
   protected JLabel refireCancelLabel = new JLabel("Refire Cancel - ");
-  protected JLabel headShotsLabel = new JLabel("Headshot TTK - ");
+  //protected JLabel headShotsLabel = new JLabel("Headshot TTK - ");
   protected JLabel totalModCostLabel = new JLabel("Total mod cost:");
   
   /** JTextFields **/
@@ -131,10 +131,10 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.labelInit(totalModCostLabel);
     UIBuilder.labelInit(weaponLabel);
     UIBuilder.labelInit(refireCancelLabel);
-    UIBuilder.labelInit(headShotsLabel);
+    //UIBuilder.labelInit(headShotsLabel);
     
     UIBuilder.checkBoxInit(refireCancel);
-    UIBuilder.checkBoxInit(headShots);
+    //UIBuilder.checkBoxInit(headShots);
    
     UIBuilder.textFieldInit(totalModCostField);
     
@@ -145,7 +145,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     
     UIBuilder.createSepparationBorder(savedWeaponPanel);
     UIBuilder.createSepparationBorder(refireCancelPanel);
-    UIBuilder.createSepparationBorder(headShotsPanel);
+    //UIBuilder.createSepparationBorder(headShotsPanel);
     
     UIBuilder.panelInit(attributesPanel);
     UIBuilder.panelInit(modsPanel);
@@ -158,7 +158,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.panelInit(modSevenPanel);
     UIBuilder.panelInit(modEightPanel);
     UIBuilder.panelInit(refireCancelPanel);
-    UIBuilder.panelInit(headShotsPanel);
+    //UIBuilder.panelInit(headShotsPanel);
     UIBuilder.panelInit(savedWeaponPanel);
     
     attributesPanel.setLayout(new BoxLayout(attributesPanel,BoxLayout.Y_AXIS));
@@ -174,7 +174,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     
     savedWeaponPanel.setLayout(new GridLayout(1,2,0,0));
     refireCancelPanel.setLayout(new GridLayout(1,2,0,0));
-    headShotsPanel.setLayout(new GridLayout(1,2,0,0));
+    //headShotsPanel.setLayout(new GridLayout(1,2,0,0));
     
     totalModCostField.setEditable(false);
     
@@ -184,13 +184,13 @@ public class WeaponPanel extends JPanel implements ActionListener {
     refireCancelPanel.add(refireCancelLabel);
     refireCancelPanel.add(refireCancel);
     
-    headShotsPanel.add(headShotsLabel);
-    headShotsPanel.add(headShots);
+    //headShotsPanel.add(headShotsLabel);
+    //headShotsPanel.add(headShots);
     
     attributesPanel.add(savedWeaponPanel);
     attributesPanel.add(wap);
     attributesPanel.add(refireCancelPanel);
-    attributesPanel.add(headShotsPanel);
+    //attributesPanel.add(headShotsPanel);
     
     JPanel modsTopPanel = new JPanel();
     UIBuilder.panelInit(modsTopPanel);
@@ -1007,7 +1007,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     return refireCancel.isSelected();
   }
   
-  public boolean isHeadShots() {
-	    return headShots.isSelected();
-	  }
+//  public boolean isHeadShots() {
+//	    return headShots.isSelected();
+//	  }
 }

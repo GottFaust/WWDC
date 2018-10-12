@@ -804,7 +804,7 @@ public class TTKTarget implements Comparable {
 									}
 								}
 								headShotMult = 1;
-								if (Main.headShots) { // Headshot damage feature -o
+								if (Main.headShot) { // Headshot damage feature -o
 									headShotMult = 2;
 									if (localCritMult > 1) {
 										headShotMult = 4;
@@ -873,7 +873,7 @@ public class TTKTarget implements Comparable {
 									if (localCritMult > 1) { // this could mess up if crits hit for less than 1x
 										if (rng.nextDouble() <= 0.3) {
 											double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35;
-											int slashDuration = (int) (Math.round(5 * Main.finalStatusDuration));
+											int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
 											slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 											targetCurrentHealth -= bleedDamage;
 										}
@@ -978,7 +978,7 @@ public class TTKTarget implements Comparable {
 				}
 			}
 
-			//Check on status stacks every 0.1 seconds. Any faster and simulation gets very slow -o
+			//Check on status stacks every 0.1 seconds. Any faster and simulation becomes very slow -o
 			if (timeToKill % 100 == 0) {
 
 				// Decrement stack timers and deal procs
@@ -1212,7 +1212,7 @@ public class TTKTarget implements Comparable {
 						double localCritMult = (1 - critty) + (Main.finalCritChance * Main.finalCritMult);
 
 						headShotMult = 1;
-						if (Main.headShots) { // Headshot damage feature -o
+						if (Main.headShot) { // Headshot damage feature -o
 							headShotMult = 2 + (2 * critty);
 						}
 
@@ -1274,7 +1274,7 @@ public class TTKTarget implements Comparable {
 
 						// Hunter Munitions proc!
 						if (Main.hunterMunitions > 0) {
-							double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35 * critty * 0.3;
+							double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35 * critty * 0.3 * Main.finalProjectileCount;
 							int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
 							slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 							targetCurrentHealth -= bleedDamage;

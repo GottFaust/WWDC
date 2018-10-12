@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -121,6 +122,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   
   protected static JCheckBox regularMods = new JCheckBox("Regular Mods");
   protected static JCheckBox maximizerMods = new JCheckBox("Maximizer Mods");
+  protected JButton resetButton = new JButton("Reset Mods");
   protected static String modFile = "mods.db";
   
   /**
@@ -272,6 +274,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     UIBuilder.buttonInit(addUpdateButton);
     UIBuilder.buttonInit(deleteButton);
     UIBuilder.buttonInit(saveButton);
+    UIBuilder.buttonInit(resetButton);
     
     UIBuilder.checkBoxInit(regularMods);
     UIBuilder.checkBoxInit(maximizerMods);
@@ -375,6 +378,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     
     filePanel.add(regularMods);
     filePanel.add(maximizerMods);
+    filePanel.add(resetButton);
     
     rightPanel.add(filePanel);
     rightPanel.add(namePanel);
@@ -399,11 +403,16 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     
     regularMods.addActionListener(this);
     maximizerMods.addActionListener(this);
+    resetButton.addActionListener(this);
     
     modList.getSelectionModel().addListSelectionListener(this);
     
     regularMods.setSelected(true);
     maximizerMods.setSelected(false);
+    
+	resetButton.setToolTipText("Resets the currently selected mod list to its default");
+	regularMods.setToolTipText("Use mods from the standard list");
+	maximizerMods.setToolTipText("Use mods from the reduced list");
     
     //Initialize the values
     clearValues();
@@ -465,9 +474,12 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
             maximizerMods.setSelected(false);
         	modFile = "mods.db";
         	Init(modFile);
-        }else if(e.getSource().equals(maximizerMods)){
+    }else if(e.getSource().equals(maximizerMods)){
             regularMods.setSelected(false);
         	modFile = "maximizerMods.db";
+        	Init(modFile);
+        }else if(e.getSource().equals(resetButton)){
+        	initializer.deleteMods();
         	Init(modFile);
         }
       }

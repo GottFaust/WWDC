@@ -67,7 +67,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "Semi-official v0.9.1";
+  public static final String APP_VERSION = "Semi-official v0.9.2";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -509,7 +509,7 @@ public class Constants {
 		  "Pistol,Semi-Auto,Physical,Arca Scisco,0,0,DEPRECIATED,0,0,36,24,4.67,36,288,2.2,18,1.6,26,1,1",
 		  "Rifle,Full-Auto,Physical,Argonak (Full-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,6,43,540,2.4,9,1.5,27,1,1",
 		  "Rifle,Semi-Auto,Physical,Argonak (Semi-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,4.33,43,473,2.4,27,2.3,19,1,1",
-		  "Shotgun,Full-Auto,Physical,Astilla,0,0,DEPRECIATED,190,25.9,15.4,28.7,4.33,16,112,2,17,1.9,33,1,1",
+		  "Shotgun,Full-Auto,Physical,Astilla,0,0,DEPRECIATED,190,70.3,41.8,77.9,4.33,16,112,2,17,1.9,33,1,1",
 		  "Pistol,Continuous,Fire,Atomos,0,0,DEPRECIATED,29,0,0,0,8,70,300,2,15,1.7,21,1,1",
 		  "Rifle,Full-Auto,Physical,Attica,0,0,DEPRECIATED,0,4,60,16,3.67,20,540,2.8,25,3,10,1,1",
 		  "Pistol,Full-Auto,Physical,Azima,0,0,DEPRECIATED,0,2,5,13,10,75,525,1.4,16,2,16,1,1",
@@ -637,6 +637,7 @@ public class Constants {
 		  "Pistol,Charge,Physical,Rakta Ballistica (Charge),1,4,DEPRECIATED,0,15,270,15,3.33,20,210,2,20,1.5,10,1,1",
 		  "Rifle,Charge,Physical,Rakta Cernos,0.25,0,DEPRECIATED,0,225,12.5,12.5,1,1,72,0.6,35,2,15,1,1",
 		  "Rifle,Semi-Auto,Physical,Rubico,0,0,DEPRECIATED,0,144,27,9,2.67,5,72,2.4,30,3,12,1,1",
+		  "Rifle,Semi-Auto,Physical,Rubico Prime,0,0,DEPRECIATED,0,149.6,28.1,9.3,3.67,5,72,2,38,3,16,1,1",
 		  "Pistol,Semi-Auto,Electric,Sancti Castanas,0.0,0,DEPRECIATED,300,0,0,0,3.33,2,18,1,24,2,34,1,1",
 		  "Shotgun,Burst,Physical,Sancti Tigris,0.0,2,DEPRECIATED,0.0,126,126,1008,2,2,120,1.5,15,1.5,28,6,1",
 		  "Rifle,Full-Auto,Corrosive,Scourge,0,0,DEPRECIATED,100,0,0,0,2.67,20,100,0.6,2,1.5,30,1,1",
@@ -706,5 +707,6 @@ public class Constants {
 		  "Rifle,Semi-Auto,Blast,Zarr (With Bomblets),0,0,DEPRECIATED,475,0,0,0,1.67,3,84,2.3,17,2.5,29,1,1",
 		  "Rifle,Full-Auto,Physical,Zenith (Full-Auto),0.0,0,DEPRECIATED,0.0,4.5,6,19.5,10.83,90,540,1.4,10,2,34,1,1",
 		  "Rifle,Semi-Auto,Physical,Zenith (Semi-Auto),0.0,0,DEPRECIATED,0.0,15,120,15,3,18,540,1.4,35,2.5,8,1,1",
-		  "Rifle,Full-Auto,Physical,Zhuge,0.0,0,DEPRECIATED,0.0,5,75,20,4.17,20,540,2.5,20,2,35,1,1"};
+		  "Rifle,Full-Auto,Physical,Zhuge,0.0,0,DEPRECIATED,0.0,5,75,20,4.17,20,540,2.5,20,2,35,1,1",
+		  "Pistol,Burst,Physical,Zylok,0.0,2,DEPRECIATED,0,44.8,16.8,78.4,1.8,8,210,1.2,8,2,26,1,1"};
 }

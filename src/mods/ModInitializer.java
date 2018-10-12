@@ -74,8 +74,6 @@ public class ModInitializer {
         mods.clear();
         modsDB.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(modsDB));
-        if(modsDB.getName() == "mods.db"){
-        }
         if(modsDB.getName() == "mods.db") {
         for(String modStr : Constants.baseModDB){
           writer.write(modStr+"\n");
@@ -114,6 +112,11 @@ public class ModInitializer {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+  public void deleteMods(){
+	     if(modsDB.exists()){
+	         modsDB.delete();
+	       } 
   }
 
 }
