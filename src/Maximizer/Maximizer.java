@@ -32,6 +32,8 @@ public class Maximizer {
 	protected int y;
 	protected int u;
 	protected int i;
+	
+	protected int count;
 
 	public static int targets = 0;
 
@@ -64,6 +66,8 @@ public class Maximizer {
 		y = modCount;
 		u = modCount;
 		i = modCount;
+		
+		count = 0;
 
 		if (Main.selectedWeapon.modOne.equals("--")) {
 			q = 1;
@@ -128,8 +132,9 @@ public class Maximizer {
 
 		
 		try {
-			if (!maximizerResults.exists())
+			if (!maximizerResults.exists()) {
 				maximizerResults.createNewFile();
+			}
 			BufferedWriter writer = new BufferedWriter(new FileWriter(maximizerResults));
 			for (int a = q; a < modCount; a++) {
 				if (touchModOne)
@@ -180,7 +185,12 @@ public class Maximizer {
 											}
 											targets = groupTargets.size();
 											writer.write(result + TTKresult + "\n");
-
+											
+											count++;
+											if(count > 100) {
+												System.gc(); //Why java won't do this on its own, I don't know
+												count = 0;
+											}
 										}
 									}
 								}
@@ -196,7 +206,7 @@ public class Maximizer {
 		}
 
 		// for each target: find its fastest kill time, DPS, etc
-
+		System.gc();
 		BufferedReader br = null;
 		String line = "";
 		String build1 = "";
