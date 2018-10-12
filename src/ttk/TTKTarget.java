@@ -873,7 +873,7 @@ public class TTKTarget implements Comparable {
 									if (localCritMult > 1) { // this could mess up if crits hit for less than 1x
 										if (rng.nextDouble() <= 0.3) {
 											double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35;
-											int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+											int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 											slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 											targetCurrentHealth -= bleedDamage;
 										}
@@ -886,7 +886,7 @@ public class TTKTarget implements Comparable {
 									// Do it
 									if (proc.equals(Constants.SLASH_WEAPON_DAMAGE)) {
 										double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35;
-										int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+										int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 										slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 										targetCurrentHealth -= bleedDamage;
 
@@ -899,7 +899,7 @@ public class TTKTarget implements Comparable {
 											}
 										}
 										double heatDamage = (DoTBase + Main.fire.finalBase - (Main.fire.base * Main.finalDamageMult)) * localCritMult * typeMult * localFireMult * headShotMult * firstShotMult * 0.5;
-										int heatDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+										int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 										if (fireStacks.size() > 0) {
 											fireStacks.get(0).duration = heatDuration; // Only updating the duration so that fire procs don't stack -o
 										} else {
@@ -924,7 +924,7 @@ public class TTKTarget implements Comparable {
 											localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 										}
 										double poisonDamage = (DoTBase + Main.toxin.finalBase - (Main.toxin.base * Main.finalDamageMult)) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * 0.5;
-										int toxinDuration = (int) (Math.round(8000 * Main.finalStatusDuration));
+										int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 										toxinStacks.add(new DoTPair(poisonDamage, toxinDuration));
 										targetCurrentHealth -= poisonDamage;
 
@@ -934,7 +934,7 @@ public class TTKTarget implements Comparable {
 											localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 										}
 										double poisonDamage = DoTBase * (0.25 * (1 + Main.globalToxin) * (1 + Main.globalToxin)) * localCritMult * typeMult * typeMult * typeMult * localGasMult * headShotMult * firstShotMult;
-										int gasDuration = (int) (Math.round(8000 * Main.finalStatusDuration));
+										int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 										gasStacks.add(new DoTPair(poisonDamage, gasDuration));
 										targetCurrentHealth -= ((DoTBase * (1 + Main.globalToxin)) * localCritMult * typeMult * typeMult * localGasMult * headShotMult * firstShotMult * 0.5);
 
@@ -1016,13 +1016,13 @@ public class TTKTarget implements Comparable {
 
 				for (int j = 0; j < viralStacks.size(); j++) {
 					int temp = viralStacks.get(j);
-					temp--;
+					temp -= 100;
 					viralStacks.set(j, temp);
 				}
 
 				for (int j = 0; j < magneticStacks.size(); j++) {
 					int temp = magneticStacks.get(j);
-					temp--;
+					temp -= 100;
 					magneticStacks.set(j, temp);
 				}
 
@@ -1275,7 +1275,7 @@ public class TTKTarget implements Comparable {
 						// Hunter Munitions proc!
 						if (Main.hunterMunitions > 0) {
 							double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35 * critty * 0.3 * Main.finalProjectileCount;
-							int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+							int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 							slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 							targetCurrentHealth -= bleedDamage;
 						}
@@ -1283,7 +1283,7 @@ public class TTKTarget implements Comparable {
 						// All the other procs!
 
 						double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * 0.35 * slashProcsPerShot;
-						int slashDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+						int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 						slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 						targetCurrentHealth -= bleedDamage;
 
@@ -1295,7 +1295,7 @@ public class TTKTarget implements Comparable {
 							}
 						}
 						double heatDamage = (DoTBase + Main.fire.finalBase - (Main.fire.base * Main.finalDamageMult)) * localCritMult * typeMult * localFireMult * headShotMult * firstShotMult * 0.5 * fireProcsPerShot;
-						int heatDuration = (int) (Math.round(6000 * Main.finalStatusDuration));
+						int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 						if (fireStacks.size() > 0) {
 							fireStacks.get(0).duration = heatDuration; // Only updating the duration so that fire procs don't stack -o
 						} else {
@@ -1318,7 +1318,7 @@ public class TTKTarget implements Comparable {
 							localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 						}
 						double poisonDamage = (DoTBase + Main.toxin.finalBase - (Main.toxin.base * Main.finalDamageMult)) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * 0.5 * toxinProcsPerShot;
-						int toxinDuration = (int) (Math.round(8000 * Main.finalStatusDuration));
+						int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 						toxinStacks.add(new DoTPair(poisonDamage, toxinDuration));
 						targetCurrentHealth -= poisonDamage;
 
@@ -1327,7 +1327,7 @@ public class TTKTarget implements Comparable {
 							localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 						}
 						double gasDamage = DoTBase * (0.25 * (1 + Main.globalToxin) * (1 + Main.globalToxin)) * localCritMult * typeMult * typeMult * typeMult * localGasMult * headShotMult * firstShotMult * gasProcsPerShot;
-						int gasDuration = (int) (Math.round(8000 * Main.finalStatusDuration));
+						int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 						gasStacks.add(new DoTPair(gasDamage, gasDuration));
 						targetCurrentHealth -= ((DoTBase * (1 + Main.globalToxin)) * localCritMult * typeMult * typeMult * localGasMult * headShotMult * firstShotMult * 0.5) * gasProcsPerShot;
 
