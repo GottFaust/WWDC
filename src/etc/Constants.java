@@ -39,7 +39,7 @@ public class Constants {
   public static final String MOD_TYPE_MUNITIONS = "Munitions";
   
   /** Damage Types **/
-  public static final String PHYSICAL_WEAPON_DAMAGE = "Physical";
+  public static final String PHYSICAL_WEAPON_DAMAGE = "Physical Only";
   public static final String IMPACT_WEAPON_DAMAGE = "Impact";
   public static final String PUNCTURE_WEAPON_DAMAGE = "Puncture";
   public static final String SLASH_WEAPON_DAMAGE = "Slash";
@@ -67,7 +67,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "Semi-official v0.9.2";
+  public static final String APP_VERSION = "v0.9.3";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -573,8 +573,7 @@ public class Constants {
 		  "Rifle,Burst,Physical,Hind,,5,14,,7.5,7.5,15,5,65,470,2,5,1.5,10,1,1",
 		  "Rifle,Burst,Physical,Hind (Burst),0.0,5,DEPRECIATED,0.0,7.5,7.5,15,6.25,65,540,2,7,1.5,15,1,1",
 		  "Rifle,Semi-Auto,Physical,Hind (Semi-Auto),0.0,0,DEPRECIATED,0.0,12,12,36,2.5,65,540,2,15,2,10,1,1",
-		  "Pistol,Full-Auto,Physical,Hystrix (Fire / Electric),0,0,DEPRECIATED,0,2.4,34.4,3.2,7,16,210,1.7,24,2.2,10,1,1",
-		  "Pistol,Full-Auto,Physical,Hystrix (Poison / Ice),0,0,DEPRECIATED,0,2.2,31,2.9,7,16,210,1.7,24,2.2,10,1,1",
+		  "Pistol,Full-Auto,Physical,Hystrix (Poison),0,0,DEPRECIATED,0,2.2,31,2.9,7,16,210,1.7,24,2.2,10,1,1",
 		  "Rifle,Continuous,Fire,Ignis,0.0,0,DEPRECIATED,33,0,0,0,8,150,750,2,11,2,27,1,1",
 		  "Rifle,Continuous,Fire,Ignis Wraith,0.0,0,DEPRECIATED,35,0,0,0,8,200,800,1.7,17,2.5,29,1,1",
 		  "Rifle,Charge,Fire,Javlok,0.3,0,DEPRECIATED,280,0,0,0,3.33,6,300,0.6,20,2,25,1,1",
@@ -587,7 +586,6 @@ public class Constants {
 		  "Pistol,Semi-Auto,Blast,Kulstar (With Bombs),0,0,DEPRECIATED,525,0,0,0,2,3,15,2,17,2.3,19,1,1",
 		  "Pistol,Full-Auto,Physical,Kunai,0.0,0,DEPRECIATED,0,4.6,34.5,6.9,3.33,10,210,0.8,8,1.6,8,1,1",
 		  "Rifle,Charge,Electric,Lanka,1,0,DEPRECIATED,525,0,0,0,1,10,72,2,25,2,25,1,1",
-		  "Rifle,Charge,Electric,Lanka (Charged),1.5,3,6.7,300,2.25,2.25,18,1,10,72,2,25,2,25,1,1",
 		  "Pistol,Semi-Auto,Physical,Lato,0,0,DEPRECIATED,0,7.5,7.5,15,6.67,15,210,1,10,1.8,6,1,1",
 		  "Pistol,Semi-Auto,Physical,Lato Prime,0.0,0,DEPRECIATED,0.0,4.8,9.6,33.6,6.67,20,210,1,30,2,20,1,1",
 		  "Pistol,Semi-Auto,Physical,Lato Vandal,0.0,0,DEPRECIATED,0.0,6.9,11.5,27.6,5,15,210,1,26,2.4,10,1,1",
@@ -608,7 +606,7 @@ public class Constants {
 		  "Rifle,Charge,Physical,Miter,0.75,0,DEPRECIATED,0,12.5,12.5,225,2.5,20,72,2,10,2,50,1,1",
 		  "Rifle,Charge,Physical,Mutalist Cernos,0.5,0,DEPRECIATED,0,202.5,11.25,11.25,1,1,72,0.6,15,2,49,1,1",
 		  "Rifle,Full-Auto,Physical,Mutalist Quanta,0.0,0,DEPRECIATED,0.0,2.5,15,7.5,10,60,540,3,2.5,1.5,15,1,1",
-		  "Rifle,Semi-Auto,Radiation,Mutalist Quanta Cubes,2.5,5,14,200,50,425,25,1,4,31,2,15,2,15,1,1",
+		  "Rifle,Semi-Auto,Radiation,Mutalist Quanta Cubes,2.5,5,14,200,0,0,0,1,4,31,2,15,2,15,1,1",
 		  "Pistol,Continuous,Radiation,Nukor,0,0,DEPRECIATED,22,0,0,0,10,50,210,2,3,4,29,1,0.5",
 		  "Rifle,Charge,Blast,Ogris,0.3,0,DEPRECIATED,600,0,0,0,1.5,5,20,2.5,5,2,35,1,1",
 		  "Rifle,Charge,Physical,Opticor,2,0,DEPRECIATED,0.0,100,850,50,1,5,200,2,20,2.5,20,1,1",
@@ -681,7 +679,7 @@ public class Constants {
 		  "Rifle,Semi-Auto,Physical,Tiberon Prime (Semi-Auto),0.0,0,DEPRECIATED,0.0,13.8,18.4,13.8,6,42,540,2,30,3.4,18,1,1",
 		  "Shotgun,Burst,Physical,Tigris,0.0,2,DEPRECIATED,0.0,105,105,840,2,2,120,1.8,10,2,28,5,1",
 		  "Shotgun,Burst,Physical,Tigris Prime,0.0,4,DEPRECIATED,0.0,156,156,1248,2,2,120,1.8,10,2,30,8,1",
-		  "Rifle,Semi-Auto,Blast,Tonkor,0,0,DEPRECIATED,325,0,75,0,2,2,40,2,25,2.5,10,1,1",
+		  "Rifle,Semi-Auto,Blast,Tonkor,0,0,DEPRECIATED,325,0,0,0,2,2,40,2,25,2.5,10,1,1",
 		  "Rifle,Semi-Auto,Toxin,Torid (Grenade),0,0,DEPRECIATED,400,0,0,0,1.5,5,60,1.7,15,2,23,1,1",
 		  "Pistol,Full-Auto,Physical,Twin Grakatas,0,0,DEPRECIATED,0,8,6.7,5.3,20,60,1200,3,25,2.7,11,2,1",
 		  "Pistol,Full-Auto,Physical,Twin Gremlins,0.0,0,DEPRECIATED,0.0,12.33,12.33,12.33,5,30,210,1.1,15,1.5,15,1,1",
@@ -708,5 +706,9 @@ public class Constants {
 		  "Rifle,Full-Auto,Physical,Zenith (Full-Auto),0.0,0,DEPRECIATED,0.0,4.5,6,19.5,10.83,90,540,1.4,10,2,34,1,1",
 		  "Rifle,Semi-Auto,Physical,Zenith (Semi-Auto),0.0,0,DEPRECIATED,0.0,15,120,15,3,18,540,1.4,35,2.5,8,1,1",
 		  "Rifle,Full-Auto,Physical,Zhuge,0.0,0,DEPRECIATED,0.0,5,75,20,4.17,20,540,2.5,20,2,35,1,1",
-		  "Pistol,Burst,Physical,Zylok,0.0,2,DEPRECIATED,0,44.8,16.8,78.4,1.8,8,210,1.2,8,2,26,1,1"};
+		  "Pistol,Burst,Physical,Zylok,0.0,2,DEPRECIATED,0,44.8,16.8,78.4,1.8,8,210,1.2,8,2,26,1,1",
+		  "Pistol,Continuous,Radiation,Cycron,0,0,DEPRECIATED,10,0,8,5,12,40,999,1,12,1.8,30,1,0.5",
+		  "Rifle,Semi-Auto,Physical Only,Nagantaka,0,0,DEPRECIATED,0,1.6,14.3,143.1,2.5,9,540,2,15,2.3,39,1,1",
+		  "Pistol,Continuous,Radiation,Ocucor,0,0,DEPRECIATED,22,0,0,0,12,40,210,1.6,16,1.8,24,1,0.5",
+		  "Rifle,Burst,Magnetic,Battacor,0.0,2,DEPRECIATED,42,0,24,0,3.57,60,540,2,32,2.4,18,1,1"};
 }

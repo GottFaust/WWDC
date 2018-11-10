@@ -148,7 +148,7 @@ public class Main {
 	public static String longestTTKName = "";
 	protected static int maxTTKTime = 300000;
 
-	protected static String weaponName = "";
+	public static String weaponName = "";
 	public static String weaponMode = "";
 	protected static String damageType = "";
 	protected static double chargeTime = 0.0;
@@ -582,11 +582,11 @@ public class Main {
 		burstCount = selectedWeapon.getBurstCount();
 		drain = selectedWeapon.getDrain();
 
-		if (damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
-			impact.base = selectedWeapon.getImpactDamage();
-			puncture.base = selectedWeapon.getPunctureDamage();
-			slash.base = selectedWeapon.getSlashDamage();
-		} else if (damageType.equals(Constants.FIRE_WEAPON_DAMAGE)) {
+
+		impact.base = selectedWeapon.getImpactDamage();
+		puncture.base = selectedWeapon.getPunctureDamage();
+		slash.base = selectedWeapon.getSlashDamage();
+		if (damageType.equals(Constants.FIRE_WEAPON_DAMAGE)) {
 			fire.base = selectedWeapon.getBaseDamage();
 		} else if (damageType.equals(Constants.ICE_WEAPON_DAMAGE)) {
 			ice.base = selectedWeapon.getBaseDamage();
@@ -613,7 +613,6 @@ public class Main {
 		// Factor for multiple projectiles per shot
 		if (projectileCount > 1.0) {
 			raw.base /= projectileCount;
-			// statusChance /= projectileCount; This is super wrong -o
 			impact.base /= projectileCount;
 			puncture.base /= projectileCount;
 			slash.base /= projectileCount;
@@ -629,8 +628,7 @@ public class Main {
 			viral.base /= projectileCount;
 		}
 
-		// Calculations based on weapon type ---Removed stuff for beams and burst
-		// because it was outdated -o
+		// Calculations based on weapon type
 		if (weaponMode.equals(Constants.CHARGE)) {
 			double fireRateAddition = 60.0 / chargeTime / 60.0;
 			fireRate += fireRateAddition;
@@ -1417,8 +1415,7 @@ public class Main {
 			finalStatusDuration += statusDuration * statusDurationMods.get(i);
 		}
 
-		if (damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) { // For some reason, gott multiplied IPS by the # of mods, rather than their
-																	// strength. Fixed -o
+//		if (damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
 
 			impact.finalBase = impact.base;
 			for (int i = 0; i < impactDamageMods.size(); i++) {
@@ -1437,7 +1434,7 @@ public class Main {
 				slash.finalBase += slash.base * slashDamageMods.get(i);
 			}
 			slash.finalBase *= finalDamageMult;
-		}
+//		}
 
 		fire.finalBase = fire.base;
 		for (int i = 0; i < fireDamageMods.size(); i++) {
@@ -1587,7 +1584,7 @@ public class Main {
 		if (fire.finalBase > 0.0) {
 			fireStacks = calculateAverageStacks("Fire", FireProcRate, 6.0);
 		}
-		if (toxin.finalBase > 0.0) {
+		if (toxin.finalBase > 0.0 || weaponName.equals("Hystrix (Poison)")) {
 			toxinStacks = calculateAverageStacks("Toxin", ToxinProcRate, 8.0);
 		}
 		if (gas.finalBase > 0.0) {
@@ -1962,7 +1959,6 @@ public class Main {
 		sinew.perSecond = sinew.perMinute / 60.0;
 
 		// Add in DoTs
-		// It's all so tiresome -o
 
 		double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
 		double totalElemental = Main.raw.finalBase - totalPhysical;
@@ -1978,12 +1974,12 @@ public class Main {
 		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + finalFirstShotDamageMult / finalMag);
 		double critBase = rawBase * finalCritMult;
 		double DoTBase = (((rawBase * finalNormalShots) + (critBase * finalCritShots)) / finalMag);
-		double toxinBase = (toxin.finalBase - (toxin.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
-		double heatBase = (fire.finalBase - (fire.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
+		//double toxinBase = (toxin.finalBase - (toxin.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
+		//double heatBase = (fire.finalBase - (fire.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
 		double electricBase = (electric.finalBase - (electric.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
 		double bleedDamage = DoTBase * 0.35 * hunterMult;
-		double poisonDamage = (DoTBase + toxinBase) * 0.5;
-		double heatDamage = (DoTBase + heatBase) * 0.5;
+		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
+		double heatDamage = (DoTBase * (1 + (fire.finalBase - (fire.base * finalDamageMult)))) * 0.5;
 		double cloudDamage = rawBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
 		bleedDoTDPS = slashStacks * bleedDamage * (7/6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9/8);
@@ -2092,6 +2088,11 @@ public class Main {
 							munitionsStack = 0.3;
 						stackTotal += (munitionsStack * averageProjectileCount);
 					}
+					
+					if (proc.equals("Toxin") && weaponName.equals("Hystrix (Poison)")) {
+						stackTotal += (averageProjectileCount);
+					}
+										
 					stackTotal += (stacksPerShot * averageProjectileCount);
 
 					for (int s = 0; stackTotal > s; s++) {

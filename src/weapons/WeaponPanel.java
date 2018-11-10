@@ -844,14 +844,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected void updateWeaponDamageOptions(String type){
     if(type.equals(Constants.PHYSICAL_WEAPON_DAMAGE)){
       wap.damagePanel.setVisible(false);
-      wap.impactPanel.setVisible(true);
-      wap.puncturePanel.setVisible(true);
-      wap.slashPanel.setVisible(true);
+//      wap.impactPanel.setVisible(true);
+//      wap.puncturePanel.setVisible(true);
+//      wap.slashPanel.setVisible(true);
     }else{
       wap.damagePanel.setVisible(true);
-      wap.impactPanel.setVisible(false);
-      wap.puncturePanel.setVisible(false);
-      wap.slashPanel.setVisible(false);
+//      wap.impactPanel.setVisible(false);
+//      wap.puncturePanel.setVisible(false);
+//      wap.slashPanel.setVisible(false);
     }
   }
   

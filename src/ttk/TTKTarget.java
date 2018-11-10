@@ -475,7 +475,6 @@ public class TTKTarget implements Comparable {
 				potentialProcs.add(Constants.CORROSIVE_WEAPON_DAMAGE);
 			}
 		}
-		// Collections.shuffle(potentialProcs); //randomize procs
 
 		Runnable advancedTTKRun = new Runnable() {
 			public void run() {
@@ -879,6 +878,19 @@ public class TTKTarget implements Comparable {
 										}
 									}
 								}
+								
+								//Hystrix poison proc?			
+							if (Main.weaponName.equals("Hystrix (Poison)")) {
+								double localToxinMult = toxinMult;
+								if (targetAdjustedMaxArmor > 0.0) {
+									localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+								}
+								double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * 0.5;
+								int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+								toxinStacks.add(new DoTPair(poisonDamage, toxinDuration));
+								targetCurrentHealth -= poisonDamage;
+							}
+							
 								// Do we get a regular status proc?
 								if (rng.nextDouble() <= Main.finalStatusChance) {
 									// Which Proc?
@@ -923,7 +935,7 @@ public class TTKTarget implements Comparable {
 										if (targetAdjustedMaxArmor > 0.0) {
 											localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 										}
-										double poisonDamage = (DoTBase + Main.toxin.finalBase - (Main.toxin.base * Main.finalDamageMult)) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * 0.5;
+										double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * 0.5;
 										int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 										toxinStacks.add(new DoTPair(poisonDamage, toxinDuration));
 										targetCurrentHealth -= poisonDamage;

@@ -48,10 +48,10 @@ public class WeaponAttributesPanel extends JPanel {
   /** JLabels **/
   protected JLabel nameLabel = new JLabel("Name - ");
   protected JLabel weaponModeLabel = new JLabel("Mode of Operation - ");
-  protected JLabel damageTypeLabel = new JLabel("Base Damage Type - ");
+  protected JLabel damageTypeLabel = new JLabel("Elemental Damage Type - ");
   protected JLabel chargeTimeLabel = new JLabel("Charge Time - ");
   protected JLabel burstCountLabel = new JLabel("Burst Count - ");
-  protected JLabel damageLabel = new JLabel("Base Damage - ");
+  protected JLabel damageLabel = new JLabel("Elemental Damage - ");
   protected JLabel impactLabel = new JLabel("Impact Damage - ");
   protected JLabel punctureLabel = new JLabel("Puncture Damage - ");
   protected JLabel slashLabel = new JLabel("Slash Damage - ");
