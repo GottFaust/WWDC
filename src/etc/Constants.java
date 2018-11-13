@@ -39,7 +39,7 @@ public class Constants {
   public static final String MOD_TYPE_MUNITIONS = "Munitions";
   
   /** Damage Types **/
-  public static final String PHYSICAL_WEAPON_DAMAGE = "Physical Only";
+  public static final String PHYSICAL_WEAPON_DAMAGE = "Physical";
   public static final String IMPACT_WEAPON_DAMAGE = "Impact";
   public static final String PUNCTURE_WEAPON_DAMAGE = "Puncture";
   public static final String SLASH_WEAPON_DAMAGE = "Slash";
@@ -229,6 +229,7 @@ public class Constants {
                                             "Burdened Magazine,Shotgun,5,2,MagCap,ReladSpeed,0.1,-0.03,~,6",
                                             "Charged Chamber,Rifle,3,1,FirstShotDamage,0.1,V,6",
                                             "Charged Shell,Shotgun,5,1,LightningDamage,0.15,~,6",
+                                            "Primed Charged Shell,Shotgun,10,1,LightningDamage,0.15,~,6",
                                             "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
                                             "Cleanse Corpus,Shotgun,5,1,CorpusDamage,0.05,V,4",
                                             "Cleanse Grineer,Shotgun,5,1,GrineerDamage,0.05,V,4",
@@ -396,7 +397,7 @@ public class Constants {
 		  "Bore,Pistol,5,1,PunctureDamage,0.2,~,6",
 		  "Breach Loader,Shotgun,5,1,PunctureDamage,0.2,~,6",
 		  "Burdened Magazine,Shotgun,5,2,MagCap,ReladSpeed,0.1,-0.03,~,6",
-		  "Charged Shell,Shotgun,5,1,LightningDamage,0.15,~,6",
+          "Primed Charged Shell,Shotgun,10,1,LightningDamage,0.15,~,6",
 		  "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
 		  "Chilling Reload,Shotgun,3,2,IceDamage,ReladSpeed,0.15,0.1,V,2",
 		  "Cleanse Corpus,Shotgun,5,1,CorpusDamage,0.05,V,4",
@@ -621,6 +622,7 @@ public class Constants {
 		  "Pistol,Full-Auto,Toxin,Pox (Poison Cloud),0.0,0,DEPRECIATED,100,0,0,0,2.08,4,20,1,1,2,35,1,1",
 		  "Pistol,Charge,Blast,Prisma Angstrum (Charged),0.6,0,DEPRECIATED,750,0.0,0.0,0.0,2,1,6,1.8,18,2.2,59.5,3,1",
 		  "Pistol,Semi-Auto,Blast,Prisma Angstrum (Single Rocket),0.0,0,DEPRECIATED,250,0.0,0.0,0.0,2,3,18,2,18,2.2,26,1,1",
+		  "Pistol,Full-Auto,Physical,Prisma Twin Gremlins,0.0,0,DEPRECIATED,0.0,3,12.7,11.3,8.83,70,600,0.9,23,1.9,23,1,1",
 		  "Rifle,Full-Auto (Ramp-up),Physical,Prisma Gorgon,0.0,0,DEPRECIATED,0.0,17.3,3.5,2.3,14.17,120,840,3,30,2.3,15,1,1",
 		  "Rifle,Full-Auto,Physical,Prisma Grakata,0.0,0,DEPRECIATED,0.0,6,5,4,21.67,120,1000,2,25,2.5,21,1,1",
 		  "Rifle,Full-Auto,Physical,Prisma Tetra,0.0,0,DEPRECIATED,0,7.6,30.4,0,7.08,60,540,2,10,2,24,1,1",

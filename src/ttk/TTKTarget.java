@@ -910,7 +910,7 @@ public class TTKTarget implements Comparable {
 												localFireMult = shieldFireMult;
 											}
 										}
-										double heatDamage = (DoTBase + Main.fire.finalBase - (Main.fire.base * Main.finalDamageMult)) * localCritMult * typeMult * localFireMult * headShotMult * firstShotMult * 0.5;
+										double heatDamage = (DoTBase * (1+ Main.globalFire)) * localCritMult * typeMult * localFireMult * headShotMult * firstShotMult * 0.5;
 										int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 										if (fireStacks.size() > 0) {
 											fireStacks.get(0).duration = heatDuration; // Only updating the duration so that fire procs don't stack -o

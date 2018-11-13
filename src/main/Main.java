@@ -230,6 +230,7 @@ public class Main {
 	public static SurfaceDamage sinew = new SurfaceDamage();
 
 	public static double globalToxin; // Added this to calculate gas proc damage -o
+	public static double globalFire;
 	public static int hunterMunitions;
 	public static boolean headShot = false;
 	public static Random rng = new Random();
@@ -682,10 +683,11 @@ public class Main {
 		double primeModRanks = 0;
 		String primeModType = "";
 
+		globalFire = 0;
 		globalToxin = 0;
 		hunterMunitions = 0;
 
-		for (int i = 0; i < activeMods.size(); i++) { // Calculating total toxin mod power for gas procs -o
+		for (int i = 0; i < activeMods.size(); i++) { // Calculating total toxin mod power for gas and toxin procs -o
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
@@ -693,6 +695,14 @@ public class Main {
 			}
 		}
 
+		for (int i = 0; i < activeMods.size(); i++) { // Calculating total toxin mod power for fire procs -o
+			Mod tempMod = activeMods.get(i);
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalFire += modPower;
+			}
+		}
+		
 		for (int i = 0; i < activeMods.size(); i++) { // Finding Hunter Munitions and setting the global variable
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
@@ -1979,7 +1989,7 @@ public class Main {
 		double electricBase = (electric.finalBase - (electric.base * finalDamageMult)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
 		double bleedDamage = DoTBase * 0.35 * hunterMult;
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
-		double heatDamage = (DoTBase * (1 + (fire.finalBase - (fire.base * finalDamageMult)))) * 0.5;
+		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = rawBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + finalFirstShotDamageMult / finalMag) * (finalCritShots * finalCritMult + finalNormalShots) / finalMag;
 		bleedDoTDPS = slashStacks * bleedDamage * (7/6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9/8);
