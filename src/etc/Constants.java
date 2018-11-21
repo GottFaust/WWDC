@@ -25,6 +25,7 @@ public class Constants {
   public static final String MOD_TYPE_STATUS_CHANCE = "StatusChance";
   public static final String MOD_TYPE_STATUS_DURATION = "StatusDuration";
   public static final String MOD_TYPE_FIRST_SHOT_DAMAGE = "FirstShotDamage";
+  public static final String MOD_TYPE_LAST_SHOT_DAMAGE = "LastShotDamage";
   public static final String MOD_TYPE_ZOOM = "Zoom";
   public static final String MOD_TYPE_OBJECT_PIERCE = "ObjectPierce";
   public static final String MOD_TYPE_AMMO_MUTATOR = "AmmoMutator";
@@ -67,7 +68,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.9.4";
+  public static final String APP_VERSION = "v0.9.5";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -228,6 +229,7 @@ public class Constants {
                                             "Breach Loader,Shotgun,5,1,PunctureDamage,0.2,~,6",
                                             "Burdened Magazine,Shotgun,5,2,MagCap,ReladSpeed,0.1,-0.03,~,6",
                                             "Charged Chamber,Rifle,3,1,FirstShotDamage,0.1,V,6",
+                                            "Synth Charge,Pistol,3,1,LastShotDamage,0.5,V,6",
                                             "Charged Shell,Shotgun,5,1,LightningDamage,0.15,~,6",
                                             "Primed Charged Shell,Shotgun,10,1,LightningDamage,0.15,~,6",
                                             "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
@@ -252,6 +254,9 @@ public class Constants {
                                             "Expel Corpus,Pistol,5,1,CorpusDamage,0.05,V,4",
                                             "Expel Grineer,Pistol,5,1,GrineerDamage,0.05,V,4",
                                             "Expel Infested,Pistol,5,1,InfestedDamage,0.05,V,4",
+                                            "Primed Expel Corpus,Pistol,10,1,CorpusDamage,0.05,V,4",
+                                            "Primed Expel Grineer,Pistol,10,1,GrineerDamage,0.05,V,4",
+                                            "Primed Expel Infested,Pistol,10,1,InfestedDamage,0.05,V,4",
                                             "Fanged Fusillade,Rifle,5,1,SlashDamage,0.2,~,6",
                                             "Fast Hands,Rifle,5,1,ReladSpeed,0.05,~,2",
                                             "Firestorm,Rifle,3,1,MiscDamage,0.0,V,6",
@@ -710,7 +715,7 @@ public class Constants {
 		  "Rifle,Full-Auto,Physical,Zhuge,0.0,0,DEPRECIATED,0.0,5,75,20,4.17,20,540,2.5,20,2,35,1,1",
 		  "Pistol,Burst,Physical,Zylok,0.0,2,DEPRECIATED,0,44.8,16.8,78.4,1.8,8,210,1.2,8,2,26,1,1",
 		  "Pistol,Continuous,Radiation,Cycron,0,0,DEPRECIATED,10,0,8,5,12,40,999,1,12,1.8,30,1,0.5",
-		  "Rifle,Semi-Auto,Physical Only,Nagantaka,0,0,DEPRECIATED,0,1.6,14.3,143.1,2.5,9,540,2,15,2.3,39,1,1",
+		  "Rifle,Semi-Auto,Physical,Nagantaka,0,0,DEPRECIATED,0,1.6,14.3,143.1,2.5,9,540,2,15,2.3,39,1,1",
 		  "Pistol,Continuous,Radiation,Ocucor,0,0,DEPRECIATED,22,0,0,0,12,40,210,1.6,16,1.8,24,1,0.5",
 		  "Rifle,Burst,Magnetic,Battacor,0.0,2,DEPRECIATED,42,0,24,0,3.57,60,540,2,32,2.4,18,1,1"};
 }

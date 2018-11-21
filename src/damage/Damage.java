@@ -15,6 +15,7 @@ public class Damage {
   public double perShot;
   public double critPerShot;
   public double firstShot;
+  public double lastShot;
   public double perIteration;
   public double perMinute;
   public double perSecond;
@@ -43,6 +44,7 @@ public class Damage {
     this.perShot = 0.0;
     this.critPerShot = 0.0;
     this.firstShot = 0.0;
+    this.lastShot = 0.0;
     this.perIteration = 0.0;
     this.perMinute = 0.0;
     this.perSecond = 0.0;
