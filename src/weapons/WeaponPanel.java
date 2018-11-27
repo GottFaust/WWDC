@@ -256,6 +256,11 @@ public class WeaponPanel extends JPanel implements ActionListener {
     additiveEffects.setVisible(false);
     
     additiveEffects.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
+    addCCField.setToolTipText("Additive crit chance as a percent.");
+    addCDField.setToolTipText("Additive crit damage as a number (IE: 1.5 for knell)");
+    addSCField.setToolTipText("Additive status chance as a percent");
+    addDamField.setToolTipText("Additive damage as a percent");
+    addFRField.setToolTipText("Additive fire rate as a percent (Toxocyst's is multiplicative)");
     hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
   
     JPanel modsTopPanel = new JPanel();

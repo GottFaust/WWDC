@@ -1379,13 +1379,13 @@ public class Main {
 		for (int i = 0; i < damageMultMods.size(); i++) {
 			finalDamageMult += damageMult * damageMultMods.get(i);
 		}
-		finalDamageMult += selectedWeapon.getAddDam();
+		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 		
 		finalFireRate = fireRate;
 		for (int i = 0; i < fireRateMods.size(); i++) {
 			finalFireRate += fireRate * fireRateMods.get(i);
 		}
-		finalFireRate += selectedWeapon.getAddFR();
+		finalFireRate += fireRate * selectedWeapon.getAddFR();
 
 		// This is completely retarded, but also the current case
 		if (weaponMode.equals(Constants.SEMI_AUTO)) {

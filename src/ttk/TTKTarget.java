@@ -689,7 +689,7 @@ public class TTKTarget implements Comparable {
 		double targetCurrentHealth = maxHealth;
 		double targetAdjustedMaxArmor = maxArmor;
 		int reloadTimeCounter = 0;
-		int shotCounter = 2147483000;
+		int shotCounter = 2147482999;
 		int iterations = 0;
 		int timeToKill = 0;
 		boolean reloading = false;
