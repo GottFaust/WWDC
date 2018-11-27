@@ -68,7 +68,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.9.5";
+  public static final String APP_VERSION = "v0.9.6";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -585,7 +585,7 @@ public class Constants {
 		  "Rifle,Charge,Fire,Javlok,0.3,0,DEPRECIATED,280,0,0,0,3.33,6,300,0.6,20,2,25,1,1",
 		  "Rifle,Full-Auto,Physical,Karak,0.0,0,DEPRECIATED,0.0,13,8.7,7.3,11.67,30,540,2,9,1.5,15,1,1",
 		  "Rifle,Full-Auto,Physical,Karak Wraith,0.0,0,DEPRECIATED,0.0,14.1,9.3,7.8,11.67,60,540,2,13,2,25,1,1",
-		  "Pistol,Semi-Auto,Physical,Knell,0.0,0,DEPRECIATED,150,63,69,18,4,9999,9999,1,20,2.214,65,1,1",
+		  "Pistol,Semi-Auto,Physical,Knell,0.0,0,DEPRECIATED,150,63,69,18,4,9999,9999,1,20,1.5,5,1,1",
 		  "Shotgun,Full-Auto (Bullet-Ramp),Physical,Kohm,0.0,0,DEPRECIATED,0.0,72,72,216,3.67,245,960,2,11,2.3,25,12,1",
 		  "Pistol,Full-Auto (Bullet-Ramp),Physical,Kohmak,0.0,0,DEPRECIATED,0.0,30,30,90,5,40,210,2,11,2,23,5,1",
 		  "Pistol,Burst,Physical,Kraken,0,2,DEPRECIATED,0,36.8,6.1,6.1,4.42,14,210,2.45,5,2,13,1,1",

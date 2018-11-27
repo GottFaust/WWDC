@@ -38,10 +38,9 @@ public class Maximizer {
 	public static int targets = 0;
 
 	public static File maximizerResults;
+	
 
 	public void Maximizer() {
-
-		Main.calculateDPS(); // Because Main needs to initialize stuff first I guess?
 
 		maximizerResults = new File("MaximizerResults.csv");
 
@@ -129,7 +128,6 @@ public class Maximizer {
 		i = Math.max(1, i);
 
 		modCount -= (emptyMods - 1);
-
 		
 		try {
 			if (!maximizerResults.exists()) {
@@ -165,9 +163,10 @@ public class Maximizer {
 											Main.selectedWeapon.setModSeven(j);
 
 										for (int k = i; k < modCount; k++) {
-											if (touchModEight)
+											if (touchModEight) {
 												Main.selectedWeapon.setModEight(k);
-											Main.selectedWeapon.maxMods();
+											}
+											//Main.selectedWeapon.maxMods();
 											Main.calculateDPS();
 
 											// Store results in a csv file
@@ -184,11 +183,11 @@ public class Maximizer {
 												TTKresult += "," + target.simpleTTK();
 											}
 											targets = groupTargets.size();
-											writer.write(result + TTKresult + "\n");
+											writer.write(result + TTKresult + "\n");											
 											
 											count++;
-											if(count > 100) {
-												System.gc(); //Why java won't do this on its own, I don't know
+											if(count == 200) {
+												System.gc(); //Why java won't do this on its own, I don't know	
 												count = 0;
 											}
 										}
@@ -204,7 +203,8 @@ public class Maximizer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+	
+		
 		// for each target: find its fastest kill time, DPS, etc
 		System.gc();
 		BufferedReader br = null;

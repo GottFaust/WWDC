@@ -276,7 +276,11 @@ public class WeaponModPanel extends JPanel implements ActionListener {
         }
         modPolarityField.setText(selectedMod.polarity);
       }
-      modLevel.setSelectedItem("0");
+      try{
+    	  modLevel.setSelectedIndex(selectedMod.ranks);
+      }catch (Exception r){
+          modLevel.setSelectedItem("0");
+      }
     }else if(e.getSource().equals(modLevel)){
       owner.calculateModCosts();
     }else if(e.getSource().equals(slotPolarityBox)){

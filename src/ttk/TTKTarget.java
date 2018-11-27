@@ -485,8 +485,7 @@ public class TTKTarget implements Comparable {
 					for (int i = 0; i < Main.complexTTKIterations; i++) {
 						TTKVec.add(calculateRandomizedTimeToKill());
 					}
-				}
-				if (Main.complexTTKIterations == 1) {
+				}else if (Main.complexTTKIterations == 1) {
 					TTKVec.add(calculateHardTimeToKill());
 				}
 
@@ -508,7 +507,29 @@ public class TTKTarget implements Comparable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
+		
+	/*	
+		clearValues();
 
+		if (Main.complexTTKIterations > 1) {
+			for (int i = 0; i < Main.complexTTKIterations; i++) {
+				TTKVec.add(calculateRandomizedTimeToKill());
+			}
+		}else if (Main.complexTTKIterations == 1) {
+			TTKVec.add(calculateHardTimeToKill());
+		}
+
+		for (Double d : TTKVec) {
+			TTK += d;
+		}
+		TTK /= TTKVec.size();
+		Collections.sort(TTKVec);
+		minTTK = TTKVec.get(0);
+		maxTTK = TTKVec.get(TTKVec.size() - 1);
+		Main.complexTTKCompletions += 1;
+*/
+		
 	}
 
 	/**
@@ -887,7 +908,7 @@ public class TTKTarget implements Comparable {
 								}
 								
 								//Hystrix poison proc?			
-							if (Main.weaponName.equals("Hystrix (Poison)")) {
+							if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
 								double localToxinMult = toxinMult;
 								if (targetAdjustedMaxArmor > 0.0) {
 									localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
@@ -1303,7 +1324,18 @@ public class TTKTarget implements Comparable {
 							slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 							targetCurrentHealth -= bleedDamage;
 						}
-
+						// Hystrix / Acrid Proc!
+						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
+							double localToxinMult = toxinMult;
+							if (targetAdjustedMaxArmor > 0.0) {
+								localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+							}
+							double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localCritMult * typeMult * localToxinMult * headShotMult * firstShotMult * lastShotMult * 0.5 * Main.finalProjectileCount;
+							int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+							toxinStacks.add(new DoTPair(poisonDamage, toxinDuration));
+							targetCurrentHealth -= poisonDamage;
+						}
+						
 						// All the other procs!
 
 						double bleedDamage = (DoTBase * localCritMult * typeMult) * headShotMult * firstShotMult * lastShotMult * 0.35 * slashProcsPerShot;

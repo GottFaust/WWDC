@@ -30,6 +30,8 @@ import mods.Mod;
 import mods.ModInitializer;
 import mods.WeaponModPanel;
 
+import main.Main;
+
 public class WeaponPanel extends JPanel implements ActionListener {
   
   /**
@@ -52,26 +54,41 @@ public class WeaponPanel extends JPanel implements ActionListener {
   protected WeaponModPanel modEightPanel = new WeaponModPanel("8",this);
   protected JPanel savedWeaponPanel = new JPanel();
   protected JPanel refireCancelPanel = new JPanel();
-  //protected JPanel headShotsPanel = new JPanel();
+  protected JPanel additiveEffects = new JPanel();
+  protected JPanel addCC = new JPanel();
+  protected JPanel addCD = new JPanel();
+  protected JPanel addSC = new JPanel();
+  protected JPanel addDam = new JPanel();
+  protected JPanel addFR = new JPanel();
+  protected JPanel nums = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> weaponBox = new JComboBox<String>();
   
   /** JCheckBoxes **/
   protected JCheckBox refireCancel = new JCheckBox();
-  protected JCheckBox headShots = new JCheckBox();
+  protected JCheckBox potato = new JCheckBox("Catalyst Installed");
   
   /** JLabels **/
   protected JLabel weaponLabel = new JLabel("Weapon - ");
   protected JLabel refireCancelLabel = new JLabel("Refire Cancel - ");
-  //protected JLabel headShotsLabel = new JLabel("Headshot TTK - ");
-  protected JLabel totalModCostLabel = new JLabel("Total mod cost:");
+  protected JLabel totalModCostLabel = new JLabel("Mod Capacity");
+  protected JLabel addCClabel = new JLabel("Additive Crit Chance - ");
+  protected JLabel addCDlabel = new JLabel("Additive Crit Damage - ");
+  protected JLabel addSClabel = new JLabel("Additive Status Chance - ");
+  protected JLabel addDamlabel = new JLabel("Additive Damage - ");
+  protected JLabel addFRlabel = new JLabel("Additive Fire Rate - ");
   
   /** JTextFields **/
   protected JTextField totalModCostField = new JTextField(10);
+  protected JTextField addCCField = new JTextField(10);
+  protected JTextField addCDField = new JTextField(10);
+  protected JTextField addSCField = new JTextField(10);
+  protected JTextField addDamField = new JTextField(10);
+  protected JTextField addFRField = new JTextField(10);
   
   /** JButtons **/
-  protected JButton maxModsButton = new JButton("Max Mods");
+  protected JButton hideAdd = new JButton("Hide/Show Additive Effects");
   
   /** Data **/
   protected Vector<String> selectedMods = new Vector<String>();
@@ -131,21 +148,30 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.labelInit(totalModCostLabel);
     UIBuilder.labelInit(weaponLabel);
     UIBuilder.labelInit(refireCancelLabel);
-    //UIBuilder.labelInit(headShotsLabel);
+    UIBuilder.labelInit(addCClabel);
+    UIBuilder.labelInit(addCDlabel);
+    UIBuilder.labelInit(addSClabel);
+    UIBuilder.labelInit(addDamlabel);
+    UIBuilder.labelInit(addFRlabel);
     
     UIBuilder.checkBoxInit(refireCancel);
-    //UIBuilder.checkBoxInit(headShots);
+    UIBuilder.checkBoxInit(potato);
    
     UIBuilder.textFieldInit(totalModCostField);
     
-    UIBuilder.buttonInit(maxModsButton);
+    UIBuilder.numberFieldInit(addCCField);
+    UIBuilder.numberFieldInit(addCDField);
+    UIBuilder.numberFieldInit(addSCField);
+    UIBuilder.numberFieldInit(addDamField);
+    UIBuilder.numberFieldInit(addFRField);
+    
+    UIBuilder.buttonInit(hideAdd);
     
     UIBuilder.createTitledLineBorder(attributesPanel, "ATTRIBUTES");
     UIBuilder.createTitledLineBorder(modsPanel, "MODS");
     
     UIBuilder.createSepparationBorder(savedWeaponPanel);
     UIBuilder.createSepparationBorder(refireCancelPanel);
-    //UIBuilder.createSepparationBorder(headShotsPanel);
     
     UIBuilder.panelInit(attributesPanel);
     UIBuilder.panelInit(modsPanel);
@@ -158,8 +184,22 @@ public class WeaponPanel extends JPanel implements ActionListener {
     UIBuilder.panelInit(modSevenPanel);
     UIBuilder.panelInit(modEightPanel);
     UIBuilder.panelInit(refireCancelPanel);
-    //UIBuilder.panelInit(headShotsPanel);
     UIBuilder.panelInit(savedWeaponPanel);
+    UIBuilder.panelInit(addCC);
+    UIBuilder.panelInit(addCD);
+    UIBuilder.panelInit(addSC);
+    UIBuilder.panelInit(addDam);
+    UIBuilder.panelInit(addFR);
+    UIBuilder.panelInit(additiveEffects);
+    UIBuilder.panelInit(nums);
+    
+    UIBuilder.createSepparationBorder(addCC);
+    UIBuilder.createSepparationBorder(addCD);
+    UIBuilder.createSepparationBorder(addSC);
+    UIBuilder.createSepparationBorder(addDam);
+    UIBuilder.createSepparationBorder(addFR);
+    
+    UIBuilder.createTitledLineBorder(additiveEffects, "ADDITIVE EFFECTS");
     
     attributesPanel.setLayout(new BoxLayout(attributesPanel,BoxLayout.Y_AXIS));
     modsPanel.setLayout(new BoxLayout(modsPanel,BoxLayout.Y_AXIS));
@@ -171,10 +211,16 @@ public class WeaponPanel extends JPanel implements ActionListener {
     modSixPanel.setLayout(new BoxLayout(modSixPanel,BoxLayout.Y_AXIS));
     modSevenPanel.setLayout(new BoxLayout(modSevenPanel,BoxLayout.Y_AXIS));
     modEightPanel.setLayout(new BoxLayout(modEightPanel,BoxLayout.Y_AXIS));
+    additiveEffects.setLayout(new BoxLayout(additiveEffects,BoxLayout.Y_AXIS));
+    nums.setLayout(new BoxLayout(nums,BoxLayout.Y_AXIS));
     
     savedWeaponPanel.setLayout(new GridLayout(1,2,0,0));
     refireCancelPanel.setLayout(new GridLayout(1,2,0,0));
-    //headShotsPanel.setLayout(new GridLayout(1,2,0,0));
+    addCC.setLayout(new GridLayout(1,2,0,0));
+    addCD.setLayout(new GridLayout(1,2,0,0));
+    addSC.setLayout(new GridLayout(1,2,0,0));
+    addDam.setLayout(new GridLayout(1,2,0,0)); 
+    addFR.setLayout(new GridLayout(1,2,0,0)); 
     
     totalModCostField.setEditable(false);
     
@@ -182,16 +228,36 @@ public class WeaponPanel extends JPanel implements ActionListener {
     savedWeaponPanel.add(weaponBox);
     
     refireCancelPanel.add(refireCancelLabel);
-    refireCancelPanel.add(refireCancel);
-    
-    //headShotsPanel.add(headShotsLabel);
-    //headShotsPanel.add(headShots);
+    refireCancelPanel.add(refireCancel);   
     
     attributesPanel.add(savedWeaponPanel);
     attributesPanel.add(wap);
     attributesPanel.add(refireCancelPanel);
-    //attributesPanel.add(headShotsPanel);
     
+    addCC.add(addCClabel);
+    addCC.add(addCCField);
+    addCD.add(addCDlabel);
+    addCD.add(addCDField);
+    addSC.add(addSClabel);
+    addSC.add(addSCField);
+    addDam.add(addDamlabel);
+    addDam.add(addDamField);  
+    addFR.add(addFRlabel);
+    addFR.add(addFRField);  
+    additiveEffects.add(addCC);
+    additiveEffects.add(addCD);
+    additiveEffects.add(addSC);
+    additiveEffects.add(addDam);
+    additiveEffects.add(addFR);
+    nums.add(attributesPanel);
+    nums.add(hideAdd);
+    nums.add(additiveEffects);
+    
+    additiveEffects.setVisible(false);
+    
+    additiveEffects.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
+    hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
+  
     JPanel modsTopPanel = new JPanel();
     UIBuilder.panelInit(modsTopPanel);
     modsTopPanel.setLayout(new BoxLayout(modsTopPanel,BoxLayout.X_AXIS));
@@ -216,7 +282,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
     totalModCostPanel.add(totalModCostLabel);
     totalModCostPanel.add(totalModCostField);
     totalModCostPanel.add(Box.createRigidArea(new Dimension(5,0)));
-    totalModCostPanel.add(maxModsButton);
+    totalModCostPanel.add(potato);
+
     
     modsPanel.add(modsTopPanel);
     modsPanel.add(modsBottomPanel);
@@ -224,18 +291,20 @@ public class WeaponPanel extends JPanel implements ActionListener {
     
     UIBuilder.panelInit(this);
     this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
-    this.add(attributesPanel);
+    this.add(nums);
     this.add(modsPanel);
     
     wap.weaponModeBox.addActionListener(this);
     wap.damageTypeBox.addActionListener(this);
     weaponBox.addActionListener(this);
-    maxModsButton.addActionListener(this);
+    potato.addActionListener(this);
+    hideAdd.addActionListener(this);
     
     updateDropDownContents();
     
     weaponBox.setSelectedItem(Constants.CUSTOM_WEAPON);
-    totalModCostField.setText("0");
+    totalModCostField.setText("60");
+    potato.setSelected(true);
   }
   
   /**
@@ -416,6 +485,90 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	      drain = 0;
 	    }
 	    return(drain);
+	  }
+  
+  /**
+   * Gets the additive crit chance
+   * @return drain
+   */
+  public double getAddCC(){
+	    String CCstr = addCCField.getText();
+	    if(CCstr == null || CCstr.equals("")){
+	      CCstr = "0";
+	    }
+	    double CC = Double.parseDouble(CCstr);
+	    CC /= 100.0;
+	    if(CC < 0){
+	      CC = 0;
+	    }
+	    return(CC);
+	  }
+  
+  /**
+   * Gets the additive crit damage
+   * @return drain
+   */
+  public double getAddCD(){
+	    String CDstr = addCDField.getText();
+	    if(CDstr == null || CDstr.equals("")){
+	      CDstr = "0";
+	    }
+	    double CD = Double.parseDouble(CDstr);
+	    if(CD < 0){
+	      CD = 0;
+	    }
+	    return(CD);
+	  }
+  
+  /**
+   * Gets the additive status chance
+   * @return drain
+   */
+  public double getAddSC(){
+	    String SCstr = addSCField.getText();
+	    if(SCstr == null || SCstr.equals("")){
+	      SCstr = "0";
+	    }
+	    double SC = Double.parseDouble(SCstr);
+	    SC /= 100.0;
+	    if(SC < 0){
+	      SC = 0;
+	    }
+	    return(SC);
+	  }
+  
+  /**
+   * Gets the additive damage
+   * @return drain
+   */
+  public double getAddDam(){
+	    String Damstr = addDamField.getText();
+	    if(Damstr == null || Damstr.equals("")){
+	    	Damstr = "0";
+	    }
+	    double Dam = Double.parseDouble(Damstr);
+	    Dam /= 100.0;
+	    if(Dam < 0){
+	    	Dam = 0;
+	    }
+	    return(Dam);
+	  }
+  
+  /**
+   * Gets the additive fire rate
+   * @return drain
+   */
+  public double getAddFR(){
+	    String FRstr = addFRField.getText();
+	    if(FRstr == null || FRstr.equals("")){
+	    	FRstr = "0";
+	    }
+	    double FR = Double.parseDouble(FRstr);
+	    FR /= 100.0;
+	    if(FR < 0){
+	    	FR = 0;
+	    }
+	    return(FR);
 	  }
   
   /**
@@ -760,7 +913,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
    * updates the mod costs
    */
   public void calculateModCosts(){
-    try{
+	try{
       int totalModCost = 0;
       totalModCost += modOnePanel.getModCost();
       totalModCost += modTwoPanel.getModCost();
@@ -770,7 +923,15 @@ public class WeaponPanel extends JPanel implements ActionListener {
       totalModCost += modSixPanel.getModCost();
       totalModCost += modSevenPanel.getModCost();
       totalModCost += modEightPanel.getModCost();
-      totalModCostField.setText(""+totalModCost);
+      int capacity = 60;
+      if(!potato.isSelected()) capacity = 30;
+      int modCapacityRemaining = capacity - totalModCost;
+      totalModCostField.setText(""+modCapacityRemaining); 
+      if(modCapacityRemaining < 0) {
+    	    	totalModCostField.setForeground(Color.RED);
+    	    }else {
+    	    	totalModCostField.setForeground(Color.GREEN);
+    	    }   
     }catch(Exception ex){
       totalModCostField.setText("0");
     }
@@ -874,6 +1035,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /**
    * Maxes all selected mods
    */
+  /*
   public void maxMods(){
     
     modOnePanel.maxMod();
@@ -885,7 +1047,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
     modSevenPanel.maxMod();
     modEightPanel.maxMod();
   }
-  
+  */
   /**
    * Updates the mod panels
    * @param panel
@@ -994,8 +1156,17 @@ public class WeaponPanel extends JPanel implements ActionListener {
       if(!updatingDropDowns){
         updateFields((String)weaponBox.getSelectedItem());
       }
-    }else if(e.getSource().equals(maxModsButton)){
-      maxMods();
+    }else if(e.getSource().equals(potato)){
+        calculateModCosts();
+    }
+    else if(e.getSource().equals(hideAdd)){
+    	if(additiveEffects.isVisible()) {
+      additiveEffects.setVisible(false);
+      Main.repack();
+    	}else {
+    		 additiveEffects.setVisible(true);
+    		 Main.repack();
+    	}
     }
   }
 
@@ -1006,8 +1177,4 @@ public class WeaponPanel extends JPanel implements ActionListener {
   public boolean isRefireCanceled() {
     return refireCancel.isSelected();
   }
-  
-//  public boolean isHeadShots() {
-//	    return headShots.isSelected();
-//	  }
 }
