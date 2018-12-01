@@ -65,17 +65,15 @@ public class Main {
 	protected static JFrame targetManagerFrame = new JFrame();
 	protected static JFrame weaponManagerFrame = new JFrame();
 	protected static JFrame colorOptionsFrame = new JFrame();
-	
 
 	/** JButtons **/
 	protected static JButton calculateButton = new JButton("Calculate");
-	//protected static JButton clearButton = new JButton("Clear");
+	// protected static JButton clearButton = new JButton("Clear");
 	protected static JButton clearOutputButton = new JButton("Clear Output");
 	protected static JButton maximizeButton = new JButton("Maximize");
 
 	protected static JLabel TTKIterationsLabel = new JLabel("Iterations:");
 	protected static JTextField TTKIterationsField = new JTextField(4);
-	
 
 	/** JTextAreas **/
 	public static JTextArea output = new JTextArea();
@@ -126,7 +124,7 @@ public class Main {
 	protected static Boolean weaponManagerInit = false;
 	protected static Boolean colorOptionsInit = false;
 	protected static JCheckBox TTKBox = new JCheckBox("TTK");
-	protected static JCheckBox lightWeightTTKBox = new JCheckBox("ULTRA Lightweight TTK");
+	protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
 	protected static JLabel targetGroupLabel = new JLabel("Group:");
 	public static JComboBox targetGroupBox = new JComboBox();
 	protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
@@ -232,8 +230,9 @@ public class Main {
 	public static SurfaceDamage fossilized = new SurfaceDamage();
 	public static SurfaceDamage sinew = new SurfaceDamage();
 
-	public static double globalToxin; // Added this to calculate gas proc damage -o
+	public static double globalToxin;
 	public static double globalFire;
+	public static double globalElectric;
 	public static double fireRateModPower;
 	public static int hunterMunitions;
 	public static boolean headShot = false;
@@ -286,7 +285,7 @@ public class Main {
 		UIBuilder.buttonInit(maximizeButton);
 		UIBuilder.labelInit(TTKIterationsLabel);
 		UIBuilder.numberFieldInit(TTKIterationsField);
-		//UIBuilder.buttonInit(clearButton);
+		// UIBuilder.buttonInit(clearButton);
 		UIBuilder.buttonInit(clearOutputButton);
 		UIBuilder.textAreaInit(output);
 		UIBuilder.scrollPaneInit(outputScroll);
@@ -331,7 +330,7 @@ public class Main {
 		maximizeButton.addActionListener(action);
 		TTKBox.addActionListener(action);
 		lightWeightTTKBox.addActionListener(action);
-		//clearButton.addActionListener(action);
+		// clearButton.addActionListener(action);
 		clearOutputButton.addActionListener(action);
 		saveItem.addActionListener(action);
 		loadItem.addActionListener(action);
@@ -366,7 +365,7 @@ public class Main {
 		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
-		//buttonPanel.add(clearButton);
+		// buttonPanel.add(clearButton);
 		buttonPanel.add(clearOutputButton);
 
 		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
@@ -377,7 +376,7 @@ public class Main {
 		TTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
 		TTKIterationsField.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
-		lightWeightTTKBox.setToolTipText("This will be significantly faster, but will be far less accurate. No min/max TTK values");
+		lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
 		TTKBox.setSelected(useComplexTTK);
 		lightWeightTTKBox.setSelected(!TTKBox.isSelected());
@@ -592,7 +591,6 @@ public class Main {
 		burstCount = selectedWeapon.getBurstCount();
 		drain = selectedWeapon.getDrain();
 
-
 		impact.base = selectedWeapon.getImpactDamage();
 		puncture.base = selectedWeapon.getPunctureDamage();
 		slash.base = selectedWeapon.getSlashDamage();
@@ -649,7 +647,7 @@ public class Main {
 		// Initialize mod vectors
 		Vector<Mod> combinedMods = new Vector<Mod>();
 		Vector<Double> magMods = new Vector<Double>();
-		//Vector<Double> ammoMods = new Vector<Double>();
+		// Vector<Double> ammoMods = new Vector<Double>();
 		Vector<Double> critChanceMods = new Vector<Double>();
 		Vector<Double> critMultMods = new Vector<Double>();
 		Vector<Double> fireRateMods = new Vector<Double>();
@@ -688,24 +686,34 @@ public class Main {
 
 		globalFire = 0;
 		globalToxin = 0;
+		globalElectric = 0;
 		hunterMunitions = 0;
 
-		for (int i = 0; i < activeMods.size(); i++) { // Calculating total toxin mod power for gas and toxin procs -o
+		// Calculating total toxin mod power for gas and toxin procs
+		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalToxin += modPower;
 			}
 		}
-
-		for (int i = 0; i < activeMods.size(); i++) { // Calculating total toxin mod power for fire procs -o
+		// Calculating total toxin mod power for fire procs
+		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalFire += modPower;
 			}
 		}
-		
+		// Calculating total electric mod power for electric procs
+		for (int i = 0; i < activeMods.size(); i++) {
+			Mod tempMod = activeMods.get(i);
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalElectric += modPower;
+			}
+		}
+
 		for (int i = 0; i < activeMods.size(); i++) { // Finding Hunter Munitions and setting the global variable
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
@@ -1280,10 +1288,10 @@ public class Main {
 				magMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MAG_CAP))) * (1.0 + modRanks.get(i)));
 			}
 			/*
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_AMMO_CAP)) {
-				ammoMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_AMMO_CAP))) * (1.0 + modRanks.get(i)));
-			}
-			*/
+			 * if (tempMod.effectTypes.contains(Constants.MOD_TYPE_AMMO_CAP)) {
+			 * ammoMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(
+			 * Constants.MOD_TYPE_AMMO_CAP))) * (1.0 + modRanks.get(i))); }
+			 */
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_CHANCE)) {
 				critChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_CHANCE))) * (1.0 + modRanks.get(i)));
 			}
@@ -1346,12 +1354,10 @@ public class Main {
 		for (int i = 0; i < flatMagMods.size(); i++) {
 			finalMag += flatMagMods.get(i);
 		}
-/*
-		finalAmmo = ammoCap;
-		for (int i = 0; i < ammoMods.size(); i++) {
-			finalAmmo += ammoCap * ammoMods.get(i);
-		}
-		*/
+		/*
+		 * finalAmmo = ammoCap; for (int i = 0; i < ammoMods.size(); i++) { finalAmmo +=
+		 * ammoCap * ammoMods.get(i); }
+		 */
 
 		finalCritChance = critChance;
 		for (int i = 0; i < critChanceMods.size(); i++) {
@@ -1380,39 +1386,40 @@ public class Main {
 			finalDamageMult += damageMult * damageMultMods.get(i);
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
-		
+
 		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
-			if(startingCombo < 1.5) startingCombo = 1;
+			if (startingCombo < 1.5)
+				startingCombo = 1;
 			finalDamageMult *= startingCombo;
 		}
-		
+
 		finalFireRate = fireRate;
 		fireRateModPower = 0;
 		for (int i = 0; i < fireRateMods.size(); i++) {
 			fireRateModPower += fireRateMods.get(i);
 		}
-		if(weaponMode.equals(Constants.AUTOBOW) || weaponMode.equals(Constants.SEMIBOW) || weaponMode.equals(Constants.CHARGEBOW)) {
+		if (weaponMode.equals(Constants.AUTOBOW) || weaponMode.equals(Constants.SEMIBOW) || weaponMode.equals(Constants.CHARGEBOW)) {
 			fireRateModPower *= 2;
-		}			
+		}
 		if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.CHARGEBOW)) {
 			double finalChargeTime = chargeTime / (1 + fireRateModPower + selectedWeapon.getAddFR());
-			if(fireRate > 0) {
-				finalFireRate = 1 / ((1/(fireRate * (1 + fireRateModPower))) + finalChargeTime);
-			}else {
-				finalFireRate = 1 / finalChargeTime;	
+			if (fireRate > 0) {
+				finalFireRate = 1 / ((1 / (fireRate * (1 + fireRateModPower))) + finalChargeTime);
+			} else {
+				finalFireRate = 1 / finalChargeTime;
 			}
-		}else{
+		} else {
 			finalFireRate += fireRate * fireRateModPower;
 			finalFireRate += fireRate * selectedWeapon.getAddFR();
 		}
-		
+
 		// This is completely retarded, but also the current case
 		if (weaponMode.equals(Constants.SEMI_AUTO) || weaponMode.equals(Constants.SNIPER) || weaponMode.equals(Constants.SEMIBOW)) {
 			if (finalFireRate > 10.0) {
 				finalFireRate = 10.0;
 			}
 		}
-	
+
 		finalReloadTime = reloadTime;
 		double reloadSpeedMult = 1.0;
 		for (int i = 0; i < reloadTimeMods.size(); i++) {
@@ -1435,7 +1442,7 @@ public class Main {
 		for (int i = 0; i < firstShotDamageMods.size(); i++) {
 			finalFirstShotDamageMult += firstShotDamageMult * firstShotDamageMods.get(i);
 		}
-		
+
 		finalLastShotDamageMult = lastShotDamageMult;
 		for (int i = 0; i < lastShotDamageMods.size(); i++) {
 			finalLastShotDamageMult += lastShotDamageMult * lastShotDamageMods.get(i);
@@ -1466,23 +1473,23 @@ public class Main {
 
 //		if (damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
 
-			impact.finalBase = impact.base;
-			for (int i = 0; i < impactDamageMods.size(); i++) {
-				impact.finalBase += impact.base * impactDamageMods.get(i);
-			}
-			impact.finalBase *= finalDamageMult;
+		impact.finalBase = impact.base;
+		for (int i = 0; i < impactDamageMods.size(); i++) {
+			impact.finalBase += impact.base * impactDamageMods.get(i);
+		}
+		impact.finalBase *= finalDamageMult;
 
-			puncture.finalBase = puncture.base;
-			for (int i = 0; i < punctureDamageMods.size(); i++) {
-				puncture.finalBase += puncture.base * punctureDamageMods.get(i);
-			}
-			puncture.finalBase *= finalDamageMult;
+		puncture.finalBase = puncture.base;
+		for (int i = 0; i < punctureDamageMods.size(); i++) {
+			puncture.finalBase += puncture.base * punctureDamageMods.get(i);
+		}
+		puncture.finalBase *= finalDamageMult;
 
-			slash.finalBase = slash.base;
-			for (int i = 0; i < slashDamageMods.size(); i++) {
-				slash.finalBase += slash.base * slashDamageMods.get(i);
-			}
-			slash.finalBase *= finalDamageMult;
+		slash.finalBase = slash.base;
+		for (int i = 0; i < slashDamageMods.size(); i++) {
+			slash.finalBase += slash.base * slashDamageMods.get(i);
+		}
+		slash.finalBase *= finalDamageMult;
 //		}
 
 		fire.finalBase = fire.base;
@@ -1594,7 +1601,7 @@ public class Main {
 		} else if (weaponMode.equals(Constants.CONTINUOUS)) {
 			finalMag /= drain;
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
-		} else if(weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)){
+		} else if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)) {
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
 		} else {
 			finalIterationTime = ((finalMag - 1) / finalFireRate) + finalReloadTime;
@@ -1602,7 +1609,7 @@ public class Main {
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
 
 		averageCritMult = (1 - Math.min(1, finalCritChance) + finalCritChance * finalCritMult);
-				
+
 	}
 
 	/**
@@ -1623,22 +1630,16 @@ public class Main {
 		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
 		burstProcsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / (finalMag / finalFireRate));
 
-		
 		/*
-		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
-			slashStacks = calculateAverageStacks("Slash", SlashProcRate, 6.0);
-		}
-		if (fire.finalBase > 0.0) {
-			fireStacks = calculateAverageStacks("Fire", FireProcRate, 6.0);
-		}
-		if (toxin.finalBase > 0.0 || weaponName.equals("Hystrix (Poison)")) {
-			toxinStacks = calculateAverageStacks("Toxin", ToxinProcRate, 8.0);
-		}
-		if (gas.finalBase > 0.0) {
-			gasStacks = calculateAverageStacks("Gas", GasProcRate, 8.0);
-		}
-		*/
-		
+		 * if (slash.finalBase > 0.0 || hunterMunitions > 0) { slashStacks =
+		 * calculateAverageStacks("Slash", SlashProcRate, 6.0); } if (fire.finalBase >
+		 * 0.0) { fireStacks = calculateAverageStacks("Fire", FireProcRate, 6.0); } if
+		 * (toxin.finalBase > 0.0 || weaponName.equals("Hystrix (Poison)")) {
+		 * toxinStacks = calculateAverageStacks("Toxin", ToxinProcRate, 8.0); } if
+		 * (gas.finalBase > 0.0) { gasStacks = calculateAverageStacks("Gas",
+		 * GasProcRate, 8.0); }
+		 */
+
 		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
 			slashStacks = procsPerSecond * slashProcRate * 6 * finalStatusDuration;
 			slashStacks += hunterMunitions * 0.3 * Math.max(1, finalCritChance) * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
@@ -1648,14 +1649,14 @@ public class Main {
 		}
 		if (toxin.finalBase > 0.0) {
 			toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
-		}		
-		if(weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
+		}
+		if (weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
 			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 8 * finalStatusDuration;
 		}
 		if (gas.finalBase > 0.0) {
 			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
 		}
-		
+
 	}
 
 	/**
@@ -1921,7 +1922,7 @@ public class Main {
 		infestedFlesh.firstShot = infestedFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
 		fossilized.firstShot = fossilized.perShot * averageCritMult * finalFirstShotDamageMult;
 		sinew.firstShot = sinew.perShot * averageCritMult * finalFirstShotDamageMult;
-		
+
 		finalLastShotDamageMult -= 1;
 		// Calculate last-shot damage
 		raw.lastShot = raw.perShot * averageCritMult * finalLastShotDamageMult;
@@ -2064,7 +2065,7 @@ public class Main {
 
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
-			double hunterRatio = (Math.min(1,finalCritChance) * 0.3 / (Math.min(1,finalCritChance) * 0.3 + SlashProcRate));
+			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + SlashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
 		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
@@ -2074,10 +2075,10 @@ public class Main {
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = rawBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * averageCritMult;
-		bleedDoTDPS = slashStacks * bleedDamage * (7/6);
-		poisonDoTDPS = toxinStacks * poisonDamage * (9/8);
-		heatDoTDPS = fireStacks * heatDamage * (7/6);
-		cloudDoTDPS = gasStacks * cloudDamage * (9/8);
+		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
+		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
+		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
+		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
 		electricProcDPS = ElectricProcRate * (DoTBase + electricBase) * 0.5 * averageProjectileCount;
 		gasProcDPS = GasProcRate * DoTBase * (1 + globalToxin) * 0.5 * averageProjectileCount;
 
@@ -2151,94 +2152,52 @@ public class Main {
 	/**
 	 * Calculates the average number of stacks of a given effect
 	 */
-	//Replaced with math that calculates max number of concurrent stacks
+	// Replaced with math that calculates max number of concurrent stacks
 	/*
-	protected static double calculateAverageStacks(String proc, double procRate, double duration) {
-
-		double millisceondsPerShot = 1000.0 / finalFireRate;
-		double stacksPerShot = 1.0 * procRate;
-		double reloadTimeMilliseconds = finalReloadTime * 1000.0;
-		double stackTotal = 0.0;
-		double moddedDuration = duration * finalStatusDuration * 1000;
-		double averageStacks = 0;
-		int reloadTimeCounter = 0;
-		int shotCounter = 0;
-		int iterations = 0;
-		boolean reloading = false;
-		Vector<Double> stackVec = new Vector<Double>();
-		Vector<Integer> stackCountVec = new Vector<Integer>();
-
-		// Run a 60 second simulation to calculate the average number of stacks
-		for (int i = 0; i < 60000; i++) {
-			// Add new stack
-			if (!reloading) {
-				shotCounter++;
-				// is it time to fire a new projectile?
-				if (shotCounter >= millisceondsPerShot) {
-					// Add stacks
-
-					if (proc.equals("Slash") && hunterMunitions > 0) { // adding hunter munitions slash stacks -o
-						double munitionsStack = (finalCritChance * 0.3);
-						if (munitionsStack > 0.3)
-							munitionsStack = 0.3;
-						stackTotal += (munitionsStack * averageProjectileCount);
-					}
-					
-					if (proc.equals("Toxin") && weaponName.equals("Hystrix (Poison)")) {
-						stackTotal += (averageProjectileCount);
-					}
-										
-					stackTotal += (stacksPerShot * averageProjectileCount);
-
-					for (int s = 0; stackTotal > s; s++) {
-						if (stackTotal > 1.0) {
-							stackVec.add(moddedDuration);
-							stackTotal--;
-						}
-					}
-					shotCounter = 0;
-					// Have we unloaded the whole mag and need to reload?
-					iterations++;
-					if (iterations >= finalMag) {
-						reloading = true;
-						iterations = 0;
-					}
-				}
-			} else {
-				// Are we still reloading?
-				reloadTimeCounter++;
-				if (reloadTimeCounter >= reloadTimeMilliseconds) {
-					reloading = false;
-					reloadTimeCounter = 0;
-				}
-			}
-
-			// Decrement stack timers
-			for (int j = 0; j < stackVec.size(); j++) {
-				double temp = stackVec.get(j);
-				temp--;
-				stackVec.set(j, temp);
-			}
-			// Remove stacks that have expired
-			for (int k = 0; k < stackVec.size(); k++) {
-				if (stackVec.get(k) <= 0) {
-					stackVec.remove(k);
-				}
-			}
-			// Add a new count to the stack counting vector
-			stackCountVec.add(stackVec.size());
-		}
-
-		for (int i = 0; i < stackCountVec.size(); i++) {
-			averageStacks += stackCountVec.get(i);
-		}
-		averageStacks /= stackCountVec.size();
-		if (proc.equals("Fire") && averageStacks > 0) { // Fire procs don't stack -o
-			averageStacks = 1;
-		}
-		return averageStacks;
-	}
-	*/
+	 * protected static double calculateAverageStacks(String proc, double procRate,
+	 * double duration) {
+	 * 
+	 * double millisceondsPerShot = 1000.0 / finalFireRate; double stacksPerShot =
+	 * 1.0 * procRate; double reloadTimeMilliseconds = finalReloadTime * 1000.0;
+	 * double stackTotal = 0.0; double moddedDuration = duration *
+	 * finalStatusDuration * 1000; double averageStacks = 0; int reloadTimeCounter =
+	 * 0; int shotCounter = 0; int iterations = 0; boolean reloading = false;
+	 * Vector<Double> stackVec = new Vector<Double>(); Vector<Integer> stackCountVec
+	 * = new Vector<Integer>();
+	 * 
+	 * // Run a 60 second simulation to calculate the average number of stacks for
+	 * (int i = 0; i < 60000; i++) { // Add new stack if (!reloading) {
+	 * shotCounter++; // is it time to fire a new projectile? if (shotCounter >=
+	 * millisceondsPerShot) { // Add stacks
+	 * 
+	 * if (proc.equals("Slash") && hunterMunitions > 0) { // adding hunter munitions
+	 * slash stacks -o double munitionsStack = (finalCritChance * 0.3); if
+	 * (munitionsStack > 0.3) munitionsStack = 0.3; stackTotal += (munitionsStack *
+	 * averageProjectileCount); }
+	 * 
+	 * if (proc.equals("Toxin") && weaponName.equals("Hystrix (Poison)")) {
+	 * stackTotal += (averageProjectileCount); }
+	 * 
+	 * stackTotal += (stacksPerShot * averageProjectileCount);
+	 * 
+	 * for (int s = 0; stackTotal > s; s++) { if (stackTotal > 1.0) {
+	 * stackVec.add(moddedDuration); stackTotal--; } } shotCounter = 0; // Have we
+	 * unloaded the whole mag and need to reload? iterations++; if (iterations >=
+	 * finalMag) { reloading = true; iterations = 0; } } } else { // Are we still
+	 * reloading? reloadTimeCounter++; if (reloadTimeCounter >=
+	 * reloadTimeMilliseconds) { reloading = false; reloadTimeCounter = 0; } }
+	 * 
+	 * // Decrement stack timers for (int j = 0; j < stackVec.size(); j++) { double
+	 * temp = stackVec.get(j); temp--; stackVec.set(j, temp); } // Remove stacks
+	 * that have expired for (int k = 0; k < stackVec.size(); k++) { if
+	 * (stackVec.get(k) <= 0) { stackVec.remove(k); } } // Add a new count to the
+	 * stack counting vector stackCountVec.add(stackVec.size()); }
+	 * 
+	 * for (int i = 0; i < stackCountVec.size(); i++) { averageStacks +=
+	 * stackCountVec.get(i); } averageStacks /= stackCountVec.size(); if
+	 * (proc.equals("Fire") && averageStacks > 0) { // Fire procs don't stack -o
+	 * averageStacks = 1; } return averageStacks; }
+	 */
 
 	/**
 	 * Appends the weapon information to the output text area
@@ -2708,16 +2667,16 @@ public class Main {
 				maxxing = false;
 				calculateDPS();
 			} else if (e.getSource().equals(maximizeButton)) {
-				
+
 				selectedWeapon = (WeaponPanel) weaponPane.getSelectedComponent();
 				selectedWeapon.parseActiveMods();
-				
+
 				boolean full = false;
 				boolean valid = true;
-				
+
 				if (!selectedWeapon.modEight.equals("--")) {
 					full = true;
-				}				
+				}
 				if (selectedWeapon.modSeven.equals("--") && full == true) {
 					valid = false;
 				} else if (!selectedWeapon.modSeven.equals("--")) {
@@ -2751,14 +2710,14 @@ public class Main {
 				if (selectedWeapon.modOne.equals("--") && full == true) {
 					valid = false;
 				}
-							
-				if(valid == true) {
-				maxxing = true;
-				theMaximizer.Maximizer();
-				}else {
-				output.append("\nError: Please only leave mods slots empty starting sequentially backwards from mod 8");
-				}			
-				
+
+				if (valid == true) {
+					maxxing = true;
+					theMaximizer.Maximizer();
+				} else {
+					output.append("\nError: Please only leave mods slots empty starting sequentially backwards from mod 8");
+				}
+
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
 				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
 				if (e.getSource().equals(TTKBox)) {
@@ -2783,14 +2742,10 @@ public class Main {
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
 			} /*
-			else if (e.getSource().equals(clearButton)) {
-				riflePanel.clear();
-				shotgunPanel.clear();
-				pistolPanel.clear();
-				output.setText("");
-				dpsGraph.clear();
-				ttkGraph.clear();
-			} */
+				 * else if (e.getSource().equals(clearButton)) { riflePanel.clear();
+				 * shotgunPanel.clear(); pistolPanel.clear(); output.setText("");
+				 * dpsGraph.clear(); ttkGraph.clear(); }
+				 */
 			else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
 				dpsGraph.clear();
@@ -2862,7 +2817,7 @@ public class Main {
 		}
 		return mult;
 	}
-	
+
 	public static void repack() {
 		mainFrame.pack();
 	}

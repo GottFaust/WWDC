@@ -38,8 +38,7 @@ public class Maximizer {
 	public static int targets = 0;
 
 	public static File maximizerResults;
-	
-
+		
 	public void Maximizer() {
 
 		maximizerResults = new File("MaximizerResults.csv");
@@ -109,31 +108,25 @@ public class Maximizer {
 			emptyMods++;
 		}
 
-		q -= emptyMods;
-		w -= emptyMods;
-		e -= emptyMods;
-		r -= emptyMods;
-		t -= emptyMods;
-		y -= emptyMods;
-		u -= emptyMods;
-		i -= emptyMods;
+		q = Math.max(1, q - emptyMods);
+		w = Math.max(1, w - emptyMods);
+		e = Math.max(1, e - emptyMods);
+		r = Math.max(1, r - emptyMods);
+		t = Math.max(1, t - emptyMods);
+		y = Math.max(1, y - emptyMods);
+		u = Math.max(1, u - emptyMods);
+		i = Math.max(1, i - emptyMods);
 
-		q = Math.max(1, q);
-		w = Math.max(1, w);
-		e = Math.max(1, e);
-		r = Math.max(1, r);
-		t = Math.max(1, t);
-		y = Math.max(1, y);
-		u = Math.max(1, u);
-		i = Math.max(1, i);
-
-		modCount -= (emptyMods - 1);
+		modCount -= (emptyMods - 1);	
+		
 		
 		try {
 			if (!maximizerResults.exists()) {
 				maximizerResults.createNewFile();
 			}
 			BufferedWriter writer = new BufferedWriter(new FileWriter(maximizerResults));
+			
+			//Believe me, I know it's bad
 			for (int a = q; a < modCount; a++) {
 				if (touchModOne)
 					Main.selectedWeapon.setModOne(a);
@@ -166,7 +159,6 @@ public class Maximizer {
 											if (touchModEight) {
 												Main.selectedWeapon.setModEight(k);
 											}
-											//Main.selectedWeapon.maxMods();
 											Main.calculateDPS();
 
 											// Store results in a csv file
