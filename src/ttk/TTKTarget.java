@@ -84,7 +84,8 @@ public class TTKTarget implements Comparable {
 	public double localProjectileCount = 1.0;
 	public double millisceondsPerShot = 0.0;
 	public double millisecondMult = 5.0;
-	public double rampMult = 0;
+	public double rampMult = -1;
+	public double comboCount = 0;
 	public double reloadTimeMilliseconds = 0.0;
 	public double baseImpactDamage = 0.0;
 	public double basePunctureDamage = 0.0;
@@ -397,19 +398,19 @@ public class TTKTarget implements Comparable {
 		double localRadiationProcMult = (Main.radiation.finalBase / ((4 * totalPhysical) + totalElemental));
 		double localViralProcMult = (Main.viral.finalBase / ((4 * totalPhysical) + totalElemental));
 		// Integer proc weights for vector
-		int localImpactProcWeight = (int) Math.round(localImpactProcMult * 10000);
-		int localPunctureProcWeight = (int) Math.round(localPunctureProcMult * 10000);
-		int localSlashProcWeight = (int) Math.round(localSlashProcMult * 10000);
-		int localFireProcWeight = (int) Math.round(localFireProcMult * 10000);
-		int localIceProcWeight = (int) Math.round(localIceProcMult * 10000);
-		int localElectricProcWeight = (int) Math.round(localElectricProcMult * 10000);
-		int localToxinProcWeight = (int) Math.round(localToxinProcMult * 10000);
-		int localBlastProcWeight = (int) Math.round(localBlastProcMult * 10000);
-		int localCorrosiveProcWeight = (int) Math.round(localCorrosiveProcMult * 10000);
-		int localGasProcWeight = (int) Math.round(localGasProcMult * 10000);
-		int localMagneticProcWeight = (int) Math.round(localMagneticProcMult * 10000);
-		int localRadiationProcWeight = (int) Math.round(localRadiationProcMult * 10000);
-		int localViralProcWeight = (int) Math.round(localViralProcMult * 10000);
+		int localImpactProcWeight = (int) Math.round(localImpactProcMult * 1000);
+		int localPunctureProcWeight = (int) Math.round(localPunctureProcMult * 1000);
+		int localSlashProcWeight = (int) Math.round(localSlashProcMult * 1000);
+		int localFireProcWeight = (int) Math.round(localFireProcMult * 1000);
+		int localIceProcWeight = (int) Math.round(localIceProcMult * 1000);
+		int localElectricProcWeight = (int) Math.round(localElectricProcMult * 1000);
+		int localToxinProcWeight = (int) Math.round(localToxinProcMult * 1000);
+		int localBlastProcWeight = (int) Math.round(localBlastProcMult * 1000);
+		int localCorrosiveProcWeight = (int) Math.round(localCorrosiveProcMult * 1000);
+		int localGasProcWeight = (int) Math.round(localGasProcMult * 1000);
+		int localMagneticProcWeight = (int) Math.round(localMagneticProcMult * 1000);
+		int localRadiationProcWeight = (int) Math.round(localRadiationProcMult * 1000);
+		int localViralProcWeight = (int) Math.round(localViralProcMult * 1000);
 		// Populate vector
 		if (Main.impact.finalBase > 0.0) {
 			for (int i = 0; i < localImpactProcWeight; i++) {
@@ -707,6 +708,18 @@ public class TTKTarget implements Comparable {
 		viralStacks = new Vector<Integer>();
 		magneticStacks = new Vector<Integer>();
 		viralHealth = 0;
+		
+		comboCount = Main.combo * Math.pow(3,((Main.startingCombo - 1) / 0.5) - 1);
+		if(Main.startingCombo == 1) {
+			comboCount = 0;
+		}
+		
+		if(Main.weaponMode.equals(Constants.CHARGE) || Main.weaponMode.equals(Constants.CHARGEBOW) || Main.weaponMode.equals(Constants.LANKA)) {
+		shotCounter = 0;
+		if(Main.fireRate > 0) {
+			shotCounter += (1/(Main.fireRate * (1 + Main.fireRateModPower)))*1000;
+			}
+		}
 
 		if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 			millisecondMult = 1.0;
@@ -714,33 +727,33 @@ public class TTKTarget implements Comparable {
 		// Run a 600 second simulation to calculate the time to kill
 		for (timeToKill = 0; timeToKill < 600000; timeToKill++) {
 			// Add new stack
-			if (!reloading) {
-
-				if (Main.weaponMode.equals(Constants.CONTINUOUS)) { // Beam weapon ramp-up damage 20% to 100% in 0.6 seconds -o
-					double ramp = 0.2 + (rampMult / 600) * 0.8;
-					if (ramp > 1) {
-						ramp = 1;
-					}
-					DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult * ramp;
-					baseImpactDamage = Main.impact.finalBase * ramp;
-					basePunctureDamage = Main.puncture.finalBase * ramp;
-					baseSlashDamage = Main.slash.finalBase * ramp;
-					baseFireDamage = Main.fire.finalBase * ramp;
-					baseIceDamage = Main.ice.finalBase * ramp;
-					baseElectricDamage = Main.electric.finalBase * ramp;
-					baseToxinDamage = Main.toxin.finalBase * ramp;
-					baseBlastDamage = Main.blast.finalBase * ramp;
-					baseCorrosiveDamage = Main.corrosive.finalBase * ramp;
-					baseGasDamage = Main.gas.finalBase * ramp;
-					baseMagneticDamage = Main.magnetic.finalBase * ramp;
-					baseRadiationDamage = Main.radiation.finalBase * ramp;
-					baseViralDamage = Main.viral.finalBase * ramp;
-					rampMult++;
-				}
-
+			if (!reloading) {							
 				shotCounter++;
+				rampMult++;
 				// is it time to fire a new projectile?
 				if (shotCounter >= (millisceondsPerShot * (5 / millisecondMult))) {
+					
+					if (Main.weaponMode.equals(Constants.CONTINUOUS)) { // Beam weapon ramp-up damage 20% to 100% in 0.6 seconds -o
+						double ramp = 0.2 + (rampMult / 600) * 0.8;
+						if (ramp > 1) {
+							ramp = 1;
+						}
+						DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult * ramp;
+						baseImpactDamage = Main.impact.finalBase * ramp;
+						basePunctureDamage = Main.puncture.finalBase * ramp;
+						baseSlashDamage = Main.slash.finalBase * ramp;
+						baseFireDamage = Main.fire.finalBase * ramp;
+						baseIceDamage = Main.ice.finalBase * ramp;
+						baseElectricDamage = Main.electric.finalBase * ramp;
+						baseToxinDamage = Main.toxin.finalBase * ramp;
+						baseBlastDamage = Main.blast.finalBase * ramp;
+						baseCorrosiveDamage = Main.corrosive.finalBase * ramp;
+						baseGasDamage = Main.gas.finalBase * ramp;
+						baseMagneticDamage = Main.magnetic.finalBase * ramp;
+						baseRadiationDamage = Main.radiation.finalBase * ramp;
+						baseViralDamage = Main.viral.finalBase * ramp;
+					}		
+					
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 						millisecondMult++;
 						if (millisecondMult > 5.0) {
@@ -803,12 +816,41 @@ public class TTKTarget implements Comparable {
 						if (targetAdjustedMaxArmor < 1) {
 							targetAdjustedMaxArmor = 0; // to account for complete armor removal -o
 						}
+									
+						//find multishot
 						double tempMultishots = localProjectileCount + 1;
+						int multishot = 0;
 						for (int p = 0; p < localProjectileCount; p++) {
-							tempMultishots--;
-							if (rng.nextDouble() < tempMultishots) { // multishot is not guaranteed -o
+						tempMultishots--;
+						if (rng.nextDouble() < tempMultishots) {
+							multishot++;
+							}
+						}
+						
+						// Sniper Combo multiplier
+						if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
+							comboCount += multishot;						
+							double combo = 0.5 * (int)(Math.log((27*comboCount)/Main.combo)/(Math.log(3)) + 0.00001); //+0.00001 to fix some rounding errors		
+							combo /= Main.startingCombo; // Adjusting for starting combo affecting the base values
+							DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult * combo;
+							baseImpactDamage = Main.impact.finalBase * combo;
+							basePunctureDamage = Main.puncture.finalBase * combo;
+							baseSlashDamage = Main.slash.finalBase * combo;
+							baseFireDamage = Main.fire.finalBase * combo;
+							baseIceDamage = Main.ice.finalBase * combo;
+							baseElectricDamage = Main.electric.finalBase * combo;
+							baseToxinDamage = Main.toxin.finalBase * combo;
+							baseBlastDamage = Main.blast.finalBase * combo;
+							baseCorrosiveDamage = Main.corrosive.finalBase * combo;
+							baseGasDamage = Main.gas.finalBase * combo;
+							baseMagneticDamage = Main.magnetic.finalBase * combo;
+							baseRadiationDamage = Main.radiation.finalBase * combo;
+							baseViralDamage = Main.viral.finalBase * combo;
+						}	
+						
+						//Shoot 1 projectile
+						for (int p = 0; p < multishot; p++) {																								
 								double localCritMult = 1.0;
-
 								// Is this a crit?
 								double crit = rng.nextDouble();
 								if (crit <= Main.finalCritChance) {
@@ -829,7 +871,8 @@ public class TTKTarget implements Comparable {
 											}
 										}
 									}
-								}
+								}						
+								
 								headShotMult = 1;
 								if (Main.headShot) { // Headshot damage feature -o
 									headShotMult = 2;
@@ -988,8 +1031,6 @@ public class TTKTarget implements Comparable {
 										corrosiveStacks++;
 									}
 								}
-
-							}
 						}
 
 						shotCounter = 0;
@@ -1006,7 +1047,7 @@ public class TTKTarget implements Comparable {
 				reloadTimeCounter++;
 				if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
 					if (reloadTimeCounter >= 800) {
-						rampMult = 0; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
+						rampMult = -1; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
 					}
 				}
 				if (reloadTimeCounter >= reloadTimeMilliseconds) {
@@ -1101,7 +1142,8 @@ public class TTKTarget implements Comparable {
 
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
-				rampMult = 0;
+				rampMult = -1;
+				comboCount = 0;
 				return timeToKill / 1000.0;
 			}
 		}
@@ -1161,32 +1203,32 @@ public class TTKTarget implements Comparable {
 		for (timeToKill = 0; timeToKill < 60000; timeToKill++) {
 			// Add new stack
 			if (!reloading) {
-
-				// Beam weapons ramp-up damage 20% to 100% in 0.6 seconds -o
-				if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-					double ramp = 0.2 + (rampMult / 600) * 0.8;
-					if (ramp > 1)
-						ramp = 1;
-					DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult * ramp;
-					baseImpactDamage = Main.impact.finalBase * ramp;
-					basePunctureDamage = Main.puncture.finalBase * ramp;
-					baseSlashDamage = Main.slash.finalBase * ramp;
-					baseFireDamage = Main.fire.finalBase * ramp;
-					baseIceDamage = Main.ice.finalBase * ramp;
-					baseElectricDamage = Main.electric.finalBase * ramp;
-					baseToxinDamage = Main.toxin.finalBase * ramp;
-					baseBlastDamage = Main.blast.finalBase * ramp;
-					baseCorrosiveDamage = Main.corrosive.finalBase * ramp;
-					baseGasDamage = Main.gas.finalBase * ramp;
-					baseMagneticDamage = Main.magnetic.finalBase * ramp;
-					baseRadiationDamage = Main.radiation.finalBase * ramp;
-					baseViralDamage = Main.viral.finalBase * ramp;
-					rampMult++;
-				}
-
 				shotCounter++;
+				rampMult++;
 				// is it time to fire a new projectile?
 				if (shotCounter >= (millisceondsPerShot * (5 / millisecondMult))) {
+					
+					// Beam weapons ramp-up damage 20% to 100% in 0.6 seconds -o
+					if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
+						double ramp = 0.2 + (rampMult / 600) * 0.8;
+						if (ramp > 1)
+							ramp = 1;
+						DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult * ramp;
+						baseImpactDamage = Main.impact.finalBase * ramp;
+						basePunctureDamage = Main.puncture.finalBase * ramp;
+						baseSlashDamage = Main.slash.finalBase * ramp;
+						baseFireDamage = Main.fire.finalBase * ramp;
+						baseIceDamage = Main.ice.finalBase * ramp;
+						baseElectricDamage = Main.electric.finalBase * ramp;
+						baseToxinDamage = Main.toxin.finalBase * ramp;
+						baseBlastDamage = Main.blast.finalBase * ramp;
+						baseCorrosiveDamage = Main.corrosive.finalBase * ramp;
+						baseGasDamage = Main.gas.finalBase * ramp;
+						baseMagneticDamage = Main.magnetic.finalBase * ramp;
+						baseRadiationDamage = Main.radiation.finalBase * ramp;
+						baseViralDamage = Main.viral.finalBase * ramp;
+					}
+					
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 						millisecondMult++;
 						if (millisecondMult > 5.0) {
@@ -1415,7 +1457,7 @@ public class TTKTarget implements Comparable {
 				reloadTimeCounter++;
 				if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
 					if (reloadTimeCounter >= 800) {
-						rampMult = 0; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
+						rampMult = -1; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
 					}
 				}
 				if (reloadTimeCounter >= reloadTimeMilliseconds) {
@@ -1510,7 +1552,7 @@ public class TTKTarget implements Comparable {
 			
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
-				rampMult = 0;
+				rampMult = -1;
 				return timeToKill / 1000.0;
 			}
 		}

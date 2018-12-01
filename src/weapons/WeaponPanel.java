@@ -733,19 +733,35 @@ public class WeaponPanel extends JPanel implements ActionListener {
   }
   
   /**
-   * Gets the total ammo
-   * @return totalAmmo
+   * Gets the sniper minimum combo
+   * @return minCombo
    */
-  public int getTotalAmmo(){
-    String totalAmmoStr = wap.ammoField.getText();
-    if(totalAmmoStr == null || totalAmmoStr.equals("")){
-      totalAmmoStr = "0";
+  public int getCombo(){
+    String ComboStr = wap.comboField.getText();
+    if(ComboStr == null || ComboStr.equals("")){
+      ComboStr = "0";
     }
-    Integer totalAmmo = Integer.parseInt(totalAmmoStr);
-    if(totalAmmo < 0){
-      totalAmmo = 0;
+    Integer Combo = Integer.parseInt(ComboStr);
+    if(Combo < 1){
+      Combo = 1;
     }
-    return(totalAmmo);
+    return(Combo);
+  }
+  
+  /**
+   * Gets the sniper starting
+   * @return startingCombo
+   */
+  public double getStartingCombo(){
+    String StartingComboStr = wap.startingComboField.getText();
+    if(StartingComboStr == null || StartingComboStr.equals("")){
+      StartingComboStr = "0";
+    }
+    double StartingCombo = Double.parseDouble(StartingComboStr);
+    if(StartingCombo < 0){
+      StartingCombo = 0;
+    }
+    return(StartingCombo);
   }
   
   /**
@@ -804,6 +820,11 @@ public class WeaponPanel extends JPanel implements ActionListener {
   public void clear(){
     weaponBox.setSelectedItem(Constants.CUSTOM_WEAPON);
     wap.clear();
+    addCCField.setText(null);
+    addCDField.setText(null);
+    addSCField.setText(null);
+    addDamField.setText(null);
+    addFRField.setText(null);
     modOnePanel.clear();
     modTwoPanel.clear();
     modThreePanel.clear();
@@ -852,7 +873,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
         wap.slashField.setText(reader.readLine());
         wap.fireRateField.setText(reader.readLine());
         wap.magSizeField.setText(reader.readLine());
-        wap.ammoField.setText(reader.readLine());
+        wap.comboField.setText(reader.readLine());
         wap.reloadField.setText(reader.readLine());
         wap.critField.setText(reader.readLine());
         wap.multiplierField.setText(reader.readLine());
@@ -900,7 +921,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       writer.write(wap.slashField.getText()+"\n");
       writer.write(wap.fireRateField.getText()+"\n");
       writer.write(wap.magSizeField.getText()+"\n");
-      writer.write(wap.ammoField.getText()+"\n");
+      writer.write(wap.comboField.getText()+"\n");
       writer.write(wap.reloadField.getText()+"\n");
       writer.write(wap.critField.getText()+"\n");
       writer.write(wap.multiplierField.getText()+"\n");
@@ -979,19 +1000,43 @@ public class WeaponPanel extends JPanel implements ActionListener {
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(true);
-    }else if(mode.equals(Constants.CHARGE)){
+      wap.comboPanel.setVisible(false);
+      wap.startingComboPanel.setVisible(false);
+    }else if(mode.equals(Constants.CHARGE) || mode.equals(Constants.CHARGEBOW)){
       wap.chargeTimePanel.setVisible(true);
       wap.burstCountPanel.setVisible(false);
       wap.drainPanel.setVisible(false);
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(false);
+      wap.comboPanel.setVisible(false);
+      wap.startingComboPanel.setVisible(false);
     }else if(mode.equals(Constants.CONTINUOUS)){
       wap.chargeTimePanel.setVisible(false);
       wap.burstCountPanel.setVisible(false);
       wap.drainPanel.setVisible(true);
       wap.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+      refireCancelPanel.setVisible(false);
+      wap.comboPanel.setVisible(false);
+      wap.startingComboPanel.setVisible(false);
+    }else if(mode.equals(Constants.SNIPER)){
+      wap.chargeTimePanel.setVisible(false);
+      wap.burstCountPanel.setVisible(false);
+      wap.drainPanel.setVisible(false);
+      wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.comboPanel.setVisible(true);
+      wap.startingComboPanel.setVisible(true);
+      refireCancelPanel.setVisible(false);
+    }else if(mode.equals(Constants.LANKA)){
+      wap.chargeTimePanel.setVisible(true);
+      wap.burstCountPanel.setVisible(false);
+      wap.drainPanel.setVisible(false);
+      wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+      wap.comboPanel.setVisible(true);
+      wap.startingComboPanel.setVisible(true);
       refireCancelPanel.setVisible(false);
     }else{
       wap.chargeTimePanel.setVisible(false);
@@ -1000,6 +1045,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
       wap.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       wap.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
       refireCancelPanel.setVisible(false);
+      wap.comboPanel.setVisible(false);
+      wap.startingComboPanel.setVisible(false);
     }
   }
   
@@ -1139,7 +1186,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
       wap.fireRateField.setText(selectedWeapon.fireRate);
       wap.magSizeField.setText(selectedWeapon.magSize);
       wap.drainField.setText(selectedWeapon.drain);
-      wap.ammoField.setText(selectedWeapon.ammo);
+      wap.comboField.setText(selectedWeapon.combo);
       wap.reloadField.setText(selectedWeapon.reload);
       wap.critField.setText(selectedWeapon.crit);
       wap.multiplierField.setText(selectedWeapon.critMult);

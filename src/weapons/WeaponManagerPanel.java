@@ -117,6 +117,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
     weaponList.setVisibleRowCount(-1);
     weaponScroll.setPreferredSize(new Dimension(150, 230));
+    attributesPanel.startingComboPanel.setVisible(false);
     
     leftPanel.add(weaponScroll);
     
@@ -198,7 +199,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     attributesPanel.fireRateField.setText(selectedWeapon.fireRate);
     attributesPanel.magSizeField.setText(selectedWeapon.magSize);
     attributesPanel.drainField.setText(selectedWeapon.drain);
-    attributesPanel.ammoField.setText(selectedWeapon.ammo);
+    attributesPanel.comboField.setText(selectedWeapon.combo);
     attributesPanel.reloadField.setText(selectedWeapon.reload);
     attributesPanel.critField.setText(selectedWeapon.crit);
     attributesPanel.multiplierField.setText(selectedWeapon.critMult);
@@ -242,7 +243,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String fireRate = attributesPanel.fireRateField.getText();
     String magSize = attributesPanel.magSizeField.getText();
     String drain = attributesPanel.drainField.getText();
-    String ammo = attributesPanel.ammoField.getText();
+    String combo = attributesPanel.comboField.getText();
     String reload = attributesPanel.reloadField.getText();
     String crit = attributesPanel.critField.getText();
     String critMult = attributesPanel.multiplierField.getText();
@@ -319,9 +320,9 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
         drain = "0";
       }
     try{
-      int testInt = Integer.parseInt(ammo);
+      int testInt = Integer.parseInt(combo);
     }catch(Exception ex){
-      ammo = "0";
+      combo = "0";
     }
     try{
       int testInt = Integer.parseInt(projeciles);
@@ -342,7 +343,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+slash;
     weaponString += ","+fireRate;
     weaponString += ","+magSize;
-    weaponString += ","+ammo;
+    weaponString += ","+combo;
     weaponString += ","+reload;
     weaponString += ","+crit;
     weaponString += ","+critMult;

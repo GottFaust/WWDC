@@ -22,7 +22,7 @@ public class Weapon implements Comparable {
   public String slash;
   public String fireRate;
   public String magSize;
-  public String ammo;
+  public String combo;
   public String reload;
   public String crit;
   public String critMult;
@@ -54,7 +54,7 @@ public class Weapon implements Comparable {
     slash = split[10];
     fireRate = split[11];
     magSize = split[12];
-    ammo = split[13];
+    combo = split[13];
     reload = split[14];
     crit = split[15];
     critMult = split[16];
@@ -81,7 +81,7 @@ public class Weapon implements Comparable {
     weaponString += slash + ",";
     weaponString += fireRate + ",";
     weaponString += magSize + ",";
-    weaponString += ammo + ",";
+    weaponString += combo + ",";
     weaponString += reload + ",";
     weaponString += crit + ",";
     weaponString += critMult + ",";

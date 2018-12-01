@@ -28,7 +28,8 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel slashPanel = new JPanel();
   protected JPanel fireRatePanel = new JPanel();
   protected JPanel magSizePanel = new JPanel();
-  protected JPanel ammoPanel = new JPanel();
+  protected JPanel comboPanel = new JPanel();
+  protected JPanel startingComboPanel = new JPanel();
   protected JPanel reloadPanel = new JPanel();
   protected JPanel critChancePanel = new JPanel();
   protected JPanel critMultPanel = new JPanel();
@@ -57,7 +58,8 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel slashLabel = new JLabel("Slash Damage - ");
   protected JLabel fireRateLabel = new JLabel("Rate of Fire - ");
   protected JLabel magSizeLabel = new JLabel("Magazine Capacity - ");
-  protected JLabel totalAmmoLabel = new JLabel("Total Ammo - ");
+  protected JLabel comboLabel = new JLabel("Mimimum Combo - ");
+  protected JLabel startingComboLabel = new JLabel("Starting Combo - ");
   protected JLabel reloadTimeLabel = new JLabel("Reload Time - ");
   protected JLabel critChanceLabel = new JLabel("Crit Chance - ");
   protected JLabel critMultiplierLabel = new JLabel("Crit Multiplier - ");
@@ -75,7 +77,8 @@ public class WeaponAttributesPanel extends JPanel {
   protected JTextField slashField = new JTextField(10);
   protected JTextField fireRateField = new JTextField(10);
   protected JTextField magSizeField = new JTextField(10);
-  protected JTextField ammoField = new JTextField(10);
+  protected JTextField comboField = new JTextField(10);
+  protected JTextField startingComboField = new JTextField(10);
   protected JTextField reloadField = new JTextField(10);
   protected JTextField critField = new JTextField(10);
   protected JTextField multiplierField = new JTextField(10);
@@ -111,7 +114,8 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(slashLabel);
     UIBuilder.labelInit(fireRateLabel);
     UIBuilder.labelInit(magSizeLabel);
-    UIBuilder.labelInit(totalAmmoLabel);
+    UIBuilder.labelInit(comboLabel);
+    UIBuilder.labelInit(startingComboLabel);
     UIBuilder.labelInit(reloadTimeLabel);
     UIBuilder.labelInit(critChanceLabel);
     UIBuilder.labelInit(critMultiplierLabel);
@@ -131,7 +135,8 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.numberFieldInit(slashField);
     UIBuilder.numberFieldInit(fireRateField);
     UIBuilder.numberFieldInit(magSizeField);
-    UIBuilder.numberFieldInit(ammoField);
+    UIBuilder.numberFieldInit(comboField);
+    UIBuilder.numberFieldInit(startingComboField);
     UIBuilder.numberFieldInit(reloadField);
     UIBuilder.numberFieldInit(critField);
     UIBuilder.numberFieldInit(multiplierField);
@@ -148,7 +153,8 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(slashPanel);
     UIBuilder.createSepparationBorder(fireRatePanel);
     UIBuilder.createSepparationBorder(magSizePanel);
-    UIBuilder.createSepparationBorder(ammoPanel);
+    UIBuilder.createSepparationBorder(comboPanel);
+    UIBuilder.createSepparationBorder(startingComboPanel);
     UIBuilder.createSepparationBorder(reloadPanel);
     UIBuilder.createSepparationBorder(critChancePanel);
     UIBuilder.createSepparationBorder(critMultPanel);
@@ -168,7 +174,8 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(slashPanel);
     UIBuilder.panelInit(fireRatePanel);
     UIBuilder.panelInit(magSizePanel);
-    UIBuilder.panelInit(ammoPanel);
+    UIBuilder.panelInit(comboPanel);
+    UIBuilder.panelInit(startingComboPanel);
     UIBuilder.panelInit(reloadPanel);
     UIBuilder.panelInit(critChancePanel);
     UIBuilder.panelInit(critMultPanel);
@@ -187,7 +194,8 @@ public class WeaponAttributesPanel extends JPanel {
     slashLabel.setToolTipText(Constants.SLASH_TOOL_TIP);
     fireRateLabel.setToolTipText(Constants.FIRE_RATE_TOOL_TIP);
     magSizeLabel.setToolTipText(Constants.MAG_SIZE_TOOL_TIP);
-    totalAmmoLabel.setToolTipText(Constants.TOTAL_AMMO_TOOL_TIP);
+    comboLabel.setToolTipText(Constants.COMBO_TOOL_TIP);
+    startingComboLabel.setToolTipText("Optional combo to start with: 1.5, 2.0, etc. Leave blank or = 0 if starting from 0 combo");
     reloadTimeLabel.setToolTipText(Constants.RELOAD_TIME_TOOL_TIP);
     critChanceLabel.setToolTipText(Constants.CRIT_CHANCE_TOOL_TIP);
     critMultiplierLabel.setToolTipText(Constants.CRIT_MULT_TOOL_TIP);
@@ -197,7 +205,7 @@ public class WeaponAttributesPanel extends JPanel {
     burstCountLabel.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
     projectileLabel.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusLabel.setToolTipText(Constants.STATUS_TOOL_TIP);
-    //drainLabel.setToolTipText(Constants.DRAIN_TOOL_TIP);
+    drainLabel.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
     
     nameField.setToolTipText(Constants.NAME_TOOL_TIP);
     damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -206,7 +214,8 @@ public class WeaponAttributesPanel extends JPanel {
     slashField.setToolTipText(Constants.SLASH_TOOL_TIP);
     fireRateField.setToolTipText(Constants.FIRE_RATE_TOOL_TIP);
     magSizeField.setToolTipText(Constants.MAG_SIZE_TOOL_TIP);
-    ammoField.setToolTipText(Constants.TOTAL_AMMO_TOOL_TIP);
+    comboField.setToolTipText(Constants.COMBO_TOOL_TIP);
+    startingComboField.setToolTipText("Optional combo to start with: 1.5, 2.0, etc. Leave blank or = 0 if starting from 0 combo");
     reloadField.setToolTipText(Constants.RELOAD_TIME_TOOL_TIP);
     critField.setToolTipText(Constants.CRIT_CHANCE_TOOL_TIP);
     multiplierField.setToolTipText(Constants.CRIT_MULT_TOOL_TIP);
@@ -216,8 +225,11 @@ public class WeaponAttributesPanel extends JPanel {
     burstCountField.setToolTipText(Constants.BURST_COUNT_TOOL_TIP);
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
-   //drainField.setToolTipText(Constants.DRAIN_TOOL_TIP);
+    drainField.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
     
+    weaponModeBox.addItem(Constants.CHARGEBOW);
+    weaponModeBox.addItem(Constants.AUTOBOW);
+    weaponModeBox.addItem(Constants.SEMIBOW);
     weaponModeBox.addItem(Constants.BURST);
     weaponModeBox.addItem(Constants.CHARGE);
     weaponModeBox.addItem(Constants.CONTINUOUS);
@@ -225,6 +237,8 @@ public class WeaponAttributesPanel extends JPanel {
     weaponModeBox.addItem(Constants.FULL_AUTO_RAMP_UP);
     weaponModeBox.addItem(Constants.FULL_AUTO_BULLET_RAMP);
     weaponModeBox.addItem(Constants.SEMI_AUTO);
+    weaponModeBox.addItem(Constants.SNIPER);
+    weaponModeBox.addItem(Constants.LANKA);
     
     damageTypeBox.addItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
@@ -247,7 +261,8 @@ public class WeaponAttributesPanel extends JPanel {
     fireRatePanel.setLayout(new GridLayout(1,2,0,0));
     magSizePanel.setLayout(new GridLayout(1,2,0,0));
     drainPanel.setLayout(new GridLayout(1,2,0,0));
-    ammoPanel.setLayout(new GridLayout(1,2,0,0));
+    comboPanel.setLayout(new GridLayout(1,2,0,0));
+    startingComboPanel.setLayout(new GridLayout(1,2,0,0));
     reloadPanel.setLayout(new GridLayout(1,2,0,0));
     critChancePanel.setLayout(new GridLayout(1,2,0,0));
     critMultPanel.setLayout(new GridLayout(1,2,0,0));
@@ -274,8 +289,10 @@ public class WeaponAttributesPanel extends JPanel {
     magSizePanel.add(magSizeField);
     drainPanel.add(drainLabel);
     drainPanel.add(drainField);
-    ammoPanel.add(totalAmmoLabel);
-    ammoPanel.add(ammoField);
+    comboPanel.add(comboLabel);
+    comboPanel.add(comboField);
+    startingComboPanel.add(startingComboLabel);
+    startingComboPanel.add(startingComboField);
     reloadPanel.add(reloadTimeLabel);
     reloadPanel.add(reloadField);
     critChancePanel.add(critChanceLabel);
@@ -311,7 +328,8 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(fireRatePanel);
     this.add(magSizePanel);
     this.add(drainPanel);
-    this.add(ammoPanel);
+    this.add(comboPanel);
+    this.add(startingComboPanel);
     this.add(reloadPanel);
     this.add(critChancePanel);
     this.add(critMultPanel);
@@ -337,7 +355,8 @@ public class WeaponAttributesPanel extends JPanel {
     fireRateField.setText("");
     magSizeField.setText("");
     drainField.setText("");
-    ammoField.setText("");
+    comboField.setText("");
+    startingComboField.setText("");
     reloadField.setText("");
     critField.setText("");
     multiplierField.setText("");
@@ -362,7 +381,8 @@ public class WeaponAttributesPanel extends JPanel {
     fireRateField.setText("");
     magSizeField.setText("");
     drainField.setText("");
-    ammoField.setText("");
+    comboField.setText("");
+    startingComboField.setText("");
     reloadField.setText("");
     critField.setText("");
     multiplierField.setText("");

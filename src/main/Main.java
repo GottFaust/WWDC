@@ -153,7 +153,7 @@ public class Main {
 	public static String weaponMode = "";
 	protected static String damageType = "";
 	protected static double chargeTime = 0.0;
-	protected static double fireRate = 0.0;
+	public static double fireRate = 0.0;
 	protected static double reloadTime = 0.0;
 	protected static double critChance = 0.0;
 	protected static double critMult = 0.0;
@@ -166,7 +166,8 @@ public class Main {
 	protected static double deadAimMult = 1.0;
 	protected static double flatDamageBonus = 0.0;
 	protected static int mag = 0;
-	protected static int ammoCap = 0;
+	public static int combo = 0;
+	public static double startingCombo = 0;
 	public static int burstCount = 0;
 	public static double drain = 1;
 
@@ -233,6 +234,7 @@ public class Main {
 
 	public static double globalToxin; // Added this to calculate gas proc damage -o
 	public static double globalFire;
+	public static double fireRateModPower;
 	public static int hunterMunitions;
 	public static boolean headShot = false;
 	public static Random rng = new Random();
@@ -535,7 +537,8 @@ public class Main {
 		deadAimMult = 1.0;
 		flatDamageBonus = 0.0;
 		mag = 0;
-		ammoCap = 0;
+		combo = 0;
+		startingCombo = 1;
 		burstCount = 0;
 		finalMag = 0;
 		finalAmmo = 0;
@@ -584,7 +587,8 @@ public class Main {
 		lastShotDamageMult = 1;
 		statusChance = selectedWeapon.getStatusChance();
 		mag = selectedWeapon.getMagSize();
-		ammoCap = selectedWeapon.getTotalAmmo();
+		combo = selectedWeapon.getCombo();
+		startingCombo = selectedWeapon.getStartingCombo();
 		burstCount = selectedWeapon.getBurstCount();
 		drain = selectedWeapon.getDrain();
 
@@ -633,13 +637,6 @@ public class Main {
 			corrosive.base /= projectileCount;
 			viral.base /= projectileCount;
 		}
-
-		// Calculations based on weapon type
-		if (weaponMode.equals(Constants.CHARGE)) {
-			double fireRateAddition = 1 / chargeTime;
-			fireRate += fireRateAddition;
-		}
-
 		// Mod Vectors
 		activeMods = selectedWeapon.getActiveMods();
 		modRanks = selectedWeapon.getActiveModRanks();
@@ -652,7 +649,7 @@ public class Main {
 		// Initialize mod vectors
 		Vector<Mod> combinedMods = new Vector<Mod>();
 		Vector<Double> magMods = new Vector<Double>();
-		Vector<Double> ammoMods = new Vector<Double>();
+		//Vector<Double> ammoMods = new Vector<Double>();
 		Vector<Double> critChanceMods = new Vector<Double>();
 		Vector<Double> critMultMods = new Vector<Double>();
 		Vector<Double> fireRateMods = new Vector<Double>();
@@ -1282,9 +1279,11 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MAG_CAP)) {
 				magMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MAG_CAP))) * (1.0 + modRanks.get(i)));
 			}
+			/*
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_AMMO_CAP)) {
 				ammoMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_AMMO_CAP))) * (1.0 + modRanks.get(i)));
 			}
+			*/
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_CHANCE)) {
 				critChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_CHANCE))) * (1.0 + modRanks.get(i)));
 			}
@@ -1347,11 +1346,12 @@ public class Main {
 		for (int i = 0; i < flatMagMods.size(); i++) {
 			finalMag += flatMagMods.get(i);
 		}
-
+/*
 		finalAmmo = ammoCap;
 		for (int i = 0; i < ammoMods.size(); i++) {
 			finalAmmo += ammoCap * ammoMods.get(i);
 		}
+		*/
 
 		finalCritChance = critChance;
 		for (int i = 0; i < critChanceMods.size(); i++) {
@@ -1381,19 +1381,38 @@ public class Main {
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 		
-		finalFireRate = fireRate;
-		for (int i = 0; i < fireRateMods.size(); i++) {
-			finalFireRate += fireRate * fireRateMods.get(i);
+		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
+			if(startingCombo < 1.5) startingCombo = 1;
+			finalDamageMult *= startingCombo;
 		}
-		finalFireRate += fireRate * selectedWeapon.getAddFR();
-
+		
+		finalFireRate = fireRate;
+		fireRateModPower = 0;
+		for (int i = 0; i < fireRateMods.size(); i++) {
+			fireRateModPower += fireRateMods.get(i);
+		}
+		if(weaponMode.equals(Constants.AUTOBOW) || weaponMode.equals(Constants.SEMIBOW) || weaponMode.equals(Constants.CHARGEBOW)) {
+			fireRateModPower *= 2;
+		}			
+		if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.CHARGEBOW)) {
+			double finalChargeTime = chargeTime / (1 + fireRateModPower + selectedWeapon.getAddFR());
+			if(fireRate > 0) {
+				finalFireRate = 1 / ((1/(fireRate * (1 + fireRateModPower))) + finalChargeTime);
+			}else {
+				finalFireRate = 1 / finalChargeTime;	
+			}
+		}else{
+			finalFireRate += fireRate * fireRateModPower;
+			finalFireRate += fireRate * selectedWeapon.getAddFR();
+		}
+		
 		// This is completely retarded, but also the current case
-		if (weaponMode.equals(Constants.SEMI_AUTO)) {
+		if (weaponMode.equals(Constants.SEMI_AUTO) || weaponMode.equals(Constants.SNIPER) || weaponMode.equals(Constants.SEMIBOW)) {
 			if (finalFireRate > 10.0) {
 				finalFireRate = 10.0;
 			}
 		}
-
+	
 		finalReloadTime = reloadTime;
 		double reloadSpeedMult = 1.0;
 		for (int i = 0; i < reloadTimeMods.size(); i++) {
@@ -1543,8 +1562,6 @@ public class Main {
 			finalInfestedMult += infestedMods.get(i);
 		}
 
-		// used to be here
-
 		if (headShots.isSelected()) {
 			headShot = true;
 		} else {
@@ -1566,8 +1583,6 @@ public class Main {
 			double rawFireTime = numBursts / finalFireRate;
 			finalIterationTime = rawFireTime + finalReloadTime;
 		} else if (weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-			// finalFireRate *= 0.8333333; //spool-up weapon fire rate caps at 5/6 for some
-			// reason -o Or does it really?
 			double baseFireDelay = ((1 / finalFireRate));
 			double firstFireDelay = baseFireDelay * 5 / 2;
 			double secondFireDelay = baseFireDelay * 5 / 3;
@@ -1578,6 +1593,8 @@ public class Main {
 			finalIterationTime = (firstFireDelay + secondFireDelay + thirdFireDelay + ((finalMag - 4) * baseFireDelay)) + finalReloadTime;
 		} else if (weaponMode.equals(Constants.CONTINUOUS)) {
 			finalMag /= drain;
+			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
+		} else if(weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)){
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
 		} else {
 			finalIterationTime = ((finalMag - 1) / finalFireRate) + finalReloadTime;
