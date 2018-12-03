@@ -32,11 +32,13 @@ public class WeaponModPanel extends JPanel implements ActionListener {
   protected JPanel topPanel = new JPanel();
   protected JPanel middlePanel = new JPanel();
   protected JPanel bottomPanel = new JPanel();
+  protected JPanel vigiPanel = new JPanel();
   
   /** JComboBoxes **/
   public JComboBox<String> modBox = new JComboBox<String>();
   protected JComboBox<String> modLevel = new JComboBox<String>();
   protected JComboBox<String> slotPolarityBox = new JComboBox<String>();
+  public JComboBox<String> vigiStrength = new JComboBox<String>();
   
   /** JLabels **/
   protected JLabel modLabel = new JLabel(Constants.MOD_LABEL);
@@ -44,6 +46,7 @@ public class WeaponModPanel extends JPanel implements ActionListener {
   protected JLabel slotPolarityLabel = new JLabel(Constants.SLOT_POLARITY_LABEL);
   protected JLabel modPolarityLabel = new JLabel(Constants.MOD_POLARITY_LABEL);
   protected JLabel costLabel = new JLabel(Constants.COST_LABEL);
+  protected JLabel vigiLabel = new JLabel("Vigilante Effects");
   
   /** JTextFields **/
   protected JTextField modPolarityField = new JTextField(3);
@@ -81,12 +84,14 @@ public class WeaponModPanel extends JPanel implements ActionListener {
     UIBuilder.comboBoxInit(modBox);
     UIBuilder.comboBoxInit(modLevel);
     UIBuilder.comboBoxInit(slotPolarityBox);
+    UIBuilder.comboBoxInit(vigiStrength);
     
     UIBuilder.labelInit(modLabel);
     UIBuilder.labelInit(levelLabel);
     UIBuilder.labelInit(slotPolarityLabel);
     UIBuilder.labelInit(modPolarityLabel);
     UIBuilder.labelInit(costLabel);
+    UIBuilder.labelInit(vigiLabel);
     
     UIBuilder.textFieldInit(modPolarityField);
     UIBuilder.textFieldInit(costField);
@@ -94,6 +99,7 @@ public class WeaponModPanel extends JPanel implements ActionListener {
     UIBuilder.panelInit(topPanel);
     UIBuilder.panelInit(middlePanel);
     UIBuilder.panelInit(bottomPanel);
+    UIBuilder.panelInit(vigiPanel);
     
     modBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
     
@@ -104,11 +110,19 @@ public class WeaponModPanel extends JPanel implements ActionListener {
     slotPolarityBox.addItem(Constants.V);
     slotPolarityBox.addItem(Constants.DASH);
     
+    vigiStrength.addItem("1");
+    vigiStrength.addItem("2");
+    vigiStrength.addItem("3");
+    vigiStrength.addItem("4");
+    vigiStrength.addItem("5");
+    vigiStrength.addItem("6");
+    
     modLevel.addItem("0");
     
     topPanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
     middlePanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
     bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
+    vigiPanel.setLayout(new FlowLayout(FlowLayout.CENTER,1,1));
     this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     
     modPolarityField.setEditable(false);
@@ -124,10 +138,15 @@ public class WeaponModPanel extends JPanel implements ActionListener {
     bottomPanel.add(modPolarityField);
     bottomPanel.add(costLabel);
     bottomPanel.add(costField);
+    vigiPanel.add(vigiLabel);
+    vigiPanel.add(vigiStrength);
     
     this.add(topPanel);
+    this.add(vigiPanel);
     this.add(middlePanel);
     this.add(bottomPanel);
+    
+    vigiPanel.setVisible(false);
     
     UIBuilder.createTextTitledLineBorder(this, title);
     
@@ -258,12 +277,24 @@ public class WeaponModPanel extends JPanel implements ActionListener {
   }
 
   /**
+   * Gets the Vigilante effect strength from this mod
+   */
+  public int countVigi(){
+	  int count = 0;
+  if(selectedMod.name.equals("Vigilante Armaments")){
+	 count = Integer.parseInt((String)vigiStrength.getSelectedItem());
+  }
+    return count;
+  }
+  
+  /**
    * Action Listener Callback
    */
   public void actionPerformed(ActionEvent e) {
     if(e.getSource().equals(modBox)){
       owner.updateModPanel(this);
       modLevel.removeAllItems();
+      vigiPanel.setVisible(false);
       if(modBox.getSelectedItem().equals("--")){
         modLevel.addItem("0");
         modPolarityField.setText(Constants.NONE);
@@ -273,6 +304,9 @@ public class WeaponModPanel extends JPanel implements ActionListener {
           for(int i=0; i<=levels; i++){
             modLevel.addItem(""+i);
           }
+          if(selectedMod.name.equals("Vigilante Armaments")) {
+        	  vigiPanel.setVisible(true);
+          }	  
         }
         modPolarityField.setText(selectedMod.polarity);
       }

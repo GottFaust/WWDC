@@ -509,19 +509,6 @@ public class TTKTarget implements Comparable {
 			ex.printStackTrace();
 		}
 
-		/*
-		 * clearValues();
-		 * 
-		 * if (Main.complexTTKIterations > 1) { for (int i = 0; i <
-		 * Main.complexTTKIterations; i++) {
-		 * TTKVec.add(calculateRandomizedTimeToKill()); } }else if
-		 * (Main.complexTTKIterations == 1) { TTKVec.add(calculateHardTimeToKill()); }
-		 * 
-		 * for (Double d : TTKVec) { TTK += d; } TTK /= TTKVec.size();
-		 * Collections.sort(TTKVec); minTTK = TTKVec.get(0); maxTTK =
-		 * TTKVec.get(TTKVec.size() - 1); Main.complexTTKCompletions += 1;
-		 */
-
 	}
 
 	/**
@@ -821,7 +808,7 @@ public class TTKTarget implements Comparable {
 							double localCritMult = 1.0;
 							double tempCrit = Main.finalCritChance + 1;
 							int crit = 0;
-							for (int a = 0; a < localProjectileCount; a++) {
+							for (int a = 0; a < Main.finalCritChance; a++) {
 								tempCrit--;
 								if (rng.nextDouble() < tempCrit) {
 									crit++;
@@ -831,6 +818,11 @@ public class TTKTarget implements Comparable {
 								localCritMult = crit * Main.finalCritMult;
 							}
 
+							//Vigilante Proc?
+							if(Main.vigilante > 0 && Main.vigilante > rng.nextDouble()) {
+								localCritMult += Main.finalCritMult;
+							}
+							
 							// Headshot damage multiplier
 							headShotMult = 1;
 							if (Main.headShot) {
@@ -863,7 +855,7 @@ public class TTKTarget implements Comparable {
 								double shieldDifference = 1.0;
 								if (targetCurrentShields < 0.0) {
 									double unabsorbed = Math.abs(targetCurrentShields);
-									double raw = ((Main.raw.finalBase * localCritMult) * typeMult);
+									double raw = Main.raw.finalBase * totalMult;
 									shieldDifference = 1.0 - (unabsorbed / raw);
 									targetCurrentShields = 0.0;
 								}
@@ -899,12 +891,10 @@ public class TTKTarget implements Comparable {
 								}
 							}
 
-							// New procs -o
-
 							// Hunter Munitions proc?
 							if (Main.hunterMunitions > 0) {
 								if (localCritMult > 1) { // this could mess up if crits hit for less than 1x
-									if (rng.nextDouble() <= 0.3) {
+									if (rng.nextDouble() <= Main.hunterMunitions) {
 										double bleedDamage = DoTBase * totalMult * 0.35;
 										int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 										slashStacks.add(new DoTPair(bleedDamage, slashDuration));
@@ -1307,7 +1297,7 @@ public class TTKTarget implements Comparable {
 							double shieldDifference = 1.0;
 							if (targetCurrentShields < 0.0) {
 								double unabsorbed = Math.abs(targetCurrentShields);
-								double raw = ((Main.raw.finalBase * localCritMult) * typeMult);
+								double raw = Main.raw.finalBase * totalMult * localProjectileCount;
 								shieldDifference = 1.0 - (unabsorbed / raw);
 								targetCurrentShields = 0.0;
 							}

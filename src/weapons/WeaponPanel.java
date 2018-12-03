@@ -349,36 +349,15 @@ public class WeaponPanel extends JPanel implements ActionListener {
   /**
    *  Sets Mods for the Maximizer
    */
-  public void setModOne (int set){
-	  modOnePanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModTwo (int set){
-	  modTwoPanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModThree (int set){
-	  modThreePanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModFour (int set){
-	  modFourPanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModFive (int set){
-	  modFivePanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModSix (int set){
-	  modSixPanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModSeven (int set){
-	  modSevenPanel.modBox.setSelectedIndex(set);
-	  updateDropDownContents();
-  }
-  public void setModEight (int set){
-	  modEightPanel.modBox.setSelectedIndex(set);
+  public void setMod (int mod, int set){
+	  if(mod == 0) modOnePanel.modBox.setSelectedIndex(set);
+	  if(mod == 1) modTwoPanel.modBox.setSelectedIndex(set);
+	  if(mod == 2) modThreePanel.modBox.setSelectedIndex(set);
+	  if(mod == 3) modFourPanel.modBox.setSelectedIndex(set);
+	  if(mod == 4) modFivePanel.modBox.setSelectedIndex(set);
+	  if(mod == 5) modSixPanel.modBox.setSelectedIndex(set);
+	  if(mod == 6) modSevenPanel.modBox.setSelectedIndex(set);
+	  if(mod == 7) modEightPanel.modBox.setSelectedIndex(set);
 	  updateDropDownContents();
   }
   
@@ -961,6 +940,22 @@ public class WeaponPanel extends JPanel implements ActionListener {
     }catch(Exception ex){
       totalModCostField.setText("0");
     }
+  }
+  
+  /**
+   * Gets the total Vigilante effect strength
+   */
+  public int getVigilanteEffects(){
+	  int vigiStrength = 0;
+	  vigiStrength += modOnePanel.countVigi();
+	  vigiStrength += modTwoPanel.countVigi();
+	  vigiStrength += modThreePanel.countVigi();
+	  vigiStrength += modFourPanel.countVigi();
+	  vigiStrength += modFivePanel.countVigi();
+	  vigiStrength += modSixPanel.countVigi();
+	  vigiStrength += modSevenPanel.countVigi();
+	  vigiStrength += modEightPanel.countVigi();
+	  return vigiStrength;
   }
   
   /**

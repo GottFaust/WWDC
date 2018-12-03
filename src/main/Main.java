@@ -234,7 +234,8 @@ public class Main {
 	public static double globalFire;
 	public static double globalElectric;
 	public static double fireRateModPower;
-	public static int hunterMunitions;
+	public static double hunterMunitions;
+	public static double vigilante;
 	public static boolean headShot = false;
 	public static Random rng = new Random();
 	public static double bleedDoTDPS;
@@ -566,6 +567,12 @@ public class Main {
 		toxinStacks = 0;
 		gasStacks = 0;
 		complexTTKCompletions = 0;
+		globalFire = 0;
+		globalToxin = 0;
+		globalElectric = 0;
+		hunterMunitions = 0;
+		vigilante = 0;
+
 	}
 
 	/**
@@ -683,43 +690,6 @@ public class Main {
 		Mod primeMod = null;
 		double primeModRanks = 0;
 		String primeModType = "";
-
-		globalFire = 0;
-		globalToxin = 0;
-		globalElectric = 0;
-		hunterMunitions = 0;
-
-		// Calculating total toxin mod power for gas and toxin procs
-		for (int i = 0; i < activeMods.size(); i++) {
-			Mod tempMod = activeMods.get(i);
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalToxin += modPower;
-			}
-		}
-		// Calculating total toxin mod power for fire procs
-		for (int i = 0; i < activeMods.size(); i++) {
-			Mod tempMod = activeMods.get(i);
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalFire += modPower;
-			}
-		}
-		// Calculating total electric mod power for electric procs
-		for (int i = 0; i < activeMods.size(); i++) {
-			Mod tempMod = activeMods.get(i);
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalElectric += modPower;
-			}
-		}
-
-		for (int i = 0; i < activeMods.size(); i++) { // Finding Hunter Munitions and setting the global variable
-			Mod tempMod = activeMods.get(i);
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
-				hunterMunitions = 1;
-			}
-		}
 
 		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
@@ -1343,6 +1313,25 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_DEAD_AIM)) {
 				deadAimMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DEAD_AIM))) * (1.0 + modRanks.get(i)));
 			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
+				hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
+			}
+			//Finding "mod power" for each element for status proc damage calculations
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalElectric += modPower;
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalFire += modPower;
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalToxin += modPower;
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
+				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
+			}	
 		}
 
 		// Calculate finals
@@ -1608,7 +1597,7 @@ public class Main {
 		}
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
 
-		averageCritMult = (1 - Math.min(1, finalCritChance) + finalCritChance * finalCritMult);
+		averageCritMult = (1 - Math.min(1, finalCritChance) + finalCritChance * finalCritMult) + vigilante * finalCritMult;
 
 	}
 
@@ -1630,19 +1619,9 @@ public class Main {
 		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
 		burstProcsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / (finalMag / finalFireRate));
 
-		/*
-		 * if (slash.finalBase > 0.0 || hunterMunitions > 0) { slashStacks =
-		 * calculateAverageStacks("Slash", SlashProcRate, 6.0); } if (fire.finalBase >
-		 * 0.0) { fireStacks = calculateAverageStacks("Fire", FireProcRate, 6.0); } if
-		 * (toxin.finalBase > 0.0 || weaponName.equals("Hystrix (Poison)")) {
-		 * toxinStacks = calculateAverageStacks("Toxin", ToxinProcRate, 8.0); } if
-		 * (gas.finalBase > 0.0) { gasStacks = calculateAverageStacks("Gas",
-		 * GasProcRate, 8.0); }
-		 */
-
 		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
 			slashStacks = procsPerSecond * slashProcRate * 6 * finalStatusDuration;
-			slashStacks += hunterMunitions * 0.3 * Math.max(1, finalCritChance) * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
+			slashStacks += hunterMunitions * Math.max(1, finalCritChance) * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
 		}
 		if (fire.finalBase > 0.0) {
 			fireStacks = 1 - Math.pow((1 - fireProcRate), (((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration));
@@ -2068,19 +2047,20 @@ public class Main {
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + SlashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
+		
 		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double DoTBase = rawBase * averageCritMult;
-		double electricBase = (electric.finalBase - (electric.base * finalDamageMult)) * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * averageCritMult;
-		double bleedDamage = DoTBase * 0.35 * hunterMult;
-		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
-		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
-		double cloudDamage = rawBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * averageCritMult;
+		double DoTBase = rawBase * averageCritMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double electricBase = DoTBase * (1 + globalElectric) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double bleedDamage = DoTBase * 0.35 * hunterMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
 		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
 		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
-		electricProcDPS = ElectricProcRate * (DoTBase + electricBase) * 0.5 * averageProjectileCount;
-		gasProcDPS = GasProcRate * DoTBase * (1 + globalToxin) * 0.5 * averageProjectileCount;
+		electricProcDPS = ElectricProcRate * electricBase * averageProjectileCount * finalFireRate;
+		gasProcDPS = GasProcRate * poisonDamage * averageProjectileCount * finalFireRate;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
 		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
