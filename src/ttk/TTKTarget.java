@@ -1262,12 +1262,12 @@ public class TTKTarget implements Comparable {
 							comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
 						}
 
-						double critty = Main.finalCritChance;
+						double critty = Main.finalCritChance + Main.vigilante;
 						if (critty > 1)
 							critty = 1;
 
 						// average crit mult
-						double localCritMult = (1 - critty) + (Main.finalCritChance * Main.finalCritMult);
+						double localCritMult = (1 - critty) + ((Main.finalCritChance + Main.vigilante) * Main.finalCritMult);
 
 						headShotMult = 1;
 						if (Main.headShot) {
@@ -1335,7 +1335,7 @@ public class TTKTarget implements Comparable {
 
 						// Hunter Munitions proc!
 						if (Main.hunterMunitions > 0) {
-							double bleedDamage = DoTBase * totalMult * 0.35 * critty * 0.3 * localProjectileCount;
+							double bleedDamage = DoTBase * totalMult * 0.35 * critty * Main.hunterMunitions * localProjectileCount;
 							int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 							slashStacks.add(new DoTPair(bleedDamage, slashDuration));
 							targetCurrentHealth -= bleedDamage;
