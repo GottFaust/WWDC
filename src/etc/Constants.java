@@ -74,7 +74,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.9.8";
+  public static final String APP_VERSION = "v0.9.9";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -376,7 +376,9 @@ public class Constants {
                                             "Depleted Reload,Rifle,5,2,MagCap,ReloadSpeed,-0.1,0.08,~,2",
   											"Primed Target Cracker,Pistol,10,1,CritMultiplier,0.1,V,4",
   											"Vigilante Armaments,Rifle,5,2,Multishot,VigilanteEffect,0.1,0,~,4",
+  											"Vigilante Fervor,Rifle,5,2,FireRate,VigilanteEffect,0.075,0,V,4",
   											"Vigilante Armaments,Shotgun,5,2,Multishot,VigilanteEffect,0.1,0,~,4",
+  											"Vigilante Fervor,Shotgun,5,2,FireRate,VigilanteEffect,0.075,0,V,4",
   											"Primed Quickdraw,Pistol,10,1,ReloadSpeed,0.08,~,2",
   											"Primed Slip Magazine,Pistol,10,1,MagCap,0.05,~,4",
   											"Auger Pact,Pistol,5,1,Damage,0.15,V,2",

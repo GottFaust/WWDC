@@ -68,23 +68,23 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel drainLabel = new JLabel("Ammo Drain - ");
   
   /** JTextFields **/
-  protected JTextField chargeTimeField = new JTextField(10);
-  protected JTextField burstCountField = new JTextField(10);
-  protected JTextField nameField = new JTextField(10);
-  protected JTextField damageField = new JTextField(10);
-  protected JTextField impactField = new JTextField(10);
-  protected JTextField punctureField = new JTextField(10);
-  protected JTextField slashField = new JTextField(10);
-  protected JTextField fireRateField = new JTextField(10);
-  protected JTextField magSizeField = new JTextField(10);
-  protected JTextField comboField = new JTextField(10);
-  protected JTextField startingComboField = new JTextField(10);
-  protected JTextField reloadField = new JTextField(10);
-  protected JTextField critField = new JTextField(10);
-  protected JTextField multiplierField = new JTextField(10);
-  protected JTextField projectileField = new JTextField(10);
-  protected JTextField statusField = new JTextField(10);
-  protected JTextField drainField = new JTextField(10);
+  protected JTextField chargeTimeField = new JTextField(8);
+  protected JTextField burstCountField = new JTextField(8);
+  protected JTextField nameField = new JTextField(8);
+  protected JTextField damageField = new JTextField(8);
+  protected JTextField impactField = new JTextField(8);
+  protected JTextField punctureField = new JTextField(8);
+  protected JTextField slashField = new JTextField(8);
+  protected JTextField fireRateField = new JTextField(8);
+  protected JTextField magSizeField = new JTextField(8);
+  protected JTextField comboField = new JTextField(8);
+  protected JTextField startingComboField = new JTextField(8);
+  protected JTextField reloadField = new JTextField(8);
+  protected JTextField critField = new JTextField(8);
+  protected JTextField multiplierField = new JTextField(8);
+  protected JTextField projectileField = new JTextField(8);
+  protected JTextField statusField = new JTextField(8);
+  protected JTextField drainField = new JTextField(8);
   
   
   /**

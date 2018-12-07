@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -16,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,9 +50,12 @@ import weapons.RiflePanel;
 import weapons.ShotgunPanel;
 import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
+import weapons.DPSPanel;
 import options.ColorOptionsPanel;
 import Maximizer.Maximizer;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Main {
 
@@ -68,7 +73,8 @@ public class Main {
 
 	/** JButtons **/
 	protected static JButton calculateButton = new JButton("Calculate");
-	// protected static JButton clearButton = new JButton("Clear");
+	// protected static JButton statsButton = new JButton("Hide/Show Calculated
+	// Stats");
 	protected static JButton clearOutputButton = new JButton("Clear Output");
 	protected static JButton maximizeButton = new JButton("Maximize");
 
@@ -87,6 +93,9 @@ public class Main {
 
 	/** JPanels **/
 	protected static JPanel mainPanel = new JPanel();
+	protected static JPanel secondaryPanel = new JPanel();
+	protected static JPanel outerPanel = new JPanel();
+	protected static JPanel deepsPanel = new JPanel();
 	protected static JPanel topPanel = new JPanel();
 	protected static JPanel bottomPanel = new JPanel();
 	protected static RiflePanel riflePanel;
@@ -100,6 +109,7 @@ public class Main {
 	protected static ColorOptionsPanel theColorPanel = null;
 	protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
 	protected static TTKGraphPanel ttkGraph = new TTKGraphPanel();
+	protected static DPSPanel DPSPanel = new DPSPanel();
 
 	/** JMenuBar **/
 	protected static JMenuBar mainMenuBar = new JMenuBar();
@@ -118,6 +128,7 @@ public class Main {
 
 	/** Misc UI Components **/
 	protected static MainActionListener action = new MainActionListener();
+	protected static MainChangeListener change = new MainChangeListener();
 	protected static MainWindowListener window = new MainWindowListener();
 	protected static Boolean modManagerInit = false;
 	protected static Boolean targetManagerInit = false;
@@ -145,7 +156,7 @@ public class Main {
 	public static int complexTTKIterations = 10000;
 	public static int complexTTKCompletions = 0;
 	public static String longestTTKName = "";
-	protected static int maxTTKTime = 300000;
+	// protected static int maxTTKTime = 300000;
 
 	public static String weaponName = "";
 	public static String weaponMode = "";
@@ -244,7 +255,9 @@ public class Main {
 	public static double cloudDoTDPS;
 	public static double electricProcDPS;
 	public static double gasProcDPS;
-	public static boolean maxxing;
+	public static boolean updateOutput;
+
+	public static boolean setup = true;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -269,6 +282,7 @@ public class Main {
 		theMaximizer = new Maximizer();
 		buildUI();
 		mainFrame.setVisible(true);
+		setup = false;
 	}
 
 	/**
@@ -276,6 +290,9 @@ public class Main {
 	 */
 	public static void buildUI() {
 		UIBuilder.panelInit(mainPanel);
+		UIBuilder.panelInit(secondaryPanel);
+		UIBuilder.panelInit(outerPanel);
+		UIBuilder.panelInit(deepsPanel);
 		UIBuilder.panelInit(topPanel);
 		UIBuilder.panelInit(bottomPanel);
 		UIBuilder.panelInit(riflePanel);
@@ -286,7 +303,7 @@ public class Main {
 		UIBuilder.buttonInit(maximizeButton);
 		UIBuilder.labelInit(TTKIterationsLabel);
 		UIBuilder.numberFieldInit(TTKIterationsField);
-		// UIBuilder.buttonInit(clearButton);
+		// UIBuilder.buttonInit(statsButton);
 		UIBuilder.buttonInit(clearOutputButton);
 		UIBuilder.textAreaInit(output);
 		UIBuilder.scrollPaneInit(outputScroll);
@@ -331,7 +348,7 @@ public class Main {
 		maximizeButton.addActionListener(action);
 		TTKBox.addActionListener(action);
 		lightWeightTTKBox.addActionListener(action);
-		// clearButton.addActionListener(action);
+		// statsButton.addActionListener(action);
 		clearOutputButton.addActionListener(action);
 		saveItem.addActionListener(action);
 		loadItem.addActionListener(action);
@@ -339,9 +356,11 @@ public class Main {
 		TTKMenu.addActionListener(action);
 		weaponMenu.addActionListener(action);
 		colorOptionsItem.addActionListener(action);
-		targetGroupBox.addActionListener(action);
-
+		weaponPane.addChangeListener(change);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+		secondaryPanel.setLayout(new BoxLayout(secondaryPanel, BoxLayout.X_AXIS));
+		outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
+		deepsPanel.setLayout(new BoxLayout(deepsPanel, BoxLayout.Y_AXIS));
 		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
 
 		weaponPane.add(riflePanel, Constants.RIFLE);
@@ -366,8 +385,8 @@ public class Main {
 		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
-		// buttonPanel.add(clearButton);
 		buttonPanel.add(clearOutputButton);
+		// buttonPanel.add(statsButton);
 
 		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
 		corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
@@ -379,8 +398,8 @@ public class Main {
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
-		TTKBox.setSelected(useComplexTTK);
-		lightWeightTTKBox.setSelected(!TTKBox.isSelected());
+		TTKBox.setSelected(true);
+		lightWeightTTKBox.setSelected(false);
 
 		JPanel dataPanel = new JPanel();
 		UIBuilder.panelInit(dataPanel);
@@ -391,11 +410,21 @@ public class Main {
 		outputScroll.getViewport().setPreferredSize(new Dimension(400, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
 
+		UIBuilder.createTitledLineBorder(DPSPanel, "Calculated Stats");
+
 		topPanel.add(weaponPane);
 		bottomPanel.add(dataPanel);
-		bottomPanel.add(buttonPanel);
 		mainPanel.add(topPanel);
 		mainPanel.add(bottomPanel);
+
+		// DPSPanel.setVisible(false);
+		mainPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		DPSPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		secondaryPanel.add(mainPanel);
+		secondaryPanel.add(DPSPanel);
+
+		outerPanel.add(secondaryPanel);
+		outerPanel.add(buttonPanel);
 
 		fileMenu.add(colorOptionsItem);
 		fileMenu.add(saveItem);
@@ -407,7 +436,7 @@ public class Main {
 		mainMenuBar.add(weaponMenu);
 
 		mainFrame.setJMenuBar(mainMenuBar);
-		mainFrame.add(mainPanel);
+		mainFrame.add(outerPanel);
 		mainFrame.pack();
 		mainFrame.addWindowListener(window);
 		mainFrame.setTitle(Constants.APP_TITLE + " " + Constants.APP_VERSION);
@@ -452,6 +481,14 @@ public class Main {
 		calculateBurstDamagePerSecond();
 
 		// Calculate Time To Kill Values
+		if (TTKBox.isSelected()) {
+			String iters = TTKIterationsField.getText();
+			if (iters == null)
+				iters = "10000";
+			complexTTKIterations = Integer.parseInt(iters);
+		} else if (lightWeightTTKBox.isSelected()) {
+			complexTTKIterations = 1;
+		}
 		int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 		Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
 		for (TTKTarget target : theTTKManager.targets) {
@@ -480,7 +517,7 @@ public class Main {
 
 		}
 		// Print the data to the text area and render the graph
-		if (!maxxing)
+		if (updateOutput)
 			updateOutput();
 	}
 
@@ -572,7 +609,6 @@ public class Main {
 		globalElectric = 0;
 		hunterMunitions = 0;
 		vigilante = 0;
-
 	}
 
 	/**
@@ -622,7 +658,6 @@ public class Main {
 		} else if (damageType.equals(Constants.VIRAL_WEAPON_DAMAGE)) {
 			viral.base = selectedWeapon.getBaseDamage();
 		}
-
 		raw.base = impact.base + puncture.base + slash.base + fire.base + ice.base + electric.base + toxin.base + blast.base + magnetic.base + gas.base + radiation.base + corrosive.base + viral.base;
 
 		// Factor for multiple projectiles per shot
@@ -1316,7 +1351,7 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
 				hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
 			}
-			//Finding "mod power" for each element for status proc damage calculations
+			// Finding "mod power" for each element for status proc damage calculations
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalElectric += modPower;
@@ -1331,7 +1366,7 @@ public class Main {
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
 				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
-			}	
+			}
 		}
 
 		// Calculate finals
@@ -2047,7 +2082,6 @@ public class Main {
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + SlashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
-		
 		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 		double DoTBase = rawBase * averageCritMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
@@ -2128,56 +2162,6 @@ public class Main {
 		fossilized.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
 		sinew.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
 	}
-
-	/**
-	 * Calculates the average number of stacks of a given effect
-	 */
-	// Replaced with math that calculates max number of concurrent stacks
-	/*
-	 * protected static double calculateAverageStacks(String proc, double procRate,
-	 * double duration) {
-	 * 
-	 * double millisceondsPerShot = 1000.0 / finalFireRate; double stacksPerShot =
-	 * 1.0 * procRate; double reloadTimeMilliseconds = finalReloadTime * 1000.0;
-	 * double stackTotal = 0.0; double moddedDuration = duration *
-	 * finalStatusDuration * 1000; double averageStacks = 0; int reloadTimeCounter =
-	 * 0; int shotCounter = 0; int iterations = 0; boolean reloading = false;
-	 * Vector<Double> stackVec = new Vector<Double>(); Vector<Integer> stackCountVec
-	 * = new Vector<Integer>();
-	 * 
-	 * // Run a 60 second simulation to calculate the average number of stacks for
-	 * (int i = 0; i < 60000; i++) { // Add new stack if (!reloading) {
-	 * shotCounter++; // is it time to fire a new projectile? if (shotCounter >=
-	 * millisceondsPerShot) { // Add stacks
-	 * 
-	 * if (proc.equals("Slash") && hunterMunitions > 0) { // adding hunter munitions
-	 * slash stacks -o double munitionsStack = (finalCritChance * 0.3); if
-	 * (munitionsStack > 0.3) munitionsStack = 0.3; stackTotal += (munitionsStack *
-	 * averageProjectileCount); }
-	 * 
-	 * if (proc.equals("Toxin") && weaponName.equals("Hystrix (Poison)")) {
-	 * stackTotal += (averageProjectileCount); }
-	 * 
-	 * stackTotal += (stacksPerShot * averageProjectileCount);
-	 * 
-	 * for (int s = 0; stackTotal > s; s++) { if (stackTotal > 1.0) {
-	 * stackVec.add(moddedDuration); stackTotal--; } } shotCounter = 0; // Have we
-	 * unloaded the whole mag and need to reload? iterations++; if (iterations >=
-	 * finalMag) { reloading = true; iterations = 0; } } } else { // Are we still
-	 * reloading? reloadTimeCounter++; if (reloadTimeCounter >=
-	 * reloadTimeMilliseconds) { reloading = false; reloadTimeCounter = 0; } }
-	 * 
-	 * // Decrement stack timers for (int j = 0; j < stackVec.size(); j++) { double
-	 * temp = stackVec.get(j); temp--; stackVec.set(j, temp); } // Remove stacks
-	 * that have expired for (int k = 0; k < stackVec.size(); k++) { if
-	 * (stackVec.get(k) <= 0) { stackVec.remove(k); } } // Add a new count to the
-	 * stack counting vector stackCountVec.add(stackVec.size()); }
-	 * 
-	 * for (int i = 0; i < stackCountVec.size(); i++) { averageStacks +=
-	 * stackCountVec.get(i); } averageStacks /= stackCountVec.size(); if
-	 * (proc.equals("Fire") && averageStacks > 0) { // Fire procs don't stack -o
-	 * averageStacks = 1; } return averageStacks; }
-	 */
 
 	/**
 	 * Appends the weapon information to the output text area
@@ -2538,6 +2522,144 @@ public class Main {
 	}
 
 	/**
+	 * Update the instant stats
+	 */
+	public static void updateStats() {
+		if (!setup) {
+			useComplexTTK = false;
+			updateOutput = false;
+			calculateDPS();
+			updateOutput = true;
+
+			DecimalFormat f = new DecimalFormat("#.###");
+
+			DPSPanel.impactField.setText(f.format(finalProjectileCount * averageCritMult * impact.finalBase));
+			DPSPanel.punctureField.setText(f.format(finalProjectileCount * averageCritMult * puncture.finalBase));
+			DPSPanel.slashField.setText(f.format(finalProjectileCount * averageCritMult * slash.finalBase));
+			DPSPanel.fireField.setText(f.format(finalProjectileCount * averageCritMult * fire.finalBase));
+			DPSPanel.iceField.setText(f.format(finalProjectileCount * averageCritMult * ice.finalBase));
+			DPSPanel.electricField.setText(f.format(finalProjectileCount * averageCritMult * electric.finalBase));
+			DPSPanel.toxinField.setText(f.format(finalProjectileCount * averageCritMult * toxin.finalBase));
+			DPSPanel.blastField.setText(f.format(finalProjectileCount * averageCritMult * blast.finalBase));
+			DPSPanel.magneticField.setText(f.format(finalProjectileCount * averageCritMult * magnetic.finalBase));
+			DPSPanel.gasField.setText(f.format(finalProjectileCount * averageCritMult * gas.finalBase));
+			DPSPanel.radiationField.setText(f.format(finalProjectileCount * averageCritMult * radiation.finalBase));
+			DPSPanel.corrosiveField.setText(f.format(finalProjectileCount * averageCritMult * corrosive.finalBase));
+			DPSPanel.viralField.setText(f.format(finalProjectileCount * averageCritMult * viral.finalBase));
+			DPSPanel.projectilesField.setText(f.format(finalProjectileCount));
+			DPSPanel.FRField.setText(f.format(finalFireRate));
+			DPSPanel.CCField.setText(f.format(100 * finalCritChance) + "%");
+			DPSPanel.CDField.setText(f.format(finalCritMult));
+			DPSPanel.SCField.setText(f.format(100 * finalStatusChance) + "%");
+			DPSPanel.modifiedSCField.setText(f.format(100 * (1 - Math.pow(1 - finalStatusChance, finalProjectileCount))) + "%");
+			DPSPanel.magField.setText(f.format(finalMag));
+			DPSPanel.reloadField.setText(f.format(finalReloadTime));
+			DPSPanel.damageField.setText(f.format(finalProjectileCount * averageCritMult * raw.finalBase));
+			DPSPanel.slashProcField.setText(f.format(bleedDoTDPS));
+			DPSPanel.toxinProcField.setText(f.format(poisonDoTDPS));
+			DPSPanel.gasProcField.setText(f.format(cloudDoTDPS + gasProcDPS));
+			DPSPanel.electricProcField.setText(f.format(electricProcDPS));
+			DPSPanel.fireProcField.setText(f.format(heatDoTDPS));
+			DPSPanel.burstField.setText(f.format(raw.rawPerSecond));
+			DPSPanel.sustainedField.setText(f.format(raw.perSecond));
+
+			if (impact.finalBase > 0) {
+				DPSPanel.impactPanel.setVisible(true);
+			} else {
+				DPSPanel.impactPanel.setVisible(false);
+			}
+			if (puncture.finalBase > 0) {
+				DPSPanel.puncturePanel.setVisible(true);
+			} else {
+				DPSPanel.puncturePanel.setVisible(false);
+			}
+			if (slash.finalBase > 0) {
+				DPSPanel.slashPanel.setVisible(true);
+			} else {
+				DPSPanel.slashPanel.setVisible(false);
+			}
+			if (fire.finalBase > 0) {
+				DPSPanel.firePanel.setVisible(true);
+			} else {
+				DPSPanel.firePanel.setVisible(false);
+			}
+			if (ice.finalBase > 0) {
+				DPSPanel.icePanel.setVisible(true);
+			} else {
+				DPSPanel.icePanel.setVisible(false);
+			}
+			if (electric.finalBase > 0) {
+				DPSPanel.electricPanel.setVisible(true);
+			} else {
+				DPSPanel.electricPanel.setVisible(false);
+			}
+			if (toxin.finalBase > 0) {
+				DPSPanel.toxinPanel.setVisible(true);
+			} else {
+				DPSPanel.toxinPanel.setVisible(false);
+			}
+			if (blast.finalBase > 0) {
+				DPSPanel.blastPanel.setVisible(true);
+			} else {
+				DPSPanel.blastPanel.setVisible(false);
+			}
+			if (magnetic.finalBase > 0) {
+				DPSPanel.magneticPanel.setVisible(true);
+			} else {
+				DPSPanel.magneticPanel.setVisible(false);
+			}
+			if (gas.finalBase > 0) {
+				DPSPanel.gasPanel.setVisible(true);
+			} else {
+				DPSPanel.gasPanel.setVisible(false);
+			}
+			if (radiation.finalBase > 0) {
+				DPSPanel.radiationPanel.setVisible(true);
+			} else {
+				DPSPanel.radiationPanel.setVisible(false);
+			}
+			if (corrosive.finalBase > 0) {
+				DPSPanel.corrosivePanel.setVisible(true);
+			} else {
+				DPSPanel.corrosivePanel.setVisible(false);
+			}
+			if (viral.finalBase > 0) {
+				DPSPanel.viralPanel.setVisible(true);
+			} else {
+				DPSPanel.viralPanel.setVisible(false);
+			}
+			if (bleedDoTDPS > 0) {
+				DPSPanel.slashProcPanel.setVisible(true);
+			} else {
+				DPSPanel.slashProcPanel.setVisible(false);
+			}
+			if (poisonDoTDPS > 0) {
+				DPSPanel.toxinProcPanel.setVisible(true);
+			} else {
+				DPSPanel.toxinProcPanel.setVisible(false);
+			}
+			if (cloudDoTDPS > 0) {
+				DPSPanel.gasProcPanel.setVisible(true);
+			} else {
+				DPSPanel.gasProcPanel.setVisible(false);
+			}
+			if (electricProcDPS > 0) {
+				DPSPanel.electricProcPanel.setVisible(true);
+			} else {
+				DPSPanel.electricProcPanel.setVisible(false);
+			}
+			if (heatDoTDPS > 0) {
+				DPSPanel.fireProcPanel.setVisible(true);
+			} else {
+				DPSPanel.fireProcPanel.setVisible(false);
+			}
+		}
+		if (TTKBox.isSelected()) {
+			useComplexTTK = true;
+		}
+	}
+
+	/**
 	 * Method to display the mod manager
 	 */
 	protected static void displayModManager() {
@@ -2626,6 +2748,15 @@ public class Main {
 	 */
 
 	/**
+	 * change Listener Local Class
+	 */
+	protected static class MainChangeListener implements ChangeListener {
+		public void stateChanged(ChangeEvent e) {
+			updateStats();
+		}
+	}
+
+	/**
 	 * Action Listener Local Class
 	 * 
 	 * @author GottFuast
@@ -2644,60 +2775,20 @@ public class Main {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(calculateButton)) {
-				maxxing = false;
+				updateStats();
+				updateOutput = true;
+				if (lightWeightTTKBox.isSelected() || TTKBox.isSelected()) {
+					useComplexTTK = true;
+				}
 				calculateDPS();
 			} else if (e.getSource().equals(maximizeButton)) {
-
 				selectedWeapon = (WeaponPanel) weaponPane.getSelectedComponent();
 				selectedWeapon.parseActiveMods();
-
-				boolean full = false;
-				boolean valid = true;
-
-				if (!selectedWeapon.modEight.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modSeven.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modSeven.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modSix.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modSix.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modFive.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modFive.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modFour.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modFour.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modThree.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modThree.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modTwo.equals("--") && full == true) {
-					valid = false;
-				} else if (!selectedWeapon.modTwo.equals("--")) {
-					full = true;
-				}
-				if (selectedWeapon.modOne.equals("--") && full == true) {
-					valid = false;
-				}
-
-				if (valid == true) {
-					maxxing = true;
-					theMaximizer.Maximizer();
-				} else {
-					output.append("\nError: Please only leave mods slots empty starting sequentially backwards from mod 8");
-				}
-
+				useComplexTTK = true;
+				updateOutput = false;
+				setup = true;
+				theMaximizer.Maximizer();
+				setup = false;
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
 				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
 				if (e.getSource().equals(TTKBox)) {
@@ -2709,23 +2800,13 @@ public class Main {
 						TTKBox.setSelected(false);
 					}
 				}
-				if (useComplexTTK) {
-					if (e.getSource().equals(TTKBox)) {
-						String iters = TTKIterationsField.getText();
-						if (iters == null)
-							iters = "10000";
-						complexTTKIterations = Integer.parseInt(iters);
-					} else {
-						complexTTKIterations = 1;
-					}
-				}
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
-			} /*
-				 * else if (e.getSource().equals(clearButton)) { riflePanel.clear();
-				 * shotgunPanel.clear(); pistolPanel.clear(); output.setText("");
-				 * dpsGraph.clear(); ttkGraph.clear(); }
-				 */
+			}
+			/*
+			 * else if (e.getSource().equals(statsButton)) { if (DPSPanel.isVisible()) {
+			 * DPSPanel.setVisible(false); } else { DPSPanel.setVisible(true); } repack(); }
+			 */
 			else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
 				dpsGraph.clear();
@@ -2733,6 +2814,9 @@ public class Main {
 			} else if (e.getSource().equals(loadItem)) {
 				int returnVal = chooser.showOpenDialog(mainPanel);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					riflePanel.setting = true;
+					shotgunPanel.setting = true;
+					pistolPanel.setting = true;
 					riflePanel.clear();
 					shotgunPanel.clear();
 					pistolPanel.clear();
@@ -2760,6 +2844,10 @@ public class Main {
 					} catch (Exception ex) {
 						// Do Nothing
 					}
+					riflePanel.setting = false;
+					shotgunPanel.setting = false;
+					pistolPanel.setting = false;
+					updateStats();
 				} else {
 					// Do Nothing
 				}
