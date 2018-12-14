@@ -241,6 +241,22 @@ public class Main {
 	public static SurfaceDamage fossilized = new SurfaceDamage();
 	public static SurfaceDamage sinew = new SurfaceDamage();
 
+	public static double totalPhysical;
+	public static double totalElemental;
+	public static double impactProcRate;
+	public static double punctureProcRate;
+	public static double slashProcRate;
+	public static double fireProcRate;
+	public static double iceProcRate;
+	public static double toxinProcRate;
+	public static double electricProcRate;
+	public static double corrosiveProcRate;
+	public static double gasProcRate;
+	public static double viralProcRate;
+	public static double blastProcRate;
+	public static double radiationProcRate;
+	public static double magneticProcRate;
+
 	public static double globalToxin;
 	public static double globalFire;
 	public static double globalElectric;
@@ -283,6 +299,7 @@ public class Main {
 		buildUI();
 		mainFrame.setVisible(true);
 		setup = false;
+		repack();
 	}
 
 	/**
@@ -410,8 +427,6 @@ public class Main {
 		outputScroll.getViewport().setPreferredSize(new Dimension(400, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
 
-		UIBuilder.createTitledLineBorder(DPSPanel, "Calculated Stats");
-
 		topPanel.add(weaponPane);
 		bottomPanel.add(dataPanel);
 		mainPanel.add(topPanel);
@@ -443,6 +458,9 @@ public class Main {
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		TTKIterationsField.setText("10000");
+
+		UIBuilder.createTitledLineBorder(DPSPanel.stats, "Calculated Stats");
+		UIBuilder.createTitledLineBorder(DPSPanel.status, "Status Breakdown");
 	}
 
 	/**
@@ -505,16 +523,6 @@ public class Main {
 					longestTTKName = name;
 				}
 			}
-
-			/*
-			 * int ttkCount = groupTargets.size(); maxTTKTime = ttkCount * 60000; int
-			 * ttkTimeout = 0; while(complexTTKCompletions < ttkCount && ttkTimeout <
-			 * maxTTKTime){ try{ ttkTimeout += 1; Thread.sleep(1); }catch(Exception ex){
-			 * ex.printStackTrace(); } }
-			 * System.out.println("Advanced TTK Completed in "+(ttkTimeout/1000.0)
-			 * +" seconds.");
-			 */
-
 		}
 		// Print the data to the text area and render the graph
 		if (updateOutput)
@@ -1292,11 +1300,6 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MAG_CAP)) {
 				magMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MAG_CAP))) * (1.0 + modRanks.get(i)));
 			}
-			/*
-			 * if (tempMod.effectTypes.contains(Constants.MOD_TYPE_AMMO_CAP)) {
-			 * ammoMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(
-			 * Constants.MOD_TYPE_AMMO_CAP))) * (1.0 + modRanks.get(i))); }
-			 */
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_CHANCE)) {
 				critChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_CHANCE))) * (1.0 + modRanks.get(i)));
 			}
@@ -1378,10 +1381,6 @@ public class Main {
 		for (int i = 0; i < flatMagMods.size(); i++) {
 			finalMag += flatMagMods.get(i);
 		}
-		/*
-		 * finalAmmo = ammoCap; for (int i = 0; i < ammoMods.size(); i++) { finalAmmo +=
-		 * ammoCap * ammoMods.get(i); }
-		 */
 
 		finalCritChance = critChance;
 		for (int i = 0; i < critChanceMods.size(); i++) {
@@ -1640,13 +1639,23 @@ public class Main {
 	 * Calculates miscellaneous values
 	 */
 	protected static void calculateMiscValues() {
+		// Status Ratios
+		totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
+		totalElemental = Main.raw.finalBase - totalPhysical;
+		slashProcRate = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental);
+		fireProcRate = (Main.fire.finalBase / ((4 * totalPhysical) + totalElemental));
+		toxinProcRate = (Main.toxin.finalBase / ((4 * totalPhysical) + totalElemental));
+		gasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental));
+		electricProcRate = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental));
+		impactProcRate = (4 * Main.impact.finalBase / ((4 * totalPhysical) + totalElemental));
+		punctureProcRate = (4 * Main.puncture.finalBase / ((4 * totalPhysical) + totalElemental));
+		iceProcRate = (Main.ice.finalBase / ((4 * totalPhysical) + totalElemental));
+		corrosiveProcRate = (Main.corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
+		viralProcRate = (Main.viral.finalBase / ((4 * totalPhysical) + totalElemental));
+		blastProcRate = (Main.blast.finalBase / ((4 * totalPhysical) + totalElemental));
+		radiationProcRate = (Main.radiation.finalBase / ((4 * totalPhysical) + totalElemental));
+		magneticProcRate = (Main.magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
 
-		double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
-		double totalElemental = Main.raw.finalBase - totalPhysical;
-		double slashProcRate = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		double fireProcRate = (Main.fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		double toxinProcRate = (Main.toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		double gasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental));
 		averageProjectileCount = finalProjectileCount;
 		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
 			averageProjectileCount = finalProjectileCount * ((((projectileCount * (projectileCount + 1) / 2) + projectileCount * (finalMag - projectileCount)) / finalMag) / projectileCount);
@@ -2071,15 +2080,9 @@ public class Main {
 
 		// Add in DoTs
 
-		double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
-		double totalElemental = Main.raw.finalBase - totalPhysical;
-		double ElectricProcRate = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental)) * finalStatusChance;
-		double GasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental)) * finalStatusChance;
-		double SlashProcRate = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental) * finalStatusChance;
-
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
-			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + SlashProcRate));
+			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
 		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
@@ -2093,8 +2096,8 @@ public class Main {
 		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
 		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
 		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
-		electricProcDPS = ElectricProcRate * electricBase * averageProjectileCount * finalFireRate;
-		gasProcDPS = GasProcRate * poisonDamage * averageProjectileCount * finalFireRate;
+		electricProcDPS = electricProcRate * electricBase * averageProjectileCount * finalFireRate * finalStatusChance;
+		gasProcDPS = gasProcRate * poisonDamage * averageProjectileCount * finalFireRate * finalStatusChance;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
 		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
@@ -2563,95 +2566,122 @@ public class Main {
 			DPSPanel.burstField.setText(f.format(raw.rawPerSecond));
 			DPSPanel.sustainedField.setText(f.format(raw.perSecond));
 
+			DPSPanel.impactChanceField.setText(f.format(finalStatusChance * 100 * impactProcRate) + "%");
+			DPSPanel.punctureChanceField.setText(f.format(finalStatusChance * 100 * punctureProcRate) + "%");
+			DPSPanel.slashChanceField.setText(f.format(finalStatusChance * 100 * slashProcRate) + "%");
+			DPSPanel.fireChanceField.setText(f.format(finalStatusChance * 100 * fireProcRate) + "%");
+			DPSPanel.iceChanceField.setText(f.format(finalStatusChance * 100 * iceProcRate) + "%");
+			DPSPanel.electricChanceField.setText(f.format(finalStatusChance * 100 * electricProcRate) + "%");
+			DPSPanel.toxinChanceField.setText(f.format(finalStatusChance * 100 * toxinProcRate) + "%");
+			DPSPanel.blastChanceField.setText(f.format(finalStatusChance * 100 * blastProcRate) + "%");
+			DPSPanel.magneticChanceField.setText(f.format(finalStatusChance * 100 * magneticProcRate) + "%");
+			DPSPanel.gasChanceField.setText(f.format(finalStatusChance * 100 * gasProcRate) + "%");
+			DPSPanel.radiationChanceField.setText(f.format(finalStatusChance * 100 * radiationProcRate) + "%");
+			DPSPanel.corrosiveChanceField.setText(f.format(finalStatusChance * 100 * corrosiveProcRate) + "%");
+			DPSPanel.viralChanceField.setText(f.format(finalStatusChance * 100 * viralProcRate) + "%");
+
+			DPSPanel.impactPanel.setVisible(false);
+			DPSPanel.puncturePanel.setVisible(false);
+			DPSPanel.slashPanel.setVisible(false);
+			DPSPanel.firePanel.setVisible(false);
+			DPSPanel.icePanel.setVisible(false);
+			DPSPanel.electricPanel.setVisible(false);
+			DPSPanel.toxinPanel.setVisible(false);
+			DPSPanel.blastPanel.setVisible(false);
+			DPSPanel.magneticPanel.setVisible(false);
+			DPSPanel.gasPanel.setVisible(false);
+			DPSPanel.radiationPanel.setVisible(false);
+			DPSPanel.corrosivePanel.setVisible(false);
+			DPSPanel.viralPanel.setVisible(false);
+			DPSPanel.slashProcPanel.setVisible(false);
+			DPSPanel.toxinProcPanel.setVisible(false);
+			DPSPanel.gasProcPanel.setVisible(false);
+			DPSPanel.electricProcPanel.setVisible(false);
+			DPSPanel.fireProcPanel.setVisible(false);
+			DPSPanel.impactChancePanel.setVisible(false);
+			DPSPanel.punctureChancePanel.setVisible(false);
+			DPSPanel.slashChancePanel.setVisible(false);
+			DPSPanel.fireChancePanel.setVisible(false);
+			DPSPanel.iceChancePanel.setVisible(false);
+			DPSPanel.electricChancePanel.setVisible(false);
+			DPSPanel.toxinChancePanel.setVisible(false);
+			DPSPanel.blastChancePanel.setVisible(false);
+			DPSPanel.magneticChancePanel.setVisible(false);
+			DPSPanel.gasChancePanel.setVisible(false);
+			DPSPanel.radiationChancePanel.setVisible(false);
+			DPSPanel.corrosiveChancePanel.setVisible(false);
+			DPSPanel.viralChancePanel.setVisible(false);
+			DPSPanel.status.setVisible(false);
+
+			if (finalStatusChance > 0) {
+				DPSPanel.status.setVisible(true);
+			}
 			if (impact.finalBase > 0) {
 				DPSPanel.impactPanel.setVisible(true);
-			} else {
-				DPSPanel.impactPanel.setVisible(false);
+				DPSPanel.impactChancePanel.setVisible(true);
 			}
 			if (puncture.finalBase > 0) {
 				DPSPanel.puncturePanel.setVisible(true);
-			} else {
-				DPSPanel.puncturePanel.setVisible(false);
+				DPSPanel.punctureChancePanel.setVisible(true);
 			}
 			if (slash.finalBase > 0) {
 				DPSPanel.slashPanel.setVisible(true);
-			} else {
-				DPSPanel.slashPanel.setVisible(false);
+				DPSPanel.slashChancePanel.setVisible(true);
 			}
 			if (fire.finalBase > 0) {
 				DPSPanel.firePanel.setVisible(true);
-			} else {
-				DPSPanel.firePanel.setVisible(false);
+				DPSPanel.fireChancePanel.setVisible(true);
 			}
 			if (ice.finalBase > 0) {
 				DPSPanel.icePanel.setVisible(true);
-			} else {
-				DPSPanel.icePanel.setVisible(false);
+				DPSPanel.iceChancePanel.setVisible(true);
 			}
 			if (electric.finalBase > 0) {
 				DPSPanel.electricPanel.setVisible(true);
-			} else {
-				DPSPanel.electricPanel.setVisible(false);
+				DPSPanel.electricChancePanel.setVisible(true);
 			}
 			if (toxin.finalBase > 0) {
 				DPSPanel.toxinPanel.setVisible(true);
-			} else {
-				DPSPanel.toxinPanel.setVisible(false);
+				DPSPanel.toxinChancePanel.setVisible(true);
 			}
 			if (blast.finalBase > 0) {
 				DPSPanel.blastPanel.setVisible(true);
-			} else {
-				DPSPanel.blastPanel.setVisible(false);
+				DPSPanel.blastChancePanel.setVisible(true);
 			}
 			if (magnetic.finalBase > 0) {
 				DPSPanel.magneticPanel.setVisible(true);
-			} else {
-				DPSPanel.magneticPanel.setVisible(false);
+				DPSPanel.magneticChancePanel.setVisible(true);
 			}
 			if (gas.finalBase > 0) {
 				DPSPanel.gasPanel.setVisible(true);
-			} else {
-				DPSPanel.gasPanel.setVisible(false);
+				DPSPanel.gasChancePanel.setVisible(true);
 			}
 			if (radiation.finalBase > 0) {
 				DPSPanel.radiationPanel.setVisible(true);
-			} else {
-				DPSPanel.radiationPanel.setVisible(false);
+				DPSPanel.radiationChancePanel.setVisible(true);
 			}
 			if (corrosive.finalBase > 0) {
 				DPSPanel.corrosivePanel.setVisible(true);
-			} else {
-				DPSPanel.corrosivePanel.setVisible(false);
+				DPSPanel.corrosiveChancePanel.setVisible(true);
 			}
 			if (viral.finalBase > 0) {
 				DPSPanel.viralPanel.setVisible(true);
-			} else {
-				DPSPanel.viralPanel.setVisible(false);
+				DPSPanel.viralChancePanel.setVisible(true);
 			}
 			if (bleedDoTDPS > 0) {
 				DPSPanel.slashProcPanel.setVisible(true);
-			} else {
-				DPSPanel.slashProcPanel.setVisible(false);
 			}
 			if (poisonDoTDPS > 0) {
 				DPSPanel.toxinProcPanel.setVisible(true);
-			} else {
-				DPSPanel.toxinProcPanel.setVisible(false);
 			}
 			if (cloudDoTDPS > 0) {
 				DPSPanel.gasProcPanel.setVisible(true);
-			} else {
-				DPSPanel.gasProcPanel.setVisible(false);
 			}
 			if (electricProcDPS > 0) {
 				DPSPanel.electricProcPanel.setVisible(true);
-			} else {
-				DPSPanel.electricProcPanel.setVisible(false);
 			}
 			if (heatDoTDPS > 0) {
 				DPSPanel.fireProcPanel.setVisible(true);
-			} else {
-				DPSPanel.fireProcPanel.setVisible(false);
 			}
 		}
 		if (TTKBox.isSelected()) {
@@ -2775,7 +2805,6 @@ public class Main {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(calculateButton)) {
-				updateStats();
 				updateOutput = true;
 				if (lightWeightTTKBox.isSelected() || TTKBox.isSelected()) {
 					useComplexTTK = true;

@@ -1274,12 +1274,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			updateWeaponDamageOptions((String) wap.damageTypeBox.getSelectedItem());
 		} else if (e.getSource().equals(weaponBox)) {
 			if (!updatingDropDowns) {
+				setting = true;
 				updateFields((String) weaponBox.getSelectedItem());
 				addCCField.setText(null);
 				addCDField.setText(null);
 				addSCField.setText(null);
 				addDamField.setText(null);
 				addFRField.setText(null);
+				setting = false;
 			}
 		} else if (e.getSource().equals(potato)) {
 			calculateModCosts();
