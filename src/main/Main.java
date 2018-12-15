@@ -260,6 +260,7 @@ public class Main {
 	public static double globalToxin;
 	public static double globalFire;
 	public static double globalElectric;
+	public static double globalIce;
 	public static double fireRateModPower;
 	public static double hunterMunitions;
 	public static double vigilante;
@@ -615,6 +616,7 @@ public class Main {
 		globalFire = 0;
 		globalToxin = 0;
 		globalElectric = 0;
+		globalIce = 0;
 		hunterMunitions = 0;
 		vigilante = 0;
 	}
@@ -728,7 +730,7 @@ public class Main {
 		Vector<Double> deadAimMods = new Vector<Double>();
 		Vector<Double> flatStatusMods = new Vector<Double>();
 		Vector<Double> flatMagMods = new Vector<Double>();
-
+/*
 		// Check for combined elements
 		Mod primeMod = null;
 		double primeModRanks = 0;
@@ -1293,8 +1295,9 @@ public class Main {
 				}
 			}
 		}
-
-		// Populate non-elemental mod vectors
+*/
+		Vector<String> elements = new Vector<String>(); // Ordered element vector
+		// Populate mod vectors
 		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MAG_CAP)) {
@@ -1354,22 +1357,100 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
 				hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
 			}
-			// Finding "mod power" for each element for status proc damage calculations
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalElectric += modPower;
+				if(!elements.contains("ElectricDamage"))elements.add(Constants.MOD_TYPE_LIGHTNING_DAMAGE);
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalFire += modPower;
+				if(!elements.contains("FireDamage"))elements.add(Constants.MOD_TYPE_FIRE_DAMAGE);
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalToxin += modPower;
+				if(!elements.contains("ToxinDamage"))elements.add(Constants.MOD_TYPE_TOXIN_DAMAGE);
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
+				globalIce += modPower;
+				if(!elements.contains("IceDamage"))elements.add(Constants.MOD_TYPE_ICE_DAMAGE);
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
 				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
 			}
+		}	
+		if(!elements.contains(damageType + "Damage"))elements.add(damageType + "Damage");
+		
+		// Combine elements
+		for (int i = 0; i < elements.size() - 1; i++) {
+			if ((!elements.get(i).equals("FireDamage") && !elements.get(i).equals("IceDamage") && !elements.get(i).equals("ToxinDamage") && !elements.get(i).equals("ElectricDamage")) || (!elements.get(i+1).equals("FireDamage") && !elements.get(i+1).equals("IceDamage") && !elements.get(i+1).equals("ToxinDamage") && !elements.get(i+1).equals("ElectricDamage"))) {
+				} else {
+					if ((elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("IceDamage")) || (elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("FireDamage"))) {
+						elements.add("BlastDamage");
+						blastDamageMods.add(globalFire + globalIce);
+						if(damageType.equals("Fire") || damageType.equals("Ice") || damageType.equals("Blast")) blastDamageMods.add(1.0);
+						fire.base = 0.0;
+						ice.base = 0.0;
+					}
+					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
+						elements.add("CorrosiveDamage");
+						corrosiveDamageMods.add(globalElectric + globalToxin);
+						if(damageType.equals("Electric") || damageType.equals("Toxin") || damageType.equals("Corrosive")) corrosiveDamageMods.add(1.0);
+						electric.base = 0.0;
+						toxin.base = 0.0;
+					}
+					if ((elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("FireDamage"))) {
+						elements.add("GasDamage");
+						gasDamageMods.add(globalFire + globalToxin);
+						if(damageType.equals("Fire") || damageType.equals("Toxin") || damageType.equals("Gas")) gasDamageMods.add(1.0);
+						fire.base = 0.0;
+						toxin.base = 0.0;
+					}
+					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("IceDamage")) || (elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
+						elements.add("MagneticDamage");
+						magneticDamageMods.add(globalElectric + globalIce);
+						if(damageType.equals("Electric") || damageType.equals("Ice") || damageType.equals("Magnetic")) magneticDamageMods.add(1.0);
+						electric.base = 0.0;
+						ice.base = 0.0;
+					}
+					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("FireDamage")) || (elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
+						elements.add("RadiationDamage");
+						radiationDamageMods.add(globalFire + globalElectric);
+						if(damageType.equals("Fire") || damageType.equals("Electric") || damageType.equals("Radiation")) radiationDamageMods.add(1.0);
+						fire.base = 0.0;
+						electric.base = 0.0;
+					}
+					if ((elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("IceDamage"))) {
+						elements.add("ViralDamage");
+						viralDamageMods.add(globalToxin + globalIce);
+						if(damageType.equals("Toxin") || damageType.equals("Ice") || damageType.equals("Viral")) viralDamageMods.add(1.0);
+						toxin.base = 0.0;
+						ice.base = 0.0;
+					}
+					elements.remove(i);
+					elements.remove(i);
+					i -= 1;
+				}
+			}
+		
+		// Uncombined elements
+		if(elements.contains("FireDamage")) {
+			fireDamageMods.add(globalFire);
+			if(damageType.equals("FireDamage")) fireDamageMods.add(1.0);
+		}
+		if(elements.contains("ElectricDamage")) {
+			electricDamageMods.add(globalElectric);
+			if(damageType.equals("ElectricDamage")) electricDamageMods.add(1.0);
+		}
+		if(elements.contains("ToxinDamage")) {
+			toxinDamageMods.add(globalToxin);
+			if(damageType.equals("ToxinDamage")) toxinDamageMods.add(1.0);
+		}
+		if(elements.contains("IceDamage")) {
+			iceDamageMods.add(globalIce);
+			if(damageType.equals("IceDamage")) iceDamageMods.add(1.0);
 		}
 
 		// Calculate finals
