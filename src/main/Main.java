@@ -502,8 +502,9 @@ public class Main {
 		// Calculate Time To Kill Values
 		if (TTKBox.isSelected()) {
 			String iters = TTKIterationsField.getText();
-			if (iters == null)
+			if (iters == null) {
 				iters = "10000";
+			}
 			complexTTKIterations = Integer.parseInt(iters);
 		} else if (lightWeightTTKBox.isSelected()) {
 			complexTTKIterations = 1;
@@ -515,7 +516,7 @@ public class Main {
 				groupTargets.add(target);
 			}
 		}
-		if (useComplexTTK && (raw.rawPerSecond > 100.0)) {
+		if (useComplexTTK && raw.perSecond > 100) {
 			complexTTKCompletions = 0;
 			for (TTKTarget target : groupTargets) {
 				target.runAdvancedTTK();
@@ -643,30 +644,41 @@ public class Main {
 		startingCombo = selectedWeapon.getStartingCombo();
 		burstCount = selectedWeapon.getBurstCount();
 		drain = selectedWeapon.getDrain();
-
 		impact.base = selectedWeapon.getImpactDamage();
 		puncture.base = selectedWeapon.getPunctureDamage();
 		slash.base = selectedWeapon.getSlashDamage();
-		if (damageType.equals(Constants.FIRE_WEAPON_DAMAGE)) {
+		
+		switch (damageType) {
+		case Constants.FIRE_WEAPON_DAMAGE:
 			fire.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.ICE_WEAPON_DAMAGE)) {
+			break;
+		case Constants.ICE_WEAPON_DAMAGE:
 			ice.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.ELECTRIC_WEAPON_DAMAGE)) {
+			break;
+		case Constants.ELECTRIC_WEAPON_DAMAGE:
 			electric.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.TOXIN_WEAPON_DAMAGE)) {
+			break;
+		case Constants.TOXIN_WEAPON_DAMAGE:
 			toxin.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.BLAST_WEAPON_DAMAGE)) {
+			break;
+		case Constants.BLAST_WEAPON_DAMAGE:
 			blast.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.MAGNETIC_WEAPON_DAMAGE)) {
+			break;
+		case Constants.MAGNETIC_WEAPON_DAMAGE:
 			magnetic.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.GAS_WEAPON_DAMAGE)) {
+			break;
+		case Constants.GAS_WEAPON_DAMAGE:
 			gas.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.RADIATION_WEAPON_DAMAGE)) {
+			break;
+		case Constants.RADIATION_WEAPON_DAMAGE:
 			radiation.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.CORROSIVE_WEAPON_DAMAGE)) {
+			break;
+		case Constants.CORROSIVE_WEAPON_DAMAGE:
 			corrosive.base = selectedWeapon.getBaseDamage();
-		} else if (damageType.equals(Constants.VIRAL_WEAPON_DAMAGE)) {
+			break;
+		case Constants.VIRAL_WEAPON_DAMAGE:
 			viral.base = selectedWeapon.getBaseDamage();
+			break;
 		}
 		raw.base = impact.base + puncture.base + slash.base + fire.base + ice.base + electric.base + toxin.base + blast.base + magnetic.base + gas.base + radiation.base + corrosive.base + viral.base;
 
@@ -697,9 +709,7 @@ public class Main {
 	 */
 	protected static void calculateFinals() {
 		// Initialize mod vectors
-		Vector<Mod> combinedMods = new Vector<Mod>();
 		Vector<Double> magMods = new Vector<Double>();
-		// Vector<Double> ammoMods = new Vector<Double>();
 		Vector<Double> critChanceMods = new Vector<Double>();
 		Vector<Double> critMultMods = new Vector<Double>();
 		Vector<Double> fireRateMods = new Vector<Double>();
@@ -730,573 +740,8 @@ public class Main {
 		Vector<Double> deadAimMods = new Vector<Double>();
 		Vector<Double> flatStatusMods = new Vector<Double>();
 		Vector<Double> flatMagMods = new Vector<Double>();
-/*
-		// Check for combined elements
-		Mod primeMod = null;
-		double primeModRanks = 0;
-		String primeModType = "";
-
-		for (int i = 0; i < activeMods.size(); i++) {
-			Mod tempMod = activeMods.get(i);
-			if (primeMod == null) {
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (blastDamageMods.size() > 0) {
-						blastDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (radiationDamageMods.size() > 0) {
-						radiationDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (gasDamageMods.size() > 0) {
-						gasDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else {
-						primeMod = tempMod;
-						primeModRanks = modRanks.get(i);
-						primeModType = Constants.MOD_TYPE_FIRE_DAMAGE;
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (blastDamageMods.size() > 0) {
-						blastDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (magneticDamageMods.size() > 0) {
-						magneticDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (viralDamageMods.size() > 0) {
-						viralDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else {
-						primeMod = tempMod;
-						primeModRanks = modRanks.get(i);
-						primeModType = Constants.MOD_TYPE_ICE_DAMAGE;
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (corrosiveDamageMods.size() > 0) {
-						corrosiveDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (magneticDamageMods.size() > 0) {
-						magneticDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (radiationDamageMods.size() > 0) {
-						radiationDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else {
-						primeMod = tempMod;
-						primeModRanks = modRanks.get(i);
-						primeModType = Constants.MOD_TYPE_LIGHTNING_DAMAGE;
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (corrosiveDamageMods.size() > 0) {
-						corrosiveDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (viralDamageMods.size() > 0) {
-						viralDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else if (gasDamageMods.size() > 0) {
-						gasDamageMods.add(modPower);
-						combinedMods.add(tempMod);
-					} else {
-						primeMod = tempMod;
-						primeModRanks = modRanks.get(i);
-						primeModType = Constants.MOD_TYPE_TOXIN_DAMAGE;
-					}
-				}
-			} else {
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-						// Don't Combine
-					} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-						if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							blastDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-						if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							radiationDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-						if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							gasDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					}
-				} else if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-						if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							blastDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-						// Don't Combine
-					} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-						if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							magneticDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-						if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							viralDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					}
-				} else if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-						if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							radiationDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-						if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							magneticDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-						// Don't Combine
-					} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-						if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							corrosiveDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					}
-				} else if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-						if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							gasDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-						if (blastDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (corrosiveDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							viralDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-						if (magneticDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (radiationDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (gasDamageMods.size() > 0) {
-							// Don't Combine
-						} else if (viralDamageMods.size() > 0) {
-							// Don't Combine
-						} else {
-							combinedMods.add(primeMod);
-							combinedMods.add(tempMod);
-							double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-							double secondEffectPower = (tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE))) * (1.0 + modRanks.get(i));
-							double jointPower = primeEffectPower + secondEffectPower;
-							corrosiveDamageMods.add(jointPower);
-							primeMod = null;
-							primeModRanks = 0;
-							primeModType = "";
-						}
-					} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-						// Don't Combine
-					}
-				}
-			}
-		}
-		// Combine the base
-		boolean baseCombined = false;
-		if (primeMod != null && !damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
-			if (damageType.equals(Constants.FIRE_WEAPON_DAMAGE) && (blastDamageMods.size() == 0) && (radiationDamageMods.size() == 0) && (gasDamageMods.size() == 0)) {
-				if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					// Don't Combine
-				} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					blastDamageMods.add(jointPower);
-					blast.base = fire.base;
-					fire.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					radiationDamageMods.add(jointPower);
-					radiation.base = fire.base;
-					fire.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					gasDamageMods.add(jointPower);
-					gas.base = fire.base;
-					fire.base = 0.0;
-					baseCombined = true;
-				}
-			} else if (damageType.equals(Constants.ICE_WEAPON_DAMAGE) && (blastDamageMods.size() == 0) && (magneticDamageMods.size() == 0) && (viralDamageMods.size() == 0)) {
-				if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					blastDamageMods.add(jointPower);
-					blast.base = ice.base;
-					ice.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					// Don't Combine
-				} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					magneticDamageMods.add(jointPower);
-					magnetic.base = ice.base;
-					ice.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					viralDamageMods.add(jointPower);
-					viral.base = ice.base;
-					ice.base = 0.0;
-					baseCombined = true;
-				}
-			} else if (damageType.equals(Constants.ELECTRIC_WEAPON_DAMAGE) && (radiationDamageMods.size() == 0) && (magneticDamageMods.size() == 0) && (corrosiveDamageMods.size() == 0)) {
-				if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					radiationDamageMods.add(jointPower);
-					radiation.base = electric.base;
-					electric.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					magneticDamageMods.add(jointPower);
-					magnetic.base = electric.base;
-					electric.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					// Don't Combine
-				} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					corrosiveDamageMods.add(jointPower);
-					corrosive.base = electric.base;
-					electric.base = 0.0;
-					baseCombined = true;
-				}
-			} else if (damageType.equals(Constants.TOXIN_WEAPON_DAMAGE) && (gasDamageMods.size() == 0) && (viralDamageMods.size() == 0) && (corrosiveDamageMods.size() == 0)) {
-				if (primeModType.equals(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					gasDamageMods.add(jointPower);
-					gas.base = toxin.base;
-					toxin.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					viralDamageMods.add(jointPower);
-					viral.base = toxin.base;
-					toxin.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					combinedMods.add(primeMod);
-					double primeEffectPower = (primeMod.effectStrengths.get(primeMod.effectTypes.indexOf(primeModType))) * (1.0 + primeModRanks);
-					double jointPower = primeEffectPower;
-					corrosiveDamageMods.add(jointPower);
-					corrosive.base = toxin.base;
-					toxin.base = 0.0;
-					baseCombined = true;
-				} else if (primeModType.equals(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					// Don't Combine
-				}
-			}
-		}
-		if (!baseCombined) {
-			if (damageType.equals(Constants.FIRE_WEAPON_DAMAGE)) {
-				if (blastDamageMods.size() > 0) {
-					blast.base = fire.base;
-					fire.base = 0.0;
-				} else if (radiationDamageMods.size() > 0) {
-					radiation.base = fire.base;
-					fire.base = 0.0;
-				} else if (gasDamageMods.size() > 0) {
-					gas.base = fire.base;
-					fire.base = 0.0;
-				}
-			} else if (damageType.equals(Constants.ICE_WEAPON_DAMAGE)) {
-				if (blastDamageMods.size() > 0) {
-					blast.base = ice.base;
-					ice.base = 0.0;
-				} else if (magneticDamageMods.size() > 0) {
-					magnetic.base = ice.base;
-					ice.base = 0.0;
-				} else if (viralDamageMods.size() > 0) {
-					viral.base = ice.base;
-					ice.base = 0.0;
-				}
-			} else if (damageType.equals(Constants.ELECTRIC_WEAPON_DAMAGE)) {
-				if (radiationDamageMods.size() > 0) {
-					radiation.base = electric.base;
-					electric.base = 0.0;
-				} else if (magneticDamageMods.size() > 0) {
-					magnetic.base = electric.base;
-					electric.base = 0.0;
-				} else if (corrosiveDamageMods.size() > 0) {
-					corrosive.base = electric.base;
-					electric.base = 0.0;
-				}
-			} else if (damageType.equals(Constants.TOXIN_WEAPON_DAMAGE)) {
-				if (gasDamageMods.size() > 0) {
-					gas.base = toxin.base;
-					toxin.base = 0.0;
-				} else if (viralDamageMods.size() > 0) {
-					viral.base = toxin.base;
-					toxin.base = 0.0;
-				} else if (corrosiveDamageMods.size() > 0) {
-					corrosive.base = toxin.base;
-					toxin.base = 0.0;
-				}
-			}
-		}
-
-		// Populate non-combined-element mod vectors
-		for (int i = 0; i < activeMods.size(); i++) {
-			Mod tempMod = activeMods.get(i);
-			if (!combinedMods.contains(tempMod)) {
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (blastDamageMods.size() > 0) {
-						blastDamageMods.add(modPower);
-					} else if (radiationDamageMods.size() > 0) {
-						radiationDamageMods.add(modPower);
-					} else if (gasDamageMods.size() > 0) {
-						gasDamageMods.add(modPower);
-					} else {
-						fireDamageMods.add(modPower);
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (blastDamageMods.size() > 0) {
-						blastDamageMods.add(modPower);
-					} else if (magneticDamageMods.size() > 0) {
-						magneticDamageMods.add(modPower);
-					} else if (viralDamageMods.size() > 0) {
-						viralDamageMods.add(modPower);
-					} else {
-						iceDamageMods.add(modPower);
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (corrosiveDamageMods.size() > 0) {
-						corrosiveDamageMods.add(modPower);
-					} else if (magneticDamageMods.size() > 0) {
-						magneticDamageMods.add(modPower);
-					} else if (radiationDamageMods.size() > 0) {
-						radiationDamageMods.add(modPower);
-					} else {
-						electricDamageMods.add(modPower);
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
-					if (corrosiveDamageMods.size() > 0) {
-						corrosiveDamageMods.add(modPower);
-					} else if (viralDamageMods.size() > 0) {
-						viralDamageMods.add(modPower);
-					} else if (gasDamageMods.size() > 0) {
-						gasDamageMods.add(modPower);
-					} else {
-						toxinDamageMods.add(modPower);
-					}
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACT_DAMAGE)) {
-					impactDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACT_DAMAGE))) * (1.0 + modRanks.get(i)));
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_PUNCTURE_DAMAGE)) {
-					punctureDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_PUNCTURE_DAMAGE))) * (1.0 + modRanks.get(i)));
-				}
-				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_SLASH_DAMAGE)) {
-					slashDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_SLASH_DAMAGE))) * (1.0 + modRanks.get(i)));
-				}
-			}
-		}
-*/
 		Vector<String> elements = new Vector<String>(); // Ordered element vector
+
 		// Populate mod vectors
 		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
@@ -1357,100 +802,120 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
 				hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
 			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACT_DAMAGE)) {
+				impactDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACT_DAMAGE))) * (1.0 + modRanks.get(i)));
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_PUNCTURE_DAMAGE)) {
+				punctureDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_PUNCTURE_DAMAGE))) * (1.0 + modRanks.get(i)));
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_SLASH_DAMAGE)) {
+				slashDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_SLASH_DAMAGE))) * (1.0 + modRanks.get(i)));
+			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalElectric += modPower;
-				if(!elements.contains("ElectricDamage"))elements.add(Constants.MOD_TYPE_LIGHTNING_DAMAGE);
+				if (!elements.contains("Electric"))
+					elements.add("Electric");
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalFire += modPower;
-				if(!elements.contains("FireDamage"))elements.add(Constants.MOD_TYPE_FIRE_DAMAGE);
+				if (!elements.contains("Fire"))
+					elements.add("Fire");
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalToxin += modPower;
-				if(!elements.contains("ToxinDamage"))elements.add(Constants.MOD_TYPE_TOXIN_DAMAGE);
+				if (!elements.contains("Toxin"))
+					elements.add("Toxin");
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
 				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
 				globalIce += modPower;
-				if(!elements.contains("IceDamage"))elements.add(Constants.MOD_TYPE_ICE_DAMAGE);
+				if (!elements.contains("Ice"))
+					elements.add("Ice");
 			}
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
 				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
 			}
-		}	
-		if(!elements.contains(damageType + "Damage"))elements.add(damageType + "Damage");
-		
+		}
+		if (!elements.contains(damageType))
+			elements.add(damageType);
+
 		// Combine elements
 		for (int i = 0; i < elements.size() - 1; i++) {
-			if ((!elements.get(i).equals("FireDamage") && !elements.get(i).equals("IceDamage") && !elements.get(i).equals("ToxinDamage") && !elements.get(i).equals("ElectricDamage")) || (!elements.get(i+1).equals("FireDamage") && !elements.get(i+1).equals("IceDamage") && !elements.get(i+1).equals("ToxinDamage") && !elements.get(i+1).equals("ElectricDamage"))) {
-				} else {
-					if ((elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("IceDamage")) || (elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("FireDamage"))) {
-						elements.add("BlastDamage");
-						blastDamageMods.add(globalFire + globalIce);
-						if(damageType.equals("Fire") || damageType.equals("Ice") || damageType.equals("Blast")) blastDamageMods.add(1.0);
-						fire.base = 0.0;
-						ice.base = 0.0;
-					}
-					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
-						elements.add("CorrosiveDamage");
-						corrosiveDamageMods.add(globalElectric + globalToxin);
-						if(damageType.equals("Electric") || damageType.equals("Toxin") || damageType.equals("Corrosive")) corrosiveDamageMods.add(1.0);
-						electric.base = 0.0;
-						toxin.base = 0.0;
-					}
-					if ((elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("FireDamage"))) {
-						elements.add("GasDamage");
-						gasDamageMods.add(globalFire + globalToxin);
-						if(damageType.equals("Fire") || damageType.equals("Toxin") || damageType.equals("Gas")) gasDamageMods.add(1.0);
-						fire.base = 0.0;
-						toxin.base = 0.0;
-					}
-					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("IceDamage")) || (elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
-						elements.add("MagneticDamage");
-						magneticDamageMods.add(globalElectric + globalIce);
-						if(damageType.equals("Electric") || damageType.equals("Ice") || damageType.equals("Magnetic")) magneticDamageMods.add(1.0);
-						electric.base = 0.0;
-						ice.base = 0.0;
-					}
-					if ((elements.get(i).equals("ElectricDamage") && elements.get(i + 1).equals("FireDamage")) || (elements.get(i).equals("FireDamage") && elements.get(i + 1).equals("ElectricDamage"))) {
-						elements.add("RadiationDamage");
-						radiationDamageMods.add(globalFire + globalElectric);
-						if(damageType.equals("Fire") || damageType.equals("Electric") || damageType.equals("Radiation")) radiationDamageMods.add(1.0);
-						fire.base = 0.0;
-						electric.base = 0.0;
-					}
-					if ((elements.get(i).equals("IceDamage") && elements.get(i + 1).equals("ToxinDamage")) || (elements.get(i).equals("ToxinDamage") && elements.get(i + 1).equals("IceDamage"))) {
-						elements.add("ViralDamage");
-						viralDamageMods.add(globalToxin + globalIce);
-						if(damageType.equals("Toxin") || damageType.equals("Ice") || damageType.equals("Viral")) viralDamageMods.add(1.0);
-						toxin.base = 0.0;
-						ice.base = 0.0;
-					}
-					elements.remove(i);
-					elements.remove(i);
-					i -= 1;
+			String element1 = elements.get(i);
+			String element2 = elements.get(i + 1);
+			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) && (element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
+
+				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
+					elements.add("Blast");
+					blastDamageMods.add(globalFire + globalIce);
+					if (damageType.equals("Fire") || damageType.equals("Ice") || damageType.equals("Blast"))
+						blastDamageMods.add(1.0);
+					fire.base = 0.0;
+					ice.base = 0.0;
+				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
+					elements.add("Corrosive");
+					corrosiveDamageMods.add(globalElectric + globalToxin);
+					if (damageType.equals("Electric") || damageType.equals("Toxin") || damageType.equals("Corrosive"))
+						corrosiveDamageMods.add(1.0);
+					electric.base = 0.0;
+					toxin.base = 0.0;
+				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
+					elements.add("Gas");
+					gasDamageMods.add(globalFire + globalToxin);
+					if (damageType.equals("Fire") || damageType.equals("Toxin") || damageType.equals("Gas"))
+						gasDamageMods.add(1.0);
+					fire.base = 0.0;
+					toxin.base = 0.0;
+				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
+					elements.add("Magnetic");
+					magneticDamageMods.add(globalElectric + globalIce);
+					if (damageType.equals("Electric") || damageType.equals("Ice") || damageType.equals("Magnetic"))
+						magneticDamageMods.add(1.0);
+					electric.base = 0.0;
+					ice.base = 0.0;
+				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
+					elements.add("Radiation");
+					radiationDamageMods.add(globalFire + globalElectric);
+					if (damageType.equals("Fire") || damageType.equals("Electric") || damageType.equals("Radiation"))
+						radiationDamageMods.add(1.0);
+					fire.base = 0.0;
+					electric.base = 0.0;
+				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
+					elements.add("Viral");
+					viralDamageMods.add(globalToxin + globalIce);
+					if (damageType.equals("Toxin") || damageType.equals("Ice") || damageType.equals("Viral"))
+						viralDamageMods.add(1.0);
+					toxin.base = 0.0;
+					ice.base = 0.0;
 				}
+				elements.remove(i);
+				elements.remove(i);
+				i -= 1;
 			}
-		
+		}
 		// Uncombined elements
-		if(elements.contains("FireDamage")) {
+		if (elements.contains("Fire")) {
 			fireDamageMods.add(globalFire);
-			if(damageType.equals("FireDamage")) fireDamageMods.add(1.0);
+			if (damageType.equals("Fire"))
+				fireDamageMods.add(1.0);
 		}
-		if(elements.contains("ElectricDamage")) {
+		if (elements.contains("Electric")) {
 			electricDamageMods.add(globalElectric);
-			if(damageType.equals("ElectricDamage")) electricDamageMods.add(1.0);
+			if (damageType.equals("Electric"))
+				electricDamageMods.add(1.0);
 		}
-		if(elements.contains("ToxinDamage")) {
+		if (elements.contains("Toxin")) {
 			toxinDamageMods.add(globalToxin);
-			if(damageType.equals("ToxinDamage")) toxinDamageMods.add(1.0);
+			if (damageType.equals("Toxin"))
+				toxinDamageMods.add(1.0);
 		}
-		if(elements.contains("IceDamage")) {
+		if (elements.contains("Ice")) {
 			iceDamageMods.add(globalIce);
-			if(damageType.equals("IceDamage")) iceDamageMods.add(1.0);
+			if (damageType.equals("Ice"))
+				iceDamageMods.add(1.0);
 		}
 
 		// Calculate finals
@@ -1517,7 +982,6 @@ public class Main {
 			finalFireRate += fireRate * selectedWeapon.getAddFR();
 		}
 
-		// This is completely retarded, but also the current case
 		if (weaponMode.equals(Constants.SEMI_AUTO) || weaponMode.equals(Constants.SNIPER) || weaponMode.equals(Constants.SEMIBOW)) {
 			if (finalFireRate > 10.0) {
 				finalFireRate = 10.0;
@@ -1568,33 +1032,36 @@ public class Main {
 		if (finalStatusChance > 1) {
 			finalStatusChance = 1;
 		}
-		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status -o
+		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status
 
 		finalStatusDuration = statusDuration;
 		for (int i = 0; i < statusDurationMods.size(); i++) {
 			finalStatusDuration += statusDuration * statusDurationMods.get(i);
 		}
 
-//		if (damageType.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
-
 		impact.finalBase = impact.base;
 		for (int i = 0; i < impactDamageMods.size(); i++) {
 			impact.finalBase += impact.base * impactDamageMods.get(i);
 		}
 		impact.finalBase *= finalDamageMult;
+		if (impact.finalBase < 0)
+			impact.finalBase = 0;
 
 		puncture.finalBase = puncture.base;
 		for (int i = 0; i < punctureDamageMods.size(); i++) {
 			puncture.finalBase += puncture.base * punctureDamageMods.get(i);
 		}
 		puncture.finalBase *= finalDamageMult;
+		if (puncture.finalBase < 0)
+			puncture.finalBase = 0;
 
 		slash.finalBase = slash.base;
 		for (int i = 0; i < slashDamageMods.size(); i++) {
 			slash.finalBase += slash.base * slashDamageMods.get(i);
 		}
 		slash.finalBase *= finalDamageMult;
-//		}
+		if (slash.finalBase < 0)
+			slash.finalBase = 0;
 
 		fire.finalBase = fire.base;
 		for (int i = 0; i < fireDamageMods.size(); i++) {
@@ -1769,295 +1236,305 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		impact.perShot = (impact.finalBase * averageProjectileCount) * finalDeadAimMult;
-		puncture.perShot = (puncture.finalBase * averageProjectileCount) * finalDeadAimMult;
-		slash.perShot = (slash.finalBase * averageProjectileCount) * finalDeadAimMult;
-		fire.perShot = (fire.finalBase * averageProjectileCount) * finalDeadAimMult;
-		ice.perShot = (ice.finalBase * averageProjectileCount) * finalDeadAimMult;
-		electric.perShot = (electric.finalBase * averageProjectileCount) * finalDeadAimMult;
-		toxin.perShot = (toxin.finalBase * averageProjectileCount) * finalDeadAimMult;
-		blast.perShot = (blast.finalBase * averageProjectileCount) * finalDeadAimMult;
-		magnetic.perShot = (magnetic.finalBase * averageProjectileCount) * finalDeadAimMult;
-		gas.perShot = (gas.finalBase * averageProjectileCount) * finalDeadAimMult;
-		radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult;
-		corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult;
-		viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult;
-		raw.perShot = impact.perShot + puncture.perShot + slash.perShot + fire.perShot + ice.perShot + electric.perShot + toxin.perShot + blast.perShot + magnetic.perShot + gas.perShot + radiation.perShot + corrosive.perShot + viral.perShot;
-
-		// Surface-specific
-		corpus.perShot = raw.perShot * finalCorpusMult;
-		grineer.perShot = raw.perShot * finalGrineerMult;
-
-		infested.perShot += impact.perShot;
-		infested.perShot += puncture.perShot;
-		infested.perShot += slash.perShot * 1.25;
-		infested.perShot += fire.perShot * 1.25;
-		infested.perShot += ice.perShot;
-		infested.perShot += electric.perShot;
-		infested.perShot += toxin.perShot;
-		infested.perShot += blast.perShot;
-		infested.perShot += magnetic.perShot;
-		infested.perShot += gas.perShot * 1.75;
-		infested.perShot += radiation.perShot * 0.5;
-		infested.perShot += corrosive.perShot;
-		infested.perShot += viral.perShot * 0.5;
-		infested.perShot *= finalInfestedMult;
-
-		cloneFlesh.perShot += impact.perShot * 0.75;
-		cloneFlesh.perShot += puncture.perShot;
-		cloneFlesh.perShot += slash.perShot * 1.25;
-		cloneFlesh.perShot += fire.perShot * 1.25;
-		cloneFlesh.perShot += ice.perShot;
-		cloneFlesh.perShot += electric.perShot;
-		cloneFlesh.perShot += toxin.perShot;
-		cloneFlesh.perShot += blast.perShot;
-		cloneFlesh.perShot += magnetic.perShot;
-		cloneFlesh.perShot += gas.perShot * 0.5;
-		cloneFlesh.perShot += radiation.perShot;
-		cloneFlesh.perShot += corrosive.perShot;
-		cloneFlesh.perShot += viral.perShot * 1.75;
-		cloneFlesh.perShot *= finalGrineerMult;
-
-		ferrite.perShot += impact.perShot;
-		ferrite.perShot += puncture.perShot * 1.5;
-		ferrite.perShot += slash.perShot * 0.85;
-		ferrite.perShot += fire.perShot;
-		ferrite.perShot += ice.perShot;
-		ferrite.perShot += electric.perShot;
-		ferrite.perShot += toxin.perShot * 1.25;
-		ferrite.perShot += blast.perShot * 0.75;
-		ferrite.perShot += magnetic.perShot;
-		ferrite.perShot += gas.perShot;
-		ferrite.perShot += radiation.perShot;
-		ferrite.perShot += corrosive.perShot * 1.75;
-		ferrite.perShot += viral.perShot;
-
-		alloy.perShot += impact.perShot;
-		alloy.perShot += puncture.perShot * 1.15;
-		alloy.perShot += slash.perShot * 0.5;
-		alloy.perShot += fire.perShot;
-		alloy.perShot += ice.perShot * 1.25;
-		alloy.perShot += electric.perShot * 0.5;
-		alloy.perShot += toxin.perShot;
-		alloy.perShot += blast.perShot;
-		alloy.perShot += magnetic.perShot * 0.5;
-		alloy.perShot += gas.perShot;
-		alloy.perShot += radiation.perShot * 1.75;
-		alloy.perShot += corrosive.perShot;
-		alloy.perShot += viral.perShot;
-
-		mechanical.perShot += impact.perShot * 1.25;
-		mechanical.perShot += puncture.perShot;
-		mechanical.perShot += slash.perShot;
-		mechanical.perShot += fire.perShot;
-		mechanical.perShot += ice.perShot;
-		mechanical.perShot += electric.perShot * 1.5;
-		mechanical.perShot += toxin.perShot * 0.75;
-		mechanical.perShot += blast.perShot * 1.75;
-		mechanical.perShot += magnetic.perShot;
-		mechanical.perShot += gas.perShot;
-		mechanical.perShot += radiation.perShot;
-		mechanical.perShot += corrosive.perShot;
-		mechanical.perShot += viral.perShot * 0.75;
-		mechanical.perShot *= finalGrineerMult;
-
-		corpusFlesh.perShot += impact.perShot * 0.75;
-		corpusFlesh.perShot += puncture.perShot;
-		corpusFlesh.perShot += slash.perShot * 1.25;
-		corpusFlesh.perShot += fire.perShot;
-		corpusFlesh.perShot += ice.perShot;
-		corpusFlesh.perShot += electric.perShot;
-		corpusFlesh.perShot += toxin.perShot * 1.5;
-		corpusFlesh.perShot += blast.perShot;
-		corpusFlesh.perShot += magnetic.perShot;
-		corpusFlesh.perShot += gas.perShot * 0.75;
-		corpusFlesh.perShot += radiation.perShot;
-		corpusFlesh.perShot += corrosive.perShot;
-		corpusFlesh.perShot += viral.perShot * 1.5;
-		corpusFlesh.perShot *= finalCorpusMult;
-
-		shield.perShot += impact.perShot * 1.5;
-		shield.perShot += puncture.perShot * 0.85;
-		shield.perShot += slash.perShot;
-		shield.perShot += fire.perShot;
-		shield.perShot += ice.perShot * 1.5;
-		shield.perShot += electric.perShot;
-		shield.perShot += toxin.perShot;
-		shield.perShot += blast.perShot;
-		shield.perShot += magnetic.perShot * 1.75;
-		shield.perShot += gas.perShot;
-		shield.perShot += radiation.perShot * 0.75;
-		shield.perShot += corrosive.perShot;
-		shield.perShot += viral.perShot;
-		shield.perShot *= finalCorpusMult;
-
-		protoShield.perShot += impact.perShot * 1.15;
-		protoShield.perShot += puncture.perShot * 0.5;
-		protoShield.perShot += slash.perShot;
-		protoShield.perShot += fire.perShot * 0.5;
-		protoShield.perShot += ice.perShot;
-		protoShield.perShot += electric.perShot;
-		protoShield.perShot += toxin.perShot * 1.25;
-		protoShield.perShot += blast.perShot;
-		protoShield.perShot += magnetic.perShot * 1.75;
-		protoShield.perShot += gas.perShot;
-		protoShield.perShot += radiation.perShot;
-		protoShield.perShot += corrosive.perShot * 0.5;
-		protoShield.perShot += viral.perShot;
-		protoShield.perShot *= finalCorpusMult;
-
-		robotic.perShot += impact.perShot;
-		robotic.perShot += puncture.perShot * 1.25;
-		robotic.perShot += slash.perShot * 0.75;
-		robotic.perShot += fire.perShot;
-		robotic.perShot += ice.perShot;
-		robotic.perShot += electric.perShot * 1.5;
-		robotic.perShot += toxin.perShot * 0.75;
-		robotic.perShot += blast.perShot;
-		robotic.perShot += magnetic.perShot;
-		robotic.perShot += gas.perShot;
-		robotic.perShot += radiation.perShot * 1.25;
-		robotic.perShot += corrosive.perShot;
-		robotic.perShot += viral.perShot;
-		robotic.perShot *= finalCorpusMult;
-
-		infestedFlesh.perShot += impact.perShot;
-		infestedFlesh.perShot += puncture.perShot;
-		infestedFlesh.perShot += slash.perShot * 1.5;
-		infestedFlesh.perShot += fire.perShot * 1.5;
-		infestedFlesh.perShot += ice.perShot * 0.5;
-		infestedFlesh.perShot += electric.perShot;
-		infestedFlesh.perShot += toxin.perShot;
-		infestedFlesh.perShot += blast.perShot;
-		infestedFlesh.perShot += magnetic.perShot;
-		infestedFlesh.perShot += gas.perShot * 1.5;
-		infestedFlesh.perShot += radiation.perShot;
-		infestedFlesh.perShot += corrosive.perShot;
-		infestedFlesh.perShot += viral.perShot;
-		infestedFlesh.perShot *= finalInfestedMult;
-
-		fossilized.perShot += impact.perShot;
-		fossilized.perShot += puncture.perShot;
-		fossilized.perShot += slash.perShot * 1.15;
-		fossilized.perShot += fire.perShot;
-		fossilized.perShot += ice.perShot * 0.75;
-		fossilized.perShot += electric.perShot;
-		fossilized.perShot += toxin.perShot * 0.5;
-		fossilized.perShot += blast.perShot * 1.5;
-		fossilized.perShot += magnetic.perShot;
-		fossilized.perShot += gas.perShot;
-		fossilized.perShot += radiation.perShot * 0.25;
-		fossilized.perShot += corrosive.perShot * 1.75;
-		fossilized.perShot += viral.perShot;
-		fossilized.perShot *= finalInfestedMult;
-
-		sinew.perShot += impact.perShot;
-		sinew.perShot += puncture.perShot * 1.25;
-		sinew.perShot += slash.perShot;
-		sinew.perShot += fire.perShot;
-		sinew.perShot += ice.perShot * 1.25;
-		sinew.perShot += electric.perShot;
-		sinew.perShot += toxin.perShot;
-		sinew.perShot += blast.perShot * 0.5;
-		sinew.perShot += magnetic.perShot;
-		sinew.perShot += gas.perShot;
-		sinew.perShot += radiation.perShot * 1.5;
-		sinew.perShot += corrosive.perShot;
-		sinew.perShot += viral.perShot;
-		sinew.perShot *= finalInfestedMult;
-
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult;
+		
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult;
-		impact.critPerShot = impact.perShot * finalCritMult;
-		puncture.critPerShot = puncture.perShot * finalCritMult;
-		slash.critPerShot = slash.perShot * finalCritMult;
-		fire.critPerShot = fire.perShot * finalCritMult;
-		ice.critPerShot = ice.perShot * finalCritMult;
-		electric.critPerShot = electric.perShot * finalCritMult;
-		toxin.critPerShot = toxin.perShot * finalCritMult;
-		blast.critPerShot = blast.perShot * finalCritMult;
-		magnetic.critPerShot = magnetic.perShot * finalCritMult;
-		gas.critPerShot = gas.perShot * finalCritMult;
-		radiation.critPerShot = radiation.perShot * finalCritMult;
-		corrosive.critPerShot = corrosive.perShot * finalCritMult;
-		viral.critPerShot = viral.perShot * finalCritMult;
-		corpus.critPerShot = corpus.perShot * finalCritMult;
-		grineer.critPerShot = grineer.perShot * finalCritMult;
-		infested.critPerShot = infested.perShot * finalCritMult;
-		cloneFlesh.critPerShot = cloneFlesh.perShot * finalCritMult;
-		ferrite.critPerShot = ferrite.perShot * finalCritMult;
-		alloy.critPerShot = alloy.perShot * finalCritMult;
-		mechanical.critPerShot = mechanical.perShot * finalCritMult;
-		corpusFlesh.critPerShot = corpusFlesh.perShot * finalCritMult;
-		shield.critPerShot = shield.perShot * finalCritMult;
-		protoShield.critPerShot = protoShield.perShot * finalCritMult;
-		robotic.critPerShot = robotic.perShot * finalCritMult;
-		infestedFlesh.critPerShot = infestedFlesh.perShot * finalCritMult;
-		fossilized.critPerShot = fossilized.perShot * finalCritMult;
-		sinew.critPerShot = sinew.perShot * finalCritMult;
 
 		finalFirstShotDamageMult -= 1;
 		// Calculate first-shot damage
 		raw.firstShot = raw.perShot * averageCritMult * finalFirstShotDamageMult;
-		impact.firstShot = impact.perShot * averageCritMult * finalFirstShotDamageMult;
-		puncture.firstShot = puncture.perShot * averageCritMult * finalFirstShotDamageMult;
-		slash.firstShot = slash.perShot * averageCritMult * finalFirstShotDamageMult;
-		fire.firstShot = fire.perShot * averageCritMult * finalFirstShotDamageMult;
-		ice.firstShot = ice.perShot * averageCritMult * finalFirstShotDamageMult;
-		electric.firstShot = electric.perShot * averageCritMult * finalFirstShotDamageMult;
-		toxin.firstShot = toxin.perShot * averageCritMult * finalFirstShotDamageMult;
-		blast.firstShot = blast.perShot * averageCritMult * finalFirstShotDamageMult;
-		magnetic.firstShot = magnetic.perShot * averageCritMult * finalFirstShotDamageMult;
-		gas.firstShot = gas.perShot * averageCritMult * finalFirstShotDamageMult;
-		radiation.firstShot = radiation.perShot * averageCritMult * finalFirstShotDamageMult;
-		corrosive.firstShot = corrosive.perShot * averageCritMult * finalFirstShotDamageMult;
-		viral.firstShot = viral.perShot * averageCritMult * finalFirstShotDamageMult;
-		corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
-		grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
-		infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
-		cloneFlesh.firstShot = cloneFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
-		ferrite.firstShot = ferrite.perShot * averageCritMult * finalFirstShotDamageMult;
-		alloy.firstShot = alloy.perShot * averageCritMult * finalFirstShotDamageMult;
-		mechanical.firstShot = mechanical.perShot * averageCritMult * finalFirstShotDamageMult;
-		corpusFlesh.firstShot = corpusFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
-		shield.firstShot = shield.perShot * averageCritMult * finalFirstShotDamageMult;
-		protoShield.firstShot = protoShield.perShot * averageCritMult * finalFirstShotDamageMult;
-		robotic.firstShot = robotic.perShot * averageCritMult * finalFirstShotDamageMult;
-		infestedFlesh.firstShot = infestedFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
-		fossilized.firstShot = fossilized.perShot * averageCritMult * finalFirstShotDamageMult;
-		sinew.firstShot = sinew.perShot * averageCritMult * finalFirstShotDamageMult;
 
 		finalLastShotDamageMult -= 1;
 		// Calculate last-shot damage
 		raw.lastShot = raw.perShot * averageCritMult * finalLastShotDamageMult;
-		impact.lastShot = impact.perShot * averageCritMult * finalLastShotDamageMult;
-		puncture.lastShot = puncture.perShot * averageCritMult * finalLastShotDamageMult;
-		slash.lastShot = slash.perShot * averageCritMult * finalLastShotDamageMult;
-		fire.lastShot = fire.perShot * averageCritMult * finalLastShotDamageMult;
-		ice.lastShot = ice.perShot * averageCritMult * finalLastShotDamageMult;
-		electric.lastShot = electric.perShot * averageCritMult * finalLastShotDamageMult;
-		toxin.lastShot = toxin.perShot * averageCritMult * finalLastShotDamageMult;
-		blast.lastShot = blast.perShot * averageCritMult * finalLastShotDamageMult;
-		magnetic.lastShot = magnetic.perShot * averageCritMult * finalLastShotDamageMult;
-		gas.lastShot = gas.perShot * averageCritMult * finalLastShotDamageMult;
-		radiation.lastShot = radiation.perShot * averageCritMult * finalLastShotDamageMult;
-		corrosive.lastShot = corrosive.perShot * averageCritMult * finalLastShotDamageMult;
-		viral.lastShot = viral.perShot * averageCritMult * finalLastShotDamageMult;
-		corpus.lastShot = corpus.perShot * averageCritMult * finalLastShotDamageMult;
-		grineer.lastShot = grineer.perShot * averageCritMult * finalLastShotDamageMult;
-		infested.lastShot = infested.perShot * averageCritMult * finalLastShotDamageMult;
-		cloneFlesh.lastShot = cloneFlesh.perShot * averageCritMult * finalLastShotDamageMult;
-		ferrite.lastShot = ferrite.perShot * averageCritMult * finalLastShotDamageMult;
-		alloy.lastShot = alloy.perShot * averageCritMult * finalLastShotDamageMult;
-		mechanical.lastShot = mechanical.perShot * averageCritMult * finalLastShotDamageMult;
-		corpusFlesh.lastShot = corpusFlesh.perShot * averageCritMult * finalLastShotDamageMult;
-		shield.lastShot = shield.perShot * averageCritMult * finalLastShotDamageMult;
-		protoShield.lastShot = protoShield.perShot * averageCritMult * finalLastShotDamageMult;
-		robotic.lastShot = robotic.perShot * averageCritMult * finalLastShotDamageMult;
-		infestedFlesh.lastShot = infestedFlesh.perShot * averageCritMult * finalLastShotDamageMult;
-		fossilized.lastShot = fossilized.perShot * averageCritMult * finalLastShotDamageMult;
-		sinew.lastShot = sinew.perShot * averageCritMult * finalLastShotDamageMult;
 
+		if (updateOutput) {
+
+			// Calculate base damage per shot values
+			impact.perShot = (impact.finalBase * averageProjectileCount) * finalDeadAimMult;
+			puncture.perShot = (puncture.finalBase * averageProjectileCount) * finalDeadAimMult;
+			slash.perShot = (slash.finalBase * averageProjectileCount) * finalDeadAimMult;
+			fire.perShot = (fire.finalBase * averageProjectileCount) * finalDeadAimMult;
+			ice.perShot = (ice.finalBase * averageProjectileCount) * finalDeadAimMult;
+			electric.perShot = (electric.finalBase * averageProjectileCount) * finalDeadAimMult;
+			toxin.perShot = (toxin.finalBase * averageProjectileCount) * finalDeadAimMult;
+			blast.perShot = (blast.finalBase * averageProjectileCount) * finalDeadAimMult;
+			magnetic.perShot = (magnetic.finalBase * averageProjectileCount) * finalDeadAimMult;
+			gas.perShot = (gas.finalBase * averageProjectileCount) * finalDeadAimMult;
+			radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult;
+			corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult;
+			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult;
+			
+			// Surface-specific
+			corpus.perShot = raw.perShot * finalCorpusMult;
+			grineer.perShot = raw.perShot * finalGrineerMult;
+
+			infested.perShot += impact.perShot;
+			infested.perShot += puncture.perShot;
+			infested.perShot += slash.perShot * 1.25;
+			infested.perShot += fire.perShot * 1.25;
+			infested.perShot += ice.perShot;
+			infested.perShot += electric.perShot;
+			infested.perShot += toxin.perShot;
+			infested.perShot += blast.perShot;
+			infested.perShot += magnetic.perShot;
+			infested.perShot += gas.perShot * 1.75;
+			infested.perShot += radiation.perShot * 0.5;
+			infested.perShot += corrosive.perShot;
+			infested.perShot += viral.perShot * 0.5;
+			infested.perShot *= finalInfestedMult;
+
+			cloneFlesh.perShot += impact.perShot * 0.75;
+			cloneFlesh.perShot += puncture.perShot;
+			cloneFlesh.perShot += slash.perShot * 1.25;
+			cloneFlesh.perShot += fire.perShot * 1.25;
+			cloneFlesh.perShot += ice.perShot;
+			cloneFlesh.perShot += electric.perShot;
+			cloneFlesh.perShot += toxin.perShot;
+			cloneFlesh.perShot += blast.perShot;
+			cloneFlesh.perShot += magnetic.perShot;
+			cloneFlesh.perShot += gas.perShot * 0.5;
+			cloneFlesh.perShot += radiation.perShot;
+			cloneFlesh.perShot += corrosive.perShot;
+			cloneFlesh.perShot += viral.perShot * 1.75;
+			cloneFlesh.perShot *= finalGrineerMult;
+
+			ferrite.perShot += impact.perShot;
+			ferrite.perShot += puncture.perShot * 1.5;
+			ferrite.perShot += slash.perShot * 0.85;
+			ferrite.perShot += fire.perShot;
+			ferrite.perShot += ice.perShot;
+			ferrite.perShot += electric.perShot;
+			ferrite.perShot += toxin.perShot * 1.25;
+			ferrite.perShot += blast.perShot * 0.75;
+			ferrite.perShot += magnetic.perShot;
+			ferrite.perShot += gas.perShot;
+			ferrite.perShot += radiation.perShot;
+			ferrite.perShot += corrosive.perShot * 1.75;
+			ferrite.perShot += viral.perShot;
+
+			alloy.perShot += impact.perShot;
+			alloy.perShot += puncture.perShot * 1.15;
+			alloy.perShot += slash.perShot * 0.5;
+			alloy.perShot += fire.perShot;
+			alloy.perShot += ice.perShot * 1.25;
+			alloy.perShot += electric.perShot * 0.5;
+			alloy.perShot += toxin.perShot;
+			alloy.perShot += blast.perShot;
+			alloy.perShot += magnetic.perShot * 0.5;
+			alloy.perShot += gas.perShot;
+			alloy.perShot += radiation.perShot * 1.75;
+			alloy.perShot += corrosive.perShot;
+			alloy.perShot += viral.perShot;
+
+			mechanical.perShot += impact.perShot * 1.25;
+			mechanical.perShot += puncture.perShot;
+			mechanical.perShot += slash.perShot;
+			mechanical.perShot += fire.perShot;
+			mechanical.perShot += ice.perShot;
+			mechanical.perShot += electric.perShot * 1.5;
+			mechanical.perShot += toxin.perShot * 0.75;
+			mechanical.perShot += blast.perShot * 1.75;
+			mechanical.perShot += magnetic.perShot;
+			mechanical.perShot += gas.perShot;
+			mechanical.perShot += radiation.perShot;
+			mechanical.perShot += corrosive.perShot;
+			mechanical.perShot += viral.perShot * 0.75;
+			mechanical.perShot *= finalGrineerMult;
+
+			corpusFlesh.perShot += impact.perShot * 0.75;
+			corpusFlesh.perShot += puncture.perShot;
+			corpusFlesh.perShot += slash.perShot * 1.25;
+			corpusFlesh.perShot += fire.perShot;
+			corpusFlesh.perShot += ice.perShot;
+			corpusFlesh.perShot += electric.perShot;
+			corpusFlesh.perShot += toxin.perShot * 1.5;
+			corpusFlesh.perShot += blast.perShot;
+			corpusFlesh.perShot += magnetic.perShot;
+			corpusFlesh.perShot += gas.perShot * 0.75;
+			corpusFlesh.perShot += radiation.perShot;
+			corpusFlesh.perShot += corrosive.perShot;
+			corpusFlesh.perShot += viral.perShot * 1.5;
+			corpusFlesh.perShot *= finalCorpusMult;
+
+			shield.perShot += impact.perShot * 1.5;
+			shield.perShot += puncture.perShot * 0.85;
+			shield.perShot += slash.perShot;
+			shield.perShot += fire.perShot;
+			shield.perShot += ice.perShot * 1.5;
+			shield.perShot += electric.perShot;
+			shield.perShot += toxin.perShot;
+			shield.perShot += blast.perShot;
+			shield.perShot += magnetic.perShot * 1.75;
+			shield.perShot += gas.perShot;
+			shield.perShot += radiation.perShot * 0.75;
+			shield.perShot += corrosive.perShot;
+			shield.perShot += viral.perShot;
+			shield.perShot *= finalCorpusMult;
+
+			protoShield.perShot += impact.perShot * 1.15;
+			protoShield.perShot += puncture.perShot * 0.5;
+			protoShield.perShot += slash.perShot;
+			protoShield.perShot += fire.perShot * 0.5;
+			protoShield.perShot += ice.perShot;
+			protoShield.perShot += electric.perShot;
+			protoShield.perShot += toxin.perShot * 1.25;
+			protoShield.perShot += blast.perShot;
+			protoShield.perShot += magnetic.perShot * 1.75;
+			protoShield.perShot += gas.perShot;
+			protoShield.perShot += radiation.perShot;
+			protoShield.perShot += corrosive.perShot * 0.5;
+			protoShield.perShot += viral.perShot;
+			protoShield.perShot *= finalCorpusMult;
+
+			robotic.perShot += impact.perShot;
+			robotic.perShot += puncture.perShot * 1.25;
+			robotic.perShot += slash.perShot * 0.75;
+			robotic.perShot += fire.perShot;
+			robotic.perShot += ice.perShot;
+			robotic.perShot += electric.perShot * 1.5;
+			robotic.perShot += toxin.perShot * 0.75;
+			robotic.perShot += blast.perShot;
+			robotic.perShot += magnetic.perShot;
+			robotic.perShot += gas.perShot;
+			robotic.perShot += radiation.perShot * 1.25;
+			robotic.perShot += corrosive.perShot;
+			robotic.perShot += viral.perShot;
+			robotic.perShot *= finalCorpusMult;
+
+			infestedFlesh.perShot += impact.perShot;
+			infestedFlesh.perShot += puncture.perShot;
+			infestedFlesh.perShot += slash.perShot * 1.5;
+			infestedFlesh.perShot += fire.perShot * 1.5;
+			infestedFlesh.perShot += ice.perShot * 0.5;
+			infestedFlesh.perShot += electric.perShot;
+			infestedFlesh.perShot += toxin.perShot;
+			infestedFlesh.perShot += blast.perShot;
+			infestedFlesh.perShot += magnetic.perShot;
+			infestedFlesh.perShot += gas.perShot * 1.5;
+			infestedFlesh.perShot += radiation.perShot;
+			infestedFlesh.perShot += corrosive.perShot;
+			infestedFlesh.perShot += viral.perShot;
+			infestedFlesh.perShot *= finalInfestedMult;
+
+			fossilized.perShot += impact.perShot;
+			fossilized.perShot += puncture.perShot;
+			fossilized.perShot += slash.perShot * 1.15;
+			fossilized.perShot += fire.perShot;
+			fossilized.perShot += ice.perShot * 0.75;
+			fossilized.perShot += electric.perShot;
+			fossilized.perShot += toxin.perShot * 0.5;
+			fossilized.perShot += blast.perShot * 1.5;
+			fossilized.perShot += magnetic.perShot;
+			fossilized.perShot += gas.perShot;
+			fossilized.perShot += radiation.perShot * 0.25;
+			fossilized.perShot += corrosive.perShot * 1.75;
+			fossilized.perShot += viral.perShot;
+			fossilized.perShot *= finalInfestedMult;
+
+			sinew.perShot += impact.perShot;
+			sinew.perShot += puncture.perShot * 1.25;
+			sinew.perShot += slash.perShot;
+			sinew.perShot += fire.perShot;
+			sinew.perShot += ice.perShot * 1.25;
+			sinew.perShot += electric.perShot;
+			sinew.perShot += toxin.perShot;
+			sinew.perShot += blast.perShot * 0.5;
+			sinew.perShot += magnetic.perShot;
+			sinew.perShot += gas.perShot;
+			sinew.perShot += radiation.perShot * 1.5;
+			sinew.perShot += corrosive.perShot;
+			sinew.perShot += viral.perShot;
+			sinew.perShot *= finalInfestedMult;
+
+			// Calculate crit damage per shot values
+			impact.critPerShot = impact.perShot * finalCritMult;
+			puncture.critPerShot = puncture.perShot * finalCritMult;
+			slash.critPerShot = slash.perShot * finalCritMult;
+			fire.critPerShot = fire.perShot * finalCritMult;
+			ice.critPerShot = ice.perShot * finalCritMult;
+			electric.critPerShot = electric.perShot * finalCritMult;
+			toxin.critPerShot = toxin.perShot * finalCritMult;
+			blast.critPerShot = blast.perShot * finalCritMult;
+			magnetic.critPerShot = magnetic.perShot * finalCritMult;
+			gas.critPerShot = gas.perShot * finalCritMult;
+			radiation.critPerShot = radiation.perShot * finalCritMult;
+			corrosive.critPerShot = corrosive.perShot * finalCritMult;
+			viral.critPerShot = viral.perShot * finalCritMult;
+			corpus.critPerShot = corpus.perShot * finalCritMult;
+			grineer.critPerShot = grineer.perShot * finalCritMult;
+			infested.critPerShot = infested.perShot * finalCritMult;
+			cloneFlesh.critPerShot = cloneFlesh.perShot * finalCritMult;
+			ferrite.critPerShot = ferrite.perShot * finalCritMult;
+			alloy.critPerShot = alloy.perShot * finalCritMult;
+			mechanical.critPerShot = mechanical.perShot * finalCritMult;
+			corpusFlesh.critPerShot = corpusFlesh.perShot * finalCritMult;
+			shield.critPerShot = shield.perShot * finalCritMult;
+			protoShield.critPerShot = protoShield.perShot * finalCritMult;
+			robotic.critPerShot = robotic.perShot * finalCritMult;
+			infestedFlesh.critPerShot = infestedFlesh.perShot * finalCritMult;
+			fossilized.critPerShot = fossilized.perShot * finalCritMult;
+			sinew.critPerShot = sinew.perShot * finalCritMult;
+
+			// Calculate surface first-shot damage
+			impact.firstShot = impact.perShot * averageCritMult * finalFirstShotDamageMult;
+			puncture.firstShot = puncture.perShot * averageCritMult * finalFirstShotDamageMult;
+			slash.firstShot = slash.perShot * averageCritMult * finalFirstShotDamageMult;
+			fire.firstShot = fire.perShot * averageCritMult * finalFirstShotDamageMult;
+			ice.firstShot = ice.perShot * averageCritMult * finalFirstShotDamageMult;
+			electric.firstShot = electric.perShot * averageCritMult * finalFirstShotDamageMult;
+			toxin.firstShot = toxin.perShot * averageCritMult * finalFirstShotDamageMult;
+			blast.firstShot = blast.perShot * averageCritMult * finalFirstShotDamageMult;
+			magnetic.firstShot = magnetic.perShot * averageCritMult * finalFirstShotDamageMult;
+			gas.firstShot = gas.perShot * averageCritMult * finalFirstShotDamageMult;
+			radiation.firstShot = radiation.perShot * averageCritMult * finalFirstShotDamageMult;
+			corrosive.firstShot = corrosive.perShot * averageCritMult * finalFirstShotDamageMult;
+			viral.firstShot = viral.perShot * averageCritMult * finalFirstShotDamageMult;
+			corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
+			grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
+			infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
+			cloneFlesh.firstShot = cloneFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
+			ferrite.firstShot = ferrite.perShot * averageCritMult * finalFirstShotDamageMult;
+			alloy.firstShot = alloy.perShot * averageCritMult * finalFirstShotDamageMult;
+			mechanical.firstShot = mechanical.perShot * averageCritMult * finalFirstShotDamageMult;
+			corpusFlesh.firstShot = corpusFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
+			shield.firstShot = shield.perShot * averageCritMult * finalFirstShotDamageMult;
+			protoShield.firstShot = protoShield.perShot * averageCritMult * finalFirstShotDamageMult;
+			robotic.firstShot = robotic.perShot * averageCritMult * finalFirstShotDamageMult;
+			infestedFlesh.firstShot = infestedFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
+			fossilized.firstShot = fossilized.perShot * averageCritMult * finalFirstShotDamageMult;
+			sinew.firstShot = sinew.perShot * averageCritMult * finalFirstShotDamageMult;
+
+			// Calculate surface last-shot damage
+			impact.lastShot = impact.perShot * averageCritMult * finalLastShotDamageMult;
+			puncture.lastShot = puncture.perShot * averageCritMult * finalLastShotDamageMult;
+			slash.lastShot = slash.perShot * averageCritMult * finalLastShotDamageMult;
+			fire.lastShot = fire.perShot * averageCritMult * finalLastShotDamageMult;
+			ice.lastShot = ice.perShot * averageCritMult * finalLastShotDamageMult;
+			electric.lastShot = electric.perShot * averageCritMult * finalLastShotDamageMult;
+			toxin.lastShot = toxin.perShot * averageCritMult * finalLastShotDamageMult;
+			blast.lastShot = blast.perShot * averageCritMult * finalLastShotDamageMult;
+			magnetic.lastShot = magnetic.perShot * averageCritMult * finalLastShotDamageMult;
+			gas.lastShot = gas.perShot * averageCritMult * finalLastShotDamageMult;
+			radiation.lastShot = radiation.perShot * averageCritMult * finalLastShotDamageMult;
+			corrosive.lastShot = corrosive.perShot * averageCritMult * finalLastShotDamageMult;
+			viral.lastShot = viral.perShot * averageCritMult * finalLastShotDamageMult;
+			corpus.lastShot = corpus.perShot * averageCritMult * finalLastShotDamageMult;
+			grineer.lastShot = grineer.perShot * averageCritMult * finalLastShotDamageMult;
+			infested.lastShot = infested.perShot * averageCritMult * finalLastShotDamageMult;
+			cloneFlesh.lastShot = cloneFlesh.perShot * averageCritMult * finalLastShotDamageMult;
+			ferrite.lastShot = ferrite.perShot * averageCritMult * finalLastShotDamageMult;
+			alloy.lastShot = alloy.perShot * averageCritMult * finalLastShotDamageMult;
+			mechanical.lastShot = mechanical.perShot * averageCritMult * finalLastShotDamageMult;
+			corpusFlesh.lastShot = corpusFlesh.perShot * averageCritMult * finalLastShotDamageMult;
+			shield.lastShot = shield.perShot * averageCritMult * finalLastShotDamageMult;
+			protoShield.lastShot = protoShield.perShot * averageCritMult * finalLastShotDamageMult;
+			robotic.lastShot = robotic.perShot * averageCritMult * finalLastShotDamageMult;
+			infestedFlesh.lastShot = infestedFlesh.perShot * averageCritMult * finalLastShotDamageMult;
+			fossilized.lastShot = fossilized.perShot * averageCritMult * finalLastShotDamageMult;
+			sinew.lastShot = sinew.perShot * averageCritMult * finalLastShotDamageMult;
+		}
 	}
 
 	/**
@@ -2065,33 +1542,36 @@ public class Main {
 	 */
 	protected static void calculateDamagePerIteration() {
 		raw.perIteration = raw.perShot * finalMag * averageCritMult + raw.firstShot + raw.lastShot;
-		impact.perIteration = impact.perShot * finalMag * averageCritMult + impact.firstShot + impact.lastShot;
-		puncture.perIteration = puncture.perShot * finalMag * averageCritMult + puncture.firstShot + puncture.lastShot;
-		slash.perIteration = slash.perShot * finalMag * averageCritMult + slash.firstShot + slash.lastShot;
-		fire.perIteration = fire.perShot * finalMag * averageCritMult + fire.firstShot + fire.lastShot;
-		ice.perIteration = ice.perShot * finalMag * averageCritMult + ice.firstShot + ice.lastShot;
-		electric.perIteration = electric.perShot * finalMag * averageCritMult + electric.firstShot + electric.lastShot;
-		toxin.perIteration = toxin.perShot * finalMag * averageCritMult + toxin.firstShot + toxin.lastShot;
-		blast.perIteration = blast.perShot * finalMag * averageCritMult + blast.firstShot + blast.lastShot;
-		magnetic.perIteration = magnetic.perShot * finalMag * averageCritMult + magnetic.firstShot + magnetic.lastShot;
-		gas.perIteration = gas.perShot * finalMag * averageCritMult + gas.firstShot + gas.lastShot;
-		radiation.perIteration = radiation.perShot * finalMag * averageCritMult + radiation.firstShot + radiation.lastShot;
-		corrosive.perIteration = corrosive.perShot * finalMag * averageCritMult + corrosive.firstShot + corrosive.lastShot;
-		viral.perIteration = viral.perShot * finalMag * averageCritMult + viral.firstShot + viral.lastShot;
-		corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
-		grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
-		infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
-		cloneFlesh.perIteration = cloneFlesh.perShot * finalMag * averageCritMult + cloneFlesh.firstShot + cloneFlesh.lastShot;
-		ferrite.perIteration = ferrite.perShot * finalMag * averageCritMult + ferrite.firstShot + ferrite.lastShot;
-		alloy.perIteration = alloy.perShot * finalMag * averageCritMult + alloy.firstShot + alloy.lastShot;
-		mechanical.perIteration = mechanical.perShot * finalMag * averageCritMult + mechanical.firstShot + mechanical.lastShot;
-		corpusFlesh.perIteration = corpusFlesh.perShot * finalMag * averageCritMult + corpusFlesh.firstShot + corpusFlesh.lastShot;
-		shield.perIteration = shield.perShot * finalMag * averageCritMult + shield.firstShot + shield.lastShot;
-		protoShield.perIteration = protoShield.perShot * finalMag * averageCritMult + protoShield.firstShot + protoShield.lastShot;
-		robotic.perIteration = robotic.perShot * finalMag * averageCritMult + robotic.firstShot + robotic.lastShot;
-		infestedFlesh.perIteration = infestedFlesh.perShot * finalMag * averageCritMult + infestedFlesh.firstShot + infestedFlesh.lastShot;
-		fossilized.perIteration = fossilized.perShot * finalMag * averageCritMult + fossilized.firstShot + fossilized.lastShot;
-		sinew.perIteration = sinew.perShot * finalMag * averageCritMult + sinew.firstShot + sinew.lastShot;
+
+		if (updateOutput) {
+			impact.perIteration = impact.perShot * finalMag * averageCritMult + impact.firstShot + impact.lastShot;
+			puncture.perIteration = puncture.perShot * finalMag * averageCritMult + puncture.firstShot + puncture.lastShot;
+			slash.perIteration = slash.perShot * finalMag * averageCritMult + slash.firstShot + slash.lastShot;
+			fire.perIteration = fire.perShot * finalMag * averageCritMult + fire.firstShot + fire.lastShot;
+			ice.perIteration = ice.perShot * finalMag * averageCritMult + ice.firstShot + ice.lastShot;
+			electric.perIteration = electric.perShot * finalMag * averageCritMult + electric.firstShot + electric.lastShot;
+			toxin.perIteration = toxin.perShot * finalMag * averageCritMult + toxin.firstShot + toxin.lastShot;
+			blast.perIteration = blast.perShot * finalMag * averageCritMult + blast.firstShot + blast.lastShot;
+			magnetic.perIteration = magnetic.perShot * finalMag * averageCritMult + magnetic.firstShot + magnetic.lastShot;
+			gas.perIteration = gas.perShot * finalMag * averageCritMult + gas.firstShot + gas.lastShot;
+			radiation.perIteration = radiation.perShot * finalMag * averageCritMult + radiation.firstShot + radiation.lastShot;
+			corrosive.perIteration = corrosive.perShot * finalMag * averageCritMult + corrosive.firstShot + corrosive.lastShot;
+			viral.perIteration = viral.perShot * finalMag * averageCritMult + viral.firstShot + viral.lastShot;
+			corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
+			grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
+			infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
+			cloneFlesh.perIteration = cloneFlesh.perShot * finalMag * averageCritMult + cloneFlesh.firstShot + cloneFlesh.lastShot;
+			ferrite.perIteration = ferrite.perShot * finalMag * averageCritMult + ferrite.firstShot + ferrite.lastShot;
+			alloy.perIteration = alloy.perShot * finalMag * averageCritMult + alloy.firstShot + alloy.lastShot;
+			mechanical.perIteration = mechanical.perShot * finalMag * averageCritMult + mechanical.firstShot + mechanical.lastShot;
+			corpusFlesh.perIteration = corpusFlesh.perShot * finalMag * averageCritMult + corpusFlesh.firstShot + corpusFlesh.lastShot;
+			shield.perIteration = shield.perShot * finalMag * averageCritMult + shield.firstShot + shield.lastShot;
+			protoShield.perIteration = protoShield.perShot * finalMag * averageCritMult + protoShield.firstShot + protoShield.lastShot;
+			robotic.perIteration = robotic.perShot * finalMag * averageCritMult + robotic.firstShot + robotic.lastShot;
+			infestedFlesh.perIteration = infestedFlesh.perShot * finalMag * averageCritMult + infestedFlesh.firstShot + infestedFlesh.lastShot;
+			fossilized.perIteration = fossilized.perShot * finalMag * averageCritMult + fossilized.firstShot + fossilized.lastShot;
+			sinew.perIteration = sinew.perShot * finalMag * averageCritMult + sinew.firstShot + sinew.lastShot;
+		}
 	}
 
 	/**
@@ -2099,68 +1579,43 @@ public class Main {
 	 */
 	protected static void calculateDamagePerMinute() {
 		raw.perMinute = raw.perIteration * finalIterationsPerMinute;
-		impact.perMinute = impact.perIteration * finalIterationsPerMinute;
-		puncture.perMinute = puncture.perIteration * finalIterationsPerMinute;
-		slash.perMinute = slash.perIteration * finalIterationsPerMinute;
-		fire.perMinute = fire.perIteration * finalIterationsPerMinute;
-		ice.perMinute = ice.perIteration * finalIterationsPerMinute;
-		electric.perMinute = electric.perIteration * finalIterationsPerMinute;
-		toxin.perMinute = toxin.perIteration * finalIterationsPerMinute;
-		blast.perMinute = blast.perIteration * finalIterationsPerMinute;
-		magnetic.perMinute = magnetic.perIteration * finalIterationsPerMinute;
-		gas.perMinute = gas.perIteration * finalIterationsPerMinute;
-		radiation.perMinute = radiation.perIteration * finalIterationsPerMinute;
-		corrosive.perMinute = corrosive.perIteration * finalIterationsPerMinute;
-		viral.perMinute = viral.perIteration * finalIterationsPerMinute;
-		corpus.perMinute = corpus.perIteration * finalIterationsPerMinute;
-		grineer.perMinute = grineer.perIteration * finalIterationsPerMinute;
-		infested.perMinute = infested.perIteration * finalIterationsPerMinute;
-		cloneFlesh.perMinute = cloneFlesh.perIteration * finalIterationsPerMinute;
-		ferrite.perMinute = ferrite.perIteration * finalIterationsPerMinute;
-		alloy.perMinute = alloy.perIteration * finalIterationsPerMinute;
-		mechanical.perMinute = mechanical.perIteration * finalIterationsPerMinute;
-		corpus.perMinute = corpusFlesh.perIteration * finalIterationsPerMinute;
-		shield.perMinute = shield.perIteration * finalIterationsPerMinute;
-		protoShield.perMinute = protoShield.perIteration * finalIterationsPerMinute;
-		robotic.perMinute = robotic.perIteration * finalIterationsPerMinute;
-		infestedFlesh.perMinute = infestedFlesh.perIteration * finalIterationsPerMinute;
-		fossilized.perMinute = fossilized.perIteration * finalIterationsPerMinute;
-		sinew.perMinute = sinew.perIteration * finalIterationsPerMinute;
+		
+		if (updateOutput) {
+			impact.perMinute = impact.perIteration * finalIterationsPerMinute;
+			puncture.perMinute = puncture.perIteration * finalIterationsPerMinute;
+			slash.perMinute = slash.perIteration * finalIterationsPerMinute;
+			fire.perMinute = fire.perIteration * finalIterationsPerMinute;
+			ice.perMinute = ice.perIteration * finalIterationsPerMinute;
+			electric.perMinute = electric.perIteration * finalIterationsPerMinute;
+			toxin.perMinute = toxin.perIteration * finalIterationsPerMinute;
+			blast.perMinute = blast.perIteration * finalIterationsPerMinute;
+			magnetic.perMinute = magnetic.perIteration * finalIterationsPerMinute;
+			gas.perMinute = gas.perIteration * finalIterationsPerMinute;
+			radiation.perMinute = radiation.perIteration * finalIterationsPerMinute;
+			corrosive.perMinute = corrosive.perIteration * finalIterationsPerMinute;
+			viral.perMinute = viral.perIteration * finalIterationsPerMinute;
+			corpus.perMinute = corpus.perIteration * finalIterationsPerMinute;
+			grineer.perMinute = grineer.perIteration * finalIterationsPerMinute;
+			infested.perMinute = infested.perIteration * finalIterationsPerMinute;
+			cloneFlesh.perMinute = cloneFlesh.perIteration * finalIterationsPerMinute;
+			ferrite.perMinute = ferrite.perIteration * finalIterationsPerMinute;
+			alloy.perMinute = alloy.perIteration * finalIterationsPerMinute;
+			mechanical.perMinute = mechanical.perIteration * finalIterationsPerMinute;
+			corpus.perMinute = corpusFlesh.perIteration * finalIterationsPerMinute;
+			shield.perMinute = shield.perIteration * finalIterationsPerMinute;
+			protoShield.perMinute = protoShield.perIteration * finalIterationsPerMinute;
+			robotic.perMinute = robotic.perIteration * finalIterationsPerMinute;
+			infestedFlesh.perMinute = infestedFlesh.perIteration * finalIterationsPerMinute;
+			fossilized.perMinute = fossilized.perIteration * finalIterationsPerMinute;
+			sinew.perMinute = sinew.perIteration * finalIterationsPerMinute;
+		}
 	}
 
 	protected static void calculateDamagePerSecond() {
 		// Calculate base DPS values
 		raw.perSecond = raw.perMinute / 60.0;
-		impact.perSecond = impact.perMinute / 60.0;
-		puncture.perSecond = puncture.perMinute / 60.0;
-		slash.perSecond = slash.perMinute / 60.0;
-		fire.perSecond = fire.perMinute / 60.0;
-		ice.perSecond = ice.perMinute / 60.0;
-		electric.perSecond = electric.perMinute / 60.0;
-		toxin.perSecond = toxin.perMinute / 60.0;
-		blast.perSecond = blast.perMinute / 60.0;
-		magnetic.perSecond = magnetic.perMinute / 60.0;
-		gas.perSecond = gas.perMinute / 60.0;
-		radiation.perSecond = radiation.perMinute / 60.0;
-		corrosive.perSecond = corrosive.perMinute / 60.0;
-		viral.perSecond = viral.perMinute / 60.0;
-		corpus.perSecond = corpus.perMinute / 60.0;
-		grineer.perSecond = grineer.perMinute / 60.0;
-		infested.perSecond = infested.perMinute / 60.0;
-		cloneFlesh.perSecond = cloneFlesh.perMinute / 60.0;
-		ferrite.perSecond = ferrite.perMinute / 60.0;
-		alloy.perSecond = alloy.perMinute / 60.0;
-		mechanical.perSecond = mechanical.perMinute / 60.0;
-		corpusFlesh.perSecond = corpus.perMinute / 60.0;
-		shield.perSecond = shield.perMinute / 60.0;
-		protoShield.perSecond = protoShield.perMinute / 60.0;
-		robotic.perSecond = robotic.perMinute / 60.0;
-		infestedFlesh.perSecond = infestedFlesh.perMinute / 60.0;
-		fossilized.perSecond = fossilized.perMinute / 60.0;
-		sinew.perSecond = sinew.perMinute / 60.0;
 
 		// Add in DoTs
-
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
@@ -2181,70 +1636,105 @@ public class Main {
 		gasProcDPS = gasProcRate * poisonDamage * averageProjectileCount * finalFireRate * finalStatusChance;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
-		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
-		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-		cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-		ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
-		alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
-		mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
-		corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
-		shield.perSecond += (heatDoTDPS + electricProcDPS);
-		protoShield.perSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
-		robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
-		infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-		fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
-		sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+
+		if (updateOutput) {
+			impact.perSecond = impact.perMinute / 60.0;
+			puncture.perSecond = puncture.perMinute / 60.0;
+			slash.perSecond = slash.perMinute / 60.0;
+			fire.perSecond = fire.perMinute / 60.0;
+			ice.perSecond = ice.perMinute / 60.0;
+			electric.perSecond = electric.perMinute / 60.0;
+			toxin.perSecond = toxin.perMinute / 60.0;
+			blast.perSecond = blast.perMinute / 60.0;
+			magnetic.perSecond = magnetic.perMinute / 60.0;
+			gas.perSecond = gas.perMinute / 60.0;
+			radiation.perSecond = radiation.perMinute / 60.0;
+			corrosive.perSecond = corrosive.perMinute / 60.0;
+			viral.perSecond = viral.perMinute / 60.0;
+			corpus.perSecond = corpus.perMinute / 60.0;
+			grineer.perSecond = grineer.perMinute / 60.0;
+			infested.perSecond = infested.perMinute / 60.0;
+			cloneFlesh.perSecond = cloneFlesh.perMinute / 60.0;
+			ferrite.perSecond = ferrite.perMinute / 60.0;
+			alloy.perSecond = alloy.perMinute / 60.0;
+			mechanical.perSecond = mechanical.perMinute / 60.0;
+			corpusFlesh.perSecond = corpus.perMinute / 60.0;
+			shield.perSecond = shield.perMinute / 60.0;
+			protoShield.perSecond = protoShield.perMinute / 60.0;
+			robotic.perSecond = robotic.perMinute / 60.0;
+			infestedFlesh.perSecond = infestedFlesh.perMinute / 60.0;
+			fossilized.perSecond = fossilized.perMinute / 60.0;
+			sinew.perSecond = sinew.perMinute / 60.0;
+
+			corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
+			grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
+			infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
+			ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
+			alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
+			mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
+			corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
+			shield.perSecond += (heatDoTDPS + electricProcDPS);
+			protoShield.perSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
+			robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
+			infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
+			sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+		}
 	}
 
 	protected static void calculateBurstDamagePerSecond() {
 		// Calculate base Burst DPS values
 		double burstTime = (1 / (finalIterationTime - finalReloadTime));
 		raw.rawPerSecond = raw.perIteration * burstTime;
-		impact.rawPerSecond = impact.perIteration * burstTime;
-		puncture.rawPerSecond = puncture.perIteration * burstTime;
-		slash.rawPerSecond = slash.perIteration * burstTime;
-		fire.rawPerSecond = fire.perIteration * burstTime;
-		ice.rawPerSecond = ice.perIteration * burstTime;
-		electric.rawPerSecond = electric.perIteration * burstTime;
-		toxin.rawPerSecond = toxin.perIteration * burstTime;
-		blast.rawPerSecond = blast.perIteration * burstTime;
-		magnetic.rawPerSecond = magnetic.perIteration * burstTime;
-		gas.rawPerSecond = gas.perIteration * burstTime;
-		radiation.rawPerSecond = radiation.perIteration * burstTime;
-		corrosive.rawPerSecond = corrosive.perIteration * burstTime;
-		viral.rawPerSecond = viral.perIteration * burstTime;
-		corpus.rawPerSecond = corpus.perIteration * burstTime;
-		grineer.rawPerSecond = grineer.perIteration * burstTime;
-		cloneFlesh.rawPerSecond = cloneFlesh.perIteration * burstTime;
-		infested.rawPerSecond = infested.perIteration * burstTime;
-		ferrite.rawPerSecond = ferrite.perIteration * burstTime;
-		alloy.rawPerSecond = alloy.perIteration * burstTime;
-		mechanical.rawPerSecond = mechanical.perIteration * burstTime;
-		corpusFlesh.rawPerSecond = corpusFlesh.perIteration * burstTime;
-		shield.rawPerSecond = shield.perIteration * burstTime;
-		protoShield.rawPerSecond = protoShield.perIteration * burstTime;
-		robotic.rawPerSecond = robotic.perIteration * burstTime;
-		infestedFlesh.rawPerSecond = infestedFlesh.perIteration * burstTime;
-		fossilized.rawPerSecond = fossilized.perIteration * burstTime;
-		sinew.rawPerSecond = sinew.perIteration * burstTime;
 
 		// Add in DoTs
 		raw.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
-		corpus.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
-		grineer.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-		infested.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-		cloneFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-		ferrite.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
-		alloy.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
-		mechanical.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
-		corpusFlesh.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
-		shield.rawPerSecond += (heatDoTDPS + electricProcDPS);
-		protoShield.rawPerSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
-		robotic.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
-		infestedFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-		fossilized.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
-		sinew.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+
+		if (updateOutput) {
+			impact.rawPerSecond = impact.perIteration * burstTime;
+			puncture.rawPerSecond = puncture.perIteration * burstTime;
+			slash.rawPerSecond = slash.perIteration * burstTime;
+			fire.rawPerSecond = fire.perIteration * burstTime;
+			ice.rawPerSecond = ice.perIteration * burstTime;
+			electric.rawPerSecond = electric.perIteration * burstTime;
+			toxin.rawPerSecond = toxin.perIteration * burstTime;
+			blast.rawPerSecond = blast.perIteration * burstTime;
+			magnetic.rawPerSecond = magnetic.perIteration * burstTime;
+			gas.rawPerSecond = gas.perIteration * burstTime;
+			radiation.rawPerSecond = radiation.perIteration * burstTime;
+			corrosive.rawPerSecond = corrosive.perIteration * burstTime;
+			viral.rawPerSecond = viral.perIteration * burstTime;
+			corpus.rawPerSecond = corpus.perIteration * burstTime;
+			grineer.rawPerSecond = grineer.perIteration * burstTime;
+			cloneFlesh.rawPerSecond = cloneFlesh.perIteration * burstTime;
+			infested.rawPerSecond = infested.perIteration * burstTime;
+			ferrite.rawPerSecond = ferrite.perIteration * burstTime;
+			alloy.rawPerSecond = alloy.perIteration * burstTime;
+			mechanical.rawPerSecond = mechanical.perIteration * burstTime;
+			corpusFlesh.rawPerSecond = corpusFlesh.perIteration * burstTime;
+			shield.rawPerSecond = shield.perIteration * burstTime;
+			protoShield.rawPerSecond = protoShield.perIteration * burstTime;
+			robotic.rawPerSecond = robotic.perIteration * burstTime;
+			infestedFlesh.rawPerSecond = infestedFlesh.perIteration * burstTime;
+			fossilized.rawPerSecond = fossilized.perIteration * burstTime;
+			sinew.rawPerSecond = sinew.perIteration * burstTime;
+
+			corpus.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
+			grineer.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
+			infested.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			cloneFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
+			ferrite.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
+			alloy.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
+			mechanical.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
+			corpusFlesh.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
+			shield.rawPerSecond += (heatDoTDPS + electricProcDPS);
+			protoShield.rawPerSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
+			robotic.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
+			infestedFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			fossilized.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
+			sinew.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+		}
 	}
 
 	/**

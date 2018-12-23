@@ -83,35 +83,21 @@ public class TTKTarget implements Comparable {
 	public double DoTBase = 0.0;
 	public double localProjectileCount = 1.0;
 	public double millisceondsPerShot = 0.0;
-	public double millisecondMult = 5.0;
-	public double rampMult = -1;
-	public double comboCount = 0;
 	public double reloadTimeMilliseconds = 0.0;
-	public double baseImpactDamage = 0.0;
-	public double basePunctureDamage = 0.0;
-	public double baseSlashDamage = 0.0;
-	public double baseFireDamage = 0.0;
-	public double baseIceDamage = 0.0;
-	public double baseElectricDamage = 0.0;
-	public double baseToxinDamage = 0.0;
-	public double baseBlastDamage = 0.0;
-	public double baseCorrosiveDamage = 0.0;
-	public double baseGasDamage = 0.0;
-	public double baseMagneticDamage = 0.0;
-	public double baseRadiationDamage = 0.0;
-	public double baseViralDamage = 0.0;
+	public double slashProc;
+	public double fireProc;
+	public double electricProc;
+	public double toxinProc;
+	public double corrosiveProc;
+	public double gasProc;
+	public double magneticProc;
+	public double viralProc;
 	public double corrosiveProjectionMult = 0.0;
-	public int corrosiveStacks = 0;
-	public Vector<DoTPair> statusStacks = new Vector<DoTPair>();
-	public DoTPair fireStacks;
-	public double viralStacks;
-	public double magneticStacks;
+	protected double shieldDamage = 0;
+	protected double healthDamage = 0;
+	protected double armorDamage = 0;
+	protected double averageArmorMult = 0;
 	public Random rng = new Random();
-
-	public double headShotMult = 1;
-	public double viralHealth = 0;
-	protected double firstShotMult;
-	protected double lastShotMult;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -163,7 +149,8 @@ public class TTKTarget implements Comparable {
 	public void runAdvancedTTK() {
 
 		// Health Mults
-		if (surfaceType.equals(Constants.ENEMY_SURFACE_CLONE_FLESH)) {
+		switch (surfaceType) {
+		case Constants.ENEMY_SURFACE_CLONE_FLESH:
 			impactMult = 0.75;
 			punctureMult = 1.0;
 			slashMult = 1.25;
@@ -177,7 +164,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 1.75;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_MECHANICAL)) {
+			break;
+		case Constants.ENEMY_SURFACE_MECHANICAL:
 			impactMult = 1.25;
 			punctureMult = 1.0;
 			slashMult = 1.0;
@@ -191,7 +179,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 0.75;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_CORPUS_FLESH)) {
+			break;
+		case Constants.ENEMY_SURFACE_CORPUS_FLESH:
 			impactMult = 0.75;
 			punctureMult = 1.0;
 			slashMult = 1.25;
@@ -205,7 +194,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 1.5;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_INFESTED_FLESH)) {
+			break;
+		case Constants.ENEMY_SURFACE_INFESTED_FLESH:
 			impactMult = 1.0;
 			punctureMult = 1.0;
 			slashMult = 1.5;
@@ -219,7 +209,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 1.0;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_FOSSILIZED)) {
+			break;
+		case Constants.ENEMY_SURFACE_FOSSILIZED:
 			impactMult = 1.0;
 			punctureMult = 1.0;
 			slashMult = 1.15;
@@ -233,7 +224,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.75;
 			viralMult = 1.0;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_SINEW)) {
+			break;
+		case Constants.ENEMY_SURFACE_SINEW:
 			impactMult = 1.0;
 			punctureMult = 1.25;
 			slashMult = 1.0;
@@ -247,7 +239,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 1.0;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_ROBOTIC)) {
+			break;
+		case Constants.ENEMY_SURFACE_ROBOTIC:
 			impactMult = 1.0;
 			punctureMult = 1.25;
 			slashMult = 0.75;
@@ -261,7 +254,8 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 1.0;
 			magneticMult = 1.0;
-		} else if (surfaceType.equals(Constants.ENEMY_SURFACE_INFESTED)) {
+			break;
+		case Constants.ENEMY_SURFACE_INFESTED:
 			impactMult = 1.0;
 			punctureMult = 1.0;
 			slashMult = 1.25;
@@ -275,10 +269,12 @@ public class TTKTarget implements Comparable {
 			corrosiveMult = 1.0;
 			viralMult = 0.5;
 			magneticMult = 1.0;
+			break;
 		}
 
 		// Armor Mults
-		if (armorType.equals(Constants.ENEMY_SURFACE_FERRITE_ARMOR)) {
+		switch (armorType) {
+		case Constants.ENEMY_SURFACE_FERRITE_ARMOR:
 			armorImpactMult = 1.0;
 			armorPunctureMult = 1.5;
 			armorSlashMult = 0.85;
@@ -292,7 +288,8 @@ public class TTKTarget implements Comparable {
 			armorCorrosiveMult = 1.75;
 			armorViralMult = 1.0;
 			armorMagneticMult = 1.0;
-		} else if (armorType.equals(Constants.ENEMY_SURFACE_ALLOY_ARMOR)) {
+			break;
+		case Constants.ENEMY_SURFACE_ALLOY_ARMOR:
 			armorImpactMult = 1.0;
 			armorPunctureMult = 1.15;
 			armorSlashMult = 0.5;
@@ -306,10 +303,12 @@ public class TTKTarget implements Comparable {
 			armorCorrosiveMult = 1.0;
 			armorViralMult = 1.0;
 			armorMagneticMult = 0.5;
+			break;
 		}
 
 		// Shield Mults
-		if (shieldType.equals(Constants.ENEMY_SURFACE_SHIELDS)) {
+		switch (shieldType) {
+		case Constants.ENEMY_SURFACE_SHIELDS:
 			shieldImpactMult = 1.5;
 			shieldPunctureMult = 0.85;
 			shieldSlashMult = 1.0;
@@ -323,7 +322,8 @@ public class TTKTarget implements Comparable {
 			shieldCorrosiveMult = 1.0;
 			shieldViralMult = 1.0;
 			shieldMagneticMult = 1.75;
-		} else if (shieldType.equals(Constants.ENEMY_SURFACE_PROTO_SHIELD)) {
+			break;
+		case Constants.ENEMY_SURFACE_PROTO_SHIELD:
 			shieldImpactMult = 1.15;
 			shieldPunctureMult = 0.5;
 			shieldSlashMult = 1.0;
@@ -337,34 +337,97 @@ public class TTKTarget implements Comparable {
 			shieldCorrosiveMult = 0.5;
 			shieldViralMult = 1.0;
 			shieldMagneticMult = 1.75;
+			break;
 		}
 
-		if (factionType.equals(Constants.ENEMY_TYPE_INFESTED)) {
+		switch (factionType) {
+		case Constants.ENEMY_TYPE_INFESTED:
 			typeMult = Main.finalInfestedMult;
-		} else if (factionType.equals(Constants.ENEMY_TYPE_GRINEER)) {
+			break;
+		case Constants.ENEMY_TYPE_GRINEER:
 			typeMult = Main.finalGrineerMult;
-		} else if (factionType.equals(Constants.ENEMY_TYPE_CORPUS)) {
+			break;
+		case Constants.ENEMY_TYPE_CORPUS:
 			typeMult = Main.finalCorpusMult;
+			break;
 		}
 
 		// Simulation Data
 		millisceondsPerShot = 1000.0 / Main.finalFireRate;
-		millisecondMult = 5.0;
 		reloadTimeMilliseconds = Main.finalReloadTime * 1000.0;
 
-		baseImpactDamage = Main.impact.finalBase;
-		basePunctureDamage = Main.puncture.finalBase;
-		baseSlashDamage = Main.slash.finalBase;
-		baseFireDamage = Main.fire.finalBase;
-		baseIceDamage = Main.ice.finalBase;
-		baseElectricDamage = Main.electric.finalBase;
-		baseToxinDamage = Main.toxin.finalBase;
-		baseBlastDamage = Main.blast.finalBase;
-		baseCorrosiveDamage = Main.corrosive.finalBase;
-		baseGasDamage = Main.gas.finalBase;
-		baseMagneticDamage = Main.magnetic.finalBase;
-		baseRadiationDamage = Main.radiation.finalBase;
-		baseViralDamage = Main.viral.finalBase;
+		// Proc chances
+		slashProc = Main.slashProcRate;
+		fireProc = Main.fireProcRate;
+		electricProc = Main.electricProcRate;
+		toxinProc = Main.toxinProcRate;
+		corrosiveProc = Main.corrosiveProcRate;
+		gasProc = Main.gasProcRate;
+		magneticProc = Main.magneticProcRate;
+		viralProc = Main.viralProcRate;
+		
+		// Pre-calculate damage
+		shieldDamage = 0;
+		shieldDamage += Main.impact.finalBase * shieldImpactMult;
+		shieldDamage += Main.puncture.finalBase * shieldPunctureMult;
+		shieldDamage += Main.slash.finalBase * shieldSlashMult;
+		shieldDamage += Main.fire.finalBase * shieldFireMult;
+		shieldDamage += Main.ice.finalBase * shieldIceMult;
+		shieldDamage += Main.electric.finalBase * shieldElectricMult;
+		shieldDamage += Main.toxin.finalBase * shieldToxinMult;
+		shieldDamage += Main.blast.finalBase * shieldBlastMult;
+		shieldDamage += Main.corrosive.finalBase * shieldCorrosiveMult;
+		shieldDamage += Main.gas.finalBase * shieldGasMult;
+		shieldDamage += Main.magnetic.finalBase * shieldMagneticMult;
+		shieldDamage += Main.radiation.finalBase * shieldRadiationMult;
+		shieldDamage += Main.viral.finalBase * shieldViralMult;
+		
+		healthDamage = 0;
+		healthDamage += Main.impact.finalBase * impactMult;
+		healthDamage += Main.puncture.finalBase * punctureMult;
+		healthDamage += Main.slash.finalBase * slashMult;
+		healthDamage += Main.fire.finalBase * fireMult;
+		healthDamage += Main.ice.finalBase * iceMult;
+		healthDamage += Main.electric.finalBase * electricMult;
+		healthDamage += Main.toxin.finalBase * toxinMult;
+		healthDamage += Main.blast.finalBase * blastMult;
+		healthDamage += Main.corrosive.finalBase * corrosiveMult;
+		healthDamage += Main.gas.finalBase * gasMult;
+		healthDamage += Main.magnetic.finalBase * magneticMult;
+		healthDamage += Main.radiation.finalBase * radiationMult;
+		healthDamage += Main.viral.finalBase * viralMult;
+		
+		armorDamage = 0;
+		armorDamage += Main.impact.finalBase * impactMult * armorImpactMult;
+		armorDamage += Main.puncture.finalBase * punctureMult * armorPunctureMult;
+		armorDamage += Main.slash.finalBase * slashMult * armorSlashMult;
+		armorDamage += Main.fire.finalBase * fireMult * armorFireMult;
+		armorDamage += Main.ice.finalBase * iceMult * armorIceMult;
+		armorDamage += Main.electric.finalBase * electricMult * armorElectricMult;
+		armorDamage += Main.toxin.finalBase * toxinMult * armorToxinMult;
+		armorDamage += Main.blast.finalBase * blastMult * armorBlastMult;
+		armorDamage += Main.corrosive.finalBase * corrosiveMult * armorCorrosiveMult;
+		armorDamage += Main.gas.finalBase * gasMult * armorGasMult;
+		armorDamage += Main.magnetic.finalBase * magneticMult * armorMagneticMult;
+		armorDamage += Main.radiation.finalBase * radiationMult * armorRadiationMult;
+		armorDamage += Main.viral.finalBase * viralMult * armorViralMult;
+		
+		averageArmorMult = 0;
+		averageArmorMult += Main.impact.finalBase * (1 / ((2 - armorImpactMult) / 300));
+		averageArmorMult += Main.puncture.finalBase * (1 / ((2 - armorPunctureMult) / 300));
+		averageArmorMult += Main.slash.finalBase * (1 / ((2 - armorSlashMult) / 300));
+		averageArmorMult += Main.fire.finalBase * (1 / ((2 - armorFireMult) / 300));
+		averageArmorMult += Main.ice.finalBase * (1 / ((2 - armorIceMult) / 300));
+		averageArmorMult += Main.electric.finalBase * (1 / ((2 - armorElectricMult) / 300));
+		averageArmorMult += Main.toxin.finalBase * (1 / ((2 - armorToxinMult) / 300));
+		averageArmorMult += Main.blast.finalBase * (1 / ((2 - armorBlastMult) / 300));
+		averageArmorMult += Main.corrosive.finalBase * (1 / ((2 - armorCorrosiveMult) / 300));
+		averageArmorMult += Main.gas.finalBase * (1 / ((2 - armorGasMult) / 300));
+		averageArmorMult += Main.magnetic.finalBase * (1 / ((2 - armorMagneticMult) / 300));
+		averageArmorMult += Main.radiation.finalBase * (1 / ((2 - armorRadiationMult) / 300));
+		averageArmorMult += Main.viral.finalBase * (1 / ((2 - armorViralMult) / 300));
+		averageArmorMult /= Main.raw.finalBase;
+		averageArmorMult = 1 / averageArmorMult;
 
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
@@ -563,41 +626,30 @@ public class TTKTarget implements Comparable {
 		int iterations = 0;
 		int timeToKill = 0;
 		boolean reloading = false;
-		fireStacks = new DoTPair(0, 0);
-		corrosiveStacks = 0;
-		viralStacks = 0;
-		magneticStacks = 0;
-		viralHealth = 0;
-		statusStacks.clear();
+		double viralHealth = 0;
+		int corrosiveStacks = 0;
+		int viralStacks = 0;
+		int magneticStacks = 0;
+		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
+		int rampMult = 0;
+		int millisecondMult = 5;
+		statusStacks.add(new DoTPair(0,0)); // Dedicated fire stack
 
-		// Proc chances
-		double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
-		double totalElemental = Main.raw.finalBase - totalPhysical;
-		double slashProc = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		double fireProc = (Main.fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		double electricProc = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental));
-		double toxinProc = (Main.toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		double corrosiveProc = (Main.corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
-		double gasProc = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental));
-		double magneticProc = (Main.magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
-		double viralProc = (Main.viral.finalBase / ((4 * totalPhysical) + totalElemental));
-		
 		// Find initial starting combo
-		comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
+		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
 		if (Main.startingCombo == 1) {
 			comboCount = 0;
 		}
-		//Start charging charge weapons
+		// Start charging charge weapons
 		if (Main.weaponMode.equals(Constants.CHARGE) || Main.weaponMode.equals(Constants.CHARGEBOW) || Main.weaponMode.equals(Constants.LANKA)) {
 			shotCounter = 0;
 			if (Main.fireRate > 0) {
 				shotCounter += (1 / (Main.fireRate * (1 + Main.fireRateModPower))) * 1000;
 			}
 		}
-
 		if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-			millisecondMult = 1.0;
-		}
+			millisecondMult = 1;
+		}	
 
 		// Run a 600 second simulation to calculate the time to kill
 		for (timeToKill = 0; timeToKill < 600000; timeToKill++) {
@@ -610,8 +662,8 @@ public class TTKTarget implements Comparable {
 
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 						millisecondMult++;
-						if (millisecondMult > 5.0) {
-							millisecondMult = 5.0;
+						if (millisecondMult > 5) {
+							millisecondMult = 5;
 						}
 					}
 					// Kohm Pellets
@@ -686,12 +738,12 @@ public class TTKTarget implements Comparable {
 							comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
 						}
 						// Primed Chamber
-						firstShotMult = 1;
+						double firstShotMult = 1;
 						if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
 							firstShotMult = 1 + Main.finalFirstShotDamageMult;
 						}
 						// Synth Charge
-						lastShotMult = 1;
+						double lastShotMult = 1;
 						if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
 							lastShotMult = 1 + Main.finalLastShotDamageMult;
 						}
@@ -719,7 +771,7 @@ public class TTKTarget implements Comparable {
 							}
 
 							// Headshot damage multiplier
-							headShotMult = 1;
+							int headShotMult = 1;
 							if (Main.headShot) {
 								headShotMult = 2;
 								if (crit > 0) {
@@ -732,19 +784,7 @@ public class TTKTarget implements Comparable {
 
 							// Deal Damage
 							if (targetCurrentShields > 0.0) {
-								targetCurrentShields -= baseImpactDamage * shieldImpactMult * totalMult;
-								targetCurrentShields -= basePunctureDamage * shieldPunctureMult * totalMult;
-								targetCurrentShields -= baseSlashDamage * shieldSlashMult * totalMult;
-								targetCurrentShields -= baseFireDamage * shieldFireMult * totalMult;
-								targetCurrentShields -= baseIceDamage * shieldIceMult * totalMult;
-								targetCurrentShields -= baseElectricDamage * shieldElectricMult * totalMult;
-								targetCurrentShields -= baseToxinDamage * shieldToxinMult * totalMult;
-								targetCurrentShields -= baseBlastDamage * shieldBlastMult * totalMult;
-								targetCurrentShields -= baseCorrosiveDamage * shieldCorrosiveMult * totalMult;
-								targetCurrentShields -= baseGasDamage * shieldGasMult * totalMult;
-								targetCurrentShields -= baseMagneticDamage * shieldMagneticMult * totalMult;
-								targetCurrentShields -= baseRadiationDamage * shieldRadiationMult * totalMult;
-								targetCurrentShields -= baseViralDamage * shieldViralMult * totalMult;
+								targetCurrentShields -= shieldDamage * totalMult;
 							}
 							if (targetCurrentShields <= 0.0) {
 								double shieldDifference = 1.0;
@@ -754,38 +794,13 @@ public class TTKTarget implements Comparable {
 									shieldDifference = 1.0 - (unabsorbed / raw);
 									targetCurrentShields = 0.0;
 								}
-
 								if (targetAdjustedMaxArmor > 0.0) {
-									targetCurrentHealth -= baseImpactDamage * impactMult * armorImpactMult / (1 + ((targetAdjustedMaxArmor * (2 - armorImpactMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= basePunctureDamage * punctureMult * armorPunctureMult / (1 + ((targetAdjustedMaxArmor * (2 - armorPunctureMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseSlashDamage * slashMult * armorSlashMult / (1 + ((targetAdjustedMaxArmor * (2 - armorSlashMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseFireDamage * fireMult * armorFireMult / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseIceDamage * iceMult * armorIceMult / (1 + ((targetAdjustedMaxArmor * (2 - armorIceMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseElectricDamage * electricMult * armorElectricMult / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseToxinDamage * toxinMult * armorToxinMult / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseBlastDamage * blastMult * armorBlastMult / (1 + ((targetAdjustedMaxArmor * (2 - armorBlastMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseCorrosiveDamage * corrosiveMult * armorCorrosiveMult / (1 + ((targetAdjustedMaxArmor * (2 - armorCorrosiveMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseGasDamage * gasMult * armorGasMult / (1 + ((targetAdjustedMaxArmor * (2 - armorGasMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseMagneticDamage * magneticMult * armorMagneticMult / (1 + ((targetAdjustedMaxArmor * (2 - armorMagneticMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseRadiationDamage * radiationMult * armorRadiationMult / (1 + ((targetAdjustedMaxArmor * (2 - armorRadiationMult)) / 300)) * totalMult * shieldDifference;
-									targetCurrentHealth -= baseViralDamage * viralMult * armorViralMult / (1 + ((targetAdjustedMaxArmor * (2 - armorViralMult)) / 300)) * totalMult * shieldDifference;
+									targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference;
 								} else {
-									targetCurrentHealth -= baseImpactDamage * impactMult * totalMult * shieldDifference;
-									targetCurrentHealth -= basePunctureDamage * punctureMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseSlashDamage * slashMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseFireDamage * fireMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseIceDamage * iceMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseElectricDamage * electricMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseToxinDamage * toxinMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseBlastDamage * blastMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseCorrosiveDamage * corrosiveMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseGasDamage * gasMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseMagneticDamage * magneticMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseRadiationDamage * radiationMult * totalMult * shieldDifference;
-									targetCurrentHealth -= baseViralDamage * viralMult * totalMult * shieldDifference;
+									targetCurrentHealth -= healthDamage * totalMult * shieldDifference;
 								}
 							}
-
+							
 							// Status effects
 							// Hunter Munitions proc?
 							if (Main.hunterMunitions > 0 && crit > 0 && rng.nextDouble() <= Main.hunterMunitions) {
@@ -807,17 +822,17 @@ public class TTKTarget implements Comparable {
 							}
 							// Do we get a random status proc?
 							if (rng.nextDouble() <= Main.finalStatusChance) {
-								
+
 								// Which Proc?
 								double proc = rng.nextDouble();
 								// Slash Proc
-								if (proc - slashProc < 0) {
+								if ((proc -= slashProc) < 0) {
 									double bleedDamage = DoTBase * totalMult * 0.35;
 									int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 									statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 									targetCurrentHealth -= bleedDamage;
-								// Fire Proc	
-								} else if (proc - slashProc - fireProc < 0) {
+									// Fire Proc
+								} else if ((proc -= fireProc) < 0) {
 									double localFireMult = fireMult;
 									if (targetCurrentShields > 0.0) {
 										localFireMult = shieldFireMult;
@@ -826,17 +841,17 @@ public class TTKTarget implements Comparable {
 									}
 									double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5;
 									int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-									fireStacks.duration = heatDuration;
-									if (fireStacks.damage == 0) {
-										fireStacks.damage = heatDamage;
+									statusStacks.get(0).duration = heatDuration;
+									if (statusStacks.get(0).damage == 0) {
+										statusStacks.get(0).damage = heatDamage;
 									}
 									if (targetCurrentShields > 0) {
 										targetCurrentShields -= heatDamage;
 									} else {
 										targetCurrentHealth -= heatDamage;
 									}
-								// Electric Pric	
-								} else if (proc - slashProc - fireProc - electricProc < 0) {
+									// Electric Pric
+								} else if ((proc -= electricProc) < 0) {
 									double localElectricMult = electricMult;
 									if (targetCurrentShields > 0.0) {
 										localElectricMult = shieldElectricMult;
@@ -849,8 +864,8 @@ public class TTKTarget implements Comparable {
 									} else {
 										targetCurrentHealth -= electricProcDamage;
 									}
-								// Toxin Proc
-								} else if (proc - slashProc - fireProc - electricProc - toxinProc < 0) {
+									// Toxin Proc
+								} else if ((proc -= toxinProc) < 0) {
 									double localToxinMult = toxinMult;
 									if (targetAdjustedMaxArmor > 0.0) {
 										localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
@@ -859,8 +874,8 @@ public class TTKTarget implements Comparable {
 									int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 									statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
 									targetCurrentHealth -= poisonDamage;
-								// Gas Proc
-								} else if (proc - slashProc - fireProc - electricProc - toxinProc - gasProc < 0) {
+									// Gas Proc
+								} else if ((proc -= gasProc) < 0) {
 									double localGasMult = toxinMult;
 									if (targetAdjustedMaxArmor > 0.0) {
 										localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
@@ -870,14 +885,14 @@ public class TTKTarget implements Comparable {
 									int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 									statusStacks.add(new DoTPair(poisonDamage, gasDuration));
 									targetCurrentHealth -= (cloudDamage + poisonDamage);
-								// Magnetic Proc
-								} else if (proc - slashProc - fireProc - electricProc - toxinProc - gasProc - magneticProc < 0) {
+									// Magnetic Proc
+								} else if ((proc -= magneticProc) < 0) {
 									magneticStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
-								// Viral Proc
-								} else if (proc - slashProc - fireProc - electricProc - toxinProc - gasProc - magneticProc - viralProc < 0) {
+									// Viral Proc
+								} else if ((proc -= viralProc) < 0) {
 									viralStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
-								// Corrosive Proc
-								} else if (proc - slashProc - fireProc - electricProc - toxinProc - gasProc - magneticProc - viralProc - corrosiveProc < 0) {
+									// Corrosive Proc
+								} else if ((proc -= corrosiveProc) < 0) {
 									corrosiveStacks++;
 								}
 							}
@@ -888,18 +903,18 @@ public class TTKTarget implements Comparable {
 						if (iterations >= Main.finalMag) {
 							reloading = true;
 							iterations = 0;
+							rampMult = -1;
 						}
 					}
 				}
 			} else {
 				// Are we still reloading?
 				reloadTimeCounter++;
-				rampMult = -1; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
 				if (reloadTimeCounter >= reloadTimeMilliseconds) {
 					reloading = false;
 					reloadTimeCounter = 0;
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult = 1.0;
+						millisecondMult = 1;
 					}
 				}
 			}
@@ -909,16 +924,12 @@ public class TTKTarget implements Comparable {
 				// DoTs
 				for (int j = 0; j < statusStacks.size(); j++) {
 					statusStacks.get(j).duration -= 100;
-					if (statusStacks.get(j).duration % 1000 == 0) {
+					if (statusStacks.get(j).duration % 1000 == 0 && statusStacks.get(j).duration >= 0) {
 						targetCurrentHealth -= statusStacks.get(j).damage;
 					}
-					if (statusStacks.get(j).duration <= 0) {
+					if (statusStacks.get(j).duration <= 0 && j > 0) {
 						statusStacks.remove(j);
 					}
-				}
-				fireStacks.duration -= 100;
-				if (fireStacks.duration > 0 && fireStacks.duration % 1000 == 0) {
-					targetCurrentHealth -= fireStacks.damage;
 				}
 				// Others
 				viralStacks -= 100;
@@ -940,25 +951,14 @@ public class TTKTarget implements Comparable {
 	 */
 	public double calculateHardTimeToKill() {
 
-		double totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
-		double totalElemental = Main.raw.finalBase - totalPhysical;
-		double localSlashProcMult = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		double localFireProcMult = (Main.fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localElectricProcMult = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localToxinProcMult = (Main.toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localCorrosiveProcMult = (Main.corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localGasProcMult = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localMagneticProcMult = (Main.magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
-		double localViralProcMult = (Main.viral.finalBase / ((4 * totalPhysical) + totalElemental));
-
-		double slashProcsPerShot = localSlashProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double fireProcsPerShot = localFireProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double electricProcsPerShot = localElectricProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double toxinProcsPerShot = localToxinProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double corrosiveProcsPerShot = localCorrosiveProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double gasProcsPerShot = localGasProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double magneticProcsPerShot = localMagneticProcMult * Main.finalProjectileCount * Main.finalStatusChance;
-		double viralProcsPerShot = localViralProcMult * Main.finalProjectileCount * Main.finalStatusChance;
+		double slashProcsPerShot = slashProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double fireProcsPerShot = fireProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double electricProcsPerShot = electricProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double toxinProcsPerShot = toxinProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double corrosiveProcsPerShot = corrosiveProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double gasProcsPerShot = gasProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double magneticProcsPerShot = magneticProc * Main.finalProjectileCount * Main.finalStatusChance;
+		double viralProcsPerShot = viralProc * Main.finalProjectileCount * Main.finalStatusChance;
 
 		double targetAdjustedMaxShields = maxShields;
 		double targetCurrentShields = maxShields;
@@ -970,14 +970,16 @@ public class TTKTarget implements Comparable {
 		int timeToKill = 0;
 		boolean reloading = false;
 
-		fireStacks = new DoTPair(0, 0);
-		corrosiveStacks = 0;
-		viralStacks = 0;
-		magneticStacks = 0;
-		viralHealth = 0;
-		statusStacks.clear();
+		int corrosiveStacks = 0;
+		int viralStacks = 0;
+		int magneticStacks = 0;
+		double viralHealth = 0;
+		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
+		int rampMult = 0;
+		int millisecondMult = 5;
+		statusStacks.add(new DoTPair(0,0)); // Dedicated fire stack
 
-		comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
+		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
 		if (Main.startingCombo == 1) {
 			comboCount = 0;
 		}
@@ -990,8 +992,9 @@ public class TTKTarget implements Comparable {
 		}
 
 		if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-			millisecondMult = 1.0;
+			millisecondMult = 1;
 		}
+		
 		// Run a 60 second simulation to calculate the time to kill
 		for (timeToKill = 0; timeToKill < 60000; timeToKill++) {
 			// Add new stack
@@ -1005,8 +1008,8 @@ public class TTKTarget implements Comparable {
 
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 						millisecondMult++;
-						if (millisecondMult > 5.0) {
-							millisecondMult = 5.0;
+						if (millisecondMult > 5) {
+							millisecondMult = 5;
 						}
 					}
 
@@ -1023,12 +1026,12 @@ public class TTKTarget implements Comparable {
 						bursts = Main.burstCount;
 					for (int b = 0; b < bursts; b++) {
 
-						firstShotMult = 1;
+						double firstShotMult = 1;
 						if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
 							firstShotMult = 1 + Main.finalFirstShotDamageMult;
 						}
 
-						lastShotMult = 1;
+						double lastShotMult = 1;
 						if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
 							lastShotMult = 1 + Main.finalLastShotDamageMult;
 						}
@@ -1088,7 +1091,7 @@ public class TTKTarget implements Comparable {
 						// average crit mult
 						double localCritMult = (1 - critty) + ((Main.finalCritChance + Main.vigilante) * Main.finalCritMult);
 
-						headShotMult = 1;
+						double headShotMult = 1;
 						if (Main.headShot) {
 							headShotMult = 2 + (2 * critty);
 						}
@@ -1098,19 +1101,7 @@ public class TTKTarget implements Comparable {
 
 						// Deal Damage
 						if (targetCurrentShields > 0.0) {
-							targetCurrentShields -= baseImpactDamage * shieldImpactMult * totalMult * localProjectileCount;
-							targetCurrentShields -= basePunctureDamage * shieldPunctureMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseSlashDamage * shieldSlashMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseFireDamage * shieldFireMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseIceDamage * shieldIceMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseElectricDamage * shieldElectricMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseToxinDamage * shieldToxinMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseBlastDamage * shieldBlastMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseCorrosiveDamage * shieldCorrosiveMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseGasDamage * shieldGasMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseMagneticDamage * shieldMagneticMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseRadiationDamage * shieldRadiationMult * totalMult * localProjectileCount;
-							targetCurrentShields -= baseViralDamage * shieldViralMult * totalMult * localProjectileCount;
+							targetCurrentShields -= shieldDamage * totalMult * localProjectileCount;
 						}
 						if (targetCurrentShields <= 0.0) {
 							double shieldDifference = 1.0;
@@ -1120,35 +1111,10 @@ public class TTKTarget implements Comparable {
 								shieldDifference = 1.0 - (unabsorbed / raw);
 								targetCurrentShields = 0.0;
 							}
-
 							if (targetAdjustedMaxArmor > 0.0) {
-								targetCurrentHealth -= baseImpactDamage * impactMult * armorImpactMult / (1 + ((targetAdjustedMaxArmor * (2 - armorImpactMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= basePunctureDamage * punctureMult * armorPunctureMult / (1 + ((targetAdjustedMaxArmor * (2 - armorPunctureMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseSlashDamage * slashMult * armorSlashMult / (1 + ((targetAdjustedMaxArmor * (2 - armorSlashMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseFireDamage * fireMult * armorFireMult / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseIceDamage * iceMult * armorIceMult / (1 + ((targetAdjustedMaxArmor * (2 - armorIceMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseElectricDamage * electricMult * armorElectricMult / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseToxinDamage * toxinMult * armorToxinMult / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseBlastDamage * blastMult * armorBlastMult / (1 + ((targetAdjustedMaxArmor * (2 - armorBlastMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseCorrosiveDamage * corrosiveMult * armorCorrosiveMult / (1 + ((targetAdjustedMaxArmor * (2 - armorCorrosiveMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseGasDamage * gasMult * armorGasMult / (1 + ((targetAdjustedMaxArmor * (2 - armorGasMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseMagneticDamage * magneticMult * armorMagneticMult / (1 + ((targetAdjustedMaxArmor * (2 - armorMagneticMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseRadiationDamage * radiationMult * armorRadiationMult / (1 + ((targetAdjustedMaxArmor * (2 - armorRadiationMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseViralDamage * viralMult * armorViralMult / (1 + ((targetAdjustedMaxArmor * (2 - armorViralMult)) / 300)) * totalMult * shieldDifference * localProjectileCount;
+								targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference * localProjectileCount;
 							} else {
-								targetCurrentHealth -= baseImpactDamage * impactMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= basePunctureDamage * punctureMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseSlashDamage * slashMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseFireDamage * fireMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseIceDamage * iceMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseElectricDamage * electricMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseToxinDamage * toxinMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseBlastDamage * blastMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseCorrosiveDamage * corrosiveMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseGasDamage * gasMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseMagneticDamage * magneticMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseRadiationDamage * radiationMult * totalMult * shieldDifference * localProjectileCount;
-								targetCurrentHealth -= baseViralDamage * viralMult * totalMult * shieldDifference * localProjectileCount;
+								targetCurrentHealth -= healthDamage * totalMult * shieldDifference * localProjectileCount;
 							}
 						}
 
@@ -1187,9 +1153,9 @@ public class TTKTarget implements Comparable {
 						}
 						double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5 * fireProcsPerShot;
 						int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-						fireStacks.duration = heatDuration;
-						if (fireStacks.damage == 0) {
-							fireStacks.damage = heatDamage;
+						statusStacks.get(0).duration = heatDuration;
+						if (statusStacks.get(0).damage == 0) {
+							statusStacks.get(0).damage = heatDamage;
 						}
 						if (targetCurrentShields > 0) {
 							targetCurrentShields -= heatDamage;
@@ -1245,6 +1211,7 @@ public class TTKTarget implements Comparable {
 						if (iterations >= Main.finalMag) {
 							reloading = true;
 							iterations = 0;
+							rampMult = -1;
 						}
 					}
 				}
@@ -1252,15 +1219,12 @@ public class TTKTarget implements Comparable {
 				// Are we still reloading?
 				reloadTimeCounter++;
 				if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-					if (reloadTimeCounter >= 800) {
-						rampMult = -1; // Drops the continuous weapon ramp if not shooting for 0.8 seconds -o
-					}
 				}
 				if (reloadTimeCounter >= reloadTimeMilliseconds) {
 					reloading = false;
 					reloadTimeCounter = 0;
 					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult = 1.0;
+						millisecondMult = 1;
 					}
 				}
 			}
@@ -1271,13 +1235,9 @@ public class TTKTarget implements Comparable {
 					if (statusStacks.get(j).duration % 1000 == 0) {
 						targetCurrentHealth -= statusStacks.get(j).damage;
 					}
-					if (statusStacks.get(j).duration <= 0) {
+					if (statusStacks.get(j).duration <= 0 && j > 0) {
 						statusStacks.remove(j);
 					}
-				}
-				fireStacks.duration -= 100;
-				if (fireStacks.duration > 0 && fireStacks.duration % 1000 == 0) {
-					targetCurrentHealth -= fireStacks.damage;
 				}
 				viralStacks -= 100;
 				magneticStacks -= 100;

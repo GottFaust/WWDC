@@ -66,40 +66,16 @@ public class Maximizer {
 	}
 
 	public void Maximizer() {
-
-		// Identify empty mod slots and count them
 		int emptyMods = 0;
-		if (Main.selectedWeapon.modOne.equals("--")) {
-			emptyMods++;
-			modsToChange.add(0);
-		}
-		if (Main.selectedWeapon.modTwo.equals("--")) {
-			emptyMods++;
-			modsToChange.add(1);
-		}
-		if (Main.selectedWeapon.modThree.equals("--")) {
-			emptyMods++;
-			modsToChange.add(2);
-		}
-		if (Main.selectedWeapon.modFour.equals("--")) {
-			emptyMods++;
-			modsToChange.add(3);
-		}
-		if (Main.selectedWeapon.modFive.equals("--")) {
-			emptyMods++;
-			modsToChange.add(4);
-		}
-		if (Main.selectedWeapon.modSix.equals("--")) {
-			emptyMods++;
-			modsToChange.add(5);
-		}
-		if (Main.selectedWeapon.modSeven.equals("--")) {
-			emptyMods++;
-			modsToChange.add(6);
-		}
-		if (Main.selectedWeapon.modEight.equals("--")) {
-			emptyMods++;
-			modsToChange.add(7);
+		modsToChange.clear();
+		results.clear();
+		
+		// Identify empty mod slots and count them	
+		for(int i = 0; i < 8; i++) {
+			if(Main.selectedWeapon.selectedMods.get(i).equals("--")) {
+				emptyMods++;
+				modsToChange.add(i);
+			}
 		}
 		modCount = Main.selectedWeapon.countMods() - (emptyMods - 1);
 
@@ -193,12 +169,11 @@ public class Maximizer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		// Clean things out
 		for (int i = 0; i < emptyMods; i++) {
 			Main.selectedWeapon.setMod(modsToChange.get(i), 0);
 		}
-		modsToChange.clear();
-		results.clear();
 	}
 
 	public static class TTKresult {

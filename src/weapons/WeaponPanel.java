@@ -91,7 +91,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected JButton hideAdd = new JButton("Hide/Show Additive Effects");
 
 	/** Data **/
-	protected Vector<String> selectedMods = new Vector<String>();
+	public Vector<String> selectedMods = new Vector<String>();
 	protected Vector<Mod> activeMods = new Vector<Mod>();
 	protected Vector<Double> modLevels = new Vector<Double>();
 
@@ -354,13 +354,13 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		int count=0;
 		updateDropDownContents();
 		if(modEight.equals("--")) count = modEightPanel.modBox.getItemCount();
-		if(modSeven.equals("--")) count = modSevenPanel.modBox.getItemCount();
-		if(modSix.equals("--")) count = modSixPanel.modBox.getItemCount();
-		if(modFive.equals("--")) count = modFivePanel.modBox.getItemCount();
-		if(modFour.equals("--")) count = modFourPanel.modBox.getItemCount();
-		if(modThree.equals("--")) count = modThreePanel.modBox.getItemCount();
-		if(modTwo.equals("--")) count = modTwoPanel.modBox.getItemCount();
-		if(modOne.equals("--")) count = modOnePanel.modBox.getItemCount();		
+		else if(modSeven.equals("--")) count = modSevenPanel.modBox.getItemCount();
+		else if(modSix.equals("--")) count = modSixPanel.modBox.getItemCount();
+		else if(modFive.equals("--")) count = modFivePanel.modBox.getItemCount();
+		else if(modFour.equals("--")) count = modFourPanel.modBox.getItemCount();
+		else if(modThree.equals("--")) count = modThreePanel.modBox.getItemCount();
+		else if(modTwo.equals("--")) count = modTwoPanel.modBox.getItemCount();
+		else if(modOne.equals("--")) count = modOnePanel.modBox.getItemCount();		
 		return count;
 	}
 
@@ -368,22 +368,32 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	 * Sets Mods for the Maximizer
 	 */
 	public void setMod(int mod, int set) {
-		if (mod == 0)
+		switch(mod) {
+		case 0:
 			modOnePanel.modBox.setSelectedIndex(set);
-		if (mod == 1)
+			break;
+		case 1:
 			modTwoPanel.modBox.setSelectedIndex(set);
-		if (mod == 2)
+			break;
+		case 2:
 			modThreePanel.modBox.setSelectedIndex(set);
-		if (mod == 3)
+			break;
+		case 3:
 			modFourPanel.modBox.setSelectedIndex(set);
-		if (mod == 4)
+			break;
+		case 4:
 			modFivePanel.modBox.setSelectedIndex(set);
-		if (mod == 5)
+			break;
+		case 5:
 			modSixPanel.modBox.setSelectedIndex(set);
-		if (mod == 6)
+			break;
+		case 6:
 			modSevenPanel.modBox.setSelectedIndex(set);
-		if (mod == 7)
+			break;
+		case 7:
 			modEightPanel.modBox.setSelectedIndex(set);
+			break;
+		}
 		updateDropDownContents();
 	}
 
@@ -1127,14 +1137,8 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected void updateWeaponDamageOptions(String type) {
 		if (type.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
 			wap.damagePanel.setVisible(false);
-//      wap.impactPanel.setVisible(true);
-//      wap.puncturePanel.setVisible(true);
-//      wap.slashPanel.setVisible(true);
 		} else {
 			wap.damagePanel.setVisible(true);
-//      wap.impactPanel.setVisible(false);
-//      wap.puncturePanel.setVisible(false);
-//      wap.slashPanel.setVisible(false);
 		}
 	}
 
@@ -1155,16 +1159,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		return localMod;
 	}
 
-	/**
-	 * Maxes all selected mods
-	 */
-	/*
-	 * public void maxMods(){
-	 * 
-	 * modOnePanel.maxMod(); modTwoPanel.maxMod(); modThreePanel.maxMod();
-	 * modFourPanel.maxMod(); modFivePanel.maxMod(); modSixPanel.maxMod();
-	 * modSevenPanel.maxMod(); modEightPanel.maxMod(); }
-	 */
 	/**
 	 * Updates the mod panels
 	 * 

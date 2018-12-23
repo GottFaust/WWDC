@@ -423,9 +423,9 @@ public class Constants {
 		  "Deep Freeze,Pistol,5,1,IceDamage,0.15,D,6",
 		  "Dual Rounds,ArcGun,5,1,Multishot,0.05,V,6",
 		  "Electrified Barrel,ArcGun,5,1,ElectricDamage,0.2,~,4",
-		  "Expel Corpus,Pistol,5,1,CorpusDamage,0.05,V,4",
-		  "Expel Grineer,Pistol,5,1,GrineerDamage,0.05,V,4",
-		  "Expel Infested,Pistol,5,1,InfestedDamage,0.05,V,4",
+		  "Primed Expel Corpus,Pistol,10,1,CorpusDamage,0.05,V,4",
+          "Primed Expel Grineer,Pistol,10,1,GrineerDamage,0.05,V,4",
+          "Primed Expel Infested,Pistol,10,1,InfestedDamage,0.05,V,4",
 		  "Fanged Fusillade,Rifle,5,1,SlashDamage,0.2,~,6",
 		  "Frail Momentum,Shotgun,5,2,FireRate,Damage,0.15,-0.025,V,4",
 		  "Fridgid Blast,Shotgun,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
@@ -503,6 +503,7 @@ public class Constants {
   public static final String[] baseWeapons = {"Pistol,Semi-Auto,Toxin,Acrid,0.0,0,DEPRECIATED,35,0.0,0.0,0.0,6.67,15,210,1.2,5,2,10,1,1",
 		  "Pistol,Full-Auto,Physical,Afuris,0.0,0,DEPRECIATED,0.0,3,14,3,12.5,70,210,2,5,2,12,1,1",
 		  "Pistol,Burst,Physical,AkJagara,0.0,2,DEPRECIATED,0.0,4.5,4.5,21,8.33,36,210,2.25,6,2,28,1,1",
+		  "Pistol,Burst,Physical,AkJagara Prime,0.0,2,DEPRECIATED,0.0,3.6,3.6,28.8,10,40,1,1.4,18,2.2,32,1,1",
 		  "Pistol,Full-Auto,Physical,AkZani,0.0,0,DEPRECIATED,0.0,1.8,8.4,1.8,20,100,400,2,14,2,14,1,1",
 		  "Pistol,Semi-Auto,Physical,Akbolto,0.0,0,DEPRECIATED,0.0,4,36,0,10,30,210,2.6,16,2.4,2.2,1,1",
 		  "Pistol,Semi-Auto,Physical,Akbolto Prime,0.0,0,DEPRECIATED,0.0,3.2,27.5,1.3,7,40,210,1.3,36,2.8,14,1,1",
@@ -726,5 +727,7 @@ public class Constants {
 		  "Rifle,Bow (Semi-Auto),Physical,Nagantaka,0,0,DEPRECIATED,0,1.6,14.3,143.1,2.5,9,540,2,15,2.3,39,1,1",
 		  "Pistol,Continuous,Radiation,Ocucor,0,0,DEPRECIATED,22,0,0,0,12,40,210,1.6,16,1.8,24,1,0.5",
 		  "Rifle,Burst,Magnetic,Battacor,0.0,2,DEPRECIATED,42,0,24,0,3.57,60,540,2,32,2.4,18,1,1",
-		  "Shotgun,Continuous,Radiation,Phantasma,0,0,DEPRECIATED,50,25,0,0,12,11,0,0.5,3,1.5,37,5,0.5"};
+		  "Shotgun,Continuous,Radiation,Phantasma,0,0,DEPRECIATED,50,25,0,0,12,11,0,0.5,3,1.5,37,5,0.5",
+		  "Shotgun,Semi-Auto,Radiation,Exergis,0.0,0,DEPRECIATED,420,60,360,780,3.33,1,0,1.6,8,1.4,36,3,1",
+		  "Pistol,Semi-Auto,Fire,Plinx,0.0,0,DEPRECIATED,20,0,26,0,3.33,10,0,1,32,3,4,1,1"};
 }
