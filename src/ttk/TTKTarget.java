@@ -462,7 +462,6 @@ public class TTKTarget implements Comparable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -1232,7 +1231,7 @@ public class TTKTarget implements Comparable {
 			if (timeToKill % 100 == 0) {
 				for (int j = 0; j < statusStacks.size(); j++) {
 					statusStacks.get(j).duration -= 100;
-					if (statusStacks.get(j).duration % 1000 == 0) {
+					if (statusStacks.get(j).duration % 1000 == 0 && statusStacks.get(j).duration % 1000 >= 0) {
 						targetCurrentHealth -= statusStacks.get(j).damage;
 					}
 					if (statusStacks.get(j).duration <= 0 && j > 0) {

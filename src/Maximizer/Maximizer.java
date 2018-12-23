@@ -174,6 +174,7 @@ public class Maximizer {
 		for (int i = 0; i < emptyMods; i++) {
 			Main.selectedWeapon.setMod(modsToChange.get(i), 0);
 		}
+		System.gc();
 	}
 
 	public static class TTKresult {
