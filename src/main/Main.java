@@ -846,47 +846,48 @@ public class Main {
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
 			String element2 = elements.get(i + 1);
-			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) && (element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
+			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) &&
+				(element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
 
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
 					blastDamageMods.add(globalFire + globalIce);
-					if (damageType.equals("Fire") || damageType.equals("Ice") || damageType.equals("Blast"))
+					if (damageType.equals("Fire") || damageType.equals("Ice"))
 						blastDamageMods.add(1.0);
 					fire.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements.add("Corrosive");
 					corrosiveDamageMods.add(globalElectric + globalToxin);
-					if (damageType.equals("Electric") || damageType.equals("Toxin") || damageType.equals("Corrosive"))
+					if (damageType.equals("Electric") || damageType.equals("Toxin"))
 						corrosiveDamageMods.add(1.0);
 					electric.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements.add("Gas");
 					gasDamageMods.add(globalFire + globalToxin);
-					if (damageType.equals("Fire") || damageType.equals("Toxin") || damageType.equals("Gas"))
+					if (damageType.equals("Fire") || damageType.equals("Toxin"))
 						gasDamageMods.add(1.0);
 					fire.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements.add("Magnetic");
 					magneticDamageMods.add(globalElectric + globalIce);
-					if (damageType.equals("Electric") || damageType.equals("Ice") || damageType.equals("Magnetic"))
+					if (damageType.equals("Electric") || damageType.equals("Ice"))
 						magneticDamageMods.add(1.0);
 					electric.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements.add("Radiation");
 					radiationDamageMods.add(globalFire + globalElectric);
-					if (damageType.equals("Fire") || damageType.equals("Electric") || damageType.equals("Radiation"))
+					if (damageType.equals("Fire") || damageType.equals("Electric"))
 						radiationDamageMods.add(1.0);
 					fire.base = 0.0;
 					electric.base = 0.0;
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements.add("Viral");
 					viralDamageMods.add(globalToxin + globalIce);
-					if (damageType.equals("Toxin") || damageType.equals("Ice") || damageType.equals("Viral"))
+					if (damageType.equals("Toxin") || damageType.equals("Ice"))
 						viralDamageMods.add(1.0);
 					toxin.base = 0.0;
 					ice.base = 0.0;
@@ -899,23 +900,15 @@ public class Main {
 		// Uncombined elements
 		if (elements.contains("Fire")) {
 			fireDamageMods.add(globalFire);
-			if (damageType.equals("Fire"))
-				fireDamageMods.add(1.0);
 		}
 		if (elements.contains("Electric")) {
 			electricDamageMods.add(globalElectric);
-			if (damageType.equals("Electric"))
-				electricDamageMods.add(1.0);
 		}
 		if (elements.contains("Toxin")) {
 			toxinDamageMods.add(globalToxin);
-			if (damageType.equals("Toxin"))
-				toxinDamageMods.add(1.0);
 		}
 		if (elements.contains("Ice")) {
 			iceDamageMods.add(globalIce);
-			if (damageType.equals("Ice"))
-				iceDamageMods.add(1.0);
 		}
 
 		// Calculate finals
