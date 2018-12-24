@@ -82,8 +82,8 @@ public class TTKTarget implements Comparable {
 	public double typeMult = 1.0;
 	public double DoTBase = 0.0;
 	public double localProjectileCount = 1.0;
-	public double millisceondsPerShot = 0.0;
-	public double reloadTimeMilliseconds = 0.0;
+	public int millisceondsPerShot = 0;
+	public int reloadTimeMilliseconds = 0;
 	public double slashProc;
 	public double fireProc;
 	public double electricProc;
@@ -353,8 +353,8 @@ public class TTKTarget implements Comparable {
 		}
 
 		// Simulation Data
-		millisceondsPerShot = 1000.0 / Main.finalFireRate;
-		reloadTimeMilliseconds = Main.finalReloadTime * 1000.0;
+		millisceondsPerShot = (int) (1000.0 / Main.finalFireRate);
+		reloadTimeMilliseconds = (int) (Main.finalReloadTime * 1000);
 
 		// Proc chances
 		slashProc = Main.slashProcRate;
@@ -365,7 +365,7 @@ public class TTKTarget implements Comparable {
 		gasProc = Main.gasProcRate;
 		magneticProc = Main.magneticProcRate;
 		viralProc = Main.viralProcRate;
-		
+
 		// Pre-calculate damage
 		shieldDamage = 0;
 		shieldDamage += Main.impact.finalBase * shieldImpactMult;
@@ -381,7 +381,7 @@ public class TTKTarget implements Comparable {
 		shieldDamage += Main.magnetic.finalBase * shieldMagneticMult;
 		shieldDamage += Main.radiation.finalBase * shieldRadiationMult;
 		shieldDamage += Main.viral.finalBase * shieldViralMult;
-		
+
 		healthDamage = 0;
 		healthDamage += Main.impact.finalBase * impactMult;
 		healthDamage += Main.puncture.finalBase * punctureMult;
@@ -396,7 +396,7 @@ public class TTKTarget implements Comparable {
 		healthDamage += Main.magnetic.finalBase * magneticMult;
 		healthDamage += Main.radiation.finalBase * radiationMult;
 		healthDamage += Main.viral.finalBase * viralMult;
-		
+
 		armorDamage = 0;
 		armorDamage += Main.impact.finalBase * impactMult * armorImpactMult;
 		armorDamage += Main.puncture.finalBase * punctureMult * armorPunctureMult;
@@ -411,7 +411,7 @@ public class TTKTarget implements Comparable {
 		armorDamage += Main.magnetic.finalBase * magneticMult * armorMagneticMult;
 		armorDamage += Main.radiation.finalBase * radiationMult * armorRadiationMult;
 		armorDamage += Main.viral.finalBase * viralMult * armorViralMult;
-		
+
 		averageArmorMult = 0;
 		averageArmorMult += Main.impact.finalBase * (1 / ((2 - armorImpactMult) / 300));
 		averageArmorMult += Main.puncture.finalBase * (1 / ((2 - armorPunctureMult) / 300));
@@ -620,11 +620,11 @@ public class TTKTarget implements Comparable {
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
 		double targetAdjustedMaxArmor = maxArmor;
-		int reloadTimeCounter = 0;
-		int shotCounter = 2147482999;
+		int shotTimer = 0;
+		int statusTimer = 100;
+		int nextEvent = 0;
 		int iterations = 0;
 		int timeToKill = 0;
-		boolean reloading = false;
 		double viralHealth = 0;
 		int corrosiveStacks = 0;
 		int viralStacks = 0;
@@ -632,7 +632,7 @@ public class TTKTarget implements Comparable {
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
 		int rampMult = 0;
 		int millisecondMult = 5;
-		statusStacks.add(new DoTPair(0,0)); // Dedicated fire stack
+		statusStacks.add(new DoTPair(0, 0)); // Dedicated fire stack
 
 		// Find initial starting combo
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
@@ -641,279 +641,270 @@ public class TTKTarget implements Comparable {
 		}
 		// Start charging charge weapons
 		if (Main.weaponMode.equals(Constants.CHARGE) || Main.weaponMode.equals(Constants.CHARGEBOW) || Main.weaponMode.equals(Constants.LANKA)) {
-			shotCounter = 0;
+			shotTimer = 0;
 			if (Main.fireRate > 0) {
-				shotCounter += (1 / (Main.fireRate * (1 + Main.fireRateModPower))) * 1000;
+				shotTimer += (1 / (Main.fireRate * (1 + Main.fireRateModPower))) * 1000;
 			}
 		}
 		if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 			millisecondMult = 1;
-		}	
+		}
 
 		// Run a 600 second simulation to calculate the time to kill
-		for (timeToKill = 0; timeToKill < 600000; timeToKill++) {
+		for (timeToKill = 0; timeToKill < 600000;) {
 			// Add new stack
-			if (!reloading) {
-				shotCounter++;
-				rampMult++;
-				// is it time to fire a new projectile?
-				if (shotCounter >= (millisceondsPerShot * (5 / millisecondMult))) {
 
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult++;
-						if (millisecondMult > 5) {
-							millisecondMult = 5;
+			// is it time to fire a new projectile?
+			if (shotTimer <= 0) {
+
+				if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+					millisecondMult++;
+					if (millisecondMult > 5) {
+						millisecondMult = 5;
+					}
+				}
+				// Kohm Pellets
+				localProjectileCount = Main.finalProjectileCount;
+				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+					double rampBulletMult = ((iterations + 1) / Main.projectileCount);
+					if (rampBulletMult > 1)
+						rampBulletMult = 1;
+					localProjectileCount *= rampBulletMult;
+				}
+				// Burst
+				int bursts = 1;
+				if (Main.weaponMode.equals(Constants.BURST)) {
+					bursts = Main.burstCount;
+				}
+				for (int b = 0; b < bursts; b++) {
+
+					// Adjust Max Stats
+					// Shields
+					targetAdjustedMaxShields = maxShields;
+					if (magneticStacks > 0) {
+						targetAdjustedMaxShields *= 0.25;
+					}
+					if (targetAdjustedMaxShields < targetCurrentShields) {
+						targetCurrentShields = targetAdjustedMaxShields;
+					}
+					// Health
+					if (viralStacks > 0) {
+						if (viralHealth == 0) {
+							viralHealth = targetCurrentHealth * 0.5;
+							targetCurrentHealth *= 0.5;
+						}
+					} else {
+						targetCurrentHealth += viralHealth;
+						viralHealth = 0;
+					}
+					// Armor
+					targetAdjustedMaxArmor = maxArmor;
+					targetAdjustedMaxArmor *= corrosiveProjectionMult;
+					if (corrosiveStacks > 0) {
+						for (int i = 0; i < corrosiveStacks; i++) {
+							targetAdjustedMaxArmor *= 0.75;
 						}
 					}
-					// Kohm Pellets
-					localProjectileCount = Main.finalProjectileCount;
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						double rampBulletMult = ((iterations + 1) / Main.projectileCount);
-						if (rampBulletMult > 1)
-							rampBulletMult = 1;
-						localProjectileCount *= rampBulletMult;
+					if (targetAdjustedMaxArmor < 1) {
+						targetAdjustedMaxArmor = 0;
 					}
-					// Burst
-					int bursts = 1;
-					if (Main.weaponMode.equals(Constants.BURST)) {
-						bursts = Main.burstCount;
+
+					// Find shot-unique multipliers
+					// Find multishot
+					double tempMultishots = localProjectileCount + 1;
+					int multishot = 0;
+					for (int p = 0; p < localProjectileCount; p++) {
+						tempMultishots--;
+						if (rng.nextDouble() < tempMultishots) {
+							multishot++;
+						}
 					}
-					for (int b = 0; b < bursts; b++) {
+					// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
+					double beamMult = 1;
+					if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
+						beamMult = 0.2 + (rampMult / 600) * 0.8;
+						if (beamMult > 1) {
+							beamMult = 1;
+						}
+					}
+					// Sniper Combo multiplier
+					double comboMult = 1;
+					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
+						comboCount += multishot;
+						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)) + 0.00001); // +0.00001 to fix some rounding errors
+						comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
+					}
+					// Primed Chamber
+					double firstShotMult = 1;
+					if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
+						firstShotMult = 1 + Main.finalFirstShotDamageMult;
+					}
+					// Synth Charge
+					double lastShotMult = 1;
+					if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
+						lastShotMult = 1 + Main.finalLastShotDamageMult;
+					}
 
-						// Adjust Max Stats
-						// Shields
-						targetAdjustedMaxShields = maxShields;
-						if (magneticStacks > 0) {
-							targetAdjustedMaxShields *= 0.25;
-						}
-						if (targetAdjustedMaxShields < targetCurrentShields) {
-							targetCurrentShields = targetAdjustedMaxShields;
-						}
-						// Health
-						if (viralStacks > 0) {
-							if (viralHealth == 0) {
-								viralHealth = targetCurrentHealth * 0.5;
-								targetCurrentHealth *= 0.5;
-							}
-						} else {
-							targetCurrentHealth += viralHealth;
-							viralHealth = 0;
-						}
-						// Armor
-						targetAdjustedMaxArmor = maxArmor;
-						targetAdjustedMaxArmor *= corrosiveProjectionMult;
-						if (corrosiveStacks > 0) {
-							for (int i = 0; i < corrosiveStacks; i++) {
-								targetAdjustedMaxArmor *= 0.75;
-							}
-						}
-						if (targetAdjustedMaxArmor < 1) {
-							targetAdjustedMaxArmor = 0;
-						}
+					// Shoot 1 projectile
+					for (int p = 0; p < multishot; p++) {
 
-						// Find shot-unique multipliers
-						// Find multishot
-						double tempMultishots = localProjectileCount + 1;
-						int multishot = 0;
-						for (int p = 0; p < localProjectileCount; p++) {
-							tempMultishots--;
-							if (rng.nextDouble() < tempMultishots) {
-								multishot++;
+						// Find Crit
+						double localCritMult = 1.0;
+						double tempCrit = Main.finalCritChance + 1;
+						int crit = 0;
+						for (int a = 0; a < Main.finalCritChance; a++) {
+							tempCrit--;
+							if (rng.nextDouble() < tempCrit) {
+								crit++;
 							}
 						}
-						// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
-						double beamMult = 1;
-						if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-							beamMult = 0.2 + (rampMult / 600) * 0.8;
-							if (beamMult > 1) {
-								beamMult = 1;
-							}
-						}
-						// Sniper Combo multiplier
-						double comboMult = 1;
-						if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
-							comboCount += multishot;
-							comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)) + 0.00001); // +0.00001 to fix some rounding errors
-							comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
-						}
-						// Primed Chamber
-						double firstShotMult = 1;
-						if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
-							firstShotMult = 1 + Main.finalFirstShotDamageMult;
-						}
-						// Synth Charge
-						double lastShotMult = 1;
-						if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
-							lastShotMult = 1 + Main.finalLastShotDamageMult;
+						if (crit > 0) {
+							localCritMult = crit * Main.finalCritMult;
 						}
 
-						// Shoot 1 projectile
-						for (int p = 0; p < multishot; p++) {
+						// Vigilante Proc?
+						if (Main.vigilante > 0 && Main.vigilante > rng.nextDouble()) {
+							localCritMult += Main.finalCritMult;
+						}
 
-							// Find Crit
-							double localCritMult = 1.0;
-							double tempCrit = Main.finalCritChance + 1;
-							int crit = 0;
-							for (int a = 0; a < Main.finalCritChance; a++) {
-								tempCrit--;
-								if (rng.nextDouble() < tempCrit) {
-									crit++;
-								}
-							}
+						// Headshot damage multiplier
+						int headShotMult = 1;
+						if (Main.headShot) {
+							headShotMult = 2;
 							if (crit > 0) {
-								localCritMult = crit * Main.finalCritMult;
+								headShotMult = 4;
 							}
+						}
 
-							// Vigilante Proc?
-							if (Main.vigilante > 0 && Main.vigilante > rng.nextDouble()) {
-								localCritMult += Main.finalCritMult;
-							}
+						// Total multiplier
+						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult;
 
-							// Headshot damage multiplier
-							int headShotMult = 1;
-							if (Main.headShot) {
-								headShotMult = 2;
-								if (crit > 0) {
-									headShotMult = 4;
-								}
+						// Deal Damage
+						if (targetCurrentShields > 0.0) {
+							targetCurrentShields -= shieldDamage * totalMult;
+						}
+						if (targetCurrentShields <= 0.0) {
+							double shieldDifference = 1.0;
+							if (targetCurrentShields < 0.0) {
+								double unabsorbed = Math.abs(targetCurrentShields);
+								double raw = Main.raw.finalBase * totalMult;
+								shieldDifference = 1.0 - (unabsorbed / raw);
+								targetCurrentShields = 0.0;
 							}
+							if (targetAdjustedMaxArmor > 0.0) {
+								targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference;
+							} else {
+								targetCurrentHealth -= healthDamage * totalMult * shieldDifference;
+							}
+						}
 
-							// Total multiplier
-							double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult;
+						// Status effects
+						// Hunter Munitions proc?
+						if (Main.hunterMunitions > 0 && crit > 0 && rng.nextDouble() <= Main.hunterMunitions) {
+							double bleedDamage = DoTBase * totalMult * 0.35;
+							int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
+							statusStacks.add(new DoTPair(bleedDamage, slashDuration));
+							targetCurrentHealth -= bleedDamage;
+						}
+						// Forced poison proc?
+						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
+							double localToxinMult = toxinMult;
+							if (targetAdjustedMaxArmor > 0.0) {
+								localToxinMult = (toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
+							}
+							double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localToxinMult * totalMult * 0.5;
+							int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+							statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
+							targetCurrentHealth -= poisonDamage;
+						}
+						// Do we get a random status proc?
+						if (rng.nextDouble() <= Main.finalStatusChance) {
 
-							// Deal Damage
-							if (targetCurrentShields > 0.0) {
-								targetCurrentShields -= shieldDamage * totalMult;
-							}
-							if (targetCurrentShields <= 0.0) {
-								double shieldDifference = 1.0;
-								if (targetCurrentShields < 0.0) {
-									double unabsorbed = Math.abs(targetCurrentShields);
-									double raw = Main.raw.finalBase * totalMult;
-									shieldDifference = 1.0 - (unabsorbed / raw);
-									targetCurrentShields = 0.0;
-								}
-								if (targetAdjustedMaxArmor > 0.0) {
-									targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference;
-								} else {
-									targetCurrentHealth -= healthDamage * totalMult * shieldDifference;
-								}
-							}
-							
-							// Status effects
-							// Hunter Munitions proc?
-							if (Main.hunterMunitions > 0 && crit > 0 && rng.nextDouble() <= Main.hunterMunitions) {
+							// Which Proc?
+							double proc = rng.nextDouble();
+							// Slash Proc
+							if ((proc -= slashProc) < 0) {
 								double bleedDamage = DoTBase * totalMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 								targetCurrentHealth -= bleedDamage;
-							}
-							// Forced poison proc?
-							if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
+								// Fire Proc
+							} else if ((proc -= fireProc) < 0) {
+								double localFireMult = fireMult;
+								if (targetCurrentShields > 0.0) {
+									localFireMult = shieldFireMult;
+								} else if (targetAdjustedMaxArmor > 0.0) {
+									localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
+								}
+								double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5;
+								int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
+								statusStacks.get(0).duration = heatDuration;
+								if (statusStacks.get(0).damage == 0) {
+									statusStacks.get(0).damage = heatDamage;
+								}
+								if (targetCurrentShields > 0) {
+									targetCurrentShields -= heatDamage;
+								} else {
+									targetCurrentHealth -= heatDamage;
+								}
+								// Electric Pric
+							} else if ((proc -= electricProc) < 0) {
+								double localElectricMult = electricMult;
+								if (targetCurrentShields > 0.0) {
+									localElectricMult = shieldElectricMult;
+								} else if (targetAdjustedMaxArmor > 0.0) {
+									localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
+								}
+								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5;
+								if (targetCurrentShields > 0) {
+									targetCurrentShields -= electricProcDamage;
+								} else {
+									targetCurrentHealth -= electricProcDamage;
+								}
+								// Toxin Proc
+							} else if ((proc -= toxinProc) < 0) {
 								double localToxinMult = toxinMult;
 								if (targetAdjustedMaxArmor > 0.0) {
-									localToxinMult = (toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
+									localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 								}
-								double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localToxinMult * totalMult * 0.5;
+								double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5;
 								int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 								statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
 								targetCurrentHealth -= poisonDamage;
-							}
-							// Do we get a random status proc?
-							if (rng.nextDouble() <= Main.finalStatusChance) {
-
-								// Which Proc?
-								double proc = rng.nextDouble();
-								// Slash Proc
-								if ((proc -= slashProc) < 0) {
-									double bleedDamage = DoTBase * totalMult * 0.35;
-									int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-									statusStacks.add(new DoTPair(bleedDamage, slashDuration));
-									targetCurrentHealth -= bleedDamage;
-									// Fire Proc
-								} else if ((proc -= fireProc) < 0) {
-									double localFireMult = fireMult;
-									if (targetCurrentShields > 0.0) {
-										localFireMult = shieldFireMult;
-									} else if (targetAdjustedMaxArmor > 0.0) {
-										localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
-									}
-									double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5;
-									int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-									statusStacks.get(0).duration = heatDuration;
-									if (statusStacks.get(0).damage == 0) {
-										statusStacks.get(0).damage = heatDamage;
-									}
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= heatDamage;
-									} else {
-										targetCurrentHealth -= heatDamage;
-									}
-									// Electric Pric
-								} else if ((proc -= electricProc) < 0) {
-									double localElectricMult = electricMult;
-									if (targetCurrentShields > 0.0) {
-										localElectricMult = shieldElectricMult;
-									} else if (targetAdjustedMaxArmor > 0.0) {
-										localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
-									}
-									double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5;
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= electricProcDamage;
-									} else {
-										targetCurrentHealth -= electricProcDamage;
-									}
-									// Toxin Proc
-								} else if ((proc -= toxinProc) < 0) {
-									double localToxinMult = toxinMult;
-									if (targetAdjustedMaxArmor > 0.0) {
-										localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
-									}
-									double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5;
-									int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
-									statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
-									targetCurrentHealth -= poisonDamage;
-									// Gas Proc
-								} else if ((proc -= gasProc) < 0) {
-									double localGasMult = toxinMult;
-									if (targetAdjustedMaxArmor > 0.0) {
-										localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
-									}
-									double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5;
-									double poisonDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25;
-									int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
-									statusStacks.add(new DoTPair(poisonDamage, gasDuration));
-									targetCurrentHealth -= (cloudDamage + poisonDamage);
-									// Magnetic Proc
-								} else if ((proc -= magneticProc) < 0) {
-									magneticStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
-									// Viral Proc
-								} else if ((proc -= viralProc) < 0) {
-									viralStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
-									// Corrosive Proc
-								} else if ((proc -= corrosiveProc) < 0) {
-									corrosiveStacks++;
+								// Gas Proc
+							} else if ((proc -= gasProc) < 0) {
+								double localGasMult = toxinMult;
+								if (targetAdjustedMaxArmor > 0.0) {
+									localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 								}
+								double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5;
+								double poisonDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25;
+								int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+								statusStacks.add(new DoTPair(poisonDamage, gasDuration));
+								targetCurrentHealth -= (cloudDamage + poisonDamage);
+								// Magnetic Proc
+							} else if ((proc -= magneticProc) < 0) {
+								magneticStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
+								// Viral Proc
+							} else if ((proc -= viralProc) < 0) {
+								viralStacks = (int) (Math.round(6000 * Main.finalStatusDuration));
+								// Corrosive Proc
+							} else if ((proc -= corrosiveProc) < 0) {
+								corrosiveStacks++;
 							}
-						}
-						shotCounter = 0;
-						iterations++;
-						// Have we unloaded the whole mag and need to reload?
-						if (iterations >= Main.finalMag) {
-							reloading = true;
-							iterations = 0;
-							rampMult = -1;
 						}
 					}
-				}
-			} else {
-				// Are we still reloading?
-				reloadTimeCounter++;
-				if (reloadTimeCounter >= reloadTimeMilliseconds) {
-					reloading = false;
-					reloadTimeCounter = 0;
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult = 1;
+					shotTimer = (millisceondsPerShot * (5 / millisecondMult)) + 1;
+					iterations++;
+					// Have we unloaded the whole mag and need to reload?
+					if (iterations >= Main.finalMag) {
+						iterations = 0;
+						rampMult = 0;
+						if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+							millisecondMult = 1;
+						}
+						rampMult -= reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
+						shotTimer = reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
 					}
 				}
 			}
@@ -933,14 +924,28 @@ public class TTKTarget implements Comparable {
 				// Others
 				viralStacks -= 100;
 				magneticStacks -= 100;
+
+				statusTimer = 100;
 			}
 
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
-				rampMult = -1;
-				comboCount = 0;
 				return timeToKill / 1000.0;
 			}
+
+			// Find next event
+			if (shotTimer < statusTimer) {
+				statusTimer -= shotTimer;
+				nextEvent = shotTimer;
+			} else {
+				nextEvent = statusTimer;
+			}
+
+			// Advance time
+			rampMult += nextEvent;
+			shotTimer -= nextEvent;
+			timeToKill += nextEvent;
+
 		}
 		return timeToKill / 1000.0;
 	}
@@ -963,11 +968,11 @@ public class TTKTarget implements Comparable {
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
 		double targetAdjustedMaxArmor = maxArmor;
-		int reloadTimeCounter = 0;
-		int shotCounter = 2147483000;
+		int shotTimer = 0;
+		int statusTimer = 0;
+		int nextEvent = 0;
 		int iterations = 0;
 		int timeToKill = 0;
-		boolean reloading = false;
 
 		int corrosiveStacks = 0;
 		int viralStacks = 0;
@@ -976,7 +981,7 @@ public class TTKTarget implements Comparable {
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
 		int rampMult = 0;
 		int millisecondMult = 5;
-		statusStacks.add(new DoTPair(0,0)); // Dedicated fire stack
+		statusStacks.add(new DoTPair(0, 0)); // Dedicated fire stack
 
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
 		if (Main.startingCombo == 1) {
@@ -984,269 +989,273 @@ public class TTKTarget implements Comparable {
 		}
 
 		if (Main.weaponMode.equals(Constants.CHARGE) || Main.weaponMode.equals(Constants.CHARGEBOW) || Main.weaponMode.equals(Constants.LANKA)) {
-			shotCounter = 0;
+			shotTimer = 0;
 			if (Main.fireRate > 0) {
-				shotCounter += (1 / (Main.fireRate * (1 + Main.fireRateModPower))) * 1000;
+				shotTimer += (1 / (Main.fireRate * (1 + Main.fireRateModPower))) * 1000;
 			}
 		}
 
 		if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 			millisecondMult = 1;
 		}
-		
+
 		// Run a 60 second simulation to calculate the time to kill
-		for (timeToKill = 0; timeToKill < 60000; timeToKill++) {
+		for (timeToKill = 0; timeToKill < 60000;) {
 			// Add new stack
-			if (!reloading) {
-				shotCounter++;
-				rampMult++;
-				// is it time to fire a new projectile?
-				if (shotCounter >= (millisceondsPerShot * (5 / millisecondMult))) {
+			// is it time to fire a new projectile?
+			if (shotTimer <= 0) {
 
-					// Beam weapons ramp-up damage 20% to 100% in 0.6 seconds -o
+				if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+					millisecondMult++;
+					if (millisecondMult > 5) {
+						millisecondMult = 5;
+					}
+				}
 
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult++;
-						if (millisecondMult > 5) {
-							millisecondMult = 5;
-						}
+				localProjectileCount = Main.finalProjectileCount;
+				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+					double rampBulletMult = ((iterations + 1) / Main.projectileCount);
+					if (rampBulletMult > 1)
+						rampBulletMult = 1;
+					localProjectileCount *= rampBulletMult;
+				}
+
+				int bursts = 1;
+				if (Main.weaponMode.equals(Constants.BURST))
+					bursts = Main.burstCount;
+				for (int b = 0; b < bursts; b++) {
+
+					double firstShotMult = 1;
+					if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
+						firstShotMult = 1 + Main.finalFirstShotDamageMult;
 					}
 
-					localProjectileCount = Main.finalProjectileCount;
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						double rampBulletMult = ((iterations + 1) / Main.projectileCount);
-						if (rampBulletMult > 1)
-							rampBulletMult = 1;
-						localProjectileCount *= rampBulletMult;
+					double lastShotMult = 1;
+					if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
+						lastShotMult = 1 + Main.finalLastShotDamageMult;
 					}
 
-					int bursts = 1;
-					if (Main.weaponMode.equals(Constants.BURST))
-						bursts = Main.burstCount;
-					for (int b = 0; b < bursts; b++) {
+					// Adjust Max Stats
+					// Shields
+					targetAdjustedMaxShields = maxShields;
+					if (magneticStacks > 0) {
+						targetAdjustedMaxShields *= 0.25;
+					}
+					if (targetAdjustedMaxShields < targetCurrentShields) {
+						targetCurrentShields = targetAdjustedMaxShields;
+					}
 
-						double firstShotMult = 1;
-						if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
-							firstShotMult = 1 + Main.finalFirstShotDamageMult;
+					// Health
+					if (viralStacks > 0) {
+						if (viralHealth == 0) {
+							viralHealth = targetCurrentHealth * 0.5;
+							targetCurrentHealth *= 0.5;
+						}
+					} else {
+						targetCurrentHealth += viralHealth;
+						viralHealth = 0;
+					}
+
+					// Armor
+					targetAdjustedMaxArmor = maxArmor;
+					targetAdjustedMaxArmor *= corrosiveProjectionMult;
+					// Average armor removal at time
+					targetAdjustedMaxArmor *= Math.pow(0.75, corrosiveProcsPerShot * corrosiveStacks);
+					// to account for complete armor removal -o
+					if (targetAdjustedMaxArmor < 1) {
+						targetAdjustedMaxArmor = 0;
+					}
+
+					// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
+					double beamMult = 1;
+					if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
+						beamMult = 0.2 + (rampMult / 600) * 0.8;
+						if (beamMult > 1) {
+							beamMult = 1;
 						}
 
-						double lastShotMult = 1;
-						if (Main.finalLastShotDamageMult > 0 && iterations == (Main.finalMag - 1)) {
-							lastShotMult = 1 + Main.finalLastShotDamageMult;
-						}
+					}
+					// Sniper Combo multiplier
+					double comboMult = 1;
+					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
+						comboCount += localProjectileCount;
+						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)) + 0.00001); // +0.00001 to fix some rounding errors
+						comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
+					}
 
-						// Adjust Max Stats
-						// Shields
-						targetAdjustedMaxShields = maxShields;
-						if (magneticStacks > 0) {
-							targetAdjustedMaxShields *= 0.25;
-						}
-						if (targetAdjustedMaxShields < targetCurrentShields) {
-							targetCurrentShields = targetAdjustedMaxShields;
-						}
+					double critty = Main.finalCritChance + Main.vigilante;
+					if (critty > 1)
+						critty = 1;
 
-						// Health
-						if (viralStacks > 0) {
-							if (viralHealth == 0) {
-								viralHealth = targetCurrentHealth * 0.5;
-								targetCurrentHealth *= 0.5;
-							}
+					// average crit mult
+					double localCritMult = (1 - critty) + ((Main.finalCritChance + Main.vigilante) * Main.finalCritMult);
+
+					double headShotMult = 1;
+					if (Main.headShot) {
+						headShotMult = 2 + (2 * critty);
+					}
+
+					// Total multiplier
+					double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult;
+
+					// Deal Damage
+					if (targetCurrentShields > 0.0) {
+						targetCurrentShields -= shieldDamage * totalMult * localProjectileCount;
+					}
+					if (targetCurrentShields <= 0.0) {
+						double shieldDifference = 1.0;
+						if (targetCurrentShields < 0.0) {
+							double unabsorbed = Math.abs(targetCurrentShields);
+							double raw = Main.raw.finalBase * totalMult * localProjectileCount;
+							shieldDifference = 1.0 - (unabsorbed / raw);
+							targetCurrentShields = 0.0;
+						}
+						if (targetAdjustedMaxArmor > 0.0) {
+							targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference * localProjectileCount;
 						} else {
-							targetCurrentHealth += viralHealth;
-							viralHealth = 0;
+							targetCurrentHealth -= healthDamage * totalMult * shieldDifference * localProjectileCount;
 						}
+					}
 
-						// Armor
-						targetAdjustedMaxArmor = maxArmor;
-						targetAdjustedMaxArmor *= corrosiveProjectionMult;
-						// Average armor removal at time
-						targetAdjustedMaxArmor *= Math.pow(0.75, corrosiveProcsPerShot * corrosiveStacks);
-						// to account for complete armor removal -o
-						if (targetAdjustedMaxArmor < 1) {
-							targetAdjustedMaxArmor = 0;
-						}
-
-						// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
-						double beamMult = 1;
-						if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-							beamMult = 0.2 + (rampMult / 600) * 0.8;
-							if (beamMult > 1) {
-								beamMult = 1;
-							}
-
-						}
-						// Sniper Combo multiplier
-						double comboMult = 1;
-						if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
-							comboCount += localProjectileCount;
-							comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)) + 0.00001); // +0.00001 to fix some rounding errors
-							comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
-						}
-
-						double critty = Main.finalCritChance + Main.vigilante;
-						if (critty > 1)
-							critty = 1;
-
-						// average crit mult
-						double localCritMult = (1 - critty) + ((Main.finalCritChance + Main.vigilante) * Main.finalCritMult);
-
-						double headShotMult = 1;
-						if (Main.headShot) {
-							headShotMult = 2 + (2 * critty);
-						}
-
-						// Total multiplier
-						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult;
-
-						// Deal Damage
-						if (targetCurrentShields > 0.0) {
-							targetCurrentShields -= shieldDamage * totalMult * localProjectileCount;
-						}
-						if (targetCurrentShields <= 0.0) {
-							double shieldDifference = 1.0;
-							if (targetCurrentShields < 0.0) {
-								double unabsorbed = Math.abs(targetCurrentShields);
-								double raw = Main.raw.finalBase * totalMult * localProjectileCount;
-								shieldDifference = 1.0 - (unabsorbed / raw);
-								targetCurrentShields = 0.0;
-							}
-							if (targetAdjustedMaxArmor > 0.0) {
-								targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference * localProjectileCount;
-							} else {
-								targetCurrentHealth -= healthDamage * totalMult * shieldDifference * localProjectileCount;
-							}
-						}
-
-						// Hunter Munitions proc!
-						if (Main.hunterMunitions > 0) {
-							double bleedDamage = DoTBase * totalMult * 0.35 * critty * Main.hunterMunitions * localProjectileCount;
-							int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-							statusStacks.add(new DoTPair(bleedDamage, slashDuration));
-							targetCurrentHealth -= bleedDamage;
-						}
-
-						// Forced poison proc!
-						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
-							double localToxinMult = toxinMult;
-							if (targetAdjustedMaxArmor > 0.0) {
-								localToxinMult = (toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
-							}
-							double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5 * localProjectileCount;
-							int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
-							statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
-							targetCurrentHealth -= poisonDamage;
-						}
-
-						// All the other procs!
-						double bleedDamage = DoTBase * totalMult * 0.35 * slashProcsPerShot;
+					// Hunter Munitions proc!
+					if (Main.hunterMunitions > 0) {
+						double bleedDamage = DoTBase * totalMult * 0.35 * critty * Main.hunterMunitions * localProjectileCount;
 						int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
 						statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 						targetCurrentHealth -= bleedDamage;
+					}
 
-						// Fire proc!
-						double localFireMult = fireMult;
-						if (targetCurrentShields > 0.0) {
-							localFireMult = shieldFireMult;
-						} else if (targetAdjustedMaxArmor > 0.0) {
-							localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
-						}
-						double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5 * fireProcsPerShot;
-						int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
-						statusStacks.get(0).duration = heatDuration;
-						if (statusStacks.get(0).damage == 0) {
-							statusStacks.get(0).damage = heatDamage;
-						}
-						if (targetCurrentShields > 0) {
-							targetCurrentShields -= heatDamage;
-						} else {
-							targetCurrentHealth -= heatDamage;
-						}
-
-						// Electric Proc!
-						double localElectricMult = electricMult;
-						if (targetCurrentShields > 0.0) {
-							localElectricMult = shieldElectricMult;
-						} else if (targetAdjustedMaxArmor > 0.0) {
-							localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
-						}
-						double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5 * electricProcsPerShot;
-						if (targetCurrentShields > 0) {
-							targetCurrentShields -= electricProcDamage;
-						} else {
-							targetCurrentHealth -= electricProcDamage;
-						}
-
-						// Toxin Proc!
+					// Forced poison proc!
+					if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
 						double localToxinMult = toxinMult;
 						if (targetAdjustedMaxArmor > 0.0) {
-							localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+							localToxinMult = (toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
 						}
-						double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5 * toxinProcsPerShot;
+						double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5 * localProjectileCount;
 						int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
 						statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
 						targetCurrentHealth -= poisonDamage;
-
-						// Gas Proc!
-						double localGasMult = toxinMult;
-						if (targetAdjustedMaxArmor > 0.0) {
-							localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
-						}
-						double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5 * gasProcsPerShot;
-						double gasDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25 * gasProcsPerShot;
-						int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
-						statusStacks.add(new DoTPair(gasDamage, gasDuration));
-						targetCurrentHealth -= (cloudDamage + gasDamage);
-
-						// Viral Proc!
-						viralStacks += viralProcsPerShot * (int) (Math.round(6000 * Main.finalStatusDuration));
-						// Magnetic Proc!
-						magneticStacks += magneticProcsPerShot * (int) (Math.round(6000 * Main.finalStatusDuration));
-						// Corrosive Proc!
-						corrosiveStacks++;
-
-						shotCounter = 0;
-						// Have we unloaded the whole mag and need to reload?
-						iterations++;
-						if (iterations >= Main.finalMag) {
-							reloading = true;
-							iterations = 0;
-							rampMult = -1;
-						}
 					}
-				}
-			} else {
-				// Are we still reloading?
-				reloadTimeCounter++;
-				if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-				}
-				if (reloadTimeCounter >= reloadTimeMilliseconds) {
-					reloading = false;
-					reloadTimeCounter = 0;
-					if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-						millisecondMult = 1;
+
+					// All the other procs!
+					double bleedDamage = DoTBase * totalMult * 0.35 * slashProcsPerShot;
+					int slashDuration = (int) (6 * Main.finalStatusDuration) * 1000;
+					statusStacks.add(new DoTPair(bleedDamage, slashDuration));
+					targetCurrentHealth -= bleedDamage;
+
+					// Fire proc!
+					double localFireMult = fireMult;
+					if (targetCurrentShields > 0.0) {
+						localFireMult = shieldFireMult;
+					} else if (targetAdjustedMaxArmor > 0.0) {
+						localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
+					}
+					double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5 * fireProcsPerShot;
+					int heatDuration = (int) (6 * Main.finalStatusDuration) * 1000;
+					statusStacks.get(0).duration = heatDuration;
+					if (statusStacks.get(0).damage == 0) {
+						statusStacks.get(0).damage = heatDamage;
+					}
+					if (targetCurrentShields > 0) {
+						targetCurrentShields -= heatDamage;
+					} else {
+						targetCurrentHealth -= heatDamage;
+					}
+
+					// Electric Proc!
+					double localElectricMult = electricMult;
+					if (targetCurrentShields > 0.0) {
+						localElectricMult = shieldElectricMult;
+					} else if (targetAdjustedMaxArmor > 0.0) {
+						localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
+					}
+					double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5 * electricProcsPerShot;
+					if (targetCurrentShields > 0) {
+						targetCurrentShields -= electricProcDamage;
+					} else {
+						targetCurrentHealth -= electricProcDamage;
+					}
+
+					// Toxin Proc!
+					double localToxinMult = toxinMult;
+					if (targetAdjustedMaxArmor > 0.0) {
+						localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+					}
+					double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5 * toxinProcsPerShot;
+					int toxinDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+					statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
+					targetCurrentHealth -= poisonDamage;
+
+					// Gas Proc!
+					double localGasMult = toxinMult;
+					if (targetAdjustedMaxArmor > 0.0) {
+						localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+					}
+					double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5 * gasProcsPerShot;
+					double gasDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25 * gasProcsPerShot;
+					int gasDuration = (int) (8 * Main.finalStatusDuration) * 1000;
+					statusStacks.add(new DoTPair(gasDamage, gasDuration));
+					targetCurrentHealth -= (cloudDamage + gasDamage);
+
+					// Viral Proc!
+					viralStacks += viralProcsPerShot * (int) (Math.round(6000 * Main.finalStatusDuration));
+					// Magnetic Proc!
+					magneticStacks += magneticProcsPerShot * (int) (Math.round(6000 * Main.finalStatusDuration));
+					// Corrosive Proc!
+					corrosiveStacks++;
+
+					shotTimer = (millisceondsPerShot * (5 / millisecondMult)) + 1;
+					iterations++;
+					// Have we unloaded the whole mag and need to reload?
+					if (iterations >= Main.finalMag) {
+						iterations = 0;
+						rampMult = 0;
+						if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
+							millisecondMult = 1;
+						}
+						rampMult -= reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
+						shotTimer = reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
 					}
 				}
 			}
-			// Check on status stacks
+
+			// Check on timed status stacks every 0.1 seconds
 			if (timeToKill % 100 == 0) {
+				// DoTs
 				for (int j = 0; j < statusStacks.size(); j++) {
 					statusStacks.get(j).duration -= 100;
-					if (statusStacks.get(j).duration % 1000 == 0 && statusStacks.get(j).duration % 1000 >= 0) {
+					if (statusStacks.get(j).duration % 1000 == 0 && statusStacks.get(j).duration >= 0) {
 						targetCurrentHealth -= statusStacks.get(j).damage;
 					}
 					if (statusStacks.get(j).duration <= 0 && j > 0) {
 						statusStacks.remove(j);
 					}
 				}
+				// Others
 				viralStacks -= 100;
 				magneticStacks -= 100;
+
+				statusTimer = 100;
 			}
 
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
-				rampMult = -1;
 				return timeToKill / 1000.0;
 			}
+
+			// Find next event
+			if (shotTimer < statusTimer) {
+				statusTimer -= shotTimer;
+				nextEvent = shotTimer;
+			} else {
+				nextEvent = statusTimer;
+			}
+
+			// Advance time
+			rampMult += nextEvent;
+			shotTimer -= nextEvent;
+			timeToKill += nextEvent;
+
 		}
 		return timeToKill / 1000;
 	}
