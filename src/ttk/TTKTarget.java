@@ -6,6 +6,9 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import etc.Constants;
 import etc.TTKNamePair;
@@ -80,8 +83,8 @@ public class TTKTarget implements Comparable {
 	public double shieldViralMult = 1.0;
 	public double shieldMagneticMult = 1.0;
 	public double typeMult = 1.0;
+	
 	public double DoTBase = 0.0;
-	public double localProjectileCount = 1.0;
 	public int millisceondsPerShot = 0;
 	public int reloadTimeMilliseconds = 0;
 	public double slashProc;
@@ -97,7 +100,7 @@ public class TTKTarget implements Comparable {
 	protected double healthDamage = 0;
 	protected double armorDamage = 0;
 	protected double averageArmorMult = 0;
-	public Random rng = new Random();
+	protected int spliterations;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -431,37 +434,40 @@ public class TTKTarget implements Comparable {
 
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-
-		Runnable advancedTTKRun = new Runnable() {
-			public void run() {
-				clearValues();
-
-				if (Main.complexTTKIterations > 1) {
-					for (int i = 0; i < Main.complexTTKIterations; i++) {
-						TTKVec.add(calculateRandomizedTimeToKill());
+		
+		int cores = Runtime.getRuntime().availableProcessors();
+		spliterations = (Main.complexTTKIterations / cores);
+		clearValues();
+		if (Main.complexTTKIterations > 1) {
+			ExecutorService es = Executors.newCachedThreadPool();
+			for (int i = 0; i < cores; i++) {
+				es.execute(new Runnable() {
+					public void run() {
+						for (int i = 0; i < spliterations; i++) {
+							TTKVec.add(calculateRandomizedTimeToKill());
+						}
 					}
-				} else if (Main.complexTTKIterations == 1) {
-					TTKVec.add(calculateHardTimeToKill());
-				}
-
-				for (Double d : TTKVec) {
-					TTK += d;
-				}
-				TTK /= TTKVec.size();
-				Collections.sort(TTKVec);
-				minTTK = TTKVec.get(0);
-				maxTTK = TTKVec.get(TTKVec.size() - 1);
-				Main.complexTTKCompletions += 1;
+				});
 			}
-		};
-
-		Thread advancedTTKThread = new Thread(advancedTTKRun);
-		advancedTTKThread.start();
-		try {
-			advancedTTKThread.join();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			es.shutdown();
+			try {
+				while (!es.awaitTermination(1, TimeUnit.MINUTES));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} else if (Main.complexTTKIterations == 1) {
+			TTKVec.add(calculateHardTimeToKill());
 		}
+		
+		for (Double d : TTKVec) {
+			TTK += d;
+		}
+		TTK /= TTKVec.size();
+		Collections.sort(TTKVec);
+		minTTK = TTKVec.get(0);
+		maxTTK = TTKVec.get(TTKVec.size() - 1);
+		Main.complexTTKCompletions += 1;
+
 	}
 
 	/**
@@ -620,6 +626,7 @@ public class TTKTarget implements Comparable {
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
 		double targetAdjustedMaxArmor = maxArmor;
+		double localProjectileCount = 1.0;
 		int shotTimer = 0;
 		int statusTimer = 100;
 		int nextEvent = 0;
@@ -633,6 +640,7 @@ public class TTKTarget implements Comparable {
 		int rampMult = 0;
 		int millisecondMult = 5;
 		statusStacks.add(new DoTPair(0, 0)); // Dedicated fire stack
+		Random rng = new Random();
 
 		// Find initial starting combo
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
@@ -899,12 +907,11 @@ public class TTKTarget implements Comparable {
 					// Have we unloaded the whole mag and need to reload?
 					if (iterations >= Main.finalMag) {
 						iterations = 0;
-						rampMult = 0;
 						if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 							millisecondMult = 1;
 						}
-						rampMult -= reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
-						shotTimer = reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult));
+						rampMult = -(reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult)));
+						shotTimer += reloadTimeMilliseconds;
 					}
 				}
 			}
@@ -968,6 +975,7 @@ public class TTKTarget implements Comparable {
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
 		double targetAdjustedMaxArmor = maxArmor;
+		double localProjectileCount = 1.0;
 		int shotTimer = 0;
 		int statusTimer = 0;
 		int nextEvent = 0;
@@ -1000,7 +1008,7 @@ public class TTKTarget implements Comparable {
 		}
 
 		// Run a 60 second simulation to calculate the time to kill
-		for (timeToKill = 0; timeToKill < 60000;) {
+		for (timeToKill = 0; timeToKill < 30000;) {
 			// Add new stack
 			// is it time to fire a new projectile?
 			if (shotTimer <= 0) {
