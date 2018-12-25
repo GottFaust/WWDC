@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import main.Main;
 import ttk.TTKTarget;
@@ -174,7 +176,6 @@ public class Maximizer {
 		for (int i = 0; i < emptyMods; i++) {
 			Main.selectedWeapon.setMod(modsToChange.get(i), 0);
 		}
-		System.gc();
 	}
 
 	public static class TTKresult {

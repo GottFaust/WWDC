@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.DecimalFormat;
-import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -73,8 +72,6 @@ public class Main {
 
 	/** JButtons **/
 	protected static JButton calculateButton = new JButton("Calculate");
-	// protected static JButton statsButton = new JButton("Hide/Show Calculated
-	// Stats");
 	protected static JButton clearOutputButton = new JButton("Clear Output");
 	protected static JButton maximizeButton = new JButton("Maximize");
 
@@ -104,7 +101,6 @@ public class Main {
 	protected static ArcGunPanel arcGunPanel;
 	protected static ModManagerPanel theModManager = null;
 	public static TTKManagerPanel theTTKManager = null;
-	protected static Maximizer theMaximizer = null;
 	protected static WeaponManagerPanel theWeaponManager = null;
 	protected static ColorOptionsPanel theColorPanel = null;
 	protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
@@ -265,7 +261,6 @@ public class Main {
 	public static double hunterMunitions;
 	public static double vigilante;
 	public static boolean headShot = false;
-	public static Random rng = new Random();
 	public static double bleedDoTDPS;
 	public static double poisonDoTDPS;
 	public static double heatDoTDPS;
@@ -296,7 +291,6 @@ public class Main {
 		theTTKManager = new TTKManagerPanel();
 		theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
 		theColorPanel = new ColorOptionsPanel();
-		theMaximizer = new Maximizer();
 		buildUI();
 		mainFrame.setVisible(true);
 		setup = false;
@@ -2380,6 +2374,7 @@ public class Main {
 				useComplexTTK = true;
 				updateOutput = false;
 				setup = true;
+				Maximizer theMaximizer = new Maximizer();
 				theMaximizer.Maximizer();
 				setup = false;
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
@@ -2396,10 +2391,6 @@ public class Main {
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
 			}
-			/*
-			 * else if (e.getSource().equals(statsButton)) { if (DPSPanel.isVisible()) {
-			 * DPSPanel.setVisible(false); } else { DPSPanel.setVisible(true); } repack(); }
-			 */
 			else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
 				dpsGraph.clear();
@@ -2407,9 +2398,7 @@ public class Main {
 			} else if (e.getSource().equals(loadItem)) {
 				int returnVal = chooser.showOpenDialog(mainPanel);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					riflePanel.setting = true;
-					shotgunPanel.setting = true;
-					pistolPanel.setting = true;
+					setup = true;
 					riflePanel.clear();
 					shotgunPanel.clear();
 					pistolPanel.clear();
@@ -2437,9 +2426,7 @@ public class Main {
 					} catch (Exception ex) {
 						// Do Nothing
 					}
-					riflePanel.setting = false;
-					shotgunPanel.setting = false;
-					pistolPanel.setting = false;
+					setup = false;
 					updateStats();
 				} else {
 					// Do Nothing
