@@ -659,7 +659,7 @@ public class TTKTarget implements Comparable {
 		}
 
 		// Run a 600 second simulation to calculate the time to kill
-		for (timeToKill = 0; timeToKill < 600000;) {
+		for (timeToKill = 0; timeToKill < 6000000;) {
 			// Add new stack
 
 			// is it time to fire a new projectile?
