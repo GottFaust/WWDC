@@ -317,7 +317,7 @@ public class WeaponModPanel extends JPanel implements ActionListener {
 			if (modBox.getSelectedItem().equals("--")) {
 				modLevel.addItem("0");
 				modPolarityField.setText(Constants.NONE);
-				//owner.setting = false;
+				owner.setting = false;
 			} else {
 				if (selectedMod != null) {
 					int levels = selectedMod.ranks;

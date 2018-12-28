@@ -34,20 +34,15 @@ public class Maximizer {
 
 		String build1 = Main.selectedWeapon.flatModsOutput().split(",")[0];
 		String build2 = Main.selectedWeapon.flatModsOutput().split(",")[1];
+		
 		double DPS = Main.raw.perSecond;
-		Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
-		for (TTKTarget target : Main.theTTKManager.targets) {
-			if (target.group == Integer.parseInt((String) Main.targetGroupBox.getSelectedItem())) {
-				groupTargets.add(target);
-			}
-		}
-		for (TTKTarget target : groupTargets) {
+		for (TTKTarget target : Main.groupTargets) {
 			TTKs.add(target.simpleTTK().split(",")[0]); // name
 			TTKs.add(target.simpleTTK().split(",")[1]); // time
 			total += Double.parseDouble(target.simpleTTK().split(",")[1]);
 			times.add(Double.parseDouble(target.simpleTTK().split(",")[1]));
 		}
-		targets = groupTargets.size();
+		targets = Main.groupTargets.size();
 		double average = total / targets;
 		double minmax = Collections.max(times);
 		results.add(new TTKresult(build1, build2, DPS, average, minmax, TTKs));

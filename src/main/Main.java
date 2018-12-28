@@ -146,11 +146,12 @@ public class Main {
 	/** Mod Vectors **/
 	protected static Vector<Mod> activeMods = new Vector<Mod>();
 	protected static Vector<Double> modRanks = new Vector<Double>();
+	public static Vector<TTKTarget> groupTargets;
 
 	/** Base Values **/
 	protected static boolean useComplexTTK = true;
 	public static int complexTTKIterations = 10000;
-	public static int complexTTKCompletions = 0;
+	//	public static int complexTTKCompletions = 0;
 	public static String longestTTKName = "";
 	// protected static int maxTTKTime = 300000;
 
@@ -503,15 +504,16 @@ public class Main {
 		} else if (lightWeightTTKBox.isSelected()) {
 			complexTTKIterations = 1;
 		}
+		if (useComplexTTK && raw.perSecond > 100) {
 		int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
-		Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
+		groupTargets = new Vector<TTKTarget>();
 		for (TTKTarget target : theTTKManager.targets) {
 			if (target.group == targetGroup) {
 				groupTargets.add(target);
 			}
 		}
-		if (useComplexTTK && raw.perSecond > 100) {
-			complexTTKCompletions = 0;
+		//if (useComplexTTK && raw.perSecond > 100) {
+			//complexTTKCompletions = 0;
 			for (TTKTarget target : groupTargets) {
 				target.runAdvancedTTK();
 				String name = target.name + "[" + target.currentLevel + "]";
@@ -528,7 +530,7 @@ public class Main {
 	/**
 	 * Clears all values
 	 */
-	protected static void clearValues() {
+	public static void clearValues() {
 		selectedWeapon = null;
 		activeMods = new Vector<Mod>();
 		modRanks = new Vector<Double>();
@@ -607,13 +609,14 @@ public class Main {
 		fireStacks = 0;
 		toxinStacks = 0;
 		gasStacks = 0;
-		complexTTKCompletions = 0;
+		//complexTTKCompletions = 0;
 		globalFire = 0;
 		globalToxin = 0;
 		globalElectric = 0;
 		globalIce = 0;
 		hunterMunitions = 0;
 		vigilante = 0;
+		groupTargets = null;
 	}
 
 	/**
@@ -1153,7 +1156,7 @@ public class Main {
 			double secondFireDelay = baseFireDelay * 5 / 3;
 			double thirdFireDelay = baseFireDelay * 5 / 4;
 			if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // Kohm's effective magazine size -o
-				finalMag = (int) Math.round(projectileCount + (finalMag - (projectileCount / 3 - 1) - (Main.projectileCount * (Main.projectileCount + 1) / 2) / 3) / (projectileCount / 3));
+				finalMag = (int) Math.round(projectileCount + (finalMag - (projectileCount / 3 - 1) - (projectileCount * (projectileCount + 1) / 2) / 3) / (projectileCount / 3));
 			}
 			finalIterationTime = (firstFireDelay + secondFireDelay + thirdFireDelay + ((finalMag - 4) * baseFireDelay)) + finalReloadTime;
 		} else if (weaponMode.equals(Constants.CONTINUOUS)) {
@@ -1175,21 +1178,21 @@ public class Main {
 	 */
 	protected static void calculateMiscValues() {
 		// Status Ratios
-		totalPhysical = Main.impact.finalBase + Main.puncture.finalBase + Main.slash.finalBase;
-		totalElemental = Main.raw.finalBase - totalPhysical;
-		slashProcRate = (4 * Main.slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		fireProcRate = (Main.fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		toxinProcRate = (Main.toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		gasProcRate = (Main.gas.finalBase / ((4 * totalPhysical) + totalElemental));
-		electricProcRate = (Main.electric.finalBase / ((4 * totalPhysical) + totalElemental));
-		impactProcRate = (4 * Main.impact.finalBase / ((4 * totalPhysical) + totalElemental));
-		punctureProcRate = (4 * Main.puncture.finalBase / ((4 * totalPhysical) + totalElemental));
-		iceProcRate = (Main.ice.finalBase / ((4 * totalPhysical) + totalElemental));
-		corrosiveProcRate = (Main.corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
-		viralProcRate = (Main.viral.finalBase / ((4 * totalPhysical) + totalElemental));
-		blastProcRate = (Main.blast.finalBase / ((4 * totalPhysical) + totalElemental));
-		radiationProcRate = (Main.radiation.finalBase / ((4 * totalPhysical) + totalElemental));
-		magneticProcRate = (Main.magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
+		totalPhysical = impact.finalBase +  puncture.finalBase +  slash.finalBase;
+		totalElemental = raw.finalBase - totalPhysical;
+		slashProcRate = (4 *  slash.finalBase) / ((4 * totalPhysical) + totalElemental);
+		fireProcRate = ( fire.finalBase / ((4 * totalPhysical) + totalElemental));
+		toxinProcRate = ( toxin.finalBase / ((4 * totalPhysical) + totalElemental));
+		gasProcRate = ( gas.finalBase / ((4 * totalPhysical) + totalElemental));
+		electricProcRate = ( electric.finalBase / ((4 * totalPhysical) + totalElemental));
+		impactProcRate = (4 *  impact.finalBase / ((4 * totalPhysical) + totalElemental));
+		punctureProcRate = (4 *  puncture.finalBase / ((4 * totalPhysical) + totalElemental));
+		iceProcRate = ( ice.finalBase / ((4 * totalPhysical) + totalElemental));
+		corrosiveProcRate = ( corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
+		viralProcRate = ( viral.finalBase / ((4 * totalPhysical) + totalElemental));
+		blastProcRate = ( blast.finalBase / ((4 * totalPhysical) + totalElemental));
+		radiationProcRate = ( radiation.finalBase / ((4 * totalPhysical) + totalElemental));
+		magneticProcRate = ( magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
 
 		averageProjectileCount = finalProjectileCount;
 		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
@@ -2041,8 +2044,8 @@ public class Main {
 		if (useComplexTTK) {
 			output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 			String ttkTableHeader = "\nTarget Name";
-			Font font = Main.output.getFont();
-			FontMetrics metric = Main.output.getFontMetrics(font);
+			Font font =  output.getFont();
+			FontMetrics metric =  output.getFontMetrics(font);
 			int spaceWidth = metric.stringWidth(".");
 			int nameFieldWidth = metric.stringWidth(longestTTKName);
 			double nameDiff = (nameFieldWidth - metric.stringWidth("Target Name")) / spaceWidth;
