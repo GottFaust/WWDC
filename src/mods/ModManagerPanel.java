@@ -118,6 +118,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   public WeaponPanel rifle;
   public WeaponPanel shotgun;
   public WeaponPanel pistol;
+  public WeaponPanel melee;
   public WeaponPanel arcGun;
   
   protected static JCheckBox regularMods = new JCheckBox("Regular Mods");
@@ -134,10 +135,11 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
   /**
    * CTOR
    */
-  public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel, WeaponPanel arcGunPanel){
+  public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel, WeaponPanel meleePanel, WeaponPanel arcGunPanel){
     rifle = riflePanel;
     shotgun = shotgunPanel;
     pistol = pistolPanel;
+    melee = meleePanel;
     arcGun = arcGunPanel;
     Init(modFile);
     buildUI();
@@ -156,6 +158,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     shotgun.updateDropDownContents();
     pistol.InitMods(file);
     pistol.updateDropDownContents();
+    melee.InitMods(file);
+    melee.updateDropDownContents();
     arcGun.InitMods(file);
     arcGun.updateDropDownContents();
     
@@ -196,7 +200,14 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modEffects.add(Constants.MOD_TYPE_FLAT_MAG);
     modEffects.add(Constants.MOD_TYPE_MUNITIONS);
     modEffects.add(Constants.MOD_TYPE_VIGILANTE);
-    Collections.sort(modEffects);
+    modEffects.add(Constants.MOD_TYPE_VIGILANTE);
+    modEffects.add(Constants.MOD_TYPE_VIGILANTE);
+    modEffects.add(Constants.MOD_TYPE_VIGILANTE);
+    modEffects.add(Constants.MOD_TYPE_VIGILANTE);
+    modEffects.add(Constants.MOD_TYPE_COMBO_DURATION);
+    modEffects.add(Constants.MOD_TYPE_COMBO_CRIT);
+    modEffects.add(Constants.MOD_TYPE_COMBO_STATUS);
+    modEffects.add(Constants.MOD_TYPE_CONDITION_OVERLOAD);
     
     modEffectOneBox.removeAllItems();
     modEffectTwoBox.removeAllItems();
@@ -292,6 +303,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
     modTypeBox.addItem(Constants.PISTOL);
     modTypeBox.addItem(Constants.RIFLE);
     modTypeBox.addItem(Constants.SHOTGUN);
+    modTypeBox.addItem(Constants.MELEE);
     modTypeBox.addItem(Constants.ARCGUN);
     
     modPolarityBox.addItem(Constants.NONE);
@@ -685,6 +697,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
       shotgun.updateDropDownContents();
       pistol.InitMods(modFile);
       pistol.updateDropDownContents();
+      melee.InitMods(modFile);
+      melee.updateDropDownContents();
     } catch (Exception e) {
       e.printStackTrace();
     }

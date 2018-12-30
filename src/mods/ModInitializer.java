@@ -57,7 +57,7 @@ public class ModInitializer {
   /**
    * Initializes the mod data
    */
-  public void initialize(String file){	  
+  public void initialize(String file){
     modsDB = new File(file);
     try {
       if(modsDB.exists()){

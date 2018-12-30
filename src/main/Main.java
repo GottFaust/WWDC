@@ -47,6 +47,7 @@ import weapons.ArcGunPanel;
 import weapons.PistolPanel;
 import weapons.RiflePanel;
 import weapons.ShotgunPanel;
+import weapons.MeleePanel;
 import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
 import weapons.DPSPanel;
@@ -99,6 +100,7 @@ public class Main {
 	protected static ShotgunPanel shotgunPanel;
 	protected static PistolPanel pistolPanel;
 	protected static ArcGunPanel arcGunPanel;
+	public static MeleePanel meleePanel;
 	protected static ModManagerPanel theModManager = null;
 	public static TTKManagerPanel theTTKManager = null;
 	protected static WeaponManagerPanel theWeaponManager = null;
@@ -261,6 +263,9 @@ public class Main {
 	public static double fireRateModPower;
 	public static double hunterMunitions;
 	public static double vigilante;
+	public static double comboCrit;
+	public static double comboStatus;
+	public static double conditionOverload;
 	public static boolean headShot = false;
 	public static double bleedDoTDPS;
 	public static double poisonDoTDPS;
@@ -288,9 +293,10 @@ public class Main {
 		shotgunPanel = new ShotgunPanel();
 		pistolPanel = new PistolPanel();
 		arcGunPanel = new ArcGunPanel();
-		theModManager = new ModManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
+		meleePanel = new MeleePanel();
+		theModManager = new ModManagerPanel(riflePanel, shotgunPanel, pistolPanel, meleePanel, arcGunPanel);
 		theTTKManager = new TTKManagerPanel();
-		theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, arcGunPanel);
+		theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, meleePanel, arcGunPanel);
 		theColorPanel = new ColorOptionsPanel();
 		buildUI();
 		mainFrame.setVisible(true);
@@ -311,6 +317,7 @@ public class Main {
 		UIBuilder.panelInit(riflePanel);
 		UIBuilder.panelInit(shotgunPanel);
 		UIBuilder.panelInit(pistolPanel);
+		UIBuilder.panelInit(meleePanel);
 		UIBuilder.panelInit(arcGunPanel);
 		UIBuilder.buttonInit(calculateButton);
 		UIBuilder.buttonInit(maximizeButton);
@@ -379,6 +386,7 @@ public class Main {
 		weaponPane.add(riflePanel, Constants.RIFLE);
 		weaponPane.add(shotgunPanel, Constants.SHOTGUN);
 		weaponPane.add(pistolPanel, Constants.PISTOL);
+		weaponPane.add(meleePanel, Constants.MELEE);
 		weaponPane.add(arcGunPanel, Constants.ARCGUN);
 
 		graphPane.add(dpsGraph, "DPS");
@@ -504,7 +512,8 @@ public class Main {
 		} else if (lightWeightTTKBox.isSelected()) {
 			complexTTKIterations = 1;
 		}
-		if (useComplexTTK && raw.perSecond > 100) {
+		// && raw.perSecond > 100
+		if (useComplexTTK) {
 		int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 		groupTargets = new Vector<TTKTarget>();
 		for (TTKTarget target : theTTKManager.targets) {
@@ -616,6 +625,9 @@ public class Main {
 		globalIce = 0;
 		hunterMunitions = 0;
 		vigilante = 0;
+		comboCrit = 0;
+		comboStatus = 0;
+		conditionOverload = 0;
 		groupTargets = null;
 	}
 
@@ -637,7 +649,11 @@ public class Main {
 		lastShotDamageMult = 1;
 		statusChance = selectedWeapon.getStatusChance();
 		mag = selectedWeapon.getMagSize();
-		combo = selectedWeapon.getCombo();
+		if(selectedWeapon.equals(meleePanel)) {
+			combo = 5;
+		}else {
+			combo = selectedWeapon.getCombo();
+		}
 		startingCombo = selectedWeapon.getStartingCombo();
 		burstCount = selectedWeapon.getBurstCount();
 		drain = selectedWeapon.getDrain();
@@ -835,6 +851,18 @@ public class Main {
 			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
 				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
 			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_CRIT)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_CRIT)) * (1.0 + modRanks.get(i));
+				comboCrit += modPower;
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_STATUS)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_STATUS)) * (1.0 + modRanks.get(i));
+				comboStatus += modPower;
+			}
+			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CONDITION_OVERLOAD)) {
+				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CONDITION_OVERLOAD)) * (1.0 + modRanks.get(i));
+				conditionOverload += modPower;
+			}
 		}
 		if (!elements.contains(damageType))
 			elements.add(damageType);
@@ -923,6 +951,13 @@ public class Main {
 			finalCritChance += critChance * critChanceMods.get(i);
 		}
 		finalCritChance += selectedWeapon.getAddCC();
+		if (selectedWeapon.equals(meleePanel)) {
+			double tempCombo = startingCombo;
+			if (startingCombo < 1.5) {
+				tempCombo = 0;
+			}
+			finalCritChance *= 1 + (tempCombo * comboCrit);
+		}
 
 		finalCritMult = critMult;
 		for (int i = 0; i < critMultMods.size(); i++) {
@@ -946,9 +981,10 @@ public class Main {
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 
-		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
-			if (startingCombo < 1.5)
+		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER) || selectedWeapon.equals(meleePanel)) {
+			if (startingCombo < 1.5) {
 				startingCombo = 1;
+			}
 			finalDamageMult *= startingCombo;
 		}
 
@@ -985,11 +1021,17 @@ public class Main {
 			reloadSpeedMult += reloadTimeMods.get(i);
 		}
 		finalReloadTime /= reloadSpeedMult;
+		if (selectedWeapon.equals(meleePanel)) {
+			finalReloadTime = 0;
+		}
 
+		if (selectedWeapon.equals(meleePanel)) {
+			projectileCount = 1;
+		}
 		finalProjectileCount = projectileCount;
 		double multishot = 1;
 		for (int i = 0; i < projectileCountMods.size(); i++) {
-			multishot += projectileCount * projectileCountMods.get(i);
+			multishot += projectileCountMods.get(i);
 			finalProjectileCount += projectileCount * projectileCountMods.get(i);
 		}
 		if (weaponMode.equals(Constants.CONTINUOUS)) {
@@ -1012,13 +1054,18 @@ public class Main {
 		}
 		for (int i = 0; i < flatStatusMods.size(); i++) {
 			double localStatus = flatStatusMods.get(i);
-			if (projectileCount > 1.0) {
-				localStatus /= projectileCount;
-			}
 			finalStatusChance += localStatus;
 		}
 		finalStatusChance += selectedWeapon.getAddSC();
 
+		if (selectedWeapon.equals(meleePanel)) {
+			double tempCombo = startingCombo;
+			if (startingCombo < 1.5) {
+				tempCombo = 0;
+			}
+			finalStatusChance *= 1 + (tempCombo * comboStatus);
+		}
+		
 		if (finalStatusChance > 1) {
 			finalStatusChance = 1;
 		}
@@ -2405,6 +2452,7 @@ public class Main {
 					riflePanel.clear();
 					shotgunPanel.clear();
 					pistolPanel.clear();
+					meleePanel.clear();
 					// output.setText("");
 					// graph.clear();
 					clearValues();
@@ -2425,6 +2473,9 @@ public class Main {
 						} else if (header.equals(Constants.ARCGUN)) {
 							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.ARCGUN));
 							arcGunPanel.loadFromFile(file);
+						} else if (header.equals(Constants.MELEE)) {
+							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.MELEE));
+							meleePanel.loadFromFile(file);
 						}
 					} catch (Exception ex) {
 						// Do Nothing
@@ -2662,5 +2713,4 @@ public class Main {
 			this.duration = duration;
 		}
 	}
-
 }

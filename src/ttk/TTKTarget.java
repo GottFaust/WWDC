@@ -83,7 +83,7 @@ public class TTKTarget implements Comparable {
 	protected double shieldViralMult = 1.0;
 	protected double shieldMagneticMult = 1.0;
 	protected double typeMult = 1.0;
-	
+
 	protected double DoTBase = 0.0;
 	protected int millisceondsPerShot = 0;
 	protected int reloadTimeMilliseconds = 0;
@@ -95,6 +95,12 @@ public class TTKTarget implements Comparable {
 	protected double gasProc;
 	protected double magneticProc;
 	protected double viralProc;
+	protected double impactProc;
+	protected double punctureProc;
+	protected double iceProc;
+	protected double blastProc;
+	protected double radiationProc;
+
 	protected double corrosiveProjectionMult = 0.0;
 	protected double shieldDamage = 0;
 	protected double healthDamage = 0;
@@ -368,6 +374,11 @@ public class TTKTarget implements Comparable {
 		gasProc = Main.gasProcRate;
 		magneticProc = Main.magneticProcRate;
 		viralProc = Main.viralProcRate;
+		impactProc = Main.impactProcRate;
+		punctureProc = Main.punctureProcRate;
+		iceProc = Main.iceProcRate;
+		blastProc = Main.blastProcRate;
+		radiationProc = Main.radiationProcRate;
 
 		// Pre-calculate damage
 		shieldDamage = 0;
@@ -434,7 +445,7 @@ public class TTKTarget implements Comparable {
 
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-		
+
 		int cores = Runtime.getRuntime().availableProcessors();
 		spliterations = (Main.complexTTKIterations / cores);
 		clearValues();
@@ -451,14 +462,15 @@ public class TTKTarget implements Comparable {
 			}
 			es.shutdown();
 			try {
-				while (!es.awaitTermination(1, TimeUnit.MINUTES));
+				while (!es.awaitTermination(1, TimeUnit.MINUTES))
+					;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		} else if (Main.complexTTKIterations == 1) {
 			TTKVec.add(calculateHardTimeToKill());
 		}
-		
+
 		for (Double d : TTKVec) {
 			TTK += d;
 		}
@@ -637,6 +649,7 @@ public class TTKTarget implements Comparable {
 		int viralStacks = 0;
 		int magneticStacks = 0;
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
+		int statusEffects[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int rampMult = 0;
 		int millisecondMult = 5;
 		statusStacks.add(new DoTPair(0, 0)); // Dedicated fire stack
@@ -735,13 +748,31 @@ public class TTKTarget implements Comparable {
 							beamMult = 1;
 						}
 					}
-					// Sniper Combo multiplier
+					// Combo multipliers
 					double comboMult = 1;
-					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA)) {
+					double comboCritMult = 1;
+					double comboStatusMult = 1;
+					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA) || Main.selectedWeapon.equals(Main.meleePanel)) {
 						comboCount += multishot;
-						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)) + 0.00001); // +0.00001 to fix some rounding errors
+						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)));
 						comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
+						if (comboMult >= 1.5) {
+							comboCritMult += Main.comboCrit * comboMult;
+							comboStatusMult += Main.comboStatus * comboMult;
+						}
+						if (comboMult < 1) comboMult = 1;
 					}
+
+					// C O N D I T I O N O V E R L O A D
+					double COMult = 1;
+					if (Main.conditionOverload > 0) {
+						for (int status : statusEffects) {
+							if (status > 0) {
+								COMult *= (1 + Main.conditionOverload);
+							}
+						}
+					}
+
 					// Primed Chamber
 					double firstShotMult = 1;
 					if (Main.finalFirstShotDamageMult > 0 && iterations == 0) {
@@ -758,7 +789,7 @@ public class TTKTarget implements Comparable {
 
 						// Find Crit
 						double localCritMult = 1.0;
-						double tempCrit = Main.finalCritChance + 1;
+						double tempCrit = comboCritMult * Main.finalCritChance + 1;
 						int crit = 0;
 						for (int a = 0; a < Main.finalCritChance; a++) {
 							tempCrit--;
@@ -785,7 +816,7 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Total multiplier
-						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult;
+						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult * COMult;
 
 						// Deal Damage
 						if (targetCurrentShields > 0.0) {
@@ -826,7 +857,7 @@ public class TTKTarget implements Comparable {
 							targetCurrentHealth -= poisonDamage;
 						}
 						// Do we get a random status proc?
-						if (rng.nextDouble() <= Main.finalStatusChance) {
+						if (rng.nextDouble() <= (Main.finalStatusChance * comboStatusMult)) {
 
 							// Which Proc?
 							double proc = rng.nextDouble();
@@ -836,6 +867,7 @@ public class TTKTarget implements Comparable {
 								int slashDuration = (int) (6 * Main.finalStatusDuration) * 10000;
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 								targetCurrentHealth -= bleedDamage;
+								statusEffects[0] = slashDuration;
 								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 								double localFireMult = fireMult;
@@ -855,7 +887,8 @@ public class TTKTarget implements Comparable {
 								} else {
 									targetCurrentHealth -= heatDamage;
 								}
-								// Electric Pric
+								statusEffects[1] = heatDuration;
+								// Electric Proc
 							} else if ((proc -= electricProc) < 0) {
 								double localElectricMult = electricMult;
 								if (targetCurrentShields > 0.0) {
@@ -869,6 +902,7 @@ public class TTKTarget implements Comparable {
 								} else {
 									targetCurrentHealth -= electricProcDamage;
 								}
+								statusEffects[2] = (int) (6 * Main.finalStatusDuration) * 10000;
 								// Toxin Proc
 							} else if ((proc -= toxinProc) < 0) {
 								double localToxinMult = toxinMult;
@@ -879,6 +913,7 @@ public class TTKTarget implements Comparable {
 								int toxinDuration = (int) (8 * Main.finalStatusDuration) * 10000;
 								statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
 								targetCurrentHealth -= poisonDamage;
+								statusEffects[3] = toxinDuration;
 								// Gas Proc
 							} else if ((proc -= gasProc) < 0) {
 								double localGasMult = toxinMult;
@@ -890,15 +925,30 @@ public class TTKTarget implements Comparable {
 								int gasDuration = (int) (8 * Main.finalStatusDuration) * 10000;
 								statusStacks.add(new DoTPair(poisonDamage, gasDuration));
 								targetCurrentHealth -= (cloudDamage + poisonDamage);
+								statusEffects[4] = gasDuration;
 								// Magnetic Proc
 							} else if ((proc -= magneticProc) < 0) {
 								magneticStacks = (int) (Math.round(60000 * Main.finalStatusDuration));
+								statusEffects[5] = (int) (Math.round(60000 * Main.finalStatusDuration));
 								// Viral Proc
 							} else if ((proc -= viralProc) < 0) {
 								viralStacks = (int) (Math.round(60000 * Main.finalStatusDuration));
+								statusEffects[6] = (int) (Math.round(60000 * Main.finalStatusDuration));
 								// Corrosive Proc
 							} else if ((proc -= corrosiveProc) < 0) {
 								corrosiveStacks++;
+								statusEffects[7] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							} else if ((proc -= impactProc) < 0) {
+								statusEffects[8] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							} else if ((proc -= punctureProc) < 0) {
+								statusEffects[9] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							} else if ((proc -= iceProc) < 0) {
+								statusEffects[10] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							} else if ((proc -= blastProc) < 0) {
+								statusEffects[11] = (int) (Math.round(60000 * Main.finalStatusDuration));
+								statusEffects[12] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							} else if ((proc -= radiationProc) < 0) {
+								statusEffects[13] = (int) (Math.round(60000 * Main.finalStatusDuration));
 							}
 						}
 					}
@@ -931,6 +981,10 @@ public class TTKTarget implements Comparable {
 				// Others
 				viralStacks -= 1000;
 				magneticStacks -= 1000;
+
+				for (int j = 0; j < 14; j++) {
+					statusEffects[j] -= 1000;
+				}
 
 				statusTimer = 1000;
 			}

@@ -1126,6 +1126,17 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.comboPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(false);
 		}
+		
+		if (weaponType.equals(Constants.MELEE)) {
+			wap.weaponModeBox.setSelectedIndex(6);
+			wap.weaponModePanel.setVisible(false);
+			wap.projectilePanel.setVisible(false);
+			wap.fireRateLabel.setText("Attack Speed");
+			wap.magSizePanel.setVisible(false);
+			wap.reloadPanel.setVisible(false);	
+			wap.startingComboPanel.setVisible(true);
+			wap.weaponModeBox.setSelectedIndex(6);
+		}
 		Main.repack();
 	}
 

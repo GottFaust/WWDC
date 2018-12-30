@@ -63,6 +63,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
   protected WeaponPanel rifle;
   protected WeaponPanel shotgun;
   protected WeaponPanel pistol;
+  protected WeaponPanel melee;
   protected WeaponPanel arcGun;
   
   /**
@@ -72,10 +73,11 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
    * @param shotgunPanel 
    * @param riflePanel 
    */
-  public WeaponManagerPanel(RiflePanel riflePanel, ShotgunPanel shotgunPanel, PistolPanel pistolPanel, ArcGunPanel arcGunPanel){
+  public WeaponManagerPanel(RiflePanel riflePanel, ShotgunPanel shotgunPanel, PistolPanel pistolPanel, MeleePanel meleePanel, ArcGunPanel arcGunPanel){
     this.rifle = riflePanel;
     this.shotgun = shotgunPanel;
     this.pistol = pistolPanel;
+    this.melee = meleePanel;
     this.arcGun = arcGunPanel;
     init();
     buildUI();
@@ -124,6 +126,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponTypeBox.addItem(Constants.RIFLE);
     weaponTypeBox.addItem(Constants.SHOTGUN);
     weaponTypeBox.addItem(Constants.PISTOL);
+    weaponTypeBox.addItem(Constants.MELEE);
     weaponTypeBox.addItem(Constants.ARCGUN);
     
     weaponTypePanel.add(weaponTypeLabel);
@@ -387,6 +390,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
       rifle.updateWeaponBox();
       shotgun.updateWeaponBox();
       pistol.updateWeaponBox();
+      melee.updateWeaponBox();
       arcGun.updateWeaponBox();
     }
   }

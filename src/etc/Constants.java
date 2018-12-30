@@ -39,6 +39,10 @@ public class Constants {
   public static final String MOD_TYPE_FLAT_MAG = "FlatMagBonus";
   public static final String MOD_TYPE_MUNITIONS = "Munitions";
   public static final String MOD_TYPE_VIGILANTE = "VigilanteEffect";
+  public static final String MOD_TYPE_COMBO_DURATION = "ComboDuration";
+  public static final String MOD_TYPE_COMBO_CRIT = "ComboCrit";
+  public static final String MOD_TYPE_COMBO_STATUS = "ComboStatus";
+  public static final String MOD_TYPE_CONDITION_OVERLOAD = "DamagePerStatus";
   
   /** Damage Types **/
   public static final String PHYSICAL_WEAPON_DAMAGE = "Physical";
@@ -102,6 +106,7 @@ public class Constants {
   public static final String RIFLE = "Rifle";
   public static final String PISTOL = "Pistol";
   public static final String ARCGUN = "ArcGun";
+  public static final String MELEE = "Melee";
   
   /** Mod Effect Count **/
   public static final String SINGLE = "Single";
@@ -395,7 +400,23 @@ public class Constants {
                                             "Primed Bane of Corpus,Rifle,10,1,CorpusDamage,0.05,V,4",
                                             "Primed Bane of Grineer,Rifle,10,1,GrineerDamage,0.05,V,4",
                                             "Primed Bane of Infested,Rifle,10,1,InfestedDamage,0.05,V,4",
-  											"Chilling Reload,Shotgun,3,2,IceDamage,ReloadSpeed,0.15,0.1,V,2"};
+  											"Chilling Reload,Shotgun,3,2,IceDamage,ReloadSpeed,0.15,0.1,V,2",
+  											//Melee Mods
+                                            "Primed Pressure Point,Melee,10,1,Damage,0.15,V,4",
+                                            "Primed Reach,Melee,10,1,Range,0.15,V,4",
+                                            "Organ Shatter,Melee,5,1,CritMultiplier,0.15,V,4",
+                                            "Blood Rush,Melee,10,1,ComboCrit,0.15,V,4",
+                                            "Weeping Wounds,Melee,5,1,ComboStatus,0.075,V,4",
+                                            "Drifting Contact,Melee,3,2,ComboDuration,StatusChance,0.025,0.1,D,2",
+                                            "Condition Overload,Melee,5,1,DamagePerStatus,0.1,V,10",
+                                            "Primed Fury,Melee,10,1,FireRate,0.05,V,4",
+                                            "Virulent Scourge,Melee,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
+                                            "Voltaic Strike,Melee,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
+                                            "Volcanic Edge,Melee,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
+                                            "Vicious Frost,Melee,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
+                                            "Berserker,Melee,5,1,FireRate,0.125,V,4",
+                                            "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
+                                            "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6"};
   
   public static final String[] maximizerModDB = {"Accelerated Blast,Shotgun,3,2,FireRate,PunctureDamage,0.15,0.15,V,6",
 		  "Ammo Stock,Shotgun,5,1,MagCap,0.1,~,2",
@@ -497,7 +518,23 @@ public class Constants {
 		  "Vigilante Armaments,Shotgun,5,2,Multishot,VigilanteEffect,0.1,0,~,4",
 		  "Vile Acceleration,Rifle,5,2,FireRate,Damage,0.15,-0.025,V,4",
 		  "Vital Sense,Rifle,5,1,CritMultiplier,0.2,V,4",
-		  "Wildfire,Rifle,3,2,FireDamage,MagCap,0.15,0.05,V,6"};
+		  "Wildfire,Rifle,3,2,FireDamage,MagCap,0.15,0.05,V,6",
+	      //Melee Mods
+          "Primed Pressure Point,Melee,10,1,Damage,0.15,V,4",
+          "Primed Reach,Melee,10,1,Range,0.15,V,4",
+          "Organ Shatter,Melee,5,1,CritMultiplier,0.15,V,4",
+          "Blood Rush,Melee,10,1,ComboCrit,0.15,V,4",
+          "Weeping Wounds,Melee,5,1,ComboStatus,0.075,V,4",
+          "Drifting Contact,Melee,3,2,ComboDuration,StatusChance,0.025,0.1,D,2",
+          "Condition Overload,Melee,5,1,DamagePerStatus,0.1,V,10",
+          "Primed Fury,Melee,10,1,FireRate,0.05,V,4",
+          "Virulent Scourge,Melee,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
+          "Voltaic Strike,Melee,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
+          "Volcanic Edge,Melee,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
+          "Vicious Frost,Melee,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
+          "Berserker,Melee,5,1,FireRate,0.125,V,4",
+          "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
+          "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6"};
   
   /** Default Weapons for use if the file is missing **/
   public static final String[] baseWeapons = {"Pistol,Semi-Auto,Toxin,Acrid,0.0,0,DEPRECIATED,35,0.0,0.0,0.0,6.67,15,210,1.2,5,2,10,1,1",
