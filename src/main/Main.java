@@ -1,13 +1,20 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -16,7 +23,6 @@ import java.io.FileReader;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +34,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -75,12 +82,16 @@ public class Main {
 	protected static JButton calculateButton = new JButton("Calculate");
 	protected static JButton clearOutputButton = new JButton("Clear Output");
 	protected static JButton maximizeButton = new JButton("Maximize");
+	protected static JButton stopButton = new JButton("Cancel Calculation");
 
 	protected static JLabel TTKIterationsLabel = new JLabel("Iterations:");
 	protected static JTextField TTKIterationsField = new JTextField(4);
+	protected static JLabel loadingLabel = new JLabel("CALCULATING");
 
 	/** JTextAreas **/
 	public static JTextArea output = new JTextArea();
+
+	public static JProgressBar progressBar;
 
 	/** JTabbedPanes **/
 	protected static JTabbedPane weaponPane = new JTabbedPane();
@@ -96,6 +107,7 @@ public class Main {
 	protected static JPanel deepsPanel = new JPanel();
 	protected static JPanel topPanel = new JPanel();
 	protected static JPanel bottomPanel = new JPanel();
+	protected static JPanel loadingScreen = (JPanel) mainFrame.getGlassPane();
 	protected static RiflePanel riflePanel;
 	protected static ShotgunPanel shotgunPanel;
 	protected static PistolPanel pistolPanel;
@@ -145,15 +157,18 @@ public class Main {
 	/** Selected WeaponPanel **/
 	public static WeaponPanel selectedWeapon = null;
 
+	/** The Maximizer **/
+	public static Maximizer theMaximizer = new Maximizer();
+
 	/** Mod Vectors **/
 	protected static Vector<Mod> activeMods = new Vector<Mod>();
-	protected static Vector<Double> modRanks = new Vector<Double>();
+	protected static Vector<Integer> modRanks = new Vector<Integer>();
 	public static Vector<TTKTarget> groupTargets;
 
 	/** Base Values **/
 	protected static boolean useComplexTTK = true;
 	public static int complexTTKIterations = 10000;
-	//	public static int complexTTKCompletions = 0;
+	// public static int complexTTKCompletions = 0;
 	public static String longestTTKName = "";
 	// protected static int maxTTKTime = 300000;
 
@@ -275,7 +290,9 @@ public class Main {
 	public static double gasProcDPS;
 	public static boolean updateOutput;
 
+	public static boolean stop = false;
 	public static boolean setup = true;
+	public static boolean maxxing = false;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -321,7 +338,9 @@ public class Main {
 		UIBuilder.panelInit(arcGunPanel);
 		UIBuilder.buttonInit(calculateButton);
 		UIBuilder.buttonInit(maximizeButton);
+		UIBuilder.buttonInit(stopButton);
 		UIBuilder.labelInit(TTKIterationsLabel);
+		UIBuilder.labelInit(loadingLabel);
 		UIBuilder.numberFieldInit(TTKIterationsField);
 		// UIBuilder.buttonInit(statsButton);
 		UIBuilder.buttonInit(clearOutputButton);
@@ -368,7 +387,7 @@ public class Main {
 		maximizeButton.addActionListener(action);
 		TTKBox.addActionListener(action);
 		lightWeightTTKBox.addActionListener(action);
-		// statsButton.addActionListener(action);
+		stopButton.addActionListener(action);
 		clearOutputButton.addActionListener(action);
 		saveItem.addActionListener(action);
 		loadItem.addActionListener(action);
@@ -436,7 +455,6 @@ public class Main {
 		mainPanel.add(topPanel);
 		mainPanel.add(bottomPanel);
 
-		// DPSPanel.setVisible(false);
 		mainPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		DPSPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		secondaryPanel.add(mainPanel);
@@ -461,6 +479,45 @@ public class Main {
 		mainFrame.setTitle(Constants.APP_TITLE + " " + Constants.APP_VERSION);
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+		// Loading screen shenanigans
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setBackground(Color.BLACK);
+		progressBar.setForeground(Color.GREEN);
+		loadingLabel.setFont(new Font("Verdana", Font.PLAIN, 100));
+		loadingScreen.setLayout(new GridBagLayout());
+		JPanel loadingStats = new JPanel();
+		JPanel loadingBackground = new JPanel();
+		loadingBackground.setBackground(new Color(0, 0, 0, 180));
+		loadingStats.setOpaque(false);
+		loadingBackground.setLayout(new GridBagLayout());
+		loadingStats.setLayout(new BoxLayout(loadingStats, BoxLayout.Y_AXIS));
+		loadingStats.add(loadingLabel);
+		loadingStats.add(progressBar);
+		JPanel stopPanel = new JPanel();
+		stopPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		stopPanel.add(stopButton);
+		stopPanel.setOpaque(false);
+		loadingStats.add(stopPanel);
+		loadingStats.setBackground(new Color(0, 0, 0, 0));
+		loadingBackground.add(loadingStats);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		loadingScreen.add(loadingBackground, gbc);
+		loadingScreen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				e.consume();
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				e.consume();
+			}
+		});
+		// loadingScreen.setVisible(true);
+
 		TTKIterationsField.setText("10000");
 
 		UIBuilder.createTitledLineBorder(DPSPanel.stats, "Calculated Stats");
@@ -476,7 +533,7 @@ public class Main {
 
 		// Get the Selected Weapon Type and Active Mods
 		selectedWeapon = (WeaponPanel) weaponPane.getSelectedComponent();
-		selectedWeapon.parseActiveMods();
+		// selectedWeapon.parseActiveMods();
 
 		// Get the base values from the selected weapon
 		getBaseValues();
@@ -514,15 +571,15 @@ public class Main {
 		}
 		// && raw.perSecond > 100
 		if (useComplexTTK) {
-		int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
-		groupTargets = new Vector<TTKTarget>();
-		for (TTKTarget target : theTTKManager.targets) {
-			if (target.group == targetGroup) {
-				groupTargets.add(target);
+			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
+			groupTargets = new Vector<TTKTarget>();
+			for (TTKTarget target : theTTKManager.targets) {
+				if (target.group == targetGroup) {
+					groupTargets.add(target);
+				}
 			}
-		}
-		//if (useComplexTTK && raw.perSecond > 100) {
-			//complexTTKCompletions = 0;
+			// if (useComplexTTK && raw.perSecond > 100) {
+			// complexTTKCompletions = 0;
 			for (TTKTarget target : groupTargets) {
 				target.runAdvancedTTK();
 				String name = target.name + "[" + target.currentLevel + "]";
@@ -532,8 +589,9 @@ public class Main {
 			}
 		}
 		// Print the data to the text area and render the graph
-		if (updateOutput)
+		if (updateOutput) {
 			updateOutput();
+		}
 	}
 
 	/**
@@ -542,7 +600,7 @@ public class Main {
 	public static void clearValues() {
 		selectedWeapon = null;
 		activeMods = new Vector<Mod>();
-		modRanks = new Vector<Double>();
+		modRanks = new Vector<Integer>();
 		weaponName = "";
 		weaponMode = "";
 		damageType = "";
@@ -618,7 +676,7 @@ public class Main {
 		fireStacks = 0;
 		toxinStacks = 0;
 		gasStacks = 0;
-		//complexTTKCompletions = 0;
+		// complexTTKCompletions = 0;
 		globalFire = 0;
 		globalToxin = 0;
 		globalElectric = 0;
@@ -649,9 +707,9 @@ public class Main {
 		lastShotDamageMult = 1;
 		statusChance = selectedWeapon.getStatusChance();
 		mag = selectedWeapon.getMagSize();
-		if(selectedWeapon.equals(meleePanel)) {
+		if (selectedWeapon.equals(meleePanel)) {
 			combo = 5;
-		}else {
+		} else {
 			combo = selectedWeapon.getCombo();
 		}
 		startingCombo = selectedWeapon.getStartingCombo();
@@ -660,7 +718,7 @@ public class Main {
 		impact.base = selectedWeapon.getImpactDamage();
 		puncture.base = selectedWeapon.getPunctureDamage();
 		slash.base = selectedWeapon.getSlashDamage();
-		
+
 		switch (damageType) {
 		case Constants.FIRE_WEAPON_DAMAGE:
 			fire.base = selectedWeapon.getBaseDamage();
@@ -713,8 +771,13 @@ public class Main {
 			viral.base /= projectileCount;
 		}
 		// Mod Vectors
-		activeMods = selectedWeapon.getActiveMods();
-		modRanks = selectedWeapon.getActiveModRanks();
+		if (maxxing) {
+			activeMods = theMaximizer.simulatedMods;
+			modRanks = theMaximizer.simulatedRanks;
+		} else {
+			activeMods = selectedWeapon.getActiveMods();
+			modRanks = selectedWeapon.getActiveModRanks();
+		}
 	}
 
 	/**
@@ -758,110 +821,112 @@ public class Main {
 		// Populate mod vectors
 		for (int i = 0; i < activeMods.size(); i++) {
 			Mod tempMod = activeMods.get(i);
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MAG_CAP)) {
-				magMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MAG_CAP))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_CHANCE)) {
-				critChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_CHANCE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_MULTIPLIER)) {
-				critMultMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_MULTIPLIER))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_RATE)) {
-				fireRateMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_RATE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_RELOAD_SPEED)) {
-				reloadTimeMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_RELOAD_SPEED))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_DAMAGE_BONUS)) {
-				damageMultMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DAMAGE_BONUS))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MULTISHOT)) {
-				projectileCountMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MULTISHOT))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRST_SHOT_DAMAGE)) {
-				firstShotDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRST_SHOT_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LAST_SHOT_DAMAGE)) {
-				lastShotDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LAST_SHOT_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_CHANCE)) {
-				statusChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_CHANCE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_DURATION)) {
-				statusDurationMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_DURATION))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CORPUS_DAMAGE)) {
-				corpusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CORPUS_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_GRINEER_DAMAGE)) {
-				grineerMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_GRINEER_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_INFESTED_DAMAGE)) {
-				infestedMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_INFESTED_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_DAMAGE)) {
-				flatDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_STATUS)) {
-				flatStatusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_STATUS))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_MAG)) {
-				flatMagMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_MAG))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_DEAD_AIM)) {
-				deadAimMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DEAD_AIM))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
-				hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACT_DAMAGE)) {
-				impactDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACT_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_PUNCTURE_DAMAGE)) {
-				punctureDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_PUNCTURE_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_SLASH_DAMAGE)) {
-				slashDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_SLASH_DAMAGE))) * (1.0 + modRanks.get(i)));
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalElectric += modPower;
-				if (!elements.contains("Electric"))
-					elements.add("Electric");
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalFire += modPower;
-				if (!elements.contains("Fire"))
-					elements.add("Fire");
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalToxin += modPower;
-				if (!elements.contains("Toxin"))
-					elements.add("Toxin");
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
-				globalIce += modPower;
-				if (!elements.contains("Ice"))
-					elements.add("Ice");
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
-				vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_CRIT)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_CRIT)) * (1.0 + modRanks.get(i));
-				comboCrit += modPower;
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_STATUS)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_STATUS)) * (1.0 + modRanks.get(i));
-				comboStatus += modPower;
-			}
-			if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CONDITION_OVERLOAD)) {
-				double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CONDITION_OVERLOAD)) * (1.0 + modRanks.get(i));
-				conditionOverload += modPower;
+			if (tempMod != null) {
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MAG_CAP)) {
+					magMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MAG_CAP))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_CHANCE)) {
+					critChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_CHANCE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CRIT_MULTIPLIER)) {
+					critMultMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CRIT_MULTIPLIER))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_RATE)) {
+					fireRateMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_RATE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_RELOAD_SPEED)) {
+					reloadTimeMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_RELOAD_SPEED))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_DAMAGE_BONUS)) {
+					damageMultMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DAMAGE_BONUS))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MULTISHOT)) {
+					projectileCountMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MULTISHOT))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRST_SHOT_DAMAGE)) {
+					firstShotDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRST_SHOT_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LAST_SHOT_DAMAGE)) {
+					lastShotDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LAST_SHOT_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_CHANCE)) {
+					statusChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_CHANCE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_STATUS_DURATION)) {
+					statusDurationMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_STATUS_DURATION))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CORPUS_DAMAGE)) {
+					corpusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CORPUS_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_GRINEER_DAMAGE)) {
+					grineerMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_GRINEER_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_INFESTED_DAMAGE)) {
+					infestedMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_INFESTED_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_DAMAGE)) {
+					flatDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_STATUS)) {
+					flatStatusMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_STATUS))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FLAT_MAG)) {
+					flatMagMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FLAT_MAG))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_DEAD_AIM)) {
+					deadAimMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_DEAD_AIM))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
+					hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACT_DAMAGE)) {
+					impactDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACT_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_PUNCTURE_DAMAGE)) {
+					punctureDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_PUNCTURE_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_SLASH_DAMAGE)) {
+					slashDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_SLASH_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_LIGHTNING_DAMAGE)) * (1.0 + modRanks.get(i));
+					globalElectric += modPower;
+					if (!elements.contains("Electric"))
+						elements.add("Electric");
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_DAMAGE)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_DAMAGE)) * (1.0 + modRanks.get(i));
+					globalFire += modPower;
+					if (!elements.contains("Fire"))
+						elements.add("Fire");
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_TOXIN_DAMAGE)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_TOXIN_DAMAGE)) * (1.0 + modRanks.get(i));
+					globalToxin += modPower;
+					if (!elements.contains("Toxin"))
+						elements.add("Toxin");
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ICE_DAMAGE)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ICE_DAMAGE)) * (1.0 + modRanks.get(i));
+					globalIce += modPower;
+					if (!elements.contains("Ice"))
+						elements.add("Ice");
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
+					vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_CRIT)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_CRIT)) * (1.0 + modRanks.get(i));
+					comboCrit += modPower;
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_STATUS)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_STATUS)) * (1.0 + modRanks.get(i));
+					comboStatus += modPower;
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CONDITION_OVERLOAD)) {
+					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CONDITION_OVERLOAD)) * (1.0 + modRanks.get(i));
+					conditionOverload += modPower;
+				}
 			}
 		}
 		if (!elements.contains(damageType))
@@ -871,8 +936,7 @@ public class Main {
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
 			String element2 = elements.get(i + 1);
-			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) &&
-				(element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
+			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) && (element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
 
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
@@ -1065,7 +1129,7 @@ public class Main {
 			}
 			finalStatusChance *= 1 + (tempCombo * comboStatus);
 		}
-		
+
 		if (finalStatusChance > 1) {
 			finalStatusChance = 1;
 		}
@@ -1182,6 +1246,9 @@ public class Main {
 		} else {
 			headShot = false;
 		}
+		if (selectedWeapon.equals(meleePanel)) {
+			finalMag = (int) Double.POSITIVE_INFINITY;
+		}
 
 		if (weaponMode.equals(Constants.BURST)) {
 			if (selectedWeapon.isRefireCanceled()) {
@@ -1225,21 +1292,21 @@ public class Main {
 	 */
 	protected static void calculateMiscValues() {
 		// Status Ratios
-		totalPhysical = impact.finalBase +  puncture.finalBase +  slash.finalBase;
+		totalPhysical = impact.finalBase + puncture.finalBase + slash.finalBase;
 		totalElemental = raw.finalBase - totalPhysical;
-		slashProcRate = (4 *  slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		fireProcRate = ( fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		toxinProcRate = ( toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		gasProcRate = ( gas.finalBase / ((4 * totalPhysical) + totalElemental));
-		electricProcRate = ( electric.finalBase / ((4 * totalPhysical) + totalElemental));
-		impactProcRate = (4 *  impact.finalBase / ((4 * totalPhysical) + totalElemental));
-		punctureProcRate = (4 *  puncture.finalBase / ((4 * totalPhysical) + totalElemental));
-		iceProcRate = ( ice.finalBase / ((4 * totalPhysical) + totalElemental));
-		corrosiveProcRate = ( corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
-		viralProcRate = ( viral.finalBase / ((4 * totalPhysical) + totalElemental));
-		blastProcRate = ( blast.finalBase / ((4 * totalPhysical) + totalElemental));
-		radiationProcRate = ( radiation.finalBase / ((4 * totalPhysical) + totalElemental));
-		magneticProcRate = ( magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
+		slashProcRate = (4 * slash.finalBase) / ((4 * totalPhysical) + totalElemental);
+		fireProcRate = (fire.finalBase / ((4 * totalPhysical) + totalElemental));
+		toxinProcRate = (toxin.finalBase / ((4 * totalPhysical) + totalElemental));
+		gasProcRate = (gas.finalBase / ((4 * totalPhysical) + totalElemental));
+		electricProcRate = (electric.finalBase / ((4 * totalPhysical) + totalElemental));
+		impactProcRate = (4 * impact.finalBase / ((4 * totalPhysical) + totalElemental));
+		punctureProcRate = (4 * puncture.finalBase / ((4 * totalPhysical) + totalElemental));
+		iceProcRate = (ice.finalBase / ((4 * totalPhysical) + totalElemental));
+		corrosiveProcRate = (corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
+		viralProcRate = (viral.finalBase / ((4 * totalPhysical) + totalElemental));
+		blastProcRate = (blast.finalBase / ((4 * totalPhysical) + totalElemental));
+		radiationProcRate = (radiation.finalBase / ((4 * totalPhysical) + totalElemental));
+		magneticProcRate = (magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
 
 		averageProjectileCount = finalProjectileCount;
 		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
@@ -1249,8 +1316,8 @@ public class Main {
 		burstProcsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / (finalMag / finalFireRate));
 
 		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
-			slashStacks = procsPerSecond * slashProcRate * 6 * finalStatusDuration;
-			slashStacks += hunterMunitions * Math.max(1, finalCritChance) * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
+			double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.max(1, finalCritChance)))); // Rewriting so munitions and natural procs don't stack
+			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
 		}
 		if (fire.finalBase > 0.0) {
 			fireStacks = 1 - Math.pow((1 - fireProcRate), (((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration));
@@ -1274,7 +1341,7 @@ public class Main {
 
 		// Calculate base damage per shot values
 		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult;
-		
+
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult;
 
@@ -1302,7 +1369,7 @@ public class Main {
 			radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult;
 			corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult;
 			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult;
-			
+
 			// Surface-specific
 			corpus.perShot = raw.perShot * finalCorpusMult;
 			grineer.perShot = raw.perShot * finalGrineerMult;
@@ -1616,7 +1683,7 @@ public class Main {
 	 */
 	protected static void calculateDamagePerMinute() {
 		raw.perMinute = raw.perIteration * finalIterationsPerMinute;
-		
+
 		if (updateOutput) {
 			impact.perMinute = impact.perIteration * finalIterationsPerMinute;
 			puncture.perMinute = puncture.perIteration * finalIterationsPerMinute;
@@ -2074,25 +2141,11 @@ public class Main {
 		output.append(selectedWeapon.getModsOutput());
 		output.append("\nCorrosive Projections: " + corrosiveProjectionBox.getSelectedItem());
 
-		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"); // showing stuff people care about without scrolling
-		if (poisonDoTDPS > 0)
-			output.append("\nDPS From Poison Procs :: " + f.format(poisonDoTDPS));
-		if (electricProcDPS > 0)
-			output.append("\nDPS From Electric Procs :: " + f.format(electricProcDPS));
-		if (heatDoTDPS > 0)
-			output.append("\nDPS From Fire Procs :: " + f.format(heatDoTDPS));
-		if (cloudDoTDPS > 0)
-			output.append("\nDPS From Gas Procs :: " + f.format(cloudDoTDPS + gasProcDPS));
-		if (bleedDoTDPS > 0)
-			output.append("\nDPS From Bleeds :: " + f.format(bleedDoTDPS));
-		output.append("\nTotal Damage Per Second :: " + f.format(raw.perSecond));
-		output.append("\nTotal Burst Damage Per Second :: " + f.format(raw.rawPerSecond));
-
 		if (useComplexTTK) {
 			output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 			String ttkTableHeader = "\nTarget Name";
-			Font font =  output.getFont();
-			FontMetrics metric =  output.getFontMetrics(font);
+			Font font = output.getFont();
+			FontMetrics metric = output.getFontMetrics(font);
 			int spaceWidth = metric.stringWidth(".");
 			int nameFieldWidth = metric.stringWidth(longestTTKName);
 			double nameDiff = (nameFieldWidth - metric.stringWidth("Target Name")) / spaceWidth;
@@ -2400,7 +2453,7 @@ public class Main {
 	 * @author GottFuast
 	 *
 	 */
-	protected static class MainActionListener implements ActionListener {
+	public static class MainActionListener implements ActionListener {
 		/**
 		 * Default CTOR
 		 */
@@ -2420,13 +2473,24 @@ public class Main {
 				calculateDPS();
 			} else if (e.getSource().equals(maximizeButton)) {
 				selectedWeapon = (WeaponPanel) weaponPane.getSelectedComponent();
-				selectedWeapon.parseActiveMods();
+				loadingScreen.setVisible(true);
+				progressBar.setValue(0);
 				useComplexTTK = true;
 				updateOutput = false;
 				setup = true;
-				Maximizer theMaximizer = new Maximizer();
-				theMaximizer.Maximizer();
-				setup = false;
+				maxxing = true;
+
+				new Thread(new Runnable() {
+					public void run() {
+						theMaximizer.Maximizer();
+						loadingScreen.setVisible(false);
+						setup = false;
+						maxxing = false;
+					}
+				}).start();
+
+			} else if (e.getSource().equals(stopButton)) {
+				stop = true;
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
 				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
 				if (e.getSource().equals(TTKBox)) {
@@ -2440,8 +2504,7 @@ public class Main {
 				}
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
-			}
-			else if (e.getSource().equals(clearOutputButton)) {
+			} else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
 				dpsGraph.clear();
 				ttkGraph.clear();
@@ -2702,6 +2765,17 @@ public class Main {
 
 		public void windowOpened(WindowEvent e) {
 		}
+	}
+
+	public static Vector<Component> getAllComponents(final Container c) {
+		Component[] comps = c.getComponents();
+		Vector<Component> compList = new Vector<Component>();
+		for (Component comp : comps) {
+			compList.add(comp);
+			if (comp instanceof Container)
+				compList.addAll(getAllComponents((Container) comp));
+		}
+		return compList;
 	}
 
 	public static class DoTPair {

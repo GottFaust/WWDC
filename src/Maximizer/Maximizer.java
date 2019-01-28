@@ -5,21 +5,25 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import main.Main;
+import mods.Mod;
 import ttk.TTKTarget;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class Maximizer {
 
+	protected boolean done = false;
+	protected int completedIterations;
+	protected int totalIterations;
 	protected int modCount;
 	protected Vector<Integer> modsToChange = new Vector<Integer>();
 	protected int targets = 0;
 	protected File maximizerResults;
 	protected Vector<TTKresult> results = new Vector<TTKresult>();
+
+	public static Vector<Mod> simulatedMods = new Vector<Mod>();
+	protected static Vector<Mod> possibleMods = new Vector<Mod>();
+	public static Vector<Integer> simulatedRanks = new Vector<Integer>();
 
 	/**
 	 * Calculate and add result to an array
@@ -32,9 +36,9 @@ public class Maximizer {
 		double total = 0;
 		Vector<Double> times = new Vector<Double>();
 
-		String build1 = Main.selectedWeapon.flatModsOutput().split(",")[0];
-		String build2 = Main.selectedWeapon.flatModsOutput().split(",")[1];
-		
+		String build1 = "[" + simulatedMods.get(0).name + "][" + simulatedMods.get(1).name + "][" + simulatedMods.get(2).name + "][" + simulatedMods.get(3).name + "]";
+		String build2 = "[" + simulatedMods.get(4).name + "][" + simulatedMods.get(5).name + "][" + simulatedMods.get(6).name + "][" + simulatedMods.get(7).name + "]";
+
 		double DPS = Main.raw.perSecond;
 		for (TTKTarget target : Main.groupTargets) {
 			TTKs.add(target.simpleTTK().split(",")[0]); // name
@@ -46,36 +50,76 @@ public class Maximizer {
 		double average = total / targets;
 		double minmax = Collections.max(times);
 		results.add(new TTKresult(build1, build2, DPS, average, minmax, TTKs));
+
+		completedIterations++;
+		Main.progressBar.setValue((completedIterations * 100) / totalIterations);
 	}
 
 	/**
 	 * Test every combination of mods in empty mod slots
 	 */
 	public void thatThang(int modSlot) {
-		if (modSlot == 0) {
+		if (Main.stop) {
+			// Do nothing
+		} else if (modSlot == 0) {
+			updateRanks();
 			calculateAndStore();
 		} else {
-			for (int i = 1; i < modCount; i++) {
-				Main.selectedWeapon.setMod(modsToChange.get(modSlot - 1), i);
+			for (int i = 0; i < modCount-1; i++) {
+				simulatedMods.set(modsToChange.get(modSlot - 1), null);
+				updateMods();
+				simulatedMods.set(modsToChange.get(modSlot - 1), possibleMods.get(i));
 				thatThang(modSlot - 1);
 			}
+		}
+	}
+	
+	public void updateMods() {
+		possibleMods = new Vector<Mod>();
+		for (Mod mod : Main.selectedWeapon.modInit.mods) {
+			if (!simulatedMods.contains(mod)) {
+				if (mod.type.equals(Main.selectedWeapon.weaponType)) {
+					possibleMods.add(mod);
+				}
+			}
+		}
+	}
+	
+	public void updateRanks() {
+		simulatedRanks = new Vector<Integer>();
+		for(Mod mod : simulatedMods) {
+			simulatedRanks.add(mod.ranks);
 		}
 	}
 
 	public void Maximizer() {
 		int emptyMods = 0;
+		completedIterations = 0;
 		modsToChange.clear();
 		results.clear();
-		
-		// Identify empty mod slots and count them	
-		for(int i = 0; i < 8; i++) {
-			if(Main.selectedWeapon.selectedMods.get(i).equals("--")) {
+		Main.stop = false;
+		simulatedMods = new Vector<Mod>();
+
+		// Identify empty mod slots and count them
+		for (int i = 0; i < 8; i++) {
+			if (Main.selectedWeapon.selectedMods.get(i).equals("--")) {
 				emptyMods++;
 				modsToChange.add(i);
 			}
 		}
 		modCount = Main.selectedWeapon.countMods() - (emptyMods - 1);
+		totalIterations = (int) Math.pow(modCount - 1, emptyMods);
 
+		// Initial mod list
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modOnePanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modTwoPanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modThreePanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modFourPanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modFivePanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modSixPanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modSevenPanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modEightPanel.getSelectedMod()));
+		
 		// Do
 		thatThang(emptyMods);
 
@@ -165,11 +209,6 @@ public class Maximizer {
 			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
-		// Clean things out
-		for (int i = 0; i < emptyMods; i++) {
-			Main.selectedWeapon.setMod(modsToChange.get(i), 0);
 		}
 	}
 

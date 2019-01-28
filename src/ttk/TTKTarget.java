@@ -449,6 +449,8 @@ public class TTKTarget implements Comparable {
 		int cores = Runtime.getRuntime().availableProcessors();
 		spliterations = (Main.complexTTKIterations / cores);
 		clearValues();
+		
+		
 		if (Main.complexTTKIterations > 1) {
 			ExecutorService es = Executors.newCachedThreadPool();
 			for (int i = 0; i < cores; i++) {
@@ -467,13 +469,15 @@ public class TTKTarget implements Comparable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		} else if (Main.complexTTKIterations == 1) {
 			TTKVec.add(calculateHardTimeToKill());
 		}
-
 		for (Double d : TTKVec) {
 			TTK += d;
 		}
+		
+		
 		TTK /= TTKVec.size();
 		Collections.sort(TTKVec);
 		minTTK = TTKVec.get(0);
@@ -637,7 +641,7 @@ public class TTKTarget implements Comparable {
 		double targetAdjustedMaxShields = maxShields;
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
-		double targetAdjustedMaxArmor = maxArmor;
+		int targetAdjustedMaxArmor = maxArmor;
 		double localProjectileCount = 1.0;
 		int shotTimer = 0;
 		int statusTimer = 1000;
@@ -725,9 +729,6 @@ public class TTKTarget implements Comparable {
 						for (int i = 0; i < corrosiveStacks; i++) {
 							targetAdjustedMaxArmor *= 0.75;
 						}
-					}
-					if (targetAdjustedMaxArmor < 1) {
-						targetAdjustedMaxArmor = 0;
 					}
 
 					// Find shot-unique multipliers
@@ -839,11 +840,13 @@ public class TTKTarget implements Comparable {
 
 						// Status effects
 						// Hunter Munitions proc?
-						if (Main.hunterMunitions > 0 && crit > 0 && rng.nextDouble() <= Main.hunterMunitions) {
+						boolean munitionsProc = false;
+						if (rng.nextDouble() < Main.hunterMunitions) {
 							double bleedDamage = DoTBase * totalMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration) * 10000;
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 							targetCurrentHealth -= bleedDamage;
+							munitionsProc = true;
 						}
 						// Forced poison proc?
 						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
@@ -862,13 +865,13 @@ public class TTKTarget implements Comparable {
 							// Which Proc?
 							double proc = rng.nextDouble();
 							// Slash Proc
-							if ((proc -= slashProc) < 0) {
+							if ((proc -= slashProc) < 0 && munitionsProc == false) {
 								double bleedDamage = DoTBase * totalMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration) * 10000;
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 								targetCurrentHealth -= bleedDamage;
 								statusEffects[0] = slashDuration;
-								// Fire Proc
+							// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 								double localFireMult = fireMult;
 								if (targetCurrentShields > 0.0) {

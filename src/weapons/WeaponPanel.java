@@ -44,14 +44,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected JPanel attributesPanel = new JPanel();
 	protected JPanel modsPanel = new JPanel();
 	protected WeaponAttributesPanel wap = new WeaponAttributesPanel();
-	protected WeaponModPanel modOnePanel = new WeaponModPanel("1", this);
-	protected WeaponModPanel modTwoPanel = new WeaponModPanel("2", this);
-	protected WeaponModPanel modThreePanel = new WeaponModPanel("3", this);
-	protected WeaponModPanel modFourPanel = new WeaponModPanel("4", this);
-	protected WeaponModPanel modFivePanel = new WeaponModPanel("5", this);
-	protected WeaponModPanel modSixPanel = new WeaponModPanel("6", this);
-	protected WeaponModPanel modSevenPanel = new WeaponModPanel("7", this);
-	protected WeaponModPanel modEightPanel = new WeaponModPanel("8", this);
+	public WeaponModPanel modOnePanel = new WeaponModPanel("1", this);
+	public WeaponModPanel modTwoPanel = new WeaponModPanel("2", this);
+	public WeaponModPanel modThreePanel = new WeaponModPanel("3", this);
+	public WeaponModPanel modFourPanel = new WeaponModPanel("4", this);
+	public WeaponModPanel modFivePanel = new WeaponModPanel("5", this);
+	public WeaponModPanel modSixPanel = new WeaponModPanel("6", this);
+	public WeaponModPanel modSevenPanel = new WeaponModPanel("7", this);
+	public WeaponModPanel modEightPanel = new WeaponModPanel("8", this);
 	protected JPanel savedWeaponPanel = new JPanel();
 	protected JPanel refireCancelPanel = new JPanel();
 	protected JPanel additiveEffects = new JPanel();
@@ -93,9 +93,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	/** Data **/
 	public Vector<String> selectedMods = new Vector<String>();
 	protected Vector<Mod> activeMods = new Vector<Mod>();
-	protected Vector<Double> modLevels = new Vector<Double>();
+	protected Vector<Integer> modLevels = new Vector<Integer>();
 
-	protected ModInitializer modInit;
+	public ModInitializer modInit;
 	protected WeaponInitializer weapInit;
 
 	public String modOne = "--";
@@ -107,7 +107,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	public String modSeven = "--";
 	public String modEight = "--";
 
-	protected String weaponType = "";
+	public String weaponType = "";
 
 	protected boolean updatingDropDowns = false;
 	public boolean setting = false;
@@ -342,11 +342,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
 				+ modSixPanel.getModRank() + "], " + modSeven + "[" + modSevenPanel.getModRank() + "], " + modEight + "[" + modEightPanel.getModRank() + "]";
 	}
 
-	public String flatModsOutput() {
-		return modOne + "[" + modOnePanel.getModRank() + "] " + modTwo + "[" + modTwoPanel.getModRank() + "] " + modThree + "[" + modThreePanel.getModRank() + "] " + modFour + "[" + modFourPanel.getModRank() + "] " + "," + modFive + "[" + modFivePanel.getModRank() + "] " + modSix + "["
-				+ modSixPanel.getModRank() + "] " + modSeven + "[" + modSevenPanel.getModRank() + "] " + modEight + "[" + modEightPanel.getModRank() + "] ";
-	}
-
 	/**
 	 * Counts the number of mods
 	 */
@@ -405,35 +400,35 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		modLevels.clear();
 		if (!modOne.equals("--")) {
 			activeMods.add(getModByName(modOne));
-			modLevels.add(Double.parseDouble(modOnePanel.getModRank()));
+			modLevels.add(Integer.parseInt(modOnePanel.getModRank()));
 		}
 		if (!modTwo.equals("--")) {
 			activeMods.add(getModByName(modTwo));
-			modLevels.add(Double.parseDouble(modTwoPanel.getModRank()));
+			modLevels.add(Integer.parseInt(modTwoPanel.getModRank()));
 		}
 		if (!modThree.equals("--")) {
 			activeMods.add(getModByName(modThree));
-			modLevels.add(Double.parseDouble(modThreePanel.getModRank()));
+			modLevels.add(Integer.parseInt(modThreePanel.getModRank()));
 		}
 		if (!modFour.equals("--")) {
 			activeMods.add(getModByName(modFour));
-			modLevels.add(Double.parseDouble(modFourPanel.getModRank()));
+			modLevels.add(Integer.parseInt(modFourPanel.getModRank()));
 		}
 		if (!modFive.equals("--")) {
 			activeMods.add(getModByName(modFive));
-			modLevels.add(Double.parseDouble(modFivePanel.getModRank()));
+			modLevels.add(Integer.parseInt(modFivePanel.getModRank()));
 		}
 		if (!modSix.equals("--")) {
 			activeMods.add(getModByName(modSix));
-			modLevels.add(Double.parseDouble(modSixPanel.getModRank()));
+			modLevels.add(Integer.parseInt(modSixPanel.getModRank()));
 		}
 		if (!modSeven.equals("--")) {
 			activeMods.add(getModByName(modSeven));
-			modLevels.add(Double.parseDouble(modSevenPanel.getModRank()));
+			modLevels.add(Integer.parseInt(modSevenPanel.getModRank()));
 		}
 		if (!modEight.equals("--")) {
 			activeMods.add(getModByName(modEight));
-			modLevels.add(Double.parseDouble(modEightPanel.getModRank()));
+			modLevels.add(Integer.parseInt(modEightPanel.getModRank()));
 		}
 	}
 
@@ -452,7 +447,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	 * 
 	 * @return
 	 */
-	public Vector<Double> getActiveModRanks() {
+	public Vector<Integer> getActiveModRanks() {
 		return modLevels;
 	}
 
