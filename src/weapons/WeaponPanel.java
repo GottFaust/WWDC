@@ -1282,6 +1282,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 				addDamField.setText(null);
 				addFRField.setText(null);
 				setting = false;
+				Main.repack();
 			}
 		} else if (e.getSource().equals(potato)) {
 			calculateModCosts();

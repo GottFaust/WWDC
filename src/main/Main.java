@@ -2569,21 +2569,23 @@ public class Main{
 				theTTKManager.deleteButton.setVisible(false);
 				theTTKManager.saveButton.setVisible(false);
 			} else if (e.getSource().equals(removeTargetButton)) {
+				if(enemyList.getSelectedIndex() >= 0) {
 			      String targetName = (String)enemyListModel.get(enemyList.getSelectedIndex());
 			      TTKTarget selectedTarget = theTTKManager.getTargetByName(targetName);
 			      TTKTarget foundTarget = theTTKManager.getTargetByName(targetName);
-			      if(theTTKManager.targets.contains(selectedTarget)){
-			    	  Vector<Integer> tempGroups = new Vector<Integer>(selectedTarget.groups);
-			    	  for(int gru : tempGroups) {
-			    		  if( gru == targetGroupBox.getSelectedIndex()) {
-			    			  selectedTarget.groups.remove(gru);
+			      if(theTTKManager.targets.contains(selectedTarget)){		    	  
+			    	  for(int i = 0; i < selectedTarget.groups.size(); i++) {
+			    		  if(selectedTarget.groups.get(i) == targetGroupBox.getSelectedIndex()) {
+			    			  selectedTarget.groups.remove(i);
+			    			  break;
 			    		  }
-			    	  }
+			    	  }			    	  			    	  
 			    	  theTTKManager.targets.set(theTTKManager.targets.indexOf(foundTarget), selectedTarget);
 			    	  //theTTKManager.targets.removeElement(selectedTarget);
 			      }
 			      updateTargetList();
 			      theTTKManager.updateTargetList();
+				}
 			      
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
 				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());

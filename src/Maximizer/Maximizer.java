@@ -93,15 +93,15 @@ public class Maximizer {
 	}
 
 	public void Maximizer() {
+		
 		int emptyMods = 0;
-		/*
-		completedIterations = 0;
-		modsToChange.clear();
-		results = new Vector<TTKresult>();
 		Main.stop = false;
-		simulatedMods = new Vector<Mod>();
-		simulatedRanks = new Vector<Integer>();
-		 */
+		completedIterations = 0;
+		results.clear();
+		modsToChange.clear();
+		simulatedMods.clear();
+		simulatedRanks.clear();
+
 		
 		// Identify empty mod slots and count them
 		for (int i = 0; i < 8; i++) {

@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Collections;
 import java.util.Vector;
 
 import etc.Constants;
@@ -81,6 +82,7 @@ public class WeaponInitializer {
     }catch(Exception ex){
       ex.printStackTrace();
     }
+    Collections.sort(weapons);
   }
   
   public void saveWeaponDB(){

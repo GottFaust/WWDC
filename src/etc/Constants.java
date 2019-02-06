@@ -660,7 +660,7 @@ public class Constants {
 		  "Pistol,Semi-Auto,Physical,Pandero,0.0,0,DEPRECIATED,72,18,18,36,3,8,210,1,30,2.8,10,1,1",
 		  "Rifle,Full-Auto,Physical,Panthera,0,0,DEPRECIATED,0,20,10,70,3,60,540,2,12,2,24,1,1",
 		  "Rifle,Continuous,Physical,Panthera (Secondary Attack),0,0,DEPRECIATED,0,10,10,80,2,60,540,2,25,2,35,1,1",
-		  "Rifle,Burst,Toxin,Paracyst,0.0,0,DEPRECIATED,33,0,0,0,11.11,60,540,2,10,2,30,1,1",
+		  "Rifle,Burst,Toxin,Paracyst,0.0,3,DEPRECIATED,33,0,0,0,11.11,60,540,2,10,2,30,1,1",
 		  "Rifle,Bow (Charge),Physical,Paris,0.5,0,DEPRECIATED,0,9,144,27,0,1,72,0.65,30,2,10,1,1",
 		  "Rifle,Bow (Charge),Physical,Paris Prime,0.5,0,DEPRECIATED,0,6.5,208,45.5,0,1,72,0.7,45,2,20,1,1",
 		  "Rifle,Semi-Auto,Blast,Penta,0,0,DEPRECIATED,350,0,0,0,1,5,20,2.5,10,2,10,1,1",
