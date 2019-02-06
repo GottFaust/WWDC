@@ -23,9 +23,10 @@ public class TTKTarget implements Comparable {
 	 * ____________________________________________________________
 	 */
 	// Target Stats
-	public int group = 0;
+	public Vector<Integer> groups = new Vector<Integer>();
 	protected int baseLevel = 0;
 	public int currentLevel = 0;
+	public int defaultLevel = 0;
 	protected int baseArmor = 0;
 	protected int baseHealth = 0;
 	protected int baseShields = 0;
@@ -123,6 +124,7 @@ public class TTKTarget implements Comparable {
 		name = split[0];
 		baseLevel = Integer.parseInt(split[1]);
 		currentLevel = Integer.parseInt(split[2]);
+		defaultLevel = Integer.parseInt(split[2]);
 		baseArmor = Integer.parseInt(split[3]);
 		baseHealth = Integer.parseInt(split[4]);
 		baseShields = Integer.parseInt(split[5]);
@@ -131,16 +133,20 @@ public class TTKTarget implements Comparable {
 		shieldType = split[8];
 		factionType = split[9];
 		try {
-			group = Integer.parseInt(split[10]);
+			String[] groupString = split[10].split(";");
+			for(String gru : groupString) {
+				if(gru != null) groups.add(Integer.parseInt(gru));
+			}
+			//group = Integer.parseInt(split[10]);
 		} catch (Exception ex) {
 			// Legacy, default to group 0
 		}
+		
+		//maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 * baseArmor) + baseArmor);
+		//maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
+		//maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
 
-		maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 * baseArmor) + baseArmor);
-		maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
-		maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
-
-		System.out.println(name + "," + currentLevel + "," + maxArmor + "," + maxHealth + "," + maxShields);
+		//System.out.println(name + "," + currentLevel + "," + maxArmor + "," + maxHealth + "," + maxShields);
 	}
 
 	/**
@@ -149,7 +155,11 @@ public class TTKTarget implements Comparable {
 	 * @return save string
 	 */
 	public String buildSaveString() {
-		return name + "," + baseLevel + "," + currentLevel + "," + baseArmor + "," + baseHealth + "," + baseShields + "," + surfaceType + "," + armorType + "," + shieldType + "," + factionType + "," + group;
+		String groupStr = "";
+		for(int gru : groups) {
+			groupStr += gru + ";";
+		}
+		return name + "," + baseLevel + "," + currentLevel + "," + baseArmor + "," + baseHealth + "," + baseShields + "," + surfaceType + "," + armorType + "," + shieldType + "," + factionType + "," + groupStr;
 	}
 
 	/**
@@ -157,6 +167,16 @@ public class TTKTarget implements Comparable {
 	 */
 	public void runAdvancedTTK() {
 
+		// Target Base values
+		if (!Main.targetLevelField.getText().equals("") && !Main.targetLevelField.getText().equals("0")) {
+			currentLevel = Integer.parseInt(Main.targetLevelField.getText());
+		} else {
+			currentLevel = defaultLevel;
+		}
+		maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 * baseArmor) + baseArmor);
+		maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
+		maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
+		
 		// Health Mults
 		switch (surfaceType) {
 		case Constants.ENEMY_SURFACE_CLONE_FLESH:
@@ -359,6 +379,9 @@ public class TTKTarget implements Comparable {
 		case Constants.ENEMY_TYPE_CORPUS:
 			typeMult = Main.finalCorpusMult;
 			break;
+		case Constants.ENEMY_TYPE_CORRUPTED:
+			typeMult = Main.finalCorruptedMult;
+			break;
 		}
 
 		// Simulation Data
@@ -445,12 +468,11 @@ public class TTKTarget implements Comparable {
 
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-
+		
 		int cores = Runtime.getRuntime().availableProcessors();
 		spliterations = (Main.complexTTKIterations / cores);
 		clearValues();
-		
-		
+
 		if (Main.complexTTKIterations > 1) {
 			ExecutorService es = Executors.newCachedThreadPool();
 			for (int i = 0; i < cores; i++) {
@@ -469,15 +491,14 @@ public class TTKTarget implements Comparable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 		} else if (Main.complexTTKIterations == 1) {
 			TTKVec.add(calculateHardTimeToKill());
 		}
 		for (Double d : TTKVec) {
 			TTK += d;
 		}
-		
-		
+
 		TTK /= TTKVec.size();
 		Collections.sort(TTKVec);
 		minTTK = TTKVec.get(0);
@@ -761,7 +782,8 @@ public class TTKTarget implements Comparable {
 							comboCritMult += Main.comboCrit * comboMult;
 							comboStatusMult += Main.comboStatus * comboMult;
 						}
-						if (comboMult < 1) comboMult = 1;
+						if (comboMult < 1)
+							comboMult = 1;
 					}
 
 					// C O N D I T I O N O V E R L O A D
@@ -871,7 +893,7 @@ public class TTKTarget implements Comparable {
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 								targetCurrentHealth -= bleedDamage;
 								statusEffects[0] = slashDuration;
-							// Fire Proc
+								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 								double localFireMult = fireMult;
 								if (targetCurrentShields > 0.0) {

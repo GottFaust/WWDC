@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -24,12 +22,14 @@ import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -40,9 +40,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import etc.Constants;
+import etc.TTKNamePair;
 import etc.DPSGraphPanel;
 import etc.TTKGraphPanel;
-import etc.TTKNamePair;
 import damage.Damage;
 import damage.SurfaceDamage;
 import etc.UIBuilder;
@@ -61,10 +61,11 @@ import weapons.DPSPanel;
 import options.ColorOptionsPanel;
 import Maximizer.Maximizer;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Main {
+public class Main{
 
 	/**
 	 * ____________________________________________________________ GLOBAL VARIABLES
@@ -83,15 +84,21 @@ public class Main {
 	protected static JButton clearOutputButton = new JButton("Clear Output");
 	protected static JButton maximizeButton = new JButton("Maximize");
 	protected static JButton stopButton = new JButton("Cancel Calculation");
+	protected static JButton quickTargetButton = new JButton("Add");
+	protected static JButton removeTargetButton = new JButton("Remove");
 
 	protected static JLabel TTKIterationsLabel = new JLabel("Iterations:");
 	protected static JTextField TTKIterationsField = new JTextField(4);
+	public static JTextField targetLevelField = new JTextField(4);
+	protected static JLabel targetLevelLabel = new JLabel("Level");
 	protected static JLabel loadingLabel = new JLabel("CALCULATING");
 
 	/** JTextAreas **/
 	public static JTextArea output = new JTextArea();
 
-	public static JProgressBar progressBar;
+	protected static DefaultListModel enemyListModel = new DefaultListModel();
+	protected static JList enemyList = new JList(enemyListModel);
+	protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
 
 	/** JTabbedPanes **/
 	protected static JTabbedPane weaponPane = new JTabbedPane();
@@ -103,7 +110,6 @@ public class Main {
 	/** JPanels **/
 	protected static JPanel mainPanel = new JPanel();
 	protected static JPanel secondaryPanel = new JPanel();
-	protected static JPanel outerPanel = new JPanel();
 	protected static JPanel deepsPanel = new JPanel();
 	protected static JPanel topPanel = new JPanel();
 	protected static JPanel bottomPanel = new JPanel();
@@ -114,7 +120,7 @@ public class Main {
 	protected static ArcGunPanel arcGunPanel;
 	public static MeleePanel meleePanel;
 	protected static ModManagerPanel theModManager = null;
-	public static TTKManagerPanel theTTKManager = null;
+	protected static TTKManagerPanel theTTKManager = null;
 	protected static WeaponManagerPanel theWeaponManager = null;
 	protected static ColorOptionsPanel theColorPanel = null;
 	protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
@@ -159,6 +165,7 @@ public class Main {
 
 	/** The Maximizer **/
 	public static Maximizer theMaximizer = new Maximizer();
+	public static JProgressBar progressBar;
 
 	/** Mod Vectors **/
 	protected static Vector<Mod> activeMods = new Vector<Mod>();
@@ -215,6 +222,7 @@ public class Main {
 	public static double finalCorpusMult = 1.0;
 	public static double finalGrineerMult = 1.0;
 	public static double finalInfestedMult = 1.0;
+	public static double finalCorruptedMult = 1.0;
 	public static double averageProjectileCount = 1;
 
 	/** Damage/DPS Values **/
@@ -293,6 +301,7 @@ public class Main {
 	public static boolean stop = false;
 	public static boolean setup = true;
 	public static boolean maxxing = false;
+	public static boolean quickGroup = false;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -318,6 +327,7 @@ public class Main {
 		buildUI();
 		mainFrame.setVisible(true);
 		setup = false;
+		updateTargetList();
 		repack();
 	}
 
@@ -327,7 +337,6 @@ public class Main {
 	public static void buildUI() {
 		UIBuilder.panelInit(mainPanel);
 		UIBuilder.panelInit(secondaryPanel);
-		UIBuilder.panelInit(outerPanel);
 		UIBuilder.panelInit(deepsPanel);
 		UIBuilder.panelInit(topPanel);
 		UIBuilder.panelInit(bottomPanel);
@@ -339,9 +348,13 @@ public class Main {
 		UIBuilder.buttonInit(calculateButton);
 		UIBuilder.buttonInit(maximizeButton);
 		UIBuilder.buttonInit(stopButton);
+		UIBuilder.buttonInit(quickTargetButton);
+		UIBuilder.buttonInit(removeTargetButton);
 		UIBuilder.labelInit(TTKIterationsLabel);
+		UIBuilder.labelInit(targetLevelLabel);
 		UIBuilder.labelInit(loadingLabel);
 		UIBuilder.numberFieldInit(TTKIterationsField);
+		UIBuilder.numberFieldInit(targetLevelField);
 		// UIBuilder.buttonInit(statsButton);
 		UIBuilder.buttonInit(clearOutputButton);
 		UIBuilder.textAreaInit(output);
@@ -364,6 +377,12 @@ public class Main {
 		UIBuilder.labelInit(targetGroupLabel);
 		UIBuilder.comboBoxInit(corrosiveProjectionBox);
 		UIBuilder.comboBoxInit(targetGroupBox);
+	    UIBuilder.listInit(enemyList);
+		UIBuilder.scrollPaneInit(enemyScroll);
+
+		enemyList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		enemyList.setLayoutOrientation(JList.VERTICAL_WRAP);
+		enemyList.setVisibleRowCount(-1);
 
 		corrosiveProjectionBox.setPrototypeDisplayValue("XX");
 		targetGroupBox.setPrototypeDisplayValue("XX");
@@ -383,11 +402,18 @@ public class Main {
 			ex.printStackTrace();
 		}
 
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+
 		calculateButton.addActionListener(action);
 		maximizeButton.addActionListener(action);
 		TTKBox.addActionListener(action);
 		lightWeightTTKBox.addActionListener(action);
 		stopButton.addActionListener(action);
+		quickTargetButton.addActionListener(action);
+		removeTargetButton.addActionListener(action);
 		clearOutputButton.addActionListener(action);
 		saveItem.addActionListener(action);
 		loadItem.addActionListener(action);
@@ -395,12 +421,12 @@ public class Main {
 		TTKMenu.addActionListener(action);
 		weaponMenu.addActionListener(action);
 		colorOptionsItem.addActionListener(action);
+		targetGroupBox.addActionListener(action);
 		weaponPane.addChangeListener(change);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		secondaryPanel.setLayout(new BoxLayout(secondaryPanel, BoxLayout.X_AXIS));
-		outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
 		deepsPanel.setLayout(new BoxLayout(deepsPanel, BoxLayout.Y_AXIS));
-		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
 		weaponPane.add(riflePanel, Constants.RIFLE);
 		weaponPane.add(shotgunPanel, Constants.SHOTGUN);
@@ -408,16 +434,25 @@ public class Main {
 		weaponPane.add(meleePanel, Constants.MELEE);
 		weaponPane.add(arcGunPanel, Constants.ARCGUN);
 
+		graphPane.add(enemyList, "Targets");
 		graphPane.add(dpsGraph, "DPS");
 		graphPane.add(ttkGraph, "TTK");
+
+		JPanel targetButtonPanel = new JPanel();
+		UIBuilder.panelInit(targetButtonPanel);
+		targetButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		targetButtonPanel.add(targetGroupLabel);
+		targetButtonPanel.add(targetGroupBox);
+		targetButtonPanel.add(targetLevelLabel);
+		targetButtonPanel.add(targetLevelField);
+		targetButtonPanel.add(quickTargetButton);
+		targetButtonPanel.add(removeTargetButton);
 
 		JPanel buttonPanel = new JPanel();
 		UIBuilder.panelInit(buttonPanel);
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(corrosiveProjectionLabel);
 		buttonPanel.add(corrosiveProjectionBox);
-		buttonPanel.add(targetGroupLabel);
-		buttonPanel.add(targetGroupBox);
 		buttonPanel.add(TTKBox);
 		buttonPanel.add(TTKIterationsLabel);
 		buttonPanel.add(TTKIterationsField);
@@ -426,7 +461,6 @@ public class Main {
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
 		buttonPanel.add(clearOutputButton);
-		// buttonPanel.add(statsButton);
 
 		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
 		corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
@@ -438,20 +472,36 @@ public class Main {
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
+		targetLevelLabel.setToolTipText("Override the default level");
+		targetLevelField.setToolTipText("Override the default level");
+		quickTargetButton.setToolTipText("Add targets to the current group");
+		removeTargetButton.setToolTipText("Remove selected target from the current group");
+		
 		TTKBox.setSelected(true);
 		lightWeightTTKBox.setSelected(false);
 
-		JPanel dataPanel = new JPanel();
-		UIBuilder.panelInit(dataPanel);
-		dataPanel.setLayout(new GridLayout(1, 2, 0, 0));
-		dataPanel.add(graphPane);
-		dataPanel.add(outputScroll);
+		JPanel bottomRightPanel = new JPanel();
+		UIBuilder.panelInit(bottomRightPanel);
+		bottomRightPanel.setLayout(new BoxLayout(bottomRightPanel, BoxLayout.Y_AXIS));
+		bottomRightPanel.add(outputScroll);
+		bottomRightPanel.add(buttonPanel);
 
+		JPanel bottomLeftPanel = new JPanel();
+		bottomLeftPanel.setLayout(new GridBagLayout());
+		UIBuilder.panelInit(bottomLeftPanel);
+		bottomLeftPanel.setLayout(new BoxLayout(bottomLeftPanel, BoxLayout.Y_AXIS));
+		bottomLeftPanel.add(graphPane);
+		bottomLeftPanel.add(targetButtonPanel);
+
+		graphPane.setPreferredSize(new Dimension(429, 250));
 		outputScroll.getViewport().setPreferredSize(new Dimension(400, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
+		targetLevelField.setPreferredSize(new Dimension(0,24));
+		TTKIterationsField.setPreferredSize(new Dimension(0,24));
 
 		topPanel.add(weaponPane);
-		bottomPanel.add(dataPanel);
+		bottomPanel.add(bottomLeftPanel);
+		bottomPanel.add(bottomRightPanel);
 		mainPanel.add(topPanel);
 		mainPanel.add(bottomPanel);
 
@@ -459,9 +509,6 @@ public class Main {
 		DPSPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		secondaryPanel.add(mainPanel);
 		secondaryPanel.add(DPSPanel);
-
-		outerPanel.add(secondaryPanel);
-		outerPanel.add(buttonPanel);
 
 		fileMenu.add(colorOptionsItem);
 		fileMenu.add(saveItem);
@@ -473,13 +520,13 @@ public class Main {
 		mainMenuBar.add(weaponMenu);
 
 		mainFrame.setJMenuBar(mainMenuBar);
-		mainFrame.add(outerPanel);
+		mainFrame.add(secondaryPanel);
 		mainFrame.pack();
 		mainFrame.addWindowListener(window);
 		mainFrame.setTitle(Constants.APP_TITLE + " " + Constants.APP_VERSION);
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		// Loading screen shenanigans
+		// Loading screen
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setBackground(Color.BLACK);
 		progressBar.setForeground(Color.GREEN);
@@ -500,10 +547,6 @@ public class Main {
 		loadingStats.add(stopPanel);
 		loadingStats.setBackground(new Color(0, 0, 0, 0));
 		loadingBackground.add(loadingStats);
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
 		loadingScreen.add(loadingBackground, gbc);
 		loadingScreen.addMouseListener(new MouseAdapter() {
 			@Override
@@ -516,7 +559,6 @@ public class Main {
 				e.consume();
 			}
 		});
-		// loadingScreen.setVisible(true);
 
 		TTKIterationsField.setText("10000");
 
@@ -574,7 +616,7 @@ public class Main {
 			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 			groupTargets = new Vector<TTKTarget>();
 			for (TTKTarget target : theTTKManager.targets) {
-				if (target.group == targetGroup) {
+				if (target.groups.contains(targetGroup)) {
 					groupTargets.add(target);
 				}
 			}
@@ -592,6 +634,18 @@ public class Main {
 		if (updateOutput) {
 			updateOutput();
 		}
+	}
+
+	public static void updateTargetList() {
+		enemyListModel.clear();
+		int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
+		groupTargets = new Vector<TTKTarget>();
+		for (TTKTarget target : theTTKManager.targets) {
+			if (target.groups.contains(targetGroup)) {
+				enemyListModel.addElement(target.name);
+			}
+		}
+		repack();
 	}
 
 	/**
@@ -812,6 +866,7 @@ public class Main {
 		Vector<Double> corpusMods = new Vector<Double>();
 		Vector<Double> grineerMods = new Vector<Double>();
 		Vector<Double> infestedMods = new Vector<Double>();
+		Vector<Double> corruptedMods = new Vector<Double>();
 		Vector<Double> flatDamageMods = new Vector<Double>();
 		Vector<Double> deadAimMods = new Vector<Double>();
 		Vector<Double> flatStatusMods = new Vector<Double>();
@@ -860,6 +915,9 @@ public class Main {
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_GRINEER_DAMAGE)) {
 					grineerMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_GRINEER_DAMAGE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_CORRUPTED_DAMAGE)) {
+					corruptedMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CORRUPTED_DAMAGE))) * (1.0 + modRanks.get(i)));
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_INFESTED_DAMAGE)) {
 					infestedMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_INFESTED_DAMAGE))) * (1.0 + modRanks.get(i)));
@@ -936,7 +994,8 @@ public class Main {
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
 			String element2 = elements.get(i + 1);
-			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) && (element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
+			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) &&
+				(element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
 
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
@@ -1236,6 +1295,12 @@ public class Main {
 			finalGrineerMult += grineerMods.get(i);
 		}
 
+		finalCorruptedMult = 1.0;
+		for (int i = 0; i < corruptedMods.size(); i++) {
+			finalCorruptedMult += corruptedMods.get(i);
+		}
+
+		
 		finalInfestedMult = 1.0;
 		for (int i = 0; i < infestedMods.size(); i++) {
 			finalInfestedMult += infestedMods.get(i);
@@ -2164,10 +2229,11 @@ public class Main {
 				ttkTableSep += "-";
 			}
 			output.append(ttkTableSep);
+
 			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 			Vector<TTKTarget> groupTargets = new Vector<TTKTarget>();
 			for (TTKTarget target : theTTKManager.targets) {
-				if (target.group == targetGroup) {
+				if (target.groups.contains(targetGroup)) {
 					groupTargets.add(target);
 				}
 			}
@@ -2178,6 +2244,7 @@ public class Main {
 			}
 			// Update the TTK Graph
 			ttkGraph.updateGraph(TTKGraphVec);
+
 		}
 
 		// Update the DPS Graph
@@ -2424,6 +2491,8 @@ public class Main {
 	 */
 	protected static void updateTTKMenuState(boolean enabled) {
 		TTKMenu.setEnabled(enabled);
+		quickTargetButton.setEnabled(enabled);
+		removeTargetButton.setEnabled(enabled);
 	}
 
 	/**
@@ -2436,8 +2505,8 @@ public class Main {
 	/**
 	 * ____________________________________________________________ INTERNAL CLASSES
 	 * ____________________________________________________________
-	 */
-
+	 */	  
+	
 	/**
 	 * change Listener Local Class
 	 */
@@ -2479,7 +2548,8 @@ public class Main {
 				updateOutput = false;
 				setup = true;
 				maxxing = true;
-
+				theMaximizer = new Maximizer();
+				
 				new Thread(new Runnable() {
 					public void run() {
 						theMaximizer.Maximizer();
@@ -2491,6 +2561,30 @@ public class Main {
 
 			} else if (e.getSource().equals(stopButton)) {
 				stop = true;
+			} else if (e.getSource().equals(quickTargetButton)) {
+				displayTargetManager();
+				updateTTKMenuState(false);
+				quickGroup = true;
+				theTTKManager.targetGroupPanel.setVisible(false);
+				theTTKManager.deleteButton.setVisible(false);
+				theTTKManager.saveButton.setVisible(false);
+			} else if (e.getSource().equals(removeTargetButton)) {
+			      String targetName = (String)enemyListModel.get(enemyList.getSelectedIndex());
+			      TTKTarget selectedTarget = theTTKManager.getTargetByName(targetName);
+			      TTKTarget foundTarget = theTTKManager.getTargetByName(targetName);
+			      if(theTTKManager.targets.contains(selectedTarget)){
+			    	  Vector<Integer> tempGroups = new Vector<Integer>(selectedTarget.groups);
+			    	  for(int gru : tempGroups) {
+			    		  if( gru == targetGroupBox.getSelectedIndex()) {
+			    			  selectedTarget.groups.remove(gru);
+			    		  }
+			    	  }
+			    	  theTTKManager.targets.set(theTTKManager.targets.indexOf(foundTarget), selectedTarget);
+			    	  //theTTKManager.targets.removeElement(selectedTarget);
+			      }
+			      updateTargetList();
+			      theTTKManager.updateTargetList();
+			      
 			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
 				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
 				if (e.getSource().equals(TTKBox)) {
@@ -2504,6 +2598,7 @@ public class Main {
 				}
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
+				updateTargetList();
 			} else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
 				dpsGraph.clear();
@@ -2566,6 +2661,10 @@ public class Main {
 			} else if (e.getSource().equals(TTKMenu)) {
 				displayTargetManager();
 				updateTTKMenuState(false);
+				quickGroup = false;
+				theTTKManager.targetGroupPanel.setVisible(true);
+				theTTKManager.deleteButton.setVisible(true);
+				theTTKManager.saveButton.setVisible(true);
 			} else if (e.getSource().equals(weaponMenu)) {
 				displayWeaponManager();
 				updateWeaponMenuState(false);

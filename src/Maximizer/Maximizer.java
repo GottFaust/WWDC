@@ -94,12 +94,15 @@ public class Maximizer {
 
 	public void Maximizer() {
 		int emptyMods = 0;
+		/*
 		completedIterations = 0;
 		modsToChange.clear();
-		results.clear();
+		results = new Vector<TTKresult>();
 		Main.stop = false;
 		simulatedMods = new Vector<Mod>();
-
+		simulatedRanks = new Vector<Integer>();
+		 */
+		
 		// Identify empty mod slots and count them
 		for (int i = 0; i < 8; i++) {
 			if (Main.selectedWeapon.selectedMods.get(i).equals("--")) {

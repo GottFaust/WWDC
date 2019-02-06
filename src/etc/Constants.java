@@ -19,6 +19,7 @@ public class Constants {
   public static final String MOD_TYPE_AMMO_CAP = "AmmoCap";
   public static final String MOD_TYPE_CORPUS_DAMAGE = "CorpusDamage";
   public static final String MOD_TYPE_GRINEER_DAMAGE = "GrineerDamage";
+  public static final String MOD_TYPE_CORRUPTED_DAMAGE = "CorruptedDamage";
   public static final String MOD_TYPE_INFESTED_DAMAGE = "InfestedDamage";
   public static final String MOD_TYPE_CRIT_CHANCE = "CritChance";
   public static final String MOD_TYPE_CRIT_MULTIPLIER = "CritMultiplier";
@@ -78,7 +79,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.10.4";
+  public static final String APP_VERSION = "v0.10.5";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -133,6 +134,7 @@ public class Constants {
   public static final String ENEMY_TYPE_INFESTED = "Infested";
   public static final String ENEMY_TYPE_CORPUS = "Corpus";
   public static final String ENEMY_TYPE_GRINEER = "Grineer";
+  public static final String ENEMY_TYPE_CORRUPTED = "Corrupted";
   public static final String ENEMY_SURFACE_CLONE_FLESH = "CloneFlesh";
   public static final String ENEMY_SURFACE_FERRITE_ARMOR = "FerriteArmor";
   public static final String ENEMY_SURFACE_ALLOY_ARMOR = "AlloyArmor";
@@ -173,20 +175,16 @@ public class Constants {
                                                     PREVIOUS_GRAPH_COLOR_NAME+";124,124,124"};
   
   /** Default TTK Targets for use if the file is missing**/
-  public static final String[] baseTTKTargets = { "Corpus Tech,15,95,0,700,250,CorpusFlesh,FerriteArmor,ProtoShield,Corpus,0",
-                                                  "Toxic Ancient,1,95,0,400,0,Fossilized,FerriteArmor,Shields,Infested,0",
-                                                  "Heavy Gunner,8,95,500,300,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,0",
-                                                  "Fusion Moa,15,95,0,250,250,Robotic,FerriteArmor,Shields,Corpus,0",
-                                                  "Corrupted Butcher,1,95,5,100,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Lancer,1,95,200,60,0,CloneFlesh,AlloyArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Crewman,1,95,0,60,150,CorpusFlesh,AlloyArmor,Shields,Grineer,4",
-                                                  "Corrupted Nullifier,1,95,0,60,150,CorpusFlesh,AlloyArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted MOA,1,95,0,250,250,Robotic,AlloyArmor,Shields,Grineer,4",
-                                                  "Corrupted Ancient,1,95,0,400,0,Fossilized,AlloyArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Heavy Gunner,8,95,500,700,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Bombard,4,95,500,300,0,CloneFlesh,AlloyArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Heavy Gunner Leech Eximus,8,95,800,2100,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,4",
-                                                  "Corrupted Bombard Leech Eximus,4,95,800,900,0,CloneFlesh,AlloyArmor,ProtoShield,Grineer,4",
+  public static final String[] baseTTKTargets = { "Corrupted Butcher,1,95,5,100,0,CloneFlesh,FerriteArmor,ProtoShield,Corrupted,4",
+                                                  "Corrupted Lancer,1,95,200,60,0,CloneFlesh,AlloyArmor,ProtoShield,Corrupted,4",
+                                                  "Corrupted Crewman,1,95,0,60,150,CorpusFlesh,AlloyArmor,Shields,Corrupted,4",
+                                                  "Corrupted Nullifier,1,95,0,60,150,CorpusFlesh,AlloyArmor,ProtoShield,Corrupted,4",
+                                                  "Corrupted MOA,1,95,0,250,250,Robotic,AlloyArmor,Shields,Corrupted,4",
+                                                  "Corrupted Ancient,1,95,0,400,0,Fossilized,AlloyArmor,ProtoShield,Corrupted,4",
+                                                  "Corrupted Heavy Gunner,8,95,500,700,0,CloneFlesh,FerriteArmor,ProtoShield,Corrupted,4;0",
+                                                  "Corrupted Bombard,4,95,500,300,0,CloneFlesh,AlloyArmor,ProtoShield,Corrupted,4;0",
+                                                  "Corrupted Heavy Gunner Leech Eximus,8,95,800,2100,0,CloneFlesh,FerriteArmor,ProtoShield,Corrupted,4",
+                                                  "Corrupted Bombard Leech Eximus,4,95,800,900,0,CloneFlesh,AlloyArmor,ProtoShield,Corrupted,4",
                                                   "Butcher,1,95,5,50,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,1",
                                                   "Scorpion,10,95,150,150,0,CloneFlesh,FerriteArmor,ProtoShield,Grineer,1",
                                                   "Elite Lancer,15,95,200,150,0,CloneFlesh,AlloyArmor,ProtoShield,Grineer,1",
@@ -205,7 +203,7 @@ public class Constants {
                                                   "Crewman,1,95,0,60,150,CorpusFlesh,AlloyArmor,Shields,Corpus,2",
                                                   "Sniper Crewman,15,95,0,60,150,CorpusFlesh,AlloyArmor,ProtoShield,Corpus,2",
                                                   "Elite Crewman,15,95,0,100,200,CorpusFlesh,AlloyArmor,Shields,Corpus,2",
-                                                  "Tech,15,95,0,700,250,CorpusFlesh,AlloyArmor,ProtoShield,Corpus,2",
+                                                  "Corpus Tech,15,95,0,700,250,CorpusFlesh,AlloyArmor,ProtoShield,Corpus,2;0",
                                                   "Nullifer Crewman,1,95,0,600,150,CorpusFlesh,AlloyArmor,ProtoShield,Corpus,2",
                                                   "MOA,1,95,0,60,150,Robotic,AlloyArmor,Shields,Corpus,2",
                                                   "Fusion MOA,15,95,0,250,250,Robotic,AlloyArmor,Shields,Corpus,2",
@@ -232,6 +230,7 @@ public class Constants {
                                             "Arrow Mutation,Rifle,3,1,AmmoMutator,0.0,~,4",
                                             "Bane of Corpus,Rifle,5,1,CorpusDamage,0.05,V,4",
                                             "Bane of Grineer,Rifle,5,1,GrineerDamage,0.05,V,4",
+                                            "Bane of Corrupted,Rifle,5,1,CorruptedDamage,0.05,V,4",
                                             "Bane of Infested,Rifle,5,1,InfestedDamage,0.05,V,4",
                                             "Barrel Diffusion,Pistol,5,1,Multishot,0.2,V,6",
                                             "Blaze,Shotgun,3,2,Damage,FireDamage,0.15,0.15,V,6",
@@ -246,6 +245,7 @@ public class Constants {
                                             "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
                                             "Cleanse Corpus,Shotgun,5,1,CorpusDamage,0.05,V,4",
                                             "Cleanse Grineer,Shotgun,5,1,GrineerDamage,0.05,V,4",
+                                            "Cleanse Corrupted,Shotgun,5,1,CorruptedDamage,0.05,V,4",
                                             "Cleanse Infested,Shotgun,5,1,InfestedDamage,0.05,V,4",
                                             "Concussion Rounds,Pistol,5,1,ImpactDamage,0.1,~,2",
                                             "Contagious Spread,Shotgun,5,1,ToxinDamage,0.15,~,6",
@@ -264,9 +264,11 @@ public class Constants {
                                             "Erroding Blight,Pistol,3,1,MagCap,0.5,D,4",
                                             "Expel Corpus,Pistol,5,1,CorpusDamage,0.05,V,4",
                                             "Expel Grineer,Pistol,5,1,GrineerDamage,0.05,V,4",
+                                            "Expel Corrupted,Pistol,5,1,CorruptedDamage,0.05,V,4",
                                             "Expel Infested,Pistol,5,1,InfestedDamage,0.05,V,4",
                                             "Primed Expel Corpus,Pistol,10,1,CorpusDamage,0.05,V,4",
                                             "Primed Expel Grineer,Pistol,10,1,GrineerDamage,0.05,V,4",
+                                            "Primed Expel Corrupted,Pistol,10,1,CorruptedDamage,0.05,V,4",
                                             "Primed Expel Infested,Pistol,10,1,InfestedDamage,0.05,V,4",
                                             "Fanged Fusillade,Rifle,5,1,SlashDamage,0.2,~,6",
                                             "Fast Hands,Rifle,5,1,ReloadSpeed,0.05,~,2",
@@ -296,7 +298,7 @@ public class Constants {
                                             "Lethal Torrent,Pistol,5,2,FireRate,Multishot,0.1,0.1,V,6",
                                             "Lingering Torment,Shotgun,5,1,StatusDuration,0.05,V,6",
                                             "Magazine Warp,Rifle,5,1,MagCap,0.05,~,4",
-                                            "Magnum Force,Pistol,10,2,Damage,AccuracyBonus,0.06,-0.03,V,4",
+                                            "Magnum Force,Pistol,10,2,Damage,AccuracyBonus,0.15,-0.05,V,4",
                                             "Maim,Pistol,5,1,SlashDamage,0.2,~,6",
                                             "Malignant Force,Rifle,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
                                             "Metal Auger,Rifle,5,1,PunchThrough,0.0,~,10",
@@ -399,6 +401,7 @@ public class Constants {
   											"Primed Cryo Rounds,Rifle,10,1,IceDamage,0.15,D,6",
                                             "Primed Bane of Corpus,Rifle,10,1,CorpusDamage,0.05,V,4",
                                             "Primed Bane of Grineer,Rifle,10,1,GrineerDamage,0.05,V,4",
+                                            "Primed Bane of Corrupted,Rifle,10,1,CorruptedDamage,0.05,V,4",
                                             "Primed Bane of Infested,Rifle,10,1,InfestedDamage,0.05,V,4",
   											"Chilling Reload,Shotgun,3,2,IceDamage,ReloadSpeed,0.15,0.1,V,2",
   											//Melee Mods
@@ -434,9 +437,6 @@ public class Constants {
           "Primed Charged Shell,Shotgun,10,1,ElectricDamage,0.15,~,6",
 		  "Chilling Grasp,Shotgun,5,1,IceDamage,0.15,D,6",
 		  "Chilling Reload,Shotgun,3,2,IceDamage,ReloadSpeed,0.15,0.1,V,2",
-		  "Cleanse Corpus,Shotgun,5,1,CorpusDamage,0.05,V,4",
-		  "Cleanse Grineer,Shotgun,5,1,GrineerDamage,0.05,V,4",
-		  "Cleanse Infested,Shotgun,5,1,InfestedDamage,0.05,V,4",
 		  "Combustion Rounds,ArcGun,5,1,FireDamage,0.2,V,4",
 		  "Contagious Spread,Shotgun,5,1,ToxinDamage,0.15,~,6",
 		  "Convulsion,Pistol,5,1,ElectricDamage,0.15,~,6",
@@ -444,9 +444,6 @@ public class Constants {
 		  "Deep Freeze,Pistol,5,1,IceDamage,0.15,D,6",
 		  "Dual Rounds,ArcGun,5,1,Multishot,0.05,V,6",
 		  "Electrified Barrel,ArcGun,5,1,ElectricDamage,0.2,~,4",
-		  "Primed Expel Corpus,Pistol,10,1,CorpusDamage,0.05,V,4",
-          "Primed Expel Grineer,Pistol,10,1,GrineerDamage,0.05,V,4",
-          "Primed Expel Infested,Pistol,10,1,InfestedDamage,0.05,V,4",
 		  "Fanged Fusillade,Rifle,5,1,SlashDamage,0.2,~,6",
 		  "Frail Momentum,Shotgun,5,2,FireRate,Damage,0.15,-0.025,V,4",
 		  "Fridgid Blast,Shotgun,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
@@ -472,6 +469,7 @@ public class Constants {
 		  "Magazine Extension,ArcGun,5,1,MagCap,0.1,~,4",
 		  "Magazine Warp,Rifle,5,1,MagCap,0.05,~,4",
 		  "Magma Chamber,ArcGun,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
+          "Magnum Force,Pistol,10,2,Damage,AccuracyBonus,0.15,-0.05,V,4",
 		  "Maim,Pistol,5,1,SlashDamage,0.2,~,6",
 		  "Malignant Force,Rifle,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
 		  "Modified Munitions,ArcGun,5,1,StatusChance,0.1,D,4",
@@ -481,9 +479,6 @@ public class Constants {
 		  "Pistol Pestilence,Pistol,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
 		  "Point Strike,Rifle,5,1,CritChance,0.25,V,4",
 		  "Polar Magazine,ArcGun,5,1,IceDamage,0.2,D,4",
-          "Primed Bane of Corpus,Rifle,10,1,CorpusDamage,0.05,V,4",
-          "Primed Bane of Grineer,Rifle,10,1,GrineerDamage,0.05,V,4",
-          "Primed Bane of Infested,Rifle,10,1,InfestedDamage,0.05,V,4",
 		  "Primed Cryo Rounds,Rifle,10,1,IceDamage,0.15,D,6",
 		  "Primed Fast Hands,Rifle,10,1,ReloadSpeed,0.05,~,2",
 		  "Primed Heated Charge,Pistol,10,1,FireDamage,0.15,~,6",
