@@ -251,6 +251,7 @@ public class Main{
 	public static SurfaceDamage corpus = new SurfaceDamage();
 	public static SurfaceDamage grineer = new SurfaceDamage();
 	public static SurfaceDamage infested = new SurfaceDamage();
+	public static SurfaceDamage corrupted = new SurfaceDamage();
 	public static SurfaceDamage cloneFlesh = new SurfaceDamage();
 	public static SurfaceDamage ferrite = new SurfaceDamage();
 	public static SurfaceDamage alloy = new SurfaceDamage();
@@ -677,6 +678,7 @@ public class Main{
 		corpus.clear();
 		grineer.clear();
 		infested.clear();
+		corrupted.clear();
 		cloneFlesh.clear();
 		ferrite.clear();
 		alloy.clear();
@@ -724,6 +726,7 @@ public class Main{
 		finalCorpusMult = 1.0;
 		finalGrineerMult = 1.0;
 		finalInfestedMult = 1.0;
+		finalCorruptedMult = 1.0;
 		procsPerSecond = 0.0;
 		burstProcsPerSecond = 0.0;
 		slashStacks = 0;
@@ -1300,7 +1303,6 @@ public class Main{
 			finalCorruptedMult += corruptedMods.get(i);
 		}
 
-		
 		finalInfestedMult = 1.0;
 		for (int i = 0; i < infestedMods.size(); i++) {
 			finalInfestedMult += infestedMods.get(i);
@@ -1418,6 +1420,27 @@ public class Main{
 		// Calculate last-shot damage
 		raw.lastShot = raw.perShot * averageCritMult * finalLastShotDamageMult;
 
+		//factions
+		corpus.perShot = raw.perShot * finalCorpusMult;
+		grineer.perShot = raw.perShot * finalGrineerMult;
+		infested.perShot = raw.perShot * finalInfestedMult;
+		corrupted.perShot = raw.perShot * finalCorruptedMult;
+		
+		corpus.critPerShot = corpus.perShot * finalCritMult;
+		grineer.critPerShot = grineer.perShot * finalCritMult;
+		infested.critPerShot = infested.perShot * finalCritMult;
+		corrupted.critPerShot = corrupted.perShot * finalCritMult;
+		
+		corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
+		grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
+		infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
+		corrupted.firstShot = corrupted.perShot * averageCritMult * finalFirstShotDamageMult;
+		
+		corpus.lastShot = corpus.perShot * averageCritMult * finalLastShotDamageMult;
+		grineer.lastShot = grineer.perShot * averageCritMult * finalLastShotDamageMult;
+		infested.lastShot = infested.perShot * averageCritMult * finalLastShotDamageMult;
+		corrupted.lastShot = corrupted.perShot * averageCritMult * finalLastShotDamageMult;
+		
 		if (updateOutput) {
 
 			// Calculate base damage per shot values
@@ -1436,23 +1459,6 @@ public class Main{
 			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult;
 
 			// Surface-specific
-			corpus.perShot = raw.perShot * finalCorpusMult;
-			grineer.perShot = raw.perShot * finalGrineerMult;
-
-			infested.perShot += impact.perShot;
-			infested.perShot += puncture.perShot;
-			infested.perShot += slash.perShot * 1.25;
-			infested.perShot += fire.perShot * 1.25;
-			infested.perShot += ice.perShot;
-			infested.perShot += electric.perShot;
-			infested.perShot += toxin.perShot;
-			infested.perShot += blast.perShot;
-			infested.perShot += magnetic.perShot;
-			infested.perShot += gas.perShot * 1.75;
-			infested.perShot += radiation.perShot * 0.5;
-			infested.perShot += corrosive.perShot;
-			infested.perShot += viral.perShot * 0.5;
-			infested.perShot *= finalInfestedMult;
 
 			cloneFlesh.perShot += impact.perShot * 0.75;
 			cloneFlesh.perShot += puncture.perShot;
@@ -1631,9 +1637,6 @@ public class Main{
 			radiation.critPerShot = radiation.perShot * finalCritMult;
 			corrosive.critPerShot = corrosive.perShot * finalCritMult;
 			viral.critPerShot = viral.perShot * finalCritMult;
-			corpus.critPerShot = corpus.perShot * finalCritMult;
-			grineer.critPerShot = grineer.perShot * finalCritMult;
-			infested.critPerShot = infested.perShot * finalCritMult;
 			cloneFlesh.critPerShot = cloneFlesh.perShot * finalCritMult;
 			ferrite.critPerShot = ferrite.perShot * finalCritMult;
 			alloy.critPerShot = alloy.perShot * finalCritMult;
@@ -1660,9 +1663,6 @@ public class Main{
 			radiation.firstShot = radiation.perShot * averageCritMult * finalFirstShotDamageMult;
 			corrosive.firstShot = corrosive.perShot * averageCritMult * finalFirstShotDamageMult;
 			viral.firstShot = viral.perShot * averageCritMult * finalFirstShotDamageMult;
-			corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
-			grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
-			infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
 			cloneFlesh.firstShot = cloneFlesh.perShot * averageCritMult * finalFirstShotDamageMult;
 			ferrite.firstShot = ferrite.perShot * averageCritMult * finalFirstShotDamageMult;
 			alloy.firstShot = alloy.perShot * averageCritMult * finalFirstShotDamageMult;
@@ -1689,9 +1689,6 @@ public class Main{
 			radiation.lastShot = radiation.perShot * averageCritMult * finalLastShotDamageMult;
 			corrosive.lastShot = corrosive.perShot * averageCritMult * finalLastShotDamageMult;
 			viral.lastShot = viral.perShot * averageCritMult * finalLastShotDamageMult;
-			corpus.lastShot = corpus.perShot * averageCritMult * finalLastShotDamageMult;
-			grineer.lastShot = grineer.perShot * averageCritMult * finalLastShotDamageMult;
-			infested.lastShot = infested.perShot * averageCritMult * finalLastShotDamageMult;
 			cloneFlesh.lastShot = cloneFlesh.perShot * averageCritMult * finalLastShotDamageMult;
 			ferrite.lastShot = ferrite.perShot * averageCritMult * finalLastShotDamageMult;
 			alloy.lastShot = alloy.perShot * averageCritMult * finalLastShotDamageMult;
@@ -1711,6 +1708,11 @@ public class Main{
 	 */
 	protected static void calculateDamagePerIteration() {
 		raw.perIteration = raw.perShot * finalMag * averageCritMult + raw.firstShot + raw.lastShot;
+		
+		corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
+		grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
+		infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
+		corrupted.perIteration = corrupted.perShot * finalMag * averageCritMult + corrupted.firstShot + corrupted.lastShot;
 
 		if (updateOutput) {
 			impact.perIteration = impact.perShot * finalMag * averageCritMult + impact.firstShot + impact.lastShot;
@@ -1726,9 +1728,6 @@ public class Main{
 			radiation.perIteration = radiation.perShot * finalMag * averageCritMult + radiation.firstShot + radiation.lastShot;
 			corrosive.perIteration = corrosive.perShot * finalMag * averageCritMult + corrosive.firstShot + corrosive.lastShot;
 			viral.perIteration = viral.perShot * finalMag * averageCritMult + viral.firstShot + viral.lastShot;
-			corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
-			grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
-			infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
 			cloneFlesh.perIteration = cloneFlesh.perShot * finalMag * averageCritMult + cloneFlesh.firstShot + cloneFlesh.lastShot;
 			ferrite.perIteration = ferrite.perShot * finalMag * averageCritMult + ferrite.firstShot + ferrite.lastShot;
 			alloy.perIteration = alloy.perShot * finalMag * averageCritMult + alloy.firstShot + alloy.lastShot;
@@ -1748,6 +1747,11 @@ public class Main{
 	 */
 	protected static void calculateDamagePerMinute() {
 		raw.perMinute = raw.perIteration * finalIterationsPerMinute;
+		
+		corpus.perMinute = corpus.perIteration * finalIterationsPerMinute;
+		grineer.perMinute = grineer.perIteration * finalIterationsPerMinute;
+		infested.perMinute = infested.perIteration * finalIterationsPerMinute;
+		corrupted.perMinute = corrupted.perIteration * finalIterationsPerMinute;
 
 		if (updateOutput) {
 			impact.perMinute = impact.perIteration * finalIterationsPerMinute;
@@ -1763,9 +1767,6 @@ public class Main{
 			radiation.perMinute = radiation.perIteration * finalIterationsPerMinute;
 			corrosive.perMinute = corrosive.perIteration * finalIterationsPerMinute;
 			viral.perMinute = viral.perIteration * finalIterationsPerMinute;
-			corpus.perMinute = corpus.perIteration * finalIterationsPerMinute;
-			grineer.perMinute = grineer.perIteration * finalIterationsPerMinute;
-			infested.perMinute = infested.perIteration * finalIterationsPerMinute;
 			cloneFlesh.perMinute = cloneFlesh.perIteration * finalIterationsPerMinute;
 			ferrite.perMinute = ferrite.perIteration * finalIterationsPerMinute;
 			alloy.perMinute = alloy.perIteration * finalIterationsPerMinute;
@@ -1783,6 +1784,11 @@ public class Main{
 	protected static void calculateDamagePerSecond() {
 		// Calculate base DPS values
 		raw.perSecond = raw.perMinute / 60.0;
+		
+		corpus.perSecond = corpus.perMinute / 60.0;
+		grineer.perSecond = grineer.perMinute / 60.0;
+		infested.perSecond = infested.perMinute / 60.0;
+		corrupted.perSecond = corrupted.perMinute / 60.0;
 
 		// Add in DoTs
 		double hunterMult = 1;
@@ -1805,7 +1811,12 @@ public class Main{
 		gasProcDPS = gasProcRate * poisonDamage * averageProjectileCount * finalFireRate * finalStatusChance;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
-
+		
+		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult) * finalCorpusMult;
+		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult) * finalGrineerMult;
+		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult) * finalInfestedMult;
+		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalCorruptedMult * finalCorruptedMult + electricProcDPS + gasProcDPS * finalCorruptedMult) * finalCorruptedMult;
+		
 		if (updateOutput) {
 			impact.perSecond = impact.perMinute / 60.0;
 			puncture.perSecond = puncture.perMinute / 60.0;
@@ -1820,24 +1831,17 @@ public class Main{
 			radiation.perSecond = radiation.perMinute / 60.0;
 			corrosive.perSecond = corrosive.perMinute / 60.0;
 			viral.perSecond = viral.perMinute / 60.0;
-			corpus.perSecond = corpus.perMinute / 60.0;
-			grineer.perSecond = grineer.perMinute / 60.0;
-			infested.perSecond = infested.perMinute / 60.0;
 			cloneFlesh.perSecond = cloneFlesh.perMinute / 60.0;
 			ferrite.perSecond = ferrite.perMinute / 60.0;
 			alloy.perSecond = alloy.perMinute / 60.0;
 			mechanical.perSecond = mechanical.perMinute / 60.0;
-			corpusFlesh.perSecond = corpus.perMinute / 60.0;
+			corpusFlesh.perSecond = corpusFlesh.perMinute / 60.0;
 			shield.perSecond = shield.perMinute / 60.0;
 			protoShield.perSecond = protoShield.perMinute / 60.0;
 			robotic.perSecond = robotic.perMinute / 60.0;
 			infestedFlesh.perSecond = infestedFlesh.perMinute / 60.0;
 			fossilized.perSecond = fossilized.perMinute / 60.0;
 			sinew.perSecond = sinew.perMinute / 60.0;
-
-			corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
-			grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-			infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
 			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
 			ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
 			alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
@@ -1860,6 +1864,16 @@ public class Main{
 		// Add in DoTs
 		raw.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
 
+		corpus.rawPerSecond = corpus.perIteration * burstTime;
+		grineer.rawPerSecond = grineer.perIteration * burstTime;
+		infested.rawPerSecond = infested.perIteration * burstTime;
+		corrupted.rawPerSecond = corrupted.perIteration * burstTime;
+		
+		corpus.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
+		grineer.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
+		infested.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+		corrupted.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorruptedMult * finalCorruptedMult + electricProcDPS + gasProcDPS * finalCorruptedMult);
+		
 		if (updateOutput) {
 			impact.rawPerSecond = impact.perIteration * burstTime;
 			puncture.rawPerSecond = puncture.perIteration * burstTime;
@@ -1874,10 +1888,7 @@ public class Main{
 			radiation.rawPerSecond = radiation.perIteration * burstTime;
 			corrosive.rawPerSecond = corrosive.perIteration * burstTime;
 			viral.rawPerSecond = viral.perIteration * burstTime;
-			corpus.rawPerSecond = corpus.perIteration * burstTime;
-			grineer.rawPerSecond = grineer.perIteration * burstTime;
 			cloneFlesh.rawPerSecond = cloneFlesh.perIteration * burstTime;
-			infested.rawPerSecond = infested.perIteration * burstTime;
 			ferrite.rawPerSecond = ferrite.perIteration * burstTime;
 			alloy.rawPerSecond = alloy.perIteration * burstTime;
 			mechanical.rawPerSecond = mechanical.perIteration * burstTime;
@@ -1889,9 +1900,6 @@ public class Main{
 			fossilized.rawPerSecond = fossilized.perIteration * burstTime;
 			sinew.rawPerSecond = sinew.perIteration * burstTime;
 
-			corpus.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
-			grineer.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-			infested.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
 			cloneFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
 			ferrite.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
 			alloy.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
@@ -2000,6 +2008,7 @@ public class Main{
 		output.append("\nDamage Per Shot to Corpus :: " + f.format(corpus.perShot));
 		output.append("\nDamage Per Shot to Grineer :: " + f.format(grineer.perShot));
 		output.append("\nDamage Per Shot to Infested :: " + f.format(infested.perShot));
+		output.append("\nDamage Per Shot to Corrupted :: " + f.format(corrupted.perShot));
 		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		output.append("\nRaw Crit Damage Per Shot :: " + f.format(raw.critPerShot));
 		if (impact.critPerShot > 0.0) {
@@ -2055,6 +2064,7 @@ public class Main{
 		output.append("\nCrit Damage Per Shot to Corpus :: " + f.format(corpus.critPerShot));
 		output.append("\nCrit Damage Per Shot to Grineer :: " + f.format(grineer.critPerShot));
 		output.append("\nCrit Damage Per Shot to Infested :: " + f.format(infested.critPerShot));
+		output.append("\nCrit Damage Per Shot to Corrupted :: " + f.format(corrupted.critPerShot));
 		if (finalFirstShotDamageMult > 0) {
 			output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 			output.append("\nRaw First Shot Damage :: " + f.format(raw.firstShot * (1 + finalFirstShotDamageMult) / finalFirstShotDamageMult));
@@ -2111,6 +2121,7 @@ public class Main{
 			output.append("\nFirst Shot Damage to Corpus :: " + f.format(corpus.firstShot));
 			output.append("\nFirst Shot Damage to Grineer :: " + f.format(grineer.firstShot));
 			output.append("\nFirst Shot Damage to Infested :: " + f.format(infested.firstShot));
+			output.append("\nFirst Shot Damage to Corrupted :: " + f.format(corrupted.firstShot));
 		}
 		if (finalLastShotDamageMult > 0) {
 			output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
@@ -2168,6 +2179,7 @@ public class Main{
 			output.append("\nLast Shot Damage to Corpus :: " + f.format(corpus.lastShot));
 			output.append("\nLast Shot Damage to Grineer :: " + f.format(grineer.lastShot));
 			output.append("\nLast Shot Damage to Infested :: " + f.format(infested.lastShot));
+			output.append("\nLast Shot Damage to Corrupted :: " + f.format(corrupted.lastShot));
 		}
 		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		output.append("\nRaw Damage Per Second :: " + f.format(raw.perSecond));
@@ -2185,6 +2197,7 @@ public class Main{
 		output.append("\nDamage Per Second to Corpus :: " + f.format(corpus.perSecond));
 		output.append("\nDamage Per Second to Grineer :: " + f.format(grineer.perSecond));
 		output.append("\nDamage Per Second to Infested :: " + f.format(infested.perSecond));
+		output.append("\nDamage Per Second to Corrupted :: " + f.format(corrupted.perSecond));
 		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		output.append("\nRaw Burst Damage Per Second :: " + f.format(raw.rawPerSecond));
 		output.append("\nBurst Damage Per Second to Clone Flesh :: " + f.format(cloneFlesh.rawPerSecond));
@@ -2201,6 +2214,7 @@ public class Main{
 		output.append("\nBurst Damage Per Second to Corpus :: " + f.format(corpus.rawPerSecond));
 		output.append("\nBurst Damage Per Second to Grineer :: " + f.format(grineer.rawPerSecond));
 		output.append("\nBurst Damage Per Second to Infested :: " + f.format(infested.rawPerSecond));
+		output.append("\nBurst Damage Per Second to Corrupted :: " + f.format(corrupted.rawPerSecond));
 
 		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		output.append(selectedWeapon.getModsOutput());
@@ -2293,6 +2307,11 @@ public class Main{
 			DPSPanel.fireProcField.setText(f.format(heatDoTDPS));
 			DPSPanel.burstField.setText(f.format(raw.rawPerSecond));
 			DPSPanel.sustainedField.setText(f.format(raw.perSecond));
+			
+			DPSPanel.corpusField.setText(f.format(corpus.perSecond));
+			DPSPanel.grineerField.setText(f.format(grineer.perSecond));
+			DPSPanel.infestedField.setText(f.format(infested.perSecond));
+			DPSPanel.corruptedField.setText(f.format(corrupted.perSecond));
 
 			DPSPanel.impactChanceField.setText(f.format(finalStatusChance * 100 * impactProcRate) + "%");
 			DPSPanel.punctureChanceField.setText(f.format(finalStatusChance * 100 * punctureProcRate) + "%");
@@ -2340,6 +2359,10 @@ public class Main{
 			DPSPanel.corrosiveChancePanel.setVisible(false);
 			DPSPanel.viralChancePanel.setVisible(false);
 			DPSPanel.status.setVisible(false);
+			DPSPanel.corpusPanel.setVisible(false);
+			DPSPanel.grineerPanel.setVisible(false);
+			DPSPanel.infestedPanel.setVisible(false);
+			DPSPanel.corruptedPanel.setVisible(false);
 
 			if (finalStatusChance > 0) {
 				DPSPanel.status.setVisible(true);
@@ -2410,11 +2433,24 @@ public class Main{
 			}
 			if (heatDoTDPS > 0) {
 				DPSPanel.fireProcPanel.setVisible(true);
+			}	
+			if (finalCorpusMult > 1) {
+				DPSPanel.corpusPanel.setVisible(true);
+			}
+			if (finalGrineerMult > 1) {
+				DPSPanel.grineerPanel.setVisible(true);
+			}
+			if (finalInfestedMult > 1) {
+				DPSPanel.infestedPanel.setVisible(true);
+			}
+			if (finalCorruptedMult > 1) {
+				DPSPanel.corruptedPanel.setVisible(true);
 			}
 		}
 		if (TTKBox.isSelected()) {
 			useComplexTTK = true;
 		}
+		repack();
 	}
 
 	/**

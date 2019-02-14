@@ -61,6 +61,10 @@ public class DPSPanel extends JPanel {
 	public JPanel radiationChancePanel = new JPanel();
 	public JPanel corrosiveChancePanel = new JPanel();
 	public JPanel viralChancePanel = new JPanel();
+	public JPanel corpusPanel = new JPanel();
+	public JPanel grineerPanel = new JPanel();
+	public JPanel infestedPanel = new JPanel();
+	public JPanel corruptedPanel = new JPanel();
 
 	protected JLabel impactLabel = new JLabel("Impact - ");
 	protected JLabel punctureLabel = new JLabel("Puncture - ");
@@ -104,6 +108,10 @@ public class DPSPanel extends JPanel {
 	protected JLabel radiationChanceLabel = new JLabel("Radiation Chance - ");
 	protected JLabel corrosiveChanceLabel = new JLabel("Corrosive Chance - ");
 	protected JLabel viralChanceLabel = new JLabel("Viral Chance - ");
+	protected JLabel corpusLabel = new JLabel("DPS to Corpus - ");
+	protected JLabel grineerLabel = new JLabel("DPS to Grineer - ");
+	protected JLabel infestedLabel = new JLabel("DPS to Infested - ");
+	protected JLabel corruptedLabel = new JLabel("DPS to Corrupted - ");
 
 	public JTextField impactField = new JTextField(8);
 	public JTextField punctureField = new JTextField(8);
@@ -147,6 +155,10 @@ public class DPSPanel extends JPanel {
 	public JTextField radiationChanceField = new JTextField(8);
 	public JTextField corrosiveChanceField = new JTextField(8);
 	public JTextField viralChanceField = new JTextField(8);
+	public JTextField corpusField = new JTextField(8);
+	public JTextField grineerField = new JTextField(8);
+	public JTextField infestedField = new JTextField(8);
+	public JTextField corruptedField = new JTextField(8);
 
 	public DPSPanel() {
 		buildUI();
@@ -195,6 +207,10 @@ public class DPSPanel extends JPanel {
 		UIBuilder.labelInit(radiationChanceLabel);
 		UIBuilder.labelInit(corrosiveChanceLabel);
 		UIBuilder.labelInit(viralChanceLabel);
+		UIBuilder.labelInit(corpusLabel);
+		UIBuilder.labelInit(grineerLabel);
+		UIBuilder.labelInit(infestedLabel);
+		UIBuilder.labelInit(corruptedLabel);
 
 		UIBuilder.textFieldInit(impactField);
 		UIBuilder.textFieldInit(punctureField);
@@ -238,6 +254,10 @@ public class DPSPanel extends JPanel {
 		UIBuilder.textFieldInit(radiationChanceField);
 		UIBuilder.textFieldInit(corrosiveChanceField);
 		UIBuilder.textFieldInit(viralChanceField);
+		UIBuilder.textFieldInit(corpusField);
+		UIBuilder.textFieldInit(grineerField);
+		UIBuilder.textFieldInit(infestedField);
+		UIBuilder.textFieldInit(corruptedField);
 
 		UIBuilder.createSepparationBorder(impactPanel);
 		UIBuilder.createSepparationBorder(puncturePanel);
@@ -281,6 +301,10 @@ public class DPSPanel extends JPanel {
 		UIBuilder.createSepparationBorder(radiationChancePanel);
 		UIBuilder.createSepparationBorder(corrosiveChancePanel);
 		UIBuilder.createSepparationBorder(viralChancePanel);
+		UIBuilder.createSepparationBorder(corpusPanel);
+		UIBuilder.createSepparationBorder(grineerPanel);
+		UIBuilder.createSepparationBorder(infestedPanel);
+		UIBuilder.createSepparationBorder(corruptedPanel);
 
 		UIBuilder.panelInit(this);
 		UIBuilder.panelInit(impactPanel);
@@ -327,6 +351,10 @@ public class DPSPanel extends JPanel {
 		UIBuilder.panelInit(viralChancePanel);
 		UIBuilder.panelInit(stats);
 		UIBuilder.panelInit(status);
+		UIBuilder.panelInit(corpusPanel);
+		UIBuilder.panelInit(grineerPanel);
+		UIBuilder.panelInit(infestedPanel);
+		UIBuilder.panelInit(corruptedPanel);
 
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -372,6 +400,10 @@ public class DPSPanel extends JPanel {
 		radiationChancePanel.setLayout(new GridLayout(1, 2, 0, 0));
 		corrosiveChancePanel.setLayout(new GridLayout(1, 2, 0, 0));
 		viralChancePanel.setLayout(new GridLayout(1, 2, 0, 0));
+		corpusPanel.setLayout(new GridLayout(1, 2, 0, 0));
+		grineerPanel.setLayout(new GridLayout(1, 2, 0, 0));
+		infestedPanel.setLayout(new GridLayout(1, 2, 0, 0));
+		corruptedPanel.setLayout(new GridLayout(1, 2, 0, 0));
 
 		this.setMinimumSize(new Dimension(0, 580));
 		impactPanel.setMaximumSize(new Dimension(250, 20));
@@ -416,6 +448,10 @@ public class DPSPanel extends JPanel {
 		radiationChancePanel.setMaximumSize(new Dimension(250, 20));
 		corrosiveChancePanel.setMaximumSize(new Dimension(250, 20));
 		viralChancePanel.setMaximumSize(new Dimension(250, 20));
+		corpusPanel.setMaximumSize(new Dimension(250, 20));
+		grineerPanel.setMaximumSize(new Dimension(250, 20));
+		infestedPanel.setMaximumSize(new Dimension(250, 20));
+		corruptedPanel.setMaximumSize(new Dimension(250, 20));
 
 		impactPanel.add(impactLabel);
 		impactPanel.add(impactField);
@@ -501,6 +537,14 @@ public class DPSPanel extends JPanel {
 		corrosiveChancePanel.add(corrosiveChanceField);
 		viralChancePanel.add(viralChanceLabel);
 		viralChancePanel.add(viralChanceField);
+		corpusPanel.add(corpusLabel);
+		corpusPanel.add(corpusField);
+		grineerPanel.add(grineerLabel);
+		grineerPanel.add(grineerField);
+		infestedPanel.add(infestedLabel);
+		infestedPanel.add(infestedField);
+		corruptedPanel.add(corruptedLabel);
+		corruptedPanel.add(corruptedField);
 
 		stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
 
@@ -533,6 +577,10 @@ public class DPSPanel extends JPanel {
 		stats.add(fireProcPanel);
 		stats.add(burstPanel);
 		stats.add(sustainedPanel);
+		stats.add(corpusPanel);
+		stats.add(grineerPanel);
+		stats.add(infestedPanel);
+		stats.add(corruptedPanel);
 
 		status.setLayout(new BoxLayout(status, BoxLayout.Y_AXIS));
 

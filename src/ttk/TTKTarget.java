@@ -886,6 +886,7 @@ public class TTKTarget implements Comparable {
 
 							// Which Proc?
 							double proc = rng.nextDouble();
+							
 							// Slash Proc
 							if ((proc -= slashProc) < 0 && munitionsProc == false) {
 								double bleedDamage = DoTBase * totalMult * 0.35;
@@ -893,6 +894,7 @@ public class TTKTarget implements Comparable {
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration));
 								targetCurrentHealth -= bleedDamage;
 								statusEffects[0] = slashDuration;
+								
 								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 								double localFireMult = fireMult;
@@ -913,6 +915,7 @@ public class TTKTarget implements Comparable {
 									targetCurrentHealth -= heatDamage;
 								}
 								statusEffects[1] = heatDuration;
+								
 								// Electric Proc
 							} else if ((proc -= electricProc) < 0) {
 								double localElectricMult = electricMult;
@@ -928,6 +931,7 @@ public class TTKTarget implements Comparable {
 									targetCurrentHealth -= electricProcDamage;
 								}
 								statusEffects[2] = (int) (6 * Main.finalStatusDuration) * 10000;
+								
 								// Toxin Proc
 							} else if ((proc -= toxinProc) < 0) {
 								double localToxinMult = toxinMult;
@@ -939,30 +943,39 @@ public class TTKTarget implements Comparable {
 								statusStacks.add(new DoTPair(poisonDamage, toxinDuration));
 								targetCurrentHealth -= poisonDamage;
 								statusEffects[3] = toxinDuration;
+								
 								// Gas Proc
 							} else if ((proc -= gasProc) < 0) {
 								double localGasMult = toxinMult;
 								if (targetAdjustedMaxArmor > 0.0) {
 									localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 								}
-								double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5;
-								double poisonDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25;
+								int gasHeadMult = 1;
+								if(headShotMult > 1) {
+									gasHeadMult = 2;
+								}
+								double cloudDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localGasMult * totalMult * 0.5 * gasHeadMult;
+								double poisonDamage = DoTBase * (1 + Main.globalToxin) * (1 + Main.globalToxin) * typeMult * typeMult * localGasMult * totalMult * 0.25 * gasHeadMult;
 								int gasDuration = (int) (8 * Main.finalStatusDuration) * 10000;
 								statusStacks.add(new DoTPair(poisonDamage, gasDuration));
 								targetCurrentHealth -= (cloudDamage + poisonDamage);
 								statusEffects[4] = gasDuration;
+								
 								// Magnetic Proc
 							} else if ((proc -= magneticProc) < 0) {
 								magneticStacks = (int) (Math.round(60000 * Main.finalStatusDuration));
 								statusEffects[5] = (int) (Math.round(60000 * Main.finalStatusDuration));
+								
 								// Viral Proc
 							} else if ((proc -= viralProc) < 0) {
 								viralStacks = (int) (Math.round(60000 * Main.finalStatusDuration));
 								statusEffects[6] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							
 								// Corrosive Proc
 							} else if ((proc -= corrosiveProc) < 0) {
 								corrosiveStacks++;
 								statusEffects[7] = (int) (Math.round(60000 * Main.finalStatusDuration));
+							
 							} else if ((proc -= impactProc) < 0) {
 								statusEffects[8] = (int) (Math.round(60000 * Main.finalStatusDuration));
 							} else if ((proc -= punctureProc) < 0) {
