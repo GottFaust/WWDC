@@ -743,14 +743,6 @@ public class TTKTarget implements Comparable {
 						targetCurrentHealth += viralHealth;
 						viralHealth = 0;
 					}
-					// Armor
-					targetAdjustedMaxArmor = maxArmor;
-					targetAdjustedMaxArmor *= corrosiveProjectionMult;
-					if (corrosiveStacks > 0) {
-						for (int i = 0; i < corrosiveStacks; i++) {
-							targetAdjustedMaxArmor *= 0.75;
-						}
-					}
 
 					// Find shot-unique multipliers
 					// Find multishot
@@ -810,6 +802,15 @@ public class TTKTarget implements Comparable {
 					// Shoot 1 projectile
 					for (int p = 0; p < multishot; p++) {
 
+						// Armor
+						targetAdjustedMaxArmor = maxArmor;
+						targetAdjustedMaxArmor *= corrosiveProjectionMult;
+						if (corrosiveStacks > 0) {
+							for (int i = 0; i < corrosiveStacks; i++) {
+								targetAdjustedMaxArmor *= 0.75;
+							}
+						}
+						
 						// Find Crit
 						double localCritMult = 1.0;
 						double tempCrit = comboCritMult * Main.finalCritChance + 1;

@@ -31,7 +31,12 @@ public class Maximizer {
 	public void calculateAndStore() {
 
 		Main.calculateDPS();
-
+		
+		if(Double.isNaN(Main.raw.perSecond)) {
+			Main.stop = true;
+			return;
+		}
+		
 		Vector TTKs = new Vector<String>();
 		double total = 0;
 		Vector<Double> times = new Vector<Double>();
@@ -60,7 +65,7 @@ public class Maximizer {
 	 */
 	public void thatThang(int modSlot) {
 		if (Main.stop) {
-			// Do nothing
+			return;
 		} else if (modSlot == 0) {
 			updateRanks();
 			calculateAndStore();
@@ -93,7 +98,6 @@ public class Maximizer {
 	}
 
 	public void Maximizer() {
-		
 		int emptyMods = 0;
 		Main.stop = false;
 		completedIterations = 0;
@@ -101,7 +105,6 @@ public class Maximizer {
 		modsToChange.clear();
 		simulatedMods.clear();
 		simulatedRanks.clear();
-
 		
 		// Identify empty mod slots and count them
 		for (int i = 0; i < 8; i++) {
@@ -126,6 +129,11 @@ public class Maximizer {
 		// Do
 		thatThang(emptyMods);
 
+		if(Main.stop == true) {
+			Main.output.append("Maximizer stopped\n");
+			return;
+		}
+		
 		// For each target: find its fastest kill time, DPS, etc
 		// Find fasted kill time for each target
 		for (int k = 0; k < targets; k++) {
@@ -187,7 +195,6 @@ public class Maximizer {
 		}
 
 		Main.output.append("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" + "\n");
-		Main.output.append("Want to see the raw data? Look at MaximizerResults.csv in the install folder" + "\n");
 
 		// Make CSV File
 		maximizerResults = new File("MaximizerResults.csv");
@@ -210,8 +217,9 @@ public class Maximizer {
 			}
 			writer.flush();
 			writer.close();
+			Main.output.append("Full results stored in MaximizerResults.csv in the install folder\n");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Main.output.append("Could not create MaximizerResults.csv\n");
 		}
 	}
 

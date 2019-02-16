@@ -98,7 +98,7 @@ public class Main{
 
 	protected static DefaultListModel enemyListModel = new DefaultListModel();
 	protected static JList enemyList = new JList(enemyListModel);
-	protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
+	//protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
 
 	/** JTabbedPanes **/
 	protected static JTabbedPane weaponPane = new JTabbedPane();
@@ -379,7 +379,7 @@ public class Main{
 		UIBuilder.comboBoxInit(corrosiveProjectionBox);
 		UIBuilder.comboBoxInit(targetGroupBox);
 	    UIBuilder.listInit(enemyList);
-		UIBuilder.scrollPaneInit(enemyScroll);
+		//UIBuilder.scrollPaneInit(enemyScroll);
 
 		enemyList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		enemyList.setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -612,8 +612,7 @@ public class Main{
 		} else if (lightWeightTTKBox.isSelected()) {
 			complexTTKIterations = 1;
 		}
-		// && raw.perSecond > 100
-		if (useComplexTTK) {
+		if (useComplexTTK && raw.perSecond > 100) {
 			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 			groupTargets = new Vector<TTKTarget>();
 			for (TTKTarget target : theTTKManager.targets) {
@@ -621,7 +620,6 @@ public class Main{
 					groupTargets.add(target);
 				}
 			}
-			// if (useComplexTTK && raw.perSecond > 100) {
 			// complexTTKCompletions = 0;
 			for (TTKTarget target : groupTargets) {
 				target.runAdvancedTTK();

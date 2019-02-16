@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import etc.Constants;
+import main.Main;
 
 
 public class WeaponInitializer {
@@ -80,7 +81,7 @@ public class WeaponInitializer {
         writer.close();
       }
     }catch(Exception ex){
-      ex.printStackTrace();
+    	Main.output.append("Could not access weapons.db");
     }
     Collections.sort(weapons);
   }

@@ -72,7 +72,6 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JComboBox<String> armorTypeBox = new JComboBox<String>();
 	protected JComboBox<String> shieldTypeBox = new JComboBox<String>();
 	protected JComboBox<String> factionTypeBox = new JComboBox<String>();
-	// protected JComboBox<String> targetGroupBox = new JComboBox<String>();
 
 	/** Buttons **/
 	protected JButton addUpdateButton = new JButton("Add or Update");
@@ -280,7 +279,7 @@ public class TTKManagerPanel extends JPanel implements ActionListener, ListSelec
 			}
 			updateTargetList();
 		} catch (Exception e) {
-			e.printStackTrace();
+	    	Main.output.append("Could not access ttkTargets.db");
 		}
 
 		surfaceTypes.clear();

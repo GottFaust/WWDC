@@ -10,6 +10,7 @@ import java.util.Vector;
 import weapons.WeaponInitializer;
 
 import etc.Constants;
+import main.Main;
 
 
 public class ModInitializer {
@@ -91,7 +92,7 @@ public class ModInitializer {
         
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	Main.output.append("Could not access mods.db");
     }
   }
   
