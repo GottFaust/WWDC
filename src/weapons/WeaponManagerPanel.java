@@ -66,6 +66,12 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
   protected WeaponPanel melee;
   protected WeaponPanel arcGun;
   
+  /** Temporary Scope Variables **/
+  String scope1 = "0";
+  String scope2 = "0";
+  String scope3 = "0";
+  int currentScope = 0;
+  
   /**
    * CTOR
    * @param arcGunPanel 
@@ -146,6 +152,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     addUpdateButton.addActionListener(this);
     deleteButton.addActionListener(this);
     saveButton.addActionListener(this);
+    attributesPanel.scopeStrengthBox.addActionListener(this);
     
     weaponList.getSelectionModel().addListSelectionListener(this);
     
@@ -208,6 +215,12 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     attributesPanel.multiplierField.setText(selectedWeapon.critMult);
     attributesPanel.statusField.setText(selectedWeapon.status);
     attributesPanel.projectileField.setText(selectedWeapon.projeciles);
+    attributesPanel.scopeBox.setSelectedItem(selectedWeapon.scopeBonus);
+    attributesPanel.scopeStrengthBox.setSelectedIndex(0);
+    attributesPanel.scopeStrengthField.setText("0");
+    scope1 = selectedWeapon.scope1;
+    scope2 = selectedWeapon.scope2;
+    scope3 = selectedWeapon.scope3;
   }
   
 
@@ -252,9 +265,18 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String critMult = attributesPanel.multiplierField.getText();
     String status = attributesPanel.statusField.getText();
     String projeciles = attributesPanel.projectileField.getText();
+    String scopeBonus = (String)attributesPanel.scopeBox.getSelectedItem();
+    
+	if(attributesPanel.scopeStrengthBox.getSelectedIndex() ==  1) {
+		scope1 = attributesPanel.scopeStrengthField.getText();
+	} else if (attributesPanel.scopeStrengthBox.getSelectedIndex() ==  2) {
+		scope2 = attributesPanel.scopeStrengthField.getText();
+	} else if (attributesPanel.scopeStrengthBox.getSelectedIndex() == 3) {
+		scope3 = attributesPanel.scopeStrengthField.getText();
+	}
     
     if(name.equals("")){
-      name = "Unnamed Target";
+      name = "Unnamed Weapon";
     }
     try{
       double testDouble = Double.parseDouble(chargeTime);
@@ -353,6 +375,10 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+status;
     weaponString += ","+projeciles;
     weaponString += ","+drain;
+    weaponString += ","+scopeBonus;
+    weaponString += ","+scope1;
+    weaponString += ","+scope2;
+    weaponString += ","+scope3;
     return weaponString;
   }
 
@@ -392,6 +418,26 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
       pistol.updateWeaponBox();
       melee.updateWeaponBox();
       arcGun.updateWeaponBox();
+    }else if(e.getSource().equals(attributesPanel.scopeStrengthBox)) {
+    	// Remember the scope's entered strength
+    	if(currentScope == 1) {
+    		scope1 = attributesPanel.scopeStrengthField.getText();
+    	} else if (currentScope == 2) {
+    		scope2 = attributesPanel.scopeStrengthField.getText();
+    	} else if (currentScope == 3) {
+    		scope3 = attributesPanel.scopeStrengthField.getText();
+    	}
+    	// Show scope's strength
+    	if(attributesPanel.scopeStrengthBox.getSelectedIndex() ==  1) {
+    		attributesPanel.scopeStrengthField.setText(scope1);
+    	} else if (attributesPanel.scopeStrengthBox.getSelectedIndex() ==  2) {
+    		attributesPanel.scopeStrengthField.setText(scope2);
+    	} else if (attributesPanel.scopeStrengthBox.getSelectedIndex() == 3) {
+    		attributesPanel.scopeStrengthField.setText(scope3);
+    	} else {
+    		attributesPanel.scopeStrengthField.setText("0");
+    	}
+    	currentScope = attributesPanel.scopeStrengthBox.getSelectedIndex();
     }
   }
   

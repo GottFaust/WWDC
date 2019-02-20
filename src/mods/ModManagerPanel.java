@@ -206,6 +206,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_COMBO_CRIT);
 		modEffects.add(Constants.MOD_TYPE_COMBO_STATUS);
 		modEffects.add(Constants.MOD_TYPE_CONDITION_OVERLOAD);
+		modEffects.add(Constants.HEADSHOT_BONUS);
 
 		Collections.sort(modEffects);
 

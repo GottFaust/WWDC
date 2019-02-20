@@ -40,11 +40,14 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel projectilePanel = new JPanel();
   protected JPanel statusPanel = new JPanel();
   protected JPanel drainPanel = new JPanel();
+  protected JPanel scopePanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> damageTypeBox = new JComboBox<String>();
   protected JComboBox<String> weaponModeBox = new JComboBox<String>();
   protected JComboBox<String> weaponBox = new JComboBox<String>();
+  protected JComboBox<String> scopeBox = new JComboBox<String>();
+  protected JComboBox<String> scopeStrengthBox = new JComboBox<String>();
   
   /** JLabels **/
   protected JLabel nameLabel = new JLabel("Name - ");
@@ -85,6 +88,7 @@ public class WeaponAttributesPanel extends JPanel {
   protected JTextField projectileField = new JTextField(8);
   protected JTextField statusField = new JTextField(8);
   protected JTextField drainField = new JTextField(8);
+  protected JTextField scopeStrengthField = new JTextField(4);
   
   
   /**
@@ -106,6 +110,8 @@ public class WeaponAttributesPanel extends JPanel {
   public void buildUI(){
     UIBuilder.comboBoxInit(weaponModeBox);
     UIBuilder.comboBoxInit(damageTypeBox);
+    UIBuilder.comboBoxInit(scopeBox);
+    UIBuilder.comboBoxInit(scopeStrengthBox);
     
     UIBuilder.labelInit(nameLabel);
     UIBuilder.labelInit(damageLabel);
@@ -145,6 +151,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.numberFieldInit(projectileField);
     UIBuilder.numberFieldInit(statusField);
     UIBuilder.numberFieldInit(drainField);
+    UIBuilder.numberFieldInit(scopeStrengthField);
     
     UIBuilder.createSepparationBorder(namePanel);
     UIBuilder.createSepparationBorder(damagePanel);
@@ -165,6 +172,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(projectilePanel);
     UIBuilder.createSepparationBorder(statusPanel);
     UIBuilder.createSepparationBorder(drainPanel);
+    UIBuilder.createSepparationBorder(scopePanel);
     
     UIBuilder.panelInit(this);
     UIBuilder.panelInit(namePanel);
@@ -186,6 +194,7 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(projectilePanel);
     UIBuilder.panelInit(statusPanel);
     UIBuilder.panelInit(drainPanel);
+    UIBuilder.panelInit(scopePanel);
     
     nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
     damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -252,6 +261,15 @@ public class WeaponAttributesPanel extends JPanel {
     damageTypeBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
     
+    scopeBox.addItem(Constants.ADDITIVE_CRIT_CHANCE);
+    scopeBox.addItem(Constants.ADDITIVE_CRIT_DAMAGE);
+    scopeBox.addItem(Constants.HEADSHOT_BONUS);
+    
+    scopeStrengthBox.addItem("Unscoped");
+    scopeStrengthBox.addItem("Level 1");
+    scopeStrengthBox.addItem("Level 2");
+    scopeStrengthBox.addItem("Level 3");
+    
     this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     namePanel.setLayout(new GridLayout(1,2,0,0));
     damagePanel.setLayout(new GridLayout(1,2,0,0));
@@ -272,6 +290,7 @@ public class WeaponAttributesPanel extends JPanel {
     statusPanel.setLayout(new GridLayout(1,2,0,0));
     chargeTimePanel.setLayout(new GridLayout(1,2,0,0));
     burstCountPanel.setLayout(new GridLayout(1,2,0,0));
+    scopePanel.setLayout(new GridLayout(1,3,0,0));
     
     namePanel.add(nameLabel);
     namePanel.add(nameField);
@@ -311,6 +330,9 @@ public class WeaponAttributesPanel extends JPanel {
     projectilePanel.add(projectileField);
     statusPanel.add(statusLabel);
     statusPanel.add(statusField);
+    scopePanel.add(scopeBox);
+    scopePanel.add(scopeStrengthBox);
+    scopePanel.add(scopeStrengthField);
     
     this.setBorder(null);
     
@@ -328,11 +350,12 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(fireRatePanel);
     this.add(magSizePanel);
     this.add(drainPanel);
-    this.add(comboPanel);
-    this.add(startingComboPanel);
     this.add(reloadPanel);
     this.add(critChancePanel);
     this.add(critMultPanel);
+    this.add(comboPanel);
+    this.add(startingComboPanel);
+    this.add(scopePanel);
     
     weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
     damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
@@ -362,6 +385,8 @@ public class WeaponAttributesPanel extends JPanel {
     multiplierField.setText("");
     projectileField.setText("");
     statusField.setText("");
+    scopeStrengthField.setText("");
+    scopeStrengthBox.setSelectedIndex(0);
   }
   
   /**
@@ -388,6 +413,8 @@ public class WeaponAttributesPanel extends JPanel {
     multiplierField.setText("");
     projectileField.setText("");
     statusField.setText("");
+    scopeStrengthField.setText("");
+    scopeStrengthBox.setSelectedIndex(0);
   }
 
 }

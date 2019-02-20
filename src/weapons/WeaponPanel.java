@@ -319,6 +319,10 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		wap.projectileField.addActionListener(this);
 		wap.statusField.addActionListener(this);
 		wap.drainField.addActionListener(this);
+		
+		wap.scopeStrengthField.addActionListener(this);
+		wap.scopeBox.addActionListener(this);
+		wap.scopeStrengthBox.addActionListener(this);
 
 		totalModCostField.addActionListener(this);
 		addCCField.addActionListener(this);
@@ -357,39 +361,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		else if(modTwo.equals("--")) count = modTwoPanel.modBox.getItemCount();
 		else if(modOne.equals("--")) count = modOnePanel.modBox.getItemCount();		
 		return count;
-	}
-
-	/**
-	 * Sets Mods for the Maximizer
-	 */
-	public void setMod(int mod, int set) {
-		switch(mod) {
-		case 0:
-			modOnePanel.modBox.setSelectedIndex(set);
-			break;
-		case 1:
-			modTwoPanel.modBox.setSelectedIndex(set);
-			break;
-		case 2:
-			modThreePanel.modBox.setSelectedIndex(set);
-			break;
-		case 3:
-			modFourPanel.modBox.setSelectedIndex(set);
-			break;
-		case 4:
-			modFivePanel.modBox.setSelectedIndex(set);
-			break;
-		case 5:
-			modSixPanel.modBox.setSelectedIndex(set);
-			break;
-		case 6:
-			modSevenPanel.modBox.setSelectedIndex(set);
-			break;
-		case 7:
-			modEightPanel.modBox.setSelectedIndex(set);
-			break;
-		}
-		updateDropDownContents();
 	}
 
 	/**
@@ -779,7 +750,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Gets the sniper starting
+	 * Gets the sniper starting combo
 	 * 
 	 * @return startingCombo
 	 */
@@ -794,7 +765,35 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		}
 		return (StartingCombo);
 	}
+	
+	/**
+	 * Gets the sniper scope effect
+	 * 
+	 * @return scopeEffect
+	 */
+	public String getScopeEffect() {
+		String scopeEffectStr = (String) wap.scopeBox.getSelectedItem();
+		return (scopeEffectStr);
+	}
 
+	/**
+	 * Gets the sniper scope strength
+	 * 
+	 * @return startingCombo
+	 */
+	public double getScopeStrength() {
+		String scopeStrengthStr = wap.scopeStrengthField.getText();
+		if (scopeStrengthStr == null || scopeStrengthStr.equals("")) {
+			scopeStrengthStr = "0";
+		}
+		double scopeStrength = Double.parseDouble(scopeStrengthStr);
+		scopeStrength /= 100;
+		if (scopeStrength < 0) {
+			scopeStrength = 0;
+		}
+		return (scopeStrength);
+	}
+	
 	/**
 	 * Gets the reload timer
 	 * 
@@ -1075,6 +1074,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			refireCancelPanel.setVisible(true);
 			wap.comboPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(false);
+			wap.scopePanel.setVisible(false);
 		} else if (mode.equals(Constants.CHARGE) || mode.equals(Constants.CHARGEBOW)) {
 			wap.chargeTimePanel.setVisible(true);
 			wap.burstCountPanel.setVisible(false);
@@ -1084,6 +1084,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			refireCancelPanel.setVisible(false);
 			wap.comboPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(false);
+			wap.scopePanel.setVisible(false);
 		} else if (mode.equals(Constants.CONTINUOUS)) {
 			wap.chargeTimePanel.setVisible(false);
 			wap.burstCountPanel.setVisible(false);
@@ -1093,6 +1094,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			refireCancelPanel.setVisible(false);
 			wap.comboPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(false);
+			wap.scopePanel.setVisible(false);
 		} else if (mode.equals(Constants.SNIPER)) {
 			wap.chargeTimePanel.setVisible(false);
 			wap.burstCountPanel.setVisible(false);
@@ -1102,6 +1104,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.comboPanel.setVisible(true);
 			wap.startingComboPanel.setVisible(true);
 			refireCancelPanel.setVisible(false);
+			wap.scopePanel.setVisible(true);
 		} else if (mode.equals(Constants.LANKA)) {
 			wap.chargeTimePanel.setVisible(true);
 			wap.burstCountPanel.setVisible(false);
@@ -1111,6 +1114,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.comboPanel.setVisible(true);
 			wap.startingComboPanel.setVisible(true);
 			refireCancelPanel.setVisible(false);
+			wap.scopePanel.setVisible(true);
 		} else {
 			wap.chargeTimePanel.setVisible(false);
 			wap.burstCountPanel.setVisible(false);
@@ -1120,6 +1124,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			refireCancelPanel.setVisible(false);
 			wap.comboPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(false);
+			wap.scopePanel.setVisible(false);
 		}
 		
 		if (weaponType.equals(Constants.MELEE)) {
@@ -1131,6 +1136,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.reloadPanel.setVisible(false);	
 			wap.startingComboPanel.setVisible(true);
 			wap.weaponModeBox.setSelectedIndex(6);
+			wap.scopePanel.setVisible(false);
 		}
 		Main.repack();
 	}
@@ -1259,6 +1265,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.multiplierField.setText(selectedWeapon.critMult);
 			wap.statusField.setText(selectedWeapon.status);
 			wap.projectileField.setText(selectedWeapon.projeciles);
+			wap.scopeBox.setSelectedItem(selectedWeapon.scopeBonus);
+			wap.scopeStrengthBox.setSelectedIndex(0);
+			wap.scopeStrengthField.setText("0");
 		}
 	}
 
@@ -1294,6 +1303,30 @@ public class WeaponPanel extends JPanel implements ActionListener {
 				additiveEffects.setVisible(true);
 				Main.repack();
 			}
+		} else if (e.getSource().equals(wap.scopeStrengthBox)) {
+			Weapon selectedWeapon = null;
+			String selected = (String) weaponBox.getSelectedItem();
+			for (Weapon weapon : weapInit.weapons) {
+				if (weapon.name.equals(selected)) {
+					selectedWeapon = weapon;
+				}
+			}
+			int scopeLevel = wap.scopeStrengthBox.getSelectedIndex();
+			switch(scopeLevel) {
+			case 0:
+				wap.scopeStrengthField.setText("0");
+				break;
+			case 1:
+				wap.scopeStrengthField.setText(selectedWeapon.scope1);
+				break;
+			case 2:
+				wap.scopeStrengthField.setText(selectedWeapon.scope2);
+				break;
+			case 3:
+				wap.scopeStrengthField.setText(selectedWeapon.scope3);
+				break;
+			}
+
 		}
 		if (!Main.setup && !setting) {
 			Main.updateStats();

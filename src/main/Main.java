@@ -42,6 +42,7 @@ import javax.swing.JTextArea;
 import etc.Constants;
 import etc.TTKNamePair;
 import etc.DPSGraphPanel;
+import etc.DPSPanel;
 import etc.TTKGraphPanel;
 import damage.Damage;
 import damage.SurfaceDamage;
@@ -57,7 +58,6 @@ import weapons.ShotgunPanel;
 import weapons.MeleePanel;
 import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
-import weapons.DPSPanel;
 import options.ColorOptionsPanel;
 import Maximizer.Maximizer;
 import javax.swing.JTextField;
@@ -65,7 +65,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Main{
+public class Main {
 
 	/**
 	 * ____________________________________________________________ GLOBAL VARIABLES
@@ -98,7 +98,7 @@ public class Main{
 
 	protected static DefaultListModel enemyListModel = new DefaultListModel();
 	protected static JList enemyList = new JList(enemyListModel);
-	//protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
+	// protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
 
 	/** JTabbedPanes **/
 	protected static JTabbedPane weaponPane = new JTabbedPane();
@@ -151,7 +151,7 @@ public class Main{
 	protected static Boolean weaponManagerInit = false;
 	protected static Boolean colorOptionsInit = false;
 	protected static JCheckBox TTKBox = new JCheckBox("TTK");
-	protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
+	//protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
 	protected static JLabel targetGroupLabel = new JLabel("Group:");
 	public static JComboBox targetGroupBox = new JComboBox();
 	protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
@@ -233,7 +233,11 @@ public class Main{
 	protected static double fireStacks = 0;
 	protected static double toxinStacks = 0;
 	protected static double gasStacks = 0;
-
+	protected static double burstSlashStacks = 0;
+	protected static double burstFireStacks = 0;
+	protected static double burstToxinStacks = 0;
+	protected static double burstGasStacks = 0;
+	
 	public static Damage raw = new Damage();
 	public static Damage impact = new Damage();
 	public static Damage puncture = new Damage();
@@ -264,6 +268,7 @@ public class Main{
 	public static SurfaceDamage fossilized = new SurfaceDamage();
 	public static SurfaceDamage sinew = new SurfaceDamage();
 
+	// Bunch of unsorted variables
 	public static double totalPhysical;
 	public static double totalElemental;
 	public static double impactProcRate;
@@ -297,12 +302,22 @@ public class Main{
 	public static double cloudDoTDPS;
 	public static double electricProcDPS;
 	public static double gasProcDPS;
+	public static double burstBleedDoTDPS;
+	public static double burstPoisonDoTDPS;
+	public static double burstHeatDoTDPS;
+	public static double burstCloudDoTDPS;
+	public static double burstElectricProcDPS;
+	public static double burstGasProcDPS;
+	
 	public static boolean updateOutput;
 
 	public static boolean stop = false;
 	public static boolean setup = true;
 	public static boolean maxxing = false;
 	public static boolean quickGroup = false;
+
+	public static double headShotBonus;
+	public static double headShotMult;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -373,13 +388,13 @@ public class Main{
 		UIBuilder.fileChooserInit(chooser);
 		UIBuilder.checkBoxInit(TTKBox);
 		UIBuilder.checkBoxInit(headShots);
-		UIBuilder.checkBoxInit(lightWeightTTKBox);
+		//UIBuilder.checkBoxInit(lightWeightTTKBox);
 		UIBuilder.labelInit(corrosiveProjectionLabel);
 		UIBuilder.labelInit(targetGroupLabel);
 		UIBuilder.comboBoxInit(corrosiveProjectionBox);
 		UIBuilder.comboBoxInit(targetGroupBox);
-	    UIBuilder.listInit(enemyList);
-		//UIBuilder.scrollPaneInit(enemyScroll);
+		UIBuilder.listInit(enemyList);
+		// UIBuilder.scrollPaneInit(enemyScroll);
 
 		enemyList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		enemyList.setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -411,7 +426,7 @@ public class Main{
 		calculateButton.addActionListener(action);
 		maximizeButton.addActionListener(action);
 		TTKBox.addActionListener(action);
-		lightWeightTTKBox.addActionListener(action);
+		//lightWeightTTKBox.addActionListener(action);
 		stopButton.addActionListener(action);
 		quickTargetButton.addActionListener(action);
 		removeTargetButton.addActionListener(action);
@@ -422,6 +437,7 @@ public class Main{
 		TTKMenu.addActionListener(action);
 		weaponMenu.addActionListener(action);
 		colorOptionsItem.addActionListener(action);
+		headShots.addActionListener(action);
 		targetGroupBox.addActionListener(action);
 		weaponPane.addChangeListener(change);
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -432,7 +448,7 @@ public class Main{
 		weaponPane.add(riflePanel, Constants.RIFLE);
 		weaponPane.add(shotgunPanel, Constants.SHOTGUN);
 		weaponPane.add(pistolPanel, Constants.PISTOL);
-		weaponPane.add(meleePanel, Constants.MELEE);
+		weaponPane.add(meleePanel, "Melee (Incomplete)");
 		weaponPane.add(arcGunPanel, Constants.ARCGUN);
 
 		graphPane.add(enemyList, "Targets");
@@ -457,7 +473,7 @@ public class Main{
 		buttonPanel.add(TTKBox);
 		buttonPanel.add(TTKIterationsLabel);
 		buttonPanel.add(TTKIterationsField);
-		buttonPanel.add(lightWeightTTKBox);
+		//buttonPanel.add(lightWeightTTKBox);
 		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
@@ -471,15 +487,16 @@ public class Main{
 		TTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
 		TTKIterationsField.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
-		lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
+		//lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
 		targetLevelLabel.setToolTipText("Override the default level");
 		targetLevelField.setToolTipText("Override the default level");
 		quickTargetButton.setToolTipText("Add targets to the current group");
 		removeTargetButton.setToolTipText("Remove selected target from the current group");
-		
+		meleePanel.setToolTipText("WARNING: Melee is incomplete and very inaccurate.");
+
 		TTKBox.setSelected(true);
-		lightWeightTTKBox.setSelected(false);
+		//lightWeightTTKBox.setSelected(false);
 
 		JPanel bottomRightPanel = new JPanel();
 		UIBuilder.panelInit(bottomRightPanel);
@@ -497,8 +514,8 @@ public class Main{
 		graphPane.setPreferredSize(new Dimension(429, 250));
 		outputScroll.getViewport().setPreferredSize(new Dimension(400, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
-		targetLevelField.setPreferredSize(new Dimension(0,24));
-		TTKIterationsField.setPreferredSize(new Dimension(0,24));
+		targetLevelField.setPreferredSize(new Dimension(0, 24));
+		TTKIterationsField.setPreferredSize(new Dimension(0, 24));
 
 		topPanel.add(weaponPane);
 		bottomPanel.add(bottomLeftPanel);
@@ -609,8 +626,6 @@ public class Main{
 				iters = "10000";
 			}
 			complexTTKIterations = Integer.parseInt(iters);
-		} else if (lightWeightTTKBox.isSelected()) {
-			complexTTKIterations = 1;
 		}
 		if (useComplexTTK && raw.perSecond > 100) {
 			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
@@ -742,6 +757,8 @@ public class Main{
 		comboStatus = 0;
 		conditionOverload = 0;
 		groupTargets = null;
+		headShotBonus = 1;
+		headShotMult = 1;
 	}
 
 	/**
@@ -986,6 +1003,9 @@ public class Main{
 					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_CONDITION_OVERLOAD)) * (1.0 + modRanks.get(i));
 					conditionOverload += modPower;
 				}
+				if (tempMod.effectTypes.contains(Constants.HEADSHOT_BONUS)) {
+					headShotBonus += ((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.HEADSHOT_BONUS))) * (1.0 + modRanks.get(i)));
+				}
 			}
 		}
 		if (!elements.contains(damageType))
@@ -995,8 +1015,7 @@ public class Main{
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
 			String element2 = elements.get(i + 1);
-			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) &&
-				(element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
+			if ((element1.equals("Fire") || element1.equals("Ice") || element1.equals("Toxin") || element1.equals("Electric")) && (element2.equals("Fire") || element2.equals("Ice") || element2.equals("Toxin") || element2.equals("Electric"))) {
 
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
@@ -1058,6 +1077,19 @@ public class Main{
 		}
 		if (elements.contains("Ice")) {
 			iceDamageMods.add(globalIce);
+		}
+
+		// Scope effects
+		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
+			if (selectedWeapon.getScopeEffect() == Constants.ADDITIVE_CRIT_CHANCE) {
+				critChanceMods.add(selectedWeapon.getScopeStrength());
+			}
+			if (selectedWeapon.getScopeEffect() == Constants.ADDITIVE_CRIT_DAMAGE) {
+				critMultMods.add(selectedWeapon.getScopeStrength());
+			}
+			if (selectedWeapon.getScopeEffect() == Constants.HEADSHOT_BONUS) {
+				headShotBonus += selectedWeapon.getScopeStrength();
+			}
 		}
 
 		// Calculate finals
@@ -1378,23 +1410,33 @@ public class Main{
 			averageProjectileCount = finalProjectileCount * ((((projectileCount * (projectileCount + 1) / 2) + projectileCount * (finalMag - projectileCount)) / finalMag) / projectileCount);
 		}
 		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
-		burstProcsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / (finalMag / finalFireRate));
+		burstProcsPerSecond = averageProjectileCount * finalStatusChance * finalFireRate;
 
 		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
 			double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.max(1, finalCritChance)))); // Rewriting so munitions and natural procs don't stack
-			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
+			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;			
+			burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration;
 		}
 		if (fire.finalBase > 0.0) {
 			fireStacks = 1 - Math.pow((1 - fireProcRate), (((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration));
+			burstFireStacks = 1 - Math.pow((1 - fireProcRate), (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration);
 		}
 		if (toxin.finalBase > 0.0) {
 			toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
+			burstToxinStacks = burstProcsPerSecond * toxinProcRate * 8 * finalStatusDuration;
 		}
 		if (weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
 			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 8 * finalStatusDuration;
+			burstToxinStacks += (averageProjectileCount * finalFireRate) * 8 * finalStatusDuration;
 		}
 		if (gas.finalBase > 0.0) {
 			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
+			burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
+		}
+		
+		if(headShot) {
+			headShotMult = 2 + 2 * Math.min(1, finalCritChance);
+			headShotMult *= headShotBonus;
 		}
 
 	}
@@ -1405,7 +1447,7 @@ public class Main{
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult;
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult;
@@ -1418,43 +1460,43 @@ public class Main{
 		// Calculate last-shot damage
 		raw.lastShot = raw.perShot * averageCritMult * finalLastShotDamageMult;
 
-		//factions
+		// factions
 		corpus.perShot = raw.perShot * finalCorpusMult;
 		grineer.perShot = raw.perShot * finalGrineerMult;
 		infested.perShot = raw.perShot * finalInfestedMult;
 		corrupted.perShot = raw.perShot * finalCorruptedMult;
-		
+
 		corpus.critPerShot = corpus.perShot * finalCritMult;
 		grineer.critPerShot = grineer.perShot * finalCritMult;
 		infested.critPerShot = infested.perShot * finalCritMult;
 		corrupted.critPerShot = corrupted.perShot * finalCritMult;
-		
+
 		corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
 		grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
 		infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
 		corrupted.firstShot = corrupted.perShot * averageCritMult * finalFirstShotDamageMult;
-		
+
 		corpus.lastShot = corpus.perShot * averageCritMult * finalLastShotDamageMult;
 		grineer.lastShot = grineer.perShot * averageCritMult * finalLastShotDamageMult;
 		infested.lastShot = infested.perShot * averageCritMult * finalLastShotDamageMult;
 		corrupted.lastShot = corrupted.perShot * averageCritMult * finalLastShotDamageMult;
-		
+
 		if (updateOutput) {
 
 			// Calculate base damage per shot values
-			impact.perShot = (impact.finalBase * averageProjectileCount) * finalDeadAimMult;
-			puncture.perShot = (puncture.finalBase * averageProjectileCount) * finalDeadAimMult;
-			slash.perShot = (slash.finalBase * averageProjectileCount) * finalDeadAimMult;
-			fire.perShot = (fire.finalBase * averageProjectileCount) * finalDeadAimMult;
-			ice.perShot = (ice.finalBase * averageProjectileCount) * finalDeadAimMult;
-			electric.perShot = (electric.finalBase * averageProjectileCount) * finalDeadAimMult;
-			toxin.perShot = (toxin.finalBase * averageProjectileCount) * finalDeadAimMult;
-			blast.perShot = (blast.finalBase * averageProjectileCount) * finalDeadAimMult;
-			magnetic.perShot = (magnetic.finalBase * averageProjectileCount) * finalDeadAimMult;
-			gas.perShot = (gas.finalBase * averageProjectileCount) * finalDeadAimMult;
-			radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult;
-			corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult;
-			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult;
+			impact.perShot = (impact.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			puncture.perShot = (puncture.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			slash.perShot = (slash.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			fire.perShot = (fire.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			ice.perShot = (ice.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			electric.perShot = (electric.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			toxin.perShot = (toxin.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			blast.perShot = (blast.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			magnetic.perShot = (magnetic.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			gas.perShot = (gas.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
 
 			// Surface-specific
 
@@ -1706,7 +1748,7 @@ public class Main{
 	 */
 	protected static void calculateDamagePerIteration() {
 		raw.perIteration = raw.perShot * finalMag * averageCritMult + raw.firstShot + raw.lastShot;
-		
+
 		corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
 		grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
 		infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
@@ -1745,7 +1787,7 @@ public class Main{
 	 */
 	protected static void calculateDamagePerMinute() {
 		raw.perMinute = raw.perIteration * finalIterationsPerMinute;
-		
+
 		corpus.perMinute = corpus.perIteration * finalIterationsPerMinute;
 		grineer.perMinute = grineer.perIteration * finalIterationsPerMinute;
 		infested.perMinute = infested.perIteration * finalIterationsPerMinute;
@@ -1782,7 +1824,7 @@ public class Main{
 	protected static void calculateDamagePerSecond() {
 		// Calculate base DPS values
 		raw.perSecond = raw.perMinute / 60.0;
-		
+
 		corpus.perSecond = corpus.perMinute / 60.0;
 		grineer.perSecond = grineer.perMinute / 60.0;
 		infested.perSecond = infested.perMinute / 60.0;
@@ -1794,27 +1836,39 @@ public class Main{
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
-		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double DoTBase = rawBase * averageCritMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double electricBase = DoTBase * (1 + globalElectric) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double bleedDamage = DoTBase * 0.35 * hunterMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5 * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
-		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+		double gasHeadMult = 1;
+		if (headShotMult > 1) {
+			gasHeadMult = 2 * Main.headShotBonus;
+		}
+		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult;
+		double DoTBase = rawBase * averageCritMult;
+		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
+		double bleedDamage = DoTBase * 0.35 * hunterMult;
+		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
+		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
+		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * gasHeadMult;
+		
 		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
 		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
 		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
-		electricProcDPS = electricProcRate * electricBase * averageProjectileCount * finalFireRate * finalStatusChance;
-		gasProcDPS = gasProcRate * poisonDamage * averageProjectileCount * finalFireRate * finalStatusChance;
+		electricProcDPS = electricProcRate * electricBase * procsPerSecond;
+		gasProcDPS = gasProcRate * poisonDamage * procsPerSecond;
+		
+		burstBleedDoTDPS = burstSlashStacks * bleedDamage * (7 / 6);
+		burstPoisonDoTDPS = burstToxinStacks * poisonDamage * (9 / 8);
+		burstHeatDoTDPS = burstFireStacks * heatDamage * (7 / 6);
+		burstCloudDoTDPS = burstGasStacks * cloudDamage * (9 / 8);
+		burstElectricProcDPS = electricProcRate * electricBase * burstProcsPerSecond;
+		burstGasProcDPS = gasProcRate * poisonDamage * burstProcsPerSecond;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
-		
+
 		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult) * finalCorpusMult;
 		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult) * finalGrineerMult;
 		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult) * finalInfestedMult;
 		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalCorruptedMult * finalCorruptedMult + electricProcDPS + gasProcDPS * finalCorruptedMult) * finalCorruptedMult;
-		
+
 		if (updateOutput) {
 			impact.perSecond = impact.perMinute / 60.0;
 			puncture.perSecond = puncture.perMinute / 60.0;
@@ -1860,18 +1914,18 @@ public class Main{
 		raw.rawPerSecond = raw.perIteration * burstTime;
 
 		// Add in DoTs
-		raw.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
+		raw.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + burstElectricProcDPS + burstGasProcDPS);
 
 		corpus.rawPerSecond = corpus.perIteration * burstTime;
 		grineer.rawPerSecond = grineer.perIteration * burstTime;
 		infested.rawPerSecond = infested.perIteration * burstTime;
 		corrupted.rawPerSecond = corrupted.perIteration * burstTime;
-		
-		corpus.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult);
-		grineer.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-		infested.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-		corrupted.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorruptedMult * finalCorruptedMult + electricProcDPS + gasProcDPS * finalCorruptedMult);
-		
+
+		corpus.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorpusMult * finalCorpusMult + burstElectricProcDPS + burstGasProcDPS * finalCorpusMult);
+		grineer.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalGrineerMult * finalGrineerMult + burstElectricProcDPS + burstGasProcDPS * finalGrineerMult);
+		infested.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
+		corrupted.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorruptedMult * finalCorruptedMult + burstElectricProcDPS + burstGasProcDPS * finalCorruptedMult);
+
 		if (updateOutput) {
 			impact.rawPerSecond = impact.perIteration * burstTime;
 			puncture.rawPerSecond = puncture.perIteration * burstTime;
@@ -1898,17 +1952,17 @@ public class Main{
 			fossilized.rawPerSecond = fossilized.perIteration * burstTime;
 			sinew.rawPerSecond = sinew.perIteration * burstTime;
 
-			cloneFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-			ferrite.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
-			alloy.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
-			mechanical.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
-			corpusFlesh.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
-			shield.rawPerSecond += (heatDoTDPS + electricProcDPS);
-			protoShield.rawPerSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
-			robotic.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
-			infestedFlesh.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-			fossilized.rawPerSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
-			sinew.rawPerSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			cloneFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.25) + burstCloudDoTDPS * finalGrineerMult * finalGrineerMult + burstElectricProcDPS + burstGasProcDPS * finalGrineerMult);
+			ferrite.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.25) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.25) + burstElectricProcDPS + burstGasProcDPS * 1.25);
+			alloy.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + (burstElectricProcDPS * 0.5) + burstGasProcDPS);
+			mechanical.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (burstElectricProcDPS * 1.5) + burstGasProcDPS * 0.75 * finalGrineerMult);
+			corpusFlesh.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.5) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + burstElectricProcDPS + burstGasProcDPS * 1.5 * finalCorpusMult);
+			shield.rawPerSecond += (burstHeatDoTDPS + burstElectricProcDPS);
+			protoShield.rawPerSecond += ((burstHeatDoTDPS * 0.5) + burstElectricProcDPS);
+			robotic.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (burstElectricProcDPS * 1.5) + burstGasProcDPS * 0.75 * finalCorpusMult);
+			infestedFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.5) + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
+			fossilized.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.5) + burstHeatDoTDPS + (burstCloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult * 0.5);
+			sinew.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
 		}
 	}
 
@@ -2305,7 +2359,7 @@ public class Main{
 			DPSPanel.fireProcField.setText(f.format(heatDoTDPS));
 			DPSPanel.burstField.setText(f.format(raw.rawPerSecond));
 			DPSPanel.sustainedField.setText(f.format(raw.perSecond));
-			
+
 			DPSPanel.corpusField.setText(f.format(corpus.perSecond));
 			DPSPanel.grineerField.setText(f.format(grineer.perSecond));
 			DPSPanel.infestedField.setText(f.format(infested.perSecond));
@@ -2431,7 +2485,7 @@ public class Main{
 			}
 			if (heatDoTDPS > 0) {
 				DPSPanel.fireProcPanel.setVisible(true);
-			}	
+			}
 			if (finalCorpusMult > 1) {
 				DPSPanel.corpusPanel.setVisible(true);
 			}
@@ -2539,8 +2593,8 @@ public class Main{
 	/**
 	 * ____________________________________________________________ INTERNAL CLASSES
 	 * ____________________________________________________________
-	 */	  
-	
+	 */
+
 	/**
 	 * change Listener Local Class
 	 */
@@ -2570,7 +2624,7 @@ public class Main{
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(calculateButton)) {
 				updateOutput = true;
-				if (lightWeightTTKBox.isSelected() || TTKBox.isSelected()) {
+				if (TTKBox.isSelected()) {
 					useComplexTTK = true;
 				}
 				calculateDPS();
@@ -2583,7 +2637,7 @@ public class Main{
 				setup = true;
 				maxxing = true;
 				theMaximizer = new Maximizer();
-				
+
 				new Thread(new Runnable() {
 					public void run() {
 						theMaximizer.Maximizer();
@@ -2603,35 +2657,26 @@ public class Main{
 				theTTKManager.deleteButton.setVisible(false);
 				theTTKManager.saveButton.setVisible(false);
 			} else if (e.getSource().equals(removeTargetButton)) {
-				if(enemyList.getSelectedIndex() >= 0) {
-			      String targetName = (String)enemyListModel.get(enemyList.getSelectedIndex());
-			      TTKTarget selectedTarget = theTTKManager.getTargetByName(targetName);
-			      TTKTarget foundTarget = theTTKManager.getTargetByName(targetName);
-			      if(theTTKManager.targets.contains(selectedTarget)){		    	  
-			    	  for(int i = 0; i < selectedTarget.groups.size(); i++) {
-			    		  if(selectedTarget.groups.get(i) == targetGroupBox.getSelectedIndex()) {
-			    			  selectedTarget.groups.remove(i);
-			    			  break;
-			    		  }
-			    	  }			    	  			    	  
-			    	  theTTKManager.targets.set(theTTKManager.targets.indexOf(foundTarget), selectedTarget);
-			    	  //theTTKManager.targets.removeElement(selectedTarget);
-			      }
-			      updateTargetList();
-			      theTTKManager.updateTargetList();
-				}
-			      
-			} else if (e.getSource().equals(TTKBox) || e.getSource().equals(lightWeightTTKBox)) {
-				useComplexTTK = (TTKBox.isSelected() || lightWeightTTKBox.isSelected());
-				if (e.getSource().equals(TTKBox)) {
-					if (lightWeightTTKBox.isSelected()) {
-						lightWeightTTKBox.setSelected(false);
+				if (enemyList.getSelectedIndex() >= 0) {
+					String targetName = (String) enemyListModel.get(enemyList.getSelectedIndex());
+					TTKTarget selectedTarget = theTTKManager.getTargetByName(targetName);
+					TTKTarget foundTarget = theTTKManager.getTargetByName(targetName);
+					if (theTTKManager.targets.contains(selectedTarget)) {
+						for (int i = 0; i < selectedTarget.groups.size(); i++) {
+							if (selectedTarget.groups.get(i) == targetGroupBox.getSelectedIndex()) {
+								selectedTarget.groups.remove(i);
+								break;
+							}
+						}
+						theTTKManager.targets.set(theTTKManager.targets.indexOf(foundTarget), selectedTarget);
+						// theTTKManager.targets.removeElement(selectedTarget);
 					}
-				} else {
-					if (TTKBox.isSelected()) {
-						TTKBox.setSelected(false);
-					}
+					updateTargetList();
+					theTTKManager.updateTargetList();
 				}
+
+			} else if (e.getSource().equals(TTKBox)) {
+				useComplexTTK = (TTKBox.isSelected());
 			} else if (e.getSource().equals(targetGroupBox)) {
 				ttkGraph.clear();
 				updateTargetList();
@@ -2639,6 +2684,8 @@ public class Main{
 				output.setText("");
 				dpsGraph.clear();
 				ttkGraph.clear();
+			} else if (e.getSource().equals(headShots)) {
+				updateStats();
 			} else if (e.getSource().equals(loadItem)) {
 				int returnVal = chooser.showOpenDialog(mainPanel);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
