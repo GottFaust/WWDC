@@ -746,6 +746,10 @@ public class Main {
 		fireStacks = 0;
 		toxinStacks = 0;
 		gasStacks = 0;
+		burstSlashStacks = 0;
+		burstFireStacks = 0;
+		burstToxinStacks = 0;
+		burstGasStacks = 0;
 		// complexTTKCompletions = 0;
 		globalFire = 0;
 		globalToxin = 0;
@@ -2963,10 +2967,12 @@ public class Main {
 	public static class DoTPair {
 		public double damage = 0.0;
 		public int duration = 0;
+		public int timer = 0;
 
-		public DoTPair(double damage, int duration) {
+		public DoTPair(double damage, int duration, int timer) {
 			this.damage = damage;
 			this.duration = duration;
+			this.timer = timer;
 		}
 	}
 }
