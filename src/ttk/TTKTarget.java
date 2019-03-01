@@ -38,7 +38,7 @@ public class TTKTarget implements Comparable {
 	protected String shieldType = "";
 	protected String factionType = "";
 	public String name = "";
-	protected double TTK = 0.0;
+	public double TTK = 0.0;
 	protected double minTTK = 0.0;
 	protected double maxTTK = 0.0;
 	protected Vector<Double> TTKVec = new Vector<Double>();
@@ -142,16 +142,6 @@ public class TTKTarget implements Comparable {
 		} catch (Exception ex) {
 			// Legacy, default to group 0
 		}
-
-		// maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 *
-		// baseArmor) + baseArmor);
-		// maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 *
-		// baseShields) + baseShields);
-		// maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 *
-		// baseHealth) + baseHealth);
-
-		// System.out.println(name + "," + currentLevel + "," + maxArmor + "," +
-		// maxHealth + "," + maxShields);
 	}
 
 	/**
@@ -546,16 +536,6 @@ public class TTKTarget implements Comparable {
 	}
 
 	/**
-	 * Gives the TTK target and time
-	 */
-	public String simpleTTK() {
-		DecimalFormat f = new DecimalFormat("00.0000");
-		String displayName = name + "[" + currentLevel + "]";
-		String result = f.format(TTK);
-		return displayName + "," + result;
-	}
-
-	/**
 	 * builds the advanced TTK output
 	 * 
 	 * @return advanced TTK
@@ -660,10 +640,10 @@ public class TTKTarget implements Comparable {
 	 */
 	public double calculateRandomizedTimeToKill() {
 
-		double targetAdjustedMaxShields = maxShields;
 		double targetCurrentShields = maxShields;
 		double targetCurrentHealth = maxHealth;
 		int targetAdjustedMaxArmor = maxArmor;
+		targetAdjustedMaxArmor *= corrosiveProjectionMult;
 		double localProjectileCount = 1.0;
 		int shotTimer = 0;
 		int statusTimer = 1000;
@@ -671,10 +651,9 @@ public class TTKTarget implements Comparable {
 		int iterations = 0;
 		int timeToKill = 0;
 		double viralHealth = 0;
-		int corrosiveStacks = 0;
-		int viralStacks = 0;
-		int magneticStacks = 0;
+		double magneticShields = 0;
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
+		//slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 		int statusEffects[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int rampMult = 0;
 		int millisecondMult = 5;
@@ -700,8 +679,7 @@ public class TTKTarget implements Comparable {
 
 		// Run a 600 second simulation to calculate the time to kill
 		for (timeToKill = 0; timeToKill < 6000000;) {
-			// Add new stack
-
+			
 			// is it time to fire a new projectile?
 			if (shotTimer <= 0) {
 
@@ -719,34 +697,13 @@ public class TTKTarget implements Comparable {
 						rampBulletMult = 1;
 					localProjectileCount *= rampBulletMult;
 				}
-				// Burst
+				// Bursts
 				int bursts = 1;
 				if (Main.weaponMode.equals(Constants.BURST)) {
 					bursts = Main.burstCount;
 				}
 				for (int b = 0; b < bursts; b++) {
 
-					// Adjust Max Stats
-					// Shields
-					targetAdjustedMaxShields = maxShields;
-					if (magneticStacks > 0) {
-						targetAdjustedMaxShields *= 0.25;
-					}
-					if (targetAdjustedMaxShields < targetCurrentShields) {
-						targetCurrentShields = targetAdjustedMaxShields;
-					}
-					// Health
-					if (viralStacks > 0) {
-						if (viralHealth == 0) {
-							viralHealth = targetCurrentHealth * 0.5;
-							targetCurrentHealth *= 0.5;
-						}
-					} else {
-						targetCurrentHealth += viralHealth;
-						viralHealth = 0;
-					}
-
-					// Find shot-unique multipliers
 					// Find multishot
 					double tempMultishots = localProjectileCount + 1;
 					int multishot = 0;
@@ -780,7 +737,7 @@ public class TTKTarget implements Comparable {
 							comboMult = 1;
 					}
 
-					// C O N D I T I O N O V E R L O A D
+					// Condition Overload
 					double COMult = 1;
 					if (Main.conditionOverload > 0) {
 						for (int status : statusEffects) {
@@ -803,15 +760,6 @@ public class TTKTarget implements Comparable {
 
 					// Shoot 1 projectile
 					for (int p = 0; p < multishot; p++) {
-
-						// Armor
-						targetAdjustedMaxArmor = maxArmor;
-						targetAdjustedMaxArmor *= corrosiveProjectionMult;
-						if (corrosiveStacks > 0) {
-							for (int i = 0; i < corrosiveStacks; i++) {
-								targetAdjustedMaxArmor *= 0.75;
-							}
-						}
 
 						// Find Crit
 						double localCritMult = 1.0;
@@ -968,17 +916,22 @@ public class TTKTarget implements Comparable {
 
 								// Magnetic Proc
 							} else if ((proc -= magneticProc) < 0) {
-								magneticStacks = (int) (60000 * Main.finalStatusDuration);
-								statusEffects[5] = (int) (60000 * Main.finalStatusDuration);
+								if (magneticShields == 0) {
+									magneticShields = targetCurrentShields * 0.75;
+									targetCurrentShields *= 0.25;
+								}
+								statusEffects[5] = (int) (40000 * Main.finalStatusDuration);
 
 								// Viral Proc
 							} else if ((proc -= viralProc) < 0) {
-								viralStacks = (int)(60000 * Main.finalStatusDuration);
+								if (viralHealth == 0) {
+									viralHealth = targetCurrentHealth *= 0.5;
+								}
 								statusEffects[6] = (int) (60000 * Main.finalStatusDuration);
 
 								// Corrosive Proc
 							} else if ((proc -= corrosiveProc) < 0) {
-								corrosiveStacks++;
+								targetAdjustedMaxArmor *= 0.75;
 								statusEffects[7] = (int) (60000 * Main.finalStatusDuration);
 							} else if ((proc -= impactProc) < 0) {
 								statusEffects[8] = (int) (60000 * Main.finalStatusDuration);
@@ -1024,13 +977,20 @@ public class TTKTarget implements Comparable {
 					}
 				}
 				// Others
-				viralStacks -= (1000/coldProcMult);
-				magneticStacks -= (1000/coldProcMult);
-
 				for (int j = 0; j < 14; j++) {
 					statusEffects[j] -= (1000/coldProcMult);
-				}
+				}	
 				
+				// If viral proc is expired
+				if (statusEffects[6] <= 0) {
+					targetCurrentHealth += viralHealth;
+					viralHealth = 0;
+				}
+				// If Magnetic proc is expired
+				if (statusEffects[5] <= 0) {
+					targetCurrentShields += magneticShields;
+					magneticShields = 0;
+				}		
 				// If cold proc is expired
 				if(statusEffects[10] <= 0) {
 					coldProcMult = 1;

@@ -3,6 +3,7 @@ package Maximizer;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -43,13 +44,13 @@ public class Maximizer {
 
 		String build1 = "[" + simulatedMods.get(0).name + "][" + simulatedMods.get(1).name + "][" + simulatedMods.get(2).name + "][" + simulatedMods.get(3).name + "]";
 		String build2 = "[" + simulatedMods.get(4).name + "][" + simulatedMods.get(5).name + "][" + simulatedMods.get(6).name + "][" + simulatedMods.get(7).name + "]";
-
+		
 		double DPS = Main.raw.perSecond;
 		for (TTKTarget target : Main.groupTargets) {
-			TTKs.add(target.simpleTTK().split(",")[0]); // name
-			TTKs.add(target.simpleTTK().split(",")[1]); // time
-			total += Double.parseDouble(target.simpleTTK().split(",")[1]);
-			times.add(Double.parseDouble(target.simpleTTK().split(",")[1]));
+			TTKs.add(target.name + " [" + target.currentLevel + "]");
+			TTKs.add(target.TTK);
+			total += target.TTK;
+			times.add(target.TTK);
 		}
 		targets = Main.groupTargets.size();
 		double average = total / targets;
@@ -98,6 +99,7 @@ public class Maximizer {
 	}
 
 	public void Maximizer() {
+		DecimalFormat f = new DecimalFormat("#.###");
 		int emptyMods = 0;
 		Main.stop = false;
 		completedIterations = 0;
@@ -138,7 +140,7 @@ public class Maximizer {
 		// Find fasted kill time for each target
 		for (int k = 0; k < targets; k++) {
 			for (int p = results.size() - 1; p > 0; p--) {
-				if (Double.parseDouble(results.get(p).TTKs.get(1 + 2 * k)) < Double.parseDouble(results.get(p - 1).TTKs.get(1 + 2 * k))) {
+				if (results.get(p).TTKs.get(1 + 2 * k) < results.get(p - 1).TTKs.get(1 + 2 * k)) {
 					Collections.swap(results, p, p - 1);
 				}
 			}
@@ -146,8 +148,8 @@ public class Maximizer {
 			Main.output.append("Build with the fasted kill time on " + results.get(0).TTKs.get(2 * k) + "\n");
 			Main.output.append(results.get(0).build1 + "\n");
 			Main.output.append(results.get(0).build2 + "\n");
-			Main.output.append("DPS: " + results.get(0).DPS + "\n");
-			Main.output.append("Time: " + results.get(0).TTKs.get(1 + 2 * k) + " seconds" + "\n");
+			Main.output.append("DPS: " + f.format(results.get(0).DPS) + "\n");
+			Main.output.append("Time: " + f.format(results.get(0).TTKs.get(1 + 2 * k)) + " seconds" + "\n");
 		}
 
 		// Find build with highest DPS
@@ -160,7 +162,7 @@ public class Maximizer {
 		Main.output.append("Build with the highest DPS" + "\n");
 		Main.output.append(results.get(0).build1 + "\n");
 		Main.output.append(results.get(0).build2 + "\n");
-		Main.output.append("DPS: " + results.get(0).DPS + "\n");
+		Main.output.append("DPS: " + f.format(results.get(0).DPS) + "\n");
 
 		// Find build with lowest average kill time
 		for (int p = results.size() - 1; p > 0; p--) {
@@ -172,10 +174,10 @@ public class Maximizer {
 		Main.output.append("Build with the Lowest average kill time on selected targets" + "\n");
 		Main.output.append(results.get(0).build1 + "\n");
 		Main.output.append(results.get(0).build2 + "\n");
-		Main.output.append("Average time to kill: " + results.get(0).average + "\n");
+		Main.output.append("Average time to kill: " + f.format(results.get(0).average) + "\n");
 		Main.output.append("--------------------------Individual TTKs----------------------------" + "\n");
 		for (int k = 0; k < targets; k++) {
-			Main.output.append(results.get(0).TTKs.get(2 * k) + ": " + results.get(0).TTKs.get(1 + 2 * k) + " seconds" + "\n");
+			Main.output.append(results.get(0).TTKs.get(2 * k) + ": " + f.format(results.get(0).TTKs.get(1 + 2 * k)) + " seconds" + "\n");
 		}
 
 		// Find build with the lowest maximum kill time
@@ -188,10 +190,10 @@ public class Maximizer {
 		Main.output.append("Build with the Lowest maximum kill time on selected targets" + "\n");
 		Main.output.append(results.get(0).build1 + "\n");
 		Main.output.append(results.get(0).build2 + "\n");
-		Main.output.append("Maximum kill time: " + results.get(0).minmax + "\n");
+		Main.output.append("Maximum kill time: " + f.format(results.get(0).minmax) + "\n");
 		Main.output.append("--------------------------Individual TTKs----------------------------" + "\n");
 		for (int k = 0; k < targets; k++) {
-			Main.output.append(results.get(0).TTKs.get(2 * k) + ": " + results.get(0).TTKs.get(1 + 2 * k) + " seconds" + "\n");
+			Main.output.append(results.get(0).TTKs.get(2 * k) + ": " + f.format(results.get(0).TTKs.get(1 + 2 * k)) + " seconds" + "\n");
 		}
 
 		Main.output.append("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" + "\n");
@@ -227,7 +229,7 @@ public class Maximizer {
 		public String build1 = "";
 		public String build2 = "";
 		public double DPS = 0;
-		public Vector<String> TTKs;
+		public Vector<Double> TTKs;
 		public double average = 0;
 		public double minmax = 0;
 
