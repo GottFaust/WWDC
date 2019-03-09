@@ -816,7 +816,7 @@ public class TTKTarget implements Comparable {
 						// Hunter Munitions proc?
 						boolean munitionsProc = false;
 						if (rng.nextDouble() < Main.hunterMunitions) {
-							double bleedDamage = DoTBase * totalMult * 0.35;
+							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000));
 							targetCurrentHealth -= bleedDamage;
@@ -841,7 +841,7 @@ public class TTKTarget implements Comparable {
 
 							// Slash Proc
 							if ((proc -= slashProc) < 0 && munitionsProc == false) {
-								double bleedDamage = DoTBase * totalMult * 0.35;
+								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000));
 								targetCurrentHealth -= bleedDamage;
@@ -855,7 +855,7 @@ public class TTKTarget implements Comparable {
 								} else if (targetAdjustedMaxArmor > 0.0) {
 									localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
 								}
-								double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * 0.5;
+								double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * typeMult * 0.5;
 								int heatDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								if (statusStacks.get(0).duration <= 0) { // if we need a new stack, set damage and timer
 									statusStacks.get(0).damage = heatDamage;
@@ -871,18 +871,6 @@ public class TTKTarget implements Comparable {
 
 								// Electric Proc
 							} else if ((proc -= electricProc) < 0) {
-								double localElectricMult = electricMult;
-								if (targetCurrentShields > 0.0) {
-									localElectricMult = shieldElectricMult;
-								} else if (targetAdjustedMaxArmor > 0.0) {
-									localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
-								}
-								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5;
-								if (targetCurrentShields > 0) {
-									targetCurrentShields -= electricProcDamage;
-								} else {
-									targetCurrentHealth -= electricProcDamage;
-								}
 								statusEffects[2] = (int) (6 * Main.finalStatusDuration * 10000);
 
 								// Toxin Proc

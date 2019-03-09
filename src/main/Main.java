@@ -1866,12 +1866,12 @@ public class Main {
 		burstElectricProcDPS = electricProcRate * electricBase * burstProcsPerSecond;
 		burstGasProcDPS = gasProcRate * poisonDamage * burstProcsPerSecond;
 
-		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
+		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + gasProcDPS);
 
-		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult * finalCorpusMult + electricProcDPS + gasProcDPS * finalCorpusMult) * finalCorpusMult;
-		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult) * finalGrineerMult;
-		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult) * finalInfestedMult;
-		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalCorruptedMult * finalCorruptedMult + electricProcDPS + gasProcDPS * finalCorruptedMult) * finalCorruptedMult;
+		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult + gasProcDPS) * finalCorpusMult * finalCorpusMult;
+		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult + gasProcDPS) * finalGrineerMult * finalGrineerMult;
+		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult + gasProcDPS) * finalInfestedMult * finalInfestedMult;
+		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorruptedMult + gasProcDPS) * finalCorruptedMult * finalCorruptedMult;
 
 		if (updateOutput) {
 			impact.perSecond = impact.perMinute / 60.0;
@@ -1898,17 +1898,17 @@ public class Main {
 			infestedFlesh.perSecond = infestedFlesh.perMinute / 60.0;
 			fossilized.perSecond = fossilized.perMinute / 60.0;
 			sinew.perSecond = sinew.perMinute / 60.0;
-			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + electricProcDPS + gasProcDPS * finalGrineerMult);
-			ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + electricProcDPS + gasProcDPS * 1.25);
-			alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + (electricProcDPS * 0.5) + gasProcDPS);
-			mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalGrineerMult);
-			corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + electricProcDPS + gasProcDPS * 1.5 * finalCorpusMult);
-			shield.perSecond += (heatDoTDPS + electricProcDPS);
-			protoShield.perSecond += ((heatDoTDPS * 0.5) + electricProcDPS);
-			robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (electricProcDPS * 1.5) + gasProcDPS * 0.75 * finalCorpusMult);
-			infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
-			fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + electricProcDPS + gasProcDPS * finalInfestedMult * 0.5);
-			sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + electricProcDPS + gasProcDPS * finalInfestedMult);
+			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult * finalGrineerMult + gasProcDPS * finalGrineerMult);
+			ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.25) + heatDoTDPS + (cloudDoTDPS * 1.25) + gasProcDPS * 1.25);
+			alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + gasProcDPS);
+			mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + gasProcDPS * 0.75 * finalGrineerMult);
+			corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + gasProcDPS * 1.5 * finalCorpusMult);
+			shield.perSecond += (heatDoTDPS);
+			protoShield.perSecond += ((heatDoTDPS * 0.5));
+			robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + gasProcDPS * 0.75 * finalCorpusMult);
+			infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult * finalInfestedMult + gasProcDPS * finalInfestedMult);
+			fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + gasProcDPS * finalInfestedMult * 0.5);
+			sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult * finalInfestedMult + gasProcDPS * finalInfestedMult);
 		}
 	}
 
@@ -1918,17 +1918,17 @@ public class Main {
 		raw.rawPerSecond = raw.perIteration * burstTime;
 
 		// Add in DoTs
-		raw.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + burstElectricProcDPS + burstGasProcDPS);
+		raw.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + burstGasProcDPS);
 
 		corpus.rawPerSecond = corpus.perIteration * burstTime;
 		grineer.rawPerSecond = grineer.perIteration * burstTime;
 		infested.rawPerSecond = infested.perIteration * burstTime;
 		corrupted.rawPerSecond = corrupted.perIteration * burstTime;
 
-		corpus.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorpusMult * finalCorpusMult + burstElectricProcDPS + burstGasProcDPS * finalCorpusMult);
-		grineer.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalGrineerMult * finalGrineerMult + burstElectricProcDPS + burstGasProcDPS * finalGrineerMult);
-		infested.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
-		corrupted.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorruptedMult * finalCorruptedMult + burstElectricProcDPS + burstGasProcDPS * finalCorruptedMult);
+		corpus.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorpusMult + burstGasProcDPS) * finalCorpusMult * finalCorpusMult;
+		grineer.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalGrineerMult + burstGasProcDPS) * finalGrineerMult * finalGrineerMult;
+		infested.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult + burstGasProcDPS) * finalInfestedMult * finalInfestedMult;
+		corrupted.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorruptedMult + burstGasProcDPS) * finalCorruptedMult * finalCorruptedMult;
 
 		if (updateOutput) {
 			impact.rawPerSecond = impact.perIteration * burstTime;
@@ -1956,17 +1956,17 @@ public class Main {
 			fossilized.rawPerSecond = fossilized.perIteration * burstTime;
 			sinew.rawPerSecond = sinew.perIteration * burstTime;
 
-			cloneFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.25) + burstCloudDoTDPS * finalGrineerMult * finalGrineerMult + burstElectricProcDPS + burstGasProcDPS * finalGrineerMult);
-			ferrite.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.25) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.25) + burstElectricProcDPS + burstGasProcDPS * 1.25);
-			alloy.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + (burstElectricProcDPS * 0.5) + burstGasProcDPS);
-			mechanical.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + (burstElectricProcDPS * 1.5) + burstGasProcDPS * 0.75 * finalGrineerMult);
-			corpusFlesh.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.5) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + burstElectricProcDPS + burstGasProcDPS * 1.5 * finalCorpusMult);
-			shield.rawPerSecond += (burstHeatDoTDPS + burstElectricProcDPS);
-			protoShield.rawPerSecond += ((burstHeatDoTDPS * 0.5) + burstElectricProcDPS);
-			robotic.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + (burstElectricProcDPS * 1.5) + burstGasProcDPS * 0.75 * finalCorpusMult);
-			infestedFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.5) + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
-			fossilized.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.5) + burstHeatDoTDPS + (burstCloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult * 0.5);
-			sinew.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstElectricProcDPS + burstGasProcDPS * finalInfestedMult);
+			cloneFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.25) + burstCloudDoTDPS * finalGrineerMult * finalGrineerMult + burstGasProcDPS * finalGrineerMult);
+			ferrite.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.25) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.25) + burstGasProcDPS * 1.25);
+			alloy.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + burstGasProcDPS);
+			mechanical.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalGrineerMult * finalGrineerMult) + burstGasProcDPS * 0.75 * finalGrineerMult);
+			corpusFlesh.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 1.5) + burstHeatDoTDPS + (burstCloudDoTDPS * 1.5 * finalCorpusMult * finalCorpusMult) + burstGasProcDPS * 1.5 * finalCorpusMult);
+			shield.rawPerSecond += burstHeatDoTDPS;
+			protoShield.rawPerSecond += burstHeatDoTDPS * 0.5;
+			robotic.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.75) + burstHeatDoTDPS + (burstCloudDoTDPS * 0.75 * finalCorpusMult * finalCorpusMult) + burstGasProcDPS * 0.75 * finalCorpusMult);
+			infestedFlesh.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + (burstHeatDoTDPS * 1.5) + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstGasProcDPS * finalInfestedMult);
+			fossilized.rawPerSecond += (burstBleedDoTDPS + (burstPoisonDoTDPS * 0.5) + burstHeatDoTDPS + (burstCloudDoTDPS * finalInfestedMult * finalInfestedMult * 0.5) + burstGasProcDPS * finalInfestedMult * 0.5);
+			sinew.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult * finalInfestedMult + burstGasProcDPS * finalInfestedMult);
 		}
 	}
 

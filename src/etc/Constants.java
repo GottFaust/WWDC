@@ -84,7 +84,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.10.9";
+  public static final String APP_VERSION = "v0.10.10";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -767,5 +767,7 @@ public class Constants {
 		  "Rifle,Burst,Magnetic,Battacor,0.0,2,DEPRECIATED,42,0,24,0,3.57,60,540,2,32,2.4,18,1,1",
 		  "Shotgun,Continuous,Radiation,Phantasma,0,0,DEPRECIATED,50,25,0,0,12,11,0,0.5,3,1.5,37,5,0.5",
 		  "Shotgun,Semi-Auto,Radiation,Exergis,0.0,0,DEPRECIATED,420,60,360,780,3.33,1,0,1.6,8,1.4,36,3,1",
-		  "Pistol,Semi-Auto,Fire,Plinx,0.0,0,DEPRECIATED,20,0,26,0,3.33,10,0,1,32,3,4,1,1"};
+		  "Pistol,Semi-Auto,Fire,Plinx,0.0,0,DEPRECIATED,20,0,26,0,3.33,10,0,1,32,3,4,1,1",
+		  "Rifle,Charge,Physical,Opticor Vandal,0.6,0,DEPRECIATED,0.0,40,280,80,2,8,200,1.4,24,2.6,30,1,1",
+		  "Rifle,Semi-Auto,Physical,Prisma Grinlok,0.0,0,DEPRECIATED,0.0,74.8,18.7,93.5,1.67,21,540,1.7,21,2.9,37,1,1"};
 }
