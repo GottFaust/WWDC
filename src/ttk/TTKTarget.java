@@ -772,7 +772,7 @@ public class TTKTarget implements Comparable {
 							}
 						}
 						if (crit > 0) {
-							localCritMult = crit * Main.finalCritMult;
+							localCritMult = 1 + crit * (Main.finalCritMult - 1);
 						}
 
 						// Vigilante Proc?

@@ -1384,7 +1384,8 @@ public class Main {
 		}
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
 
-		averageCritMult = 1 - Math.min(1, finalCritChance) + (finalCritChance + vigilante) * finalCritMult;
+		averageCritMult = (1 - finalCritChance) + (finalCritChance + vigilante) * finalCritMult;
+		
 
 	}
 
