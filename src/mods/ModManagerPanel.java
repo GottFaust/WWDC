@@ -1298,6 +1298,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffectThreeBox.setSelectedIndex(0);
 		modPowerFourField.setText("0");
 		modEffectFourBox.setSelectedIndex(0);
+		this.revalidate();
 	}
 
 	/**
