@@ -762,7 +762,6 @@ public class TTKTarget implements Comparable {
 					for (int p = 0; p < multishot; p++) {
 
 						// Find Crit
-						double localCritMult = 1.0;
 						double tempCrit = comboCritMult * Main.finalCritChance + 1;
 						int crit = 0;
 						for (int a = 0; a < Main.finalCritChance; a++) {
@@ -771,13 +770,11 @@ public class TTKTarget implements Comparable {
 								crit++;
 							}
 						}
-						if (crit > 0) {
-							localCritMult = 1 + crit * (Main.finalCritMult - 1);
-						}
+						double localCritMult = 1 + crit * (Main.finalCritMult - 1);
 
 						// Vigilante Proc?
 						if (Main.vigilante > 0 && Main.vigilante > rng.nextDouble()) {
-							localCritMult += Main.finalCritMult;
+							localCritMult += (Main.finalCritMult - 1);
 						}
 
 						// Headshot damage multiplier

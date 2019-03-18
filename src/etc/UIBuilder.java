@@ -22,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -298,6 +299,16 @@ public class UIBuilder {
    * @param box
    */
   public static void checkBoxInit(JCheckBox box){
+    box.setBackground(CONTAINER_BACKGROUND);
+    box.setForeground(LABEL_FOREGROUND);
+    box.setOpaque(true);
+  }
+  
+  /**
+   * Default Radio Button Init
+   * @param button
+   */
+  public static void radioButtonInit(JRadioButton box){
     box.setBackground(CONTAINER_BACKGROUND);
     box.setForeground(LABEL_FOREGROUND);
     box.setOpaque(true);
