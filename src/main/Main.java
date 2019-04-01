@@ -41,9 +41,7 @@ import javax.swing.JTextArea;
 
 import etc.Constants;
 import etc.TTKNamePair;
-import etc.DPSGraphPanel;
 import etc.DPSPanel;
-import etc.TTKGraphPanel;
 import damage.Damage;
 import damage.SurfaceDamage;
 import etc.UIBuilder;
@@ -87,7 +85,7 @@ public class Main {
 	protected static JButton quickTargetButton = new JButton("Add");
 	protected static JButton removeTargetButton = new JButton("Remove");
 
-	protected static JLabel TTKIterationsLabel = new JLabel("Iterations:");
+	protected static JLabel TTKIterationsLabel = new JLabel("TTK Iterations:");
 	protected static JTextField TTKIterationsField = new JTextField(4);
 	public static JTextField targetLevelField = new JTextField(4);
 	protected static JLabel targetLevelLabel = new JLabel("Level");
@@ -98,11 +96,9 @@ public class Main {
 
 	protected static DefaultListModel enemyListModel = new DefaultListModel();
 	protected static JList enemyList = new JList(enemyListModel);
-	// protected static JScrollPane enemyScroll = new JScrollPane(enemyList);
 
 	/** JTabbedPanes **/
 	protected static JTabbedPane weaponPane = new JTabbedPane();
-	protected static JTabbedPane graphPane = new JTabbedPane();
 
 	/** JScrollPanes **/
 	protected static JScrollPane outputScroll = new JScrollPane(output);
@@ -123,8 +119,6 @@ public class Main {
 	protected static TTKManagerPanel theTTKManager = null;
 	protected static WeaponManagerPanel theWeaponManager = null;
 	protected static ColorOptionsPanel theColorPanel = null;
-	protected static DPSGraphPanel dpsGraph = new DPSGraphPanel();
-	protected static TTKGraphPanel ttkGraph = new TTKGraphPanel();
 	protected static DPSPanel DPSPanel = new DPSPanel();
 
 	/** JMenuBar **/
@@ -150,12 +144,12 @@ public class Main {
 	protected static Boolean targetManagerInit = false;
 	protected static Boolean weaponManagerInit = false;
 	protected static Boolean colorOptionsInit = false;
-	protected static JCheckBox TTKBox = new JCheckBox("TTK");
-	//protected static JCheckBox lightWeightTTKBox = new JCheckBox("Lightweight TTK");
 	protected static JLabel targetGroupLabel = new JLabel("Group:");
 	public static JComboBox targetGroupBox = new JComboBox();
-	protected static JLabel corrosiveProjectionLabel = new JLabel("CP Count:");
+	protected static JLabel corrosiveProjectionLabel = new JLabel("CPs:");
+	protected static JLabel shieldDisruptionLabel = new JLabel("SDs:");
 	protected static JComboBox corrosiveProjectionBox = new JComboBox();
+	protected static JComboBox shieldDisruptionBox = new JComboBox();
 	protected static JCheckBox headShots = new JCheckBox("Headshots");
 
 	/** Data **/
@@ -177,7 +171,7 @@ public class Main {
 	public static int complexTTKIterations = 10000;
 	// public static int complexTTKCompletions = 0;
 	public static String longestTTKName = "";
-	// protected static int maxTTKTime = 300000;
+	public static int maxTTKTime = 6000000;
 
 	public static String weaponName = "";
 	public static String weaponMode = "";
@@ -237,7 +231,7 @@ public class Main {
 	protected static double burstFireStacks = 0;
 	protected static double burstToxinStacks = 0;
 	protected static double burstGasStacks = 0;
-	
+
 	public static Damage raw = new Damage();
 	public static Damage impact = new Damage();
 	public static Damage puncture = new Damage();
@@ -308,7 +302,7 @@ public class Main {
 	public static double burstCloudDoTDPS;
 	public static double burstElectricProcDPS;
 	public static double burstGasProcDPS;
-	
+
 	public static boolean updateOutput;
 
 	public static boolean stop = false;
@@ -376,7 +370,6 @@ public class Main {
 		UIBuilder.textAreaInit(output);
 		UIBuilder.scrollPaneInit(outputScroll);
 		UIBuilder.tabbedPaneInit(weaponPane);
-		UIBuilder.tabbedPaneInit(graphPane);
 		UIBuilder.menuBarInit(mainMenuBar);
 		UIBuilder.menuInit(fileMenu);
 		UIBuilder.menuItemInit(modMenu);
@@ -386,12 +379,14 @@ public class Main {
 		UIBuilder.menuItemInit(loadItem);
 		UIBuilder.menuItemInit(colorOptionsItem);
 		UIBuilder.fileChooserInit(chooser);
-		UIBuilder.checkBoxInit(TTKBox);
+		// UIBuilder.checkBoxInit(TTKBox);
 		UIBuilder.checkBoxInit(headShots);
-		//UIBuilder.checkBoxInit(lightWeightTTKBox);
+		// UIBuilder.checkBoxInit(lightWeightTTKBox);
 		UIBuilder.labelInit(corrosiveProjectionLabel);
+		UIBuilder.labelInit(shieldDisruptionLabel);
 		UIBuilder.labelInit(targetGroupLabel);
 		UIBuilder.comboBoxInit(corrosiveProjectionBox);
+		UIBuilder.comboBoxInit(shieldDisruptionBox);
 		UIBuilder.comboBoxInit(targetGroupBox);
 		UIBuilder.listInit(enemyList);
 		// UIBuilder.scrollPaneInit(enemyScroll);
@@ -401,6 +396,7 @@ public class Main {
 		enemyList.setVisibleRowCount(-1);
 
 		corrosiveProjectionBox.setPrototypeDisplayValue("XX");
+		shieldDisruptionBox.setPrototypeDisplayValue("XX");
 		targetGroupBox.setPrototypeDisplayValue("XX");
 
 		for (int i = 0; i < 10; i++) {
@@ -409,6 +405,9 @@ public class Main {
 
 		for (int i = 0; i < 5; i++) {
 			corrosiveProjectionBox.addItem("" + i);
+		}
+		for (int i = 0; i < 5; i++) {
+			shieldDisruptionBox.addItem("" + i);
 		}
 
 		try {
@@ -425,8 +424,8 @@ public class Main {
 
 		calculateButton.addActionListener(action);
 		maximizeButton.addActionListener(action);
-		TTKBox.addActionListener(action);
-		//lightWeightTTKBox.addActionListener(action);
+		// TTKBox.addActionListener(action);
+		// lightWeightTTKBox.addActionListener(action);
 		stopButton.addActionListener(action);
 		quickTargetButton.addActionListener(action);
 		removeTargetButton.addActionListener(action);
@@ -451,10 +450,6 @@ public class Main {
 		weaponPane.add(meleePanel, "Melee (Incomplete)");
 		weaponPane.add(arcGunPanel, Constants.ARCGUN);
 
-		graphPane.add(enemyList, "Targets");
-		graphPane.add(dpsGraph, "DPS");
-		graphPane.add(ttkGraph, "TTK");
-
 		JPanel targetButtonPanel = new JPanel();
 		UIBuilder.panelInit(targetButtonPanel);
 		targetButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -470,10 +465,12 @@ public class Main {
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(corrosiveProjectionLabel);
 		buttonPanel.add(corrosiveProjectionBox);
-		buttonPanel.add(TTKBox);
+		buttonPanel.add(shieldDisruptionLabel);
+		buttonPanel.add(shieldDisruptionBox);
+		// buttonPanel.add(TTKBox);
 		buttonPanel.add(TTKIterationsLabel);
 		buttonPanel.add(TTKIterationsField);
-		//buttonPanel.add(lightWeightTTKBox);
+		// buttonPanel.add(lightWeightTTKBox);
 		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
@@ -482,12 +479,17 @@ public class Main {
 		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
 		corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
 		corrosiveProjectionBox.setToolTipText("Number of Corrosive Projection auras active.");
+		shieldDisruptionLabel.setToolTipText("Number of Shield Disruption auras active.");
+		shieldDisruptionBox.setToolTipText("Number of Shield Disruption auras active.");
 		targetGroupLabel.setToolTipText("Target group to run calculations against.");
 		targetGroupBox.setToolTipText("Target group to run calculations against.");
-		TTKBox.setToolTipText("Warning: This will cause a significantly performance hit compared to not running TTK.");
+		// TTKBox.setToolTipText("Warning: This will cause a significantly performance
+		// hit compared to not running TTK.");
 		TTKIterationsField.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
-		//lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster, but will be far less accurate. No min/max TTK values.<br>Even less accurate on slow-firing weapons</HTML>");
+		// lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster,
+		// but will be far less accurate. No min/max TTK values.<br>Even less accurate
+		// on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
 		targetLevelLabel.setToolTipText("Override the default level");
 		targetLevelField.setToolTipText("Override the default level");
@@ -495,8 +497,8 @@ public class Main {
 		removeTargetButton.setToolTipText("Remove selected target from the current group");
 		meleePanel.setToolTipText("WARNING: Melee is incomplete and very inaccurate.");
 
-		TTKBox.setSelected(true);
-		//lightWeightTTKBox.setSelected(false);
+		// TTKBox.setSelected(true);
+		// lightWeightTTKBox.setSelected(false);
 
 		JPanel bottomRightPanel = new JPanel();
 		UIBuilder.panelInit(bottomRightPanel);
@@ -505,14 +507,17 @@ public class Main {
 		bottomRightPanel.add(buttonPanel);
 
 		JPanel bottomLeftPanel = new JPanel();
-		bottomLeftPanel.setLayout(new GridBagLayout());
+		JPanel bottomLeftFillPanel = new JPanel();
+		bottomLeftFillPanel.setLayout(new GridBagLayout());
 		UIBuilder.panelInit(bottomLeftPanel);
 		bottomLeftPanel.setLayout(new BoxLayout(bottomLeftPanel, BoxLayout.Y_AXIS));
-		bottomLeftPanel.add(graphPane);
-		bottomLeftPanel.add(targetButtonPanel);
+		bottomLeftFillPanel.add(enemyList, gbc);
+		bottomLeftPanel.add(bottomLeftFillPanel);
+		bottomLeftPanel.add(targetButtonPanel, gbc);
+		UIBuilder.panelInit(bottomLeftFillPanel);
 
-		graphPane.setPreferredSize(new Dimension(429, 250));
-		outputScroll.getViewport().setPreferredSize(new Dimension(400, 250));
+		outputScroll.getViewport().setPreferredSize(new Dimension(750, 250));
+		bottomLeftFillPanel.setPreferredSize(new Dimension(300, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
 		targetLevelField.setPreferredSize(new Dimension(0, 24));
 		TTKIterationsField.setPreferredSize(new Dimension(0, 24));
@@ -580,8 +585,9 @@ public class Main {
 
 		TTKIterationsField.setText("10000");
 
-		UIBuilder.createTitledLineBorder(DPSPanel.stats, "Calculated Stats");
-		UIBuilder.createTitledLineBorder(DPSPanel.status, "Status Breakdown");
+		UIBuilder.createTitledLineBorder(DPSPanel.stats, "CALCULATED STATS");
+		UIBuilder.createTitledLineBorder(DPSPanel.status, "STATUS BREAKDOWN");
+		UIBuilder.createTitledLineBorder(bottomLeftFillPanel, "TARGETS");
 	}
 
 	/**
@@ -620,13 +626,12 @@ public class Main {
 		calculateBurstDamagePerSecond();
 
 		// Calculate Time To Kill Values
-		if (TTKBox.isSelected()) {
-			String iters = TTKIterationsField.getText();
-			if (iters == null) {
-				iters = "10000";
-			}
-			complexTTKIterations = Integer.parseInt(iters);
+		String iters = TTKIterationsField.getText();
+		if (iters == null) {
+			iters = "10000";
 		}
+		complexTTKIterations = Integer.parseInt(iters);
+
 		if (useComplexTTK && raw.perSecond > 100) {
 			int targetGroup = Integer.parseInt((String) targetGroupBox.getSelectedItem());
 			groupTargets = new Vector<TTKTarget>();
@@ -1194,10 +1199,7 @@ public class Main {
 			multishot += projectileCountMods.get(i);
 			finalProjectileCount += projectileCount * projectileCountMods.get(i);
 		}
-		if (weaponMode.equals(Constants.CONTINUOUS)) {
-			finalProjectileCount = projectileCount;
-			finalDamageMult *= multishot; // Beams don't get more projectiles, so I turned multishot into damage -o
-		}
+
 		finalFirstShotDamageMult = firstShotDamageMult;
 		for (int i = 0; i < firstShotDamageMods.size(); i++) {
 			finalFirstShotDamageMult += firstShotDamageMult * firstShotDamageMods.get(i);
@@ -1385,7 +1387,6 @@ public class Main {
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
 
 		averageCritMult = (1 - finalCritChance) + (finalCritChance + vigilante) * finalCritMult;
-		
 
 	}
 
@@ -1419,7 +1420,7 @@ public class Main {
 
 		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
 			double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.max(1, finalCritChance)))); // Rewriting so munitions and natural procs don't stack
-			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;			
+			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
 			burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration;
 		}
 		if (fire.finalBase > 0.0) {
@@ -1438,8 +1439,8 @@ public class Main {
 			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
 			burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
 		}
-		
-		if(headShot) {
+
+		if (headShot) {
 			headShotMult = 2 + 2 * Math.min(1, finalCritChance);
 			headShotMult *= headShotBonus;
 		}
@@ -1852,14 +1853,14 @@ public class Main {
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * gasHeadMult;
-		
+
 		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
 		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
 		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
 		electricProcDPS = electricProcRate * electricBase * procsPerSecond;
 		gasProcDPS = gasProcRate * poisonDamage * procsPerSecond;
-		
+
 		burstBleedDoTDPS = burstSlashStacks * bleedDamage * (7 / 6);
 		burstPoisonDoTDPS = burstToxinStacks * poisonDamage * (9 / 8);
 		burstHeatDoTDPS = burstFireStacks * heatDamage * (7 / 6);
@@ -2276,6 +2277,7 @@ public class Main {
 		output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		output.append(selectedWeapon.getModsOutput());
 		output.append("\nCorrosive Projections: " + corrosiveProjectionBox.getSelectedItem());
+		output.append("\nShieldDisruptions: " + shieldDisruptionBox.getSelectedItem());
 
 		if (useComplexTTK) {
 			output.append("\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
@@ -2313,14 +2315,7 @@ public class Main {
 				output.append(target.printAdvancedData());
 				TTKGraphVec.add(target.getTTKNamePair());
 			}
-			// Update the TTK Graph
-			ttkGraph.updateGraph(TTKGraphVec);
-
 		}
-
-		// Update the DPS Graph
-		dpsGraph.updateDPS(raw.perSecond, cloneFlesh.perSecond, ferrite.perSecond, alloy.perSecond, mechanical.perSecond, corpusFlesh.perSecond, shield.perSecond, protoShield.perSecond, robotic.perSecond, infestedFlesh.perSecond, fossilized.perSecond, sinew.perSecond, infested.perSecond,
-				grineer.perSecond, corpus.perSecond);
 	}
 
 	/**
@@ -2349,6 +2344,9 @@ public class Main {
 			DPSPanel.corrosiveField.setText(f.format(finalProjectileCount * averageCritMult * corrosive.finalBase));
 			DPSPanel.viralField.setText(f.format(finalProjectileCount * averageCritMult * viral.finalBase));
 			DPSPanel.projectilesField.setText(f.format(finalProjectileCount));
+			if (weaponMode.equals(Constants.CONTINUOUS)) {
+				DPSPanel.projectilesField.setText(f.format(projectileCount));
+			}
 			DPSPanel.FRField.setText(f.format(finalFireRate));
 			DPSPanel.CCField.setText(f.format(100 * finalCritChance) + "%");
 			DPSPanel.CDField.setText(f.format(finalCritMult));
@@ -2504,9 +2502,8 @@ public class Main {
 				DPSPanel.corruptedPanel.setVisible(true);
 			}
 		}
-		if (TTKBox.isSelected()) {
-			useComplexTTK = true;
-		}
+		useComplexTTK = true;
+
 		repack();
 	}
 
@@ -2629,9 +2626,7 @@ public class Main {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(calculateButton)) {
 				updateOutput = true;
-				if (TTKBox.isSelected()) {
-					useComplexTTK = true;
-				}
+				useComplexTTK = true;
 				calculateDPS();
 			} else if (e.getSource().equals(maximizeButton)) {
 				selectedWeapon = (WeaponPanel) weaponPane.getSelectedComponent();
@@ -2642,7 +2637,6 @@ public class Main {
 				setup = true;
 				maxxing = true;
 				theMaximizer = new Maximizer();
-
 				new Thread(new Runnable() {
 					public void run() {
 						theMaximizer.Maximizer();
@@ -2674,21 +2668,15 @@ public class Main {
 							}
 						}
 						theTTKManager.targets.set(theTTKManager.targets.indexOf(foundTarget), selectedTarget);
-						// theTTKManager.targets.removeElement(selectedTarget);
 					}
 					updateTargetList();
 					theTTKManager.updateTargetList();
 				}
 
-			} else if (e.getSource().equals(TTKBox)) {
-				useComplexTTK = (TTKBox.isSelected());
 			} else if (e.getSource().equals(targetGroupBox)) {
-				ttkGraph.clear();
 				updateTargetList();
 			} else if (e.getSource().equals(clearOutputButton)) {
 				output.setText("");
-				dpsGraph.clear();
-				ttkGraph.clear();
 			} else if (e.getSource().equals(headShots)) {
 				updateStats();
 			} else if (e.getSource().equals(loadItem)) {
@@ -2699,8 +2687,6 @@ public class Main {
 					shotgunPanel.clear();
 					pistolPanel.clear();
 					meleePanel.clear();
-					// output.setText("");
-					// graph.clear();
 					clearValues();
 					File file = chooser.getSelectedFile();
 					try {
@@ -2767,6 +2753,11 @@ public class Main {
 		if (mult < 0.0) {
 			mult = 0.0;
 		}
+		return mult;
+	}
+	
+	public static double getShieldDisruptionMult() {
+		double mult = 1.0 - (0.24 * Double.parseDouble((String) shieldDisruptionBox.getSelectedItem()));
 		return mult;
 	}
 

@@ -40,7 +40,7 @@ public class TTKTarget implements Comparable {
 	public String name = "";
 	public double TTK = 0.0;
 	protected double minTTK = 0.0;
-	protected double maxTTK = 0.0;
+	public double maxTTK = 0.0;
 	protected Vector<Double> TTKVec = new Vector<Double>();
 
 	// TTKSim Stats
@@ -103,11 +103,13 @@ public class TTKTarget implements Comparable {
 	protected double radiationProc;
 
 	protected double corrosiveProjectionMult = 0.0;
+	protected double shieldDisruptionMult = 0.0;
 	protected double shieldDamage = 0;
 	protected double healthDamage = 0;
 	protected double armorDamage = 0;
 	protected double averageArmorMult = 0;
 	protected int spliterations;
+	protected boolean stopWastingTime = false;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -462,11 +464,14 @@ public class TTKTarget implements Comparable {
 		averageArmorMult = 1 / averageArmorMult;
 
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
+		shieldDisruptionMult = Main.getShieldDisruptionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-
+		
 		int cores = Runtime.getRuntime().availableProcessors();
 		spliterations = (Main.complexTTKIterations / cores);
 		clearValues();
+		
+		stopWastingTime = false;
 
 		ExecutorService es = Executors.newCachedThreadPool();
 		for (int i = 0; i < cores; i++) {
@@ -474,6 +479,9 @@ public class TTKTarget implements Comparable {
 				public void run() {
 					for (int i = 0; i < spliterations; i++) {
 						TTKVec.add(calculateRandomizedTimeToKill());
+						if (stopWastingTime == true) {
+							break;
+						}
 					}
 				}
 			});
@@ -494,8 +502,6 @@ public class TTKTarget implements Comparable {
 		Collections.sort(TTKVec);
 		minTTK = TTKVec.get(0);
 		maxTTK = TTKVec.get(TTKVec.size() - 1);
-		// Main.complexTTKCompletions += 1;
-
 	}
 
 	/**
@@ -641,6 +647,7 @@ public class TTKTarget implements Comparable {
 	public double calculateRandomizedTimeToKill() {
 
 		double targetCurrentShields = maxShields;
+		targetCurrentShields *= shieldDisruptionMult;
 		double targetCurrentHealth = maxHealth;
 		int targetAdjustedMaxArmor = maxArmor;
 		targetAdjustedMaxArmor *= corrosiveProjectionMult;
@@ -653,7 +660,7 @@ public class TTKTarget implements Comparable {
 		double viralHealth = 0;
 		double magneticShields = 0;
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
-		//slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
+		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 		int statusEffects[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int rampMult = 0;
 		int millisecondMult = 5;
@@ -677,9 +684,9 @@ public class TTKTarget implements Comparable {
 			millisecondMult = 1;
 		}
 
-		// Run a 600 second simulation to calculate the time to kill
-		for (timeToKill = 0; timeToKill < 6000000;) {
-			
+		// Run a X second simulation to calculate the time to kill
+		for (timeToKill = 0; timeToKill < Main.maxTTKTime;) {
+
 			// is it time to fire a new projectile?
 			if (shotTimer <= 0) {
 
@@ -720,6 +727,8 @@ public class TTKTarget implements Comparable {
 						if (beamMult > 1) {
 							beamMult = 1;
 						}
+						beamMult *= multishot;
+						multishot = 1;
 					}
 					// Combo multipliers
 					double comboMult = 1;
@@ -963,9 +972,9 @@ public class TTKTarget implements Comparable {
 				}
 				// Others
 				for (int j = 0; j < 14; j++) {
-					statusEffects[j] -= (1000/coldProcMult);
-				}	
-				
+					statusEffects[j] -= (1000 / coldProcMult);
+				}
+
 				// If viral proc is expired
 				if (statusEffects[6] <= 0) {
 					targetCurrentHealth += viralHealth;
@@ -975,15 +984,21 @@ public class TTKTarget implements Comparable {
 				if (statusEffects[5] <= 0) {
 					targetCurrentShields += magneticShields;
 					magneticShields = 0;
-				}		
+				}
 				// If cold proc is expired
-				if(statusEffects[10] <= 0) {
+				if (statusEffects[10] <= 0) {
 					coldProcMult = 1;
 				}
-				
+
 				statusTimer = 1000;
 			}
-
+			
+			// Check if we're wasting time
+			if (Main.maxxing && (timeToKill / 10000.0) > (Main.theMaximizer.bestTTK + 1)) {
+				stopWastingTime = true;
+				return Main.maxTTKTime / 10000.0;
+			}
+			
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
 				return timeToKill / 10000.0;
@@ -1003,6 +1018,6 @@ public class TTKTarget implements Comparable {
 			timeToKill += nextEvent;
 
 		}
-		return timeToKill / 1000.0;
+		return timeToKill / 10000.0;
 	}
 }

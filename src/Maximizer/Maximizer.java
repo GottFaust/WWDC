@@ -21,6 +21,7 @@ public class Maximizer {
 	protected int targets = 0;
 	protected File maximizerResults;
 	protected Vector<TTKresult> results = new Vector<TTKresult>();
+	public double bestTTK = 9999999;
 
 	public static Vector<Mod> simulatedMods = new Vector<Mod>();
 	protected static Vector<Mod> possibleMods = new Vector<Mod>();
@@ -37,7 +38,7 @@ public class Maximizer {
 			Main.stop = true;
 			return;
 		}
-		
+		double currentMaxTTK = 0.0;
 		Vector TTKs = new Vector<String>();
 		double total = 0;
 		Vector<Double> times = new Vector<Double>();
@@ -51,12 +52,19 @@ public class Maximizer {
 			TTKs.add(target.TTK);
 			total += target.TTK;
 			times.add(target.TTK);
+			if (target.maxTTK > currentMaxTTK) {
+				currentMaxTTK = target.maxTTK;
+			}
 		}
 		targets = Main.groupTargets.size();
 		double average = total / targets;
 		double minmax = Collections.max(times);
 		results.add(new TTKresult(build1, build2, DPS, average, minmax, TTKs));
 
+		if (currentMaxTTK < bestTTK) {
+			bestTTK = currentMaxTTK;
+		}
+		
 		completedIterations++;
 		Main.progressBar.setValue((completedIterations * 100) / totalIterations);
 	}
@@ -103,6 +111,7 @@ public class Maximizer {
 		int emptyMods = 0;
 		Main.stop = false;
 		completedIterations = 0;
+		bestTTK = 9999999;
 		results.clear();
 		modsToChange.clear();
 		simulatedMods.clear();
