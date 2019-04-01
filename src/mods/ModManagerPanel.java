@@ -344,7 +344,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			negMult *= 0.5;
 		}
 
-		if (dispoWeaponType.getSelectedItem().equals(Constants.RIFLE)) {
+		switch ((String) dispoWeaponType.getSelectedItem()) {
+		case Constants.RIFLE:
 			baseMultsihot = 90;
 			baseDamage = 165;
 			basePhysical = 120;
@@ -362,7 +363,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			baseRecoil = -90;
 			baseZoom = 60;
 			basePT = 2.7;
-		} else if (dispoWeaponType.getSelectedItem().equals(Constants.PISTOL)) {
+			break;
+		case Constants.PISTOL:
 			baseMultsihot = 120;
 			baseDamage = 220;
 			basePhysical = 120;
@@ -380,7 +382,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			baseRecoil = -90;
 			baseZoom = 80;
 			basePT = 2.7;
-		} else {
+			break;
+		case Constants.SHOTGUN:
 			baseMultsihot = 120;
 			baseDamage = 165;
 			basePhysical = 120;
@@ -398,7 +401,9 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			baseRecoil = -90;
 			baseZoom = 0;
 			basePT = 2.7;
+			break;
 		}
+
 		DecimalFormat f = new DecimalFormat("#.#");
 		dispoMultishotPositiveField.setText(f.format(baseMultsihot * 0.9 * posMult) + "  to  " + f.format(baseMultsihot * 1.1 * posMult));
 		dispoDamagePositiveField.setText(f.format(baseDamage * 0.9 * posMult) + "  to  " + f.format(baseDamage * 1.1 * posMult));
@@ -658,7 +663,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		filePanel.add(resetButton);
 		moddy.add(regularMods);
 		moddy.add(maximizerMods);
-		
+
 		rightPanel.add(filePanel);
 		rightPanel.add(namePanel);
 		rightPanel.add(typePanel);
@@ -989,16 +994,23 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	 * Grades the current mod as if it were a riven
 	 */
 	void gradeRiven() {
-		modPowerOneGrade.setVisible(true);
-		modPowerTwoGrade.setVisible(true);
-		modPowerThreeGrade.setVisible(true);
-		modPowerFourGrade.setVisible(true);
+		if (modEffectOneBox.getSelectedIndex() > 0) {
+			gradeStat(1, (String) modEffectOneBox.getSelectedItem(), Double.parseDouble(modPowerOneField.getText()));
+			modPowerOneGrade.setVisible(true);
+		}
+		if (modEffectTwoBox.getSelectedIndex() > 0) {
+			gradeStat(2, (String) modEffectTwoBox.getSelectedItem(), Double.parseDouble(modPowerTwoField.getText()));
+			modPowerTwoGrade.setVisible(true);
+		}
+		if (modEffectThreeBox.getSelectedIndex() > 0) {
+			gradeStat(3, (String) modEffectThreeBox.getSelectedItem(), Double.parseDouble(modPowerThreeField.getText()));
+			modPowerThreeGrade.setVisible(true);
+		}
+		if (modEffectFourBox.getSelectedIndex() > 0) {
+			gradeStat(4, (String) modEffectFourBox.getSelectedItem(), Double.parseDouble(modPowerFourField.getText()));
+			modPowerFourGrade.setVisible(true);
+		}
 		this.revalidate();
-
-		gradeStat(1, (String) modEffectOneBox.getSelectedItem(), Double.parseDouble(modPowerOneField.getText()));
-		gradeStat(2, (String) modEffectTwoBox.getSelectedItem(), Double.parseDouble(modPowerTwoField.getText()));
-		gradeStat(3, (String) modEffectThreeBox.getSelectedItem(), Double.parseDouble(modPowerThreeField.getText()));
-		gradeStat(4, (String) modEffectFourBox.getSelectedItem(), Double.parseDouble(modPowerFourField.getText()));
 	}
 
 	/**
@@ -1006,109 +1018,136 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	 */
 	void gradeStat(int whichEffect, String effect, double power) {
 		double compareTo = 0;
-		if (effect.equals("Multishot")) {
+
+		switch (effect) {
+		case "Multishot":
 			if (power > 0) {
 				compareTo = baseMultsihot * posMult;
 			} else {
 				compareTo = baseMultsihot * negMult;
 			}
-		} else if (effect.equals("Damage")) {
+			break;
+		case "Damage":
 			if (power > 0) {
 				compareTo = baseDamage * posMult;
 			} else {
 				compareTo = baseDamage * negMult;
 			}
-		} else if (effect.equals("ImpactDamage") || effect.equals("PunctureDamage") || effect.equals("SlashDamage")) {
+			break;
+		case "ImpactDamage":
+		case "PunctureDamage":
+		case "SlashDamage":
 			if (power > 0) {
 				compareTo = basePhysical * posMult;
 			} else {
 				compareTo = basePhysical * negMult;
 			}
-		} else if (effect.equals("CritChance")) {
+			break;
+		case "CritChance":
 			if (power > 0) {
 				compareTo = baseCC * posMult;
 			} else {
 				compareTo = baseCC * negMult;
 			}
-		} else if (effect.equals("CritMultiplier")) {
+			break;
+		case "CritMultiplier":
 			if (power > 0) {
 				compareTo = baseCD * posMult;
 			} else {
 				compareTo = baseCD * negMult;
 			}
-		} else if (effect.equals("ElectricDamage") || effect.equals("FireDamage") || effect.equals("ToxinDamage") || effect.equals("IceDamage")) {
+			break;
+		case "ElectricDamage":
+		case "FireDamage":
+		case "ToxinDamage":
+		case "IceDamage":
 			if (power > 0) {
 				compareTo = baseElement * posMult;
 			} else {
 				compareTo = baseElement * negMult;
 			}
-		} else if (effect.equals("StatusChance")) {
+			break;
+		case "StatusChance":
 			if (power > 0) {
 				compareTo = baseSC * posMult;
 			} else {
 				compareTo = baseSC * negMult;
 			}
-		} else if (effect.equals("StatusDuration")) {
+			break;
+		case "StatusDuration":
 			if (power > 0) {
 				compareTo = baseSD * posMult;
 			} else {
 				compareTo = baseSD * negMult;
 			}
-		} else if (effect.equals("GrineerDamage") || effect.equals("InfestedDamage") || effect.equals("CorpusDamage") || effect.equals("CorruptedDamage")) {
+			break;
+		case "GrineerDamage":
+		case "InfestedDamage":
+		case "CorpusDamage":
+		case "CorruptedDamage":
 			if (power > 0) {
 				compareTo = baseFaction * posMult;
 			} else {
 				compareTo = baseFaction * negMult;
 			}
-		} else if (effect.equals("FireRate")) {
+			break;
+		case "FireRate":
 			if (power > 0) {
 				compareTo = baseFR * posMult;
 			} else {
 				compareTo = baseFR * negMult;
 			}
-		} else if (effect.equals("MagCap")) {
+			break;
+		case "MagCap":
 			if (power > 0) {
 				compareTo = baseMag * posMult;
 			} else {
 				compareTo = baseMag * negMult;
 			}
-		} else if (effect.equals("AmmoCap")) {
+			break;
+		case "AmmoCap":
 			if (power > 0) {
 				compareTo = baseAmmo * posMult;
 			} else {
 				compareTo = baseAmmo * negMult;
 			}
-		} else if (effect.equals("FlightSpeed")) {
+			break;
+		case "FlightSpeed":
 			if (power > 0) {
 				compareTo = basePFS * posMult;
 			} else {
 				compareTo = basePFS * negMult;
 			}
-		} else if (effect.equals("ReloadSpeed")) {
+			break;
+		case "ReloadSpeed":
 			if (power > 0) {
 				compareTo = baseReload * posMult;
 			} else {
 				compareTo = baseReload * negMult;
 			}
-		} else if (effect.equals("RecoilBonus")) {
+			break;
+		case "RecoilBonus":
 			if (power < 0) {
 				compareTo = baseRecoil * posMult;
 			} else {
 				compareTo = baseRecoil * negMult;
 			}
-		} else if (effect.equals("Zoom")) {
+			break;
+		case "Zoom":
 			if (power > 0) {
 				compareTo = baseZoom * posMult;
 			} else {
 				compareTo = baseZoom * negMult;
 			}
-		} else if (effect.equals("PunchThrough")) {
+			break;
+		case "PunchThrough":
 			if (power > 0) {
 				compareTo = basePT * posMult;
 			} else {
 				compareTo = basePT * negMult;
 			}
 		}
+
 		DecimalFormat f = new DecimalFormat("#.###");
 		double grade;
 		if (power > 0) {
@@ -1319,25 +1358,44 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		if (modEffectTwoBox.getSelectedIndex() > 0) {
 			effects++;
 		}
-		if (modEffectTwoBox.getSelectedIndex() > 0) {
+		if (modEffectThreeBox.getSelectedIndex() > 0) {
 			effects++;
 		}
-		if (modEffectTwoBox.getSelectedIndex() > 0) {
+		if (modEffectFourBox.getSelectedIndex() > 0) {
 			effects++;
 		}
 
 		// Build the String
-		String newModString = newName + "," + newType + "," + newRanks;
-		if (effects == 4) {
-			newModString += ",4," + newModEffectOne + "," + newModEffectTwo + "," + newModEffectThree + "," + newModEffectFour + "," + newModPowerOne + "," + newModPowerTwo + "," + newModPowerThree + "," + newModPowerFour;
-		} else if (effects == 3) {
-			newModString += ",3," + newModEffectOne + "," + newModEffectTwo + "," + newModEffectThree + "," + newModPowerOne + "," + newModPowerTwo + "," + newModPowerThree;
-		} else if (effects == 2) {
-			newModString += ",2," + newModEffectOne + "," + newModEffectTwo + "," + newModPowerOne + "," + newModPowerTwo;
-		} else {
-			newModString += ",1," + newModEffectOne + "," + newModPowerOne;
+		String newModString = newName + "," + newType + "," + newRanks + "," + effects + ",";
+
+		// Add effects to the string. (I know this is terrible, but it's staying this
+		// way until i feel like rewriting all the mods in the database)
+		if (modEffectOneBox.getSelectedIndex() > 0) {
+			newModString += newModEffectOne + ",";
 		}
-		newModString += "," + newPolarity + "," + newCost;
+		if (modEffectTwoBox.getSelectedIndex() > 0) {
+			newModString += newModEffectTwo + ",";
+		}
+		if (modEffectThreeBox.getSelectedIndex() > 0) {
+			newModString += newModEffectThree + ",";
+		}
+		if (modEffectFourBox.getSelectedIndex() > 0) {
+			newModString += newModEffectFour + ",";
+		}
+		if (modEffectOneBox.getSelectedIndex() > 0) {
+			newModString += newModPowerOne + ",";
+		}
+		if (modEffectTwoBox.getSelectedIndex() > 0) {
+			newModString += newModPowerTwo + ",";
+		}
+		if (modEffectThreeBox.getSelectedIndex() > 0) {
+			newModString += newModPowerThree + ",";
+		}
+		if (modEffectFourBox.getSelectedIndex() > 0) {
+			newModString += newModPowerFour + ",";
+		}
+
+		newModString += newPolarity + "," + newCost;
 
 		return newModString;
 	}
