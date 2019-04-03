@@ -232,26 +232,44 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		pistol = pistolPanel;
 		melee = meleePanel;
 		arcGun = arcGunPanel;
-		Init(modFile);
+		Init();
 		buildUI();
+	}
+	
+	/**
+	 * Initializes the Data
+	 */
+	public void easyInit() {
+		initializer = ModInitializer.getInstance();
+		rifle.InitMods(modFile);
+		rifle.updateDropDownContents();
+		shotgun.InitMods(modFile);
+		shotgun.updateDropDownContents();
+		pistol.InitMods(modFile);
+		pistol.updateDropDownContents();
+		melee.InitMods(modFile);
+		melee.updateDropDownContents();
+		arcGun.InitMods(modFile);
+		arcGun.updateDropDownContents();
+		updateModList();
 	}
 
 	/**
 	 * Initializes the Data
 	 */
-	public void Init(String file) {
+	public void Init() {
 
 		// Initialize The Mod Data
 		initializer = ModInitializer.getInstance();
-		rifle.InitMods(file);
+		rifle.InitMods(modFile);
 		rifle.updateDropDownContents();
-		shotgun.InitMods(file);
+		shotgun.InitMods(modFile);
 		shotgun.updateDropDownContents();
-		pistol.InitMods(file);
+		pistol.InitMods(modFile);
 		pistol.updateDropDownContents();
-		melee.InitMods(file);
+		melee.InitMods(modFile);
 		melee.updateDropDownContents();
-		arcGun.InitMods(file);
+		arcGun.InitMods(modFile);
 		arcGun.updateDropDownContents();
 
 		modEffects.clear();
@@ -891,13 +909,13 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 
 		} else if (e.getSource().equals(regularMods)) { // Switching between mod files (maximizer uses a tuned set of mods)
 			modFile = "mods.db";
-			Init(modFile);
+			easyInit();
 		} else if (e.getSource().equals(maximizerMods)) {
 			modFile = "maximizerMods.db";
-			Init(modFile);
+			easyInit();
 		} else if (e.getSource().equals(resetButton)) {
 			initializer.deleteMods();
-			Init(modFile);
+			Init();
 		} else if (e.getSource().equals(dispoWeapon)) {
 			if (updating == false) {
 				String weapon = (String) dispoWeapon.getSelectedItem();
@@ -945,7 +963,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			selectedMod = getModByName(modName);
 			updateSelectedValues();
 		} catch (Exception ex) {
-			clearValues();
+			//clearValues();
 		}
 	}
 

@@ -787,7 +787,7 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Headshot damage multiplier
-						int headShotMult = 1;
+						double headShotMult = 1;
 						if (Main.headShot) {
 							headShotMult = 2;
 							if (crit > 0) {
@@ -994,11 +994,10 @@ public class TTKTarget implements Comparable {
 			}
 			
 			// Check if we're wasting time
-			if (Main.maxxing && (timeToKill / 10000.0) > (Main.theMaximizer.bestTTK + 1)) {
+			if (Main.maxxing && (timeToKill / 10000.0) > (Main.theMaximizer.bestTTK * 1.5)) {
 				stopWastingTime = true;
 				return Main.maxTTKTime / 10000.0;
 			}
-			
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
 				return timeToKill / 10000.0;

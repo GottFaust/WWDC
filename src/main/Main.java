@@ -467,11 +467,9 @@ public class Main {
 		buttonPanel.add(corrosiveProjectionBox);
 		buttonPanel.add(shieldDisruptionLabel);
 		buttonPanel.add(shieldDisruptionBox);
-		// buttonPanel.add(TTKBox);
+		buttonPanel.add(headShots);
 		buttonPanel.add(TTKIterationsLabel);
 		buttonPanel.add(TTKIterationsField);
-		// buttonPanel.add(lightWeightTTKBox);
-		buttonPanel.add(headShots);
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
 		buttonPanel.add(clearOutputButton);
@@ -2514,7 +2512,7 @@ public class Main {
 
 		if (!modManagerInit) {
 			modManagerInit = true;
-			theModManager.Init("mods.db");
+			theModManager.Init();
 			modManagerFrame.add(theModManager);
 			modManagerFrame.pack();
 			modManagerFrame.addWindowListener(new ModWindowListener());
