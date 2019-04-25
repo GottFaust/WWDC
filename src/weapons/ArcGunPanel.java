@@ -14,7 +14,7 @@ public class ArcGunPanel extends WeaponPanel {
    * CTOR
    */
   public ArcGunPanel(){
-    weaponType = Constants.ARCGUN;
+    weaponType = Constants.ARCHGUN;
     Init();
     buildUI();
   }

@@ -448,7 +448,7 @@ public class Main {
 		weaponPane.add(shotgunPanel, Constants.SHOTGUN);
 		weaponPane.add(pistolPanel, Constants.PISTOL);
 		weaponPane.add(meleePanel, "Melee (Incomplete)");
-		weaponPane.add(arcGunPanel, Constants.ARCGUN);
+		weaponPane.add(arcGunPanel, Constants.ARCHGUN);
 
 		JPanel targetButtonPanel = new JPanel();
 		UIBuilder.panelInit(targetButtonPanel);
@@ -1108,6 +1108,7 @@ public class Main {
 		for (int i = 0; i < flatMagMods.size(); i++) {
 			finalMag += flatMagMods.get(i);
 		}
+		finalMag = Math.max(1, finalMag);
 
 		finalCritChance = critChance;
 		for (int i = 0; i < critChanceMods.size(); i++) {
@@ -1121,13 +1122,15 @@ public class Main {
 			}
 			finalCritChance *= 1 + (tempCombo * comboCrit);
 		}
+		finalCritChance = Math.max(0, finalCritChance);
 
 		finalCritMult = critMult;
 		for (int i = 0; i < critMultMods.size(); i++) {
 			finalCritMult += critMult * critMultMods.get(i);
 		}
 		finalCritMult += selectedWeapon.getAddCD();
-
+		finalCritMult = Math.max(0, finalCritMult);
+		
 		finalFlatDamageBonus = flatDamageBonus;
 		for (int i = 0; i < flatDamageMods.size(); i++) {
 			finalFlatDamageBonus += flatDamageMods.get(i);
@@ -1143,12 +1146,12 @@ public class Main {
 			finalDamageMult += damageMult * damageMultMods.get(i);
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
-
+		finalDamageMult = Math.max(0, finalDamageMult);
+		
 		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER) || selectedWeapon.equals(meleePanel)) {
 			if (startingCombo < 1.5) {
 				startingCombo = 1;
 			}
-			finalDamageMult *= startingCombo;
 		}
 
 		finalFireRate = fireRate;
@@ -1170,17 +1173,16 @@ public class Main {
 			finalFireRate += fireRate * fireRateModPower;
 			finalFireRate += fireRate * selectedWeapon.getAddFR();
 		}
-
 		if (weaponMode.equals(Constants.SEMI_AUTO) || weaponMode.equals(Constants.SNIPER) || weaponMode.equals(Constants.SEMIBOW)) {
 			if (finalFireRate > 10.0) {
 				finalFireRate = 10.0;
 			}
 		}
+		finalFireRate = Math.max(0, finalFireRate);
 
 		finalReloadTime = reloadTime;
 		double reloadSpeedMult = 1.0;
 		for (int i = 0; i < reloadTimeMods.size(); i++) {
-			// finalReloadTime -= reloadTime*reloadTimeMods.get(i);
 			reloadSpeedMult += reloadTimeMods.get(i);
 		}
 		finalReloadTime /= reloadSpeedMult;
@@ -1192,11 +1194,10 @@ public class Main {
 			projectileCount = 1;
 		}
 		finalProjectileCount = projectileCount;
-		double multishot = 1;
 		for (int i = 0; i < projectileCountMods.size(); i++) {
-			multishot += projectileCountMods.get(i);
 			finalProjectileCount += projectileCount * projectileCountMods.get(i);
 		}
+		finalProjectileCount = Math.max(0, finalProjectileCount);
 
 		finalFirstShotDamageMult = firstShotDamageMult;
 		for (int i = 0; i < firstShotDamageMods.size(); i++) {
@@ -1225,40 +1226,36 @@ public class Main {
 			}
 			finalStatusChance *= 1 + (tempCombo * comboStatus);
 		}
+		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance ));
 
-		if (finalStatusChance > 1) {
-			finalStatusChance = 1;
-		}
 		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status
 
 		finalStatusDuration = statusDuration;
 		for (int i = 0; i < statusDurationMods.size(); i++) {
 			finalStatusDuration += statusDuration * statusDurationMods.get(i);
 		}
+		finalStatusDuration = Math.max(0, finalStatusDuration);
 
 		impact.finalBase = impact.base;
 		for (int i = 0; i < impactDamageMods.size(); i++) {
 			impact.finalBase += impact.base * impactDamageMods.get(i);
 		}
 		impact.finalBase *= finalDamageMult;
-		if (impact.finalBase < 0)
-			impact.finalBase = 0;
+		impact.finalBase = Math.max(0, impact.finalBase);
 
 		puncture.finalBase = puncture.base;
 		for (int i = 0; i < punctureDamageMods.size(); i++) {
 			puncture.finalBase += puncture.base * punctureDamageMods.get(i);
 		}
 		puncture.finalBase *= finalDamageMult;
-		if (puncture.finalBase < 0)
-			puncture.finalBase = 0;
+		puncture.finalBase = Math.max(0, puncture.finalBase);
 
 		slash.finalBase = slash.base;
 		for (int i = 0; i < slashDamageMods.size(); i++) {
 			slash.finalBase += slash.base * slashDamageMods.get(i);
 		}
 		slash.finalBase *= finalDamageMult;
-		if (slash.finalBase < 0)
-			slash.finalBase = 0;
+		slash.finalBase = Math.max(0, slash.finalBase);
 
 		fire.finalBase = fire.base;
 		for (int i = 0; i < fireDamageMods.size(); i++) {
@@ -1451,7 +1448,7 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult;
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * startingCombo;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult;
@@ -1844,7 +1841,7 @@ public class Main {
 		if (headShotMult > 1) {
 			gasHeadMult = 2 * Main.headShotBonus;
 		}
-		double rawBase = (raw.base * finalDamageMult) * finalDeadAimMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult;
+		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult;
 		double DoTBase = rawBase * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
 		double bleedDamage = DoTBase * 0.35 * hunterMult;
@@ -2327,20 +2324,20 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-
-			DPSPanel.impactField.setText(f.format(finalProjectileCount * averageCritMult * impact.finalBase));
-			DPSPanel.punctureField.setText(f.format(finalProjectileCount * averageCritMult * puncture.finalBase));
-			DPSPanel.slashField.setText(f.format(finalProjectileCount * averageCritMult * slash.finalBase));
-			DPSPanel.fireField.setText(f.format(finalProjectileCount * averageCritMult * fire.finalBase));
-			DPSPanel.iceField.setText(f.format(finalProjectileCount * averageCritMult * ice.finalBase));
-			DPSPanel.electricField.setText(f.format(finalProjectileCount * averageCritMult * electric.finalBase));
-			DPSPanel.toxinField.setText(f.format(finalProjectileCount * averageCritMult * toxin.finalBase));
-			DPSPanel.blastField.setText(f.format(finalProjectileCount * averageCritMult * blast.finalBase));
-			DPSPanel.magneticField.setText(f.format(finalProjectileCount * averageCritMult * magnetic.finalBase));
-			DPSPanel.gasField.setText(f.format(finalProjectileCount * averageCritMult * gas.finalBase));
-			DPSPanel.radiationField.setText(f.format(finalProjectileCount * averageCritMult * radiation.finalBase));
-			DPSPanel.corrosiveField.setText(f.format(finalProjectileCount * averageCritMult * corrosive.finalBase));
-			DPSPanel.viralField.setText(f.format(finalProjectileCount * averageCritMult * viral.finalBase));
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * finalDeadAimMult * headShotMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			DPSPanel.impactField.setText(f.format(totalmult * impact.finalBase));
+			DPSPanel.punctureField.setText(f.format(totalmult * puncture.finalBase));
+			DPSPanel.slashField.setText(f.format(totalmult * slash.finalBase));
+			DPSPanel.fireField.setText(f.format(totalmult * fire.finalBase));
+			DPSPanel.iceField.setText(f.format(totalmult * ice.finalBase));
+			DPSPanel.electricField.setText(f.format(totalmult * electric.finalBase));
+			DPSPanel.toxinField.setText(f.format(totalmult * toxin.finalBase));
+			DPSPanel.blastField.setText(f.format(totalmult * blast.finalBase));
+			DPSPanel.magneticField.setText(f.format(totalmult * magnetic.finalBase));
+			DPSPanel.gasField.setText(f.format(totalmult * gas.finalBase));
+			DPSPanel.radiationField.setText(f.format(totalmult * radiation.finalBase));
+			DPSPanel.corrosiveField.setText(f.format(totalmult * corrosive.finalBase));
+			DPSPanel.viralField.setText(f.format(totalmult * viral.finalBase));
 			DPSPanel.projectilesField.setText(f.format(finalProjectileCount));
 			if (weaponMode.equals(Constants.CONTINUOUS)) {
 				DPSPanel.projectilesField.setText(f.format(projectileCount));
@@ -2352,7 +2349,7 @@ public class Main {
 			DPSPanel.modifiedSCField.setText(f.format(100 * (1 - Math.pow(1 - finalStatusChance, finalProjectileCount))) + "%");
 			DPSPanel.magField.setText(f.format(finalMag));
 			DPSPanel.reloadField.setText(f.format(finalReloadTime));
-			DPSPanel.damageField.setText(f.format(finalProjectileCount * averageCritMult * raw.finalBase));
+			DPSPanel.damageField.setText(f.format(totalmult * raw.finalBase));
 			DPSPanel.slashProcField.setText(f.format(bleedDoTDPS));
 			DPSPanel.toxinProcField.setText(f.format(poisonDoTDPS));
 			DPSPanel.gasProcField.setText(f.format(cloudDoTDPS + gasProcDPS));
@@ -2700,8 +2697,8 @@ public class Main {
 						} else if (header.equals(Constants.SHOTGUN)) {
 							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.SHOTGUN));
 							shotgunPanel.loadFromFile(file);
-						} else if (header.equals(Constants.ARCGUN)) {
-							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.ARCGUN));
+						} else if (header.equals(Constants.ARCHGUN)) {
+							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.ARCHGUN));
 							arcGunPanel.loadFromFile(file);
 						} else if (header.equals(Constants.MELEE)) {
 							weaponPane.setSelectedIndex(weaponPane.indexOfTab(Constants.MELEE));

@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -115,7 +116,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	public WeaponPanel shotgun;
 	public WeaponPanel pistol;
 	public WeaponPanel melee;
-	public WeaponPanel arcGun;
+	public WeaponPanel ARCHGUN;
 
 	protected static JRadioButton regularMods = new JRadioButton("Regular Mods");
 	protected static JRadioButton maximizerMods = new JRadioButton("Maximizer Mods");
@@ -226,12 +227,12 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	/**
 	 * CTOR
 	 */
-	public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel, WeaponPanel meleePanel, WeaponPanel arcGunPanel) {
+	public ModManagerPanel(WeaponPanel riflePanel, WeaponPanel shotgunPanel, WeaponPanel pistolPanel, WeaponPanel meleePanel, WeaponPanel ARCHGUNPanel) {
 		rifle = riflePanel;
 		shotgun = shotgunPanel;
 		pistol = pistolPanel;
 		melee = meleePanel;
-		arcGun = arcGunPanel;
+		ARCHGUN = ARCHGUNPanel;
 		Init();
 		buildUI();
 	}
@@ -249,8 +250,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		pistol.updateDropDownContents();
 		melee.InitMods(modFile);
 		melee.updateDropDownContents();
-		arcGun.InitMods(modFile);
-		arcGun.updateDropDownContents();
+		ARCHGUN.InitMods(modFile);
+		ARCHGUN.updateDropDownContents();
 		updateModList();
 	}
 
@@ -269,8 +270,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		pistol.updateDropDownContents();
 		melee.InitMods(modFile);
 		melee.updateDropDownContents();
-		arcGun.InitMods(modFile);
-		arcGun.updateDropDownContents();
+		ARCHGUN.InitMods(modFile);
+		ARCHGUN.updateDropDownContents();
 
 		modEffects.clear();
 		modEffects.add(Constants.MOD_TYPE_DAMAGE_BONUS);
@@ -418,6 +419,25 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			baseReload = 50;
 			baseRecoil = -90;
 			baseZoom = 0;
+			basePT = 2.7;
+			break;
+		case Constants.ARCHGUN:
+			baseMultsihot = 60;
+			baseDamage = 100;
+			basePhysical = 80;
+			baseCC = 100;
+			baseCD = 80;
+			baseElement = 120;
+			baseSC = 60;
+			baseSD = 100;
+			baseFaction = 45;
+			baseFR = 60;
+			baseMag = 60;
+			baseAmmo = 100;
+			basePFS = 0;
+			baseReload = 100;
+			baseRecoil = -100;
+			baseZoom = 60;
 			basePT = 2.7;
 			break;
 		}
@@ -598,7 +618,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modTypeBox.addItem(Constants.RIFLE);
 		modTypeBox.addItem(Constants.SHOTGUN);
 		modTypeBox.addItem(Constants.MELEE);
-		modTypeBox.addItem(Constants.ARCGUN);
+		modTypeBox.addItem(Constants.ARCHGUN);
 
 		modPolarityBox.addItem(Constants.NONE);
 		modPolarityBox.addItem(Constants.DASH);
@@ -771,6 +791,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		dispoWeaponType.addItem(Constants.RIFLE);
 		dispoWeaponType.addItem(Constants.PISTOL);
 		dispoWeaponType.addItem(Constants.SHOTGUN);
+		dispoWeaponType.addItem(Constants.ARCHGUN);
 
 		dispoMultishotPositiveField.setEditable(false);
 		dispoDamagePositiveField.setEditable(false);
@@ -819,15 +840,11 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modPowerThreeGrade.setVisible(false);
 		modPowerFourGrade.setVisible(false);
 
-		dispoDisposition.setText("1.00");
-		dispoWeapon.addItem("No Selection");
-		for (String weapon : Constants.rifleDispositions) {
-			dispoWeapon.addItem(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
-		}
-
 		threeBuffs.setSelected(true);
 		hasNegative.setSelected(true);
 
+		updateDispoList(Constants.rifleDispositions);
+		
 		dispoRank.addItem("Rank 8");
 		dispoRank.addItem("Rank 7");
 		dispoRank.addItem("Rank 6");
@@ -919,7 +936,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		} else if (e.getSource().equals(dispoWeapon)) {
 			if (updating == false) {
 				String weapon = (String) dispoWeapon.getSelectedItem();
-				if (weapon != "No Selection") {
+				if (weapon != "--") {
 					dispoDisposition.setText(weapon.split(",")[1]);
 					calculateRivenStats();
 				} else {
@@ -928,23 +945,15 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			}
 		} else if (e.getSource().equals(dispoWeaponType)) {
 			updating = true;
-			dispoWeapon.removeAllItems();
-			dispoWeapon.addItem(" No Selection");
-
 			if (dispoWeaponType.getSelectedItem().equals(Constants.RIFLE)) {
-				for (String weapon : Constants.rifleDispositions) {
-					dispoWeapon.addItem(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
-				}
+				updateDispoList(Constants.rifleDispositions);
 			} else if (dispoWeaponType.getSelectedItem().equals(Constants.PISTOL)) {
-				for (String weapon : Constants.pistolDispositions) {
-					dispoWeapon.addItem(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
-				}
+				updateDispoList(Constants.pistolDispositions);
+			} else if (dispoWeaponType.getSelectedItem().equals(Constants.SHOTGUN)){
+				updateDispoList(Constants.shotgunDispositions);
 			} else {
-				for (String weapon : Constants.shotgunDispositions) {
-					dispoWeapon.addItem(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
-				}
+				updateDispoList(Constants.ArchGunDispositions);
 			}
-			dispoDisposition.setText("1.00");
 			calculateRivenStats();
 			updating = false;
 		} else if (e.getSource().equals(gradeButton)) {
@@ -954,6 +963,21 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		}
 	}
 
+	/**
+	 * Updates the weapons in the dispo list
+	 */
+	public void updateDispoList(String[] list) {
+		dispoWeapon.removeAllItems();
+		dispoDisposition.setText("1.00");
+		Vector<String> weaponDispos = new Vector<String>();
+		weaponDispos.add("--");
+		for (String weapon : list) {
+			weaponDispos.add(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
+		}
+		Collections.sort(weaponDispos);
+		dispoWeapon.setModel(new DefaultComboBoxModel(weaponDispos));
+	}
+	
 	/**
 	 * List Selection Listener
 	 */
@@ -993,7 +1017,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 
 		// Sort by type
 		Vector<Mod> sortedMods = new Vector<Mod>();
-		String types[] = { "Rifle", "Shotgun", "Pistol", "Melee", "ArcGun" };
+		String types[] = { "Rifle", "Shotgun", "Pistol", "Melee", "ArchGun" };
 		for (String type : types) {
 			for (int i = 0; i < initializer.mods.size(); i++) {
 				if (initializer.mods.get(i).type.equals(type)) {
@@ -1012,6 +1036,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	 * Grades the current mod as if it were a riven
 	 */
 	void gradeRiven() {
+		modPowerOneGrade.setVisible(false);
+		modPowerTwoGrade.setVisible(false);
+		modPowerThreeGrade.setVisible(false);
+		modPowerFourGrade.setVisible(false);
 		if (modEffectOneBox.getSelectedIndex() > 0) {
 			gradeStat(1, (String) modEffectOneBox.getSelectedItem(), Double.parseDouble(modPowerOneField.getText()));
 			modPowerOneGrade.setVisible(true);

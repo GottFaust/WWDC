@@ -133,7 +133,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponTypeBox.addItem(Constants.SHOTGUN);
     weaponTypeBox.addItem(Constants.PISTOL);
     weaponTypeBox.addItem(Constants.MELEE);
-    weaponTypeBox.addItem(Constants.ARCGUN);
+    weaponTypeBox.addItem(Constants.ARCHGUN);
     
     weaponTypePanel.add(weaponTypeLabel);
     weaponTypePanel.add(weaponTypeBox);

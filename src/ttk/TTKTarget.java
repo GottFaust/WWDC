@@ -737,7 +737,6 @@ public class TTKTarget implements Comparable {
 					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA) || Main.selectedWeapon.equals(Main.meleePanel)) {
 						comboCount += multishot;
 						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)));
-						comboMult /= Main.startingCombo; // Adjusting for starting combo affecting the base values
 						if (comboMult >= 1.5) {
 							comboCritMult += Main.comboCrit * comboMult;
 							comboStatusMult += Main.comboStatus * comboMult;
