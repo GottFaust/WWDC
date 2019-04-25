@@ -1148,11 +1148,7 @@ public class Main {
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 		finalDamageMult = Math.max(0, finalDamageMult);
 		
-		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER) || selectedWeapon.equals(meleePanel)) {
-			if (startingCombo < 1.5) {
-				startingCombo = 1;
-			}
-		}
+		startingCombo = Math.max(1, startingCombo);
 
 		finalFireRate = fireRate;
 		fireRateModPower = 0;
