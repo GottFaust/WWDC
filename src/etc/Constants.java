@@ -824,8 +824,8 @@ public class Constants {
 		  "ArchGun,Semi-Auto,Magnetic,Velocitus (Atmosphere Uncharged),1,0,DEPRECIATED,133,0,0,0,5,10,5,2,30,3,25,1,1",
 		  "ArchGun,Charge,Magnetic,Velocitus (Charged),1,0,DEPRECIATED,1800,0,0,0,5,100,5,4,25,3,25,1,1",
 		  "ArchGun,Semi-Auto,Magnetic,Velocitus (Uncharged),1,0,DEPRECIATED,200,0,0,0,5,100,5,4,25,3,25,1,1",
-		  "ArcGun,Continuous,Radiation,Larkspur,0,0,DEPRECIATED,80,10,0,0,12,600,0,12,10,1.4,50,1,1",
-		  "ArcGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1"};
+		  "ArchGun,Continuous,Radiation,Larkspur,0,0,DEPRECIATED,80,10,0,0,12,600,0,12,10,1.4,50,1,1",
+		  "ArchGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1"};
   
   public static final String[] rifleDispositions = {
 	"1.55, FLUX RIFLE",
