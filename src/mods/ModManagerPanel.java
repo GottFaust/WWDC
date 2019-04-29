@@ -424,7 +424,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		case Constants.ARCHGUN:
 			baseMultsihot = 60;
 			baseDamage = 100;
-			basePhysical = 80;
+			basePhysical = 90;
 			baseCC = 100;
 			baseCD = 80;
 			baseElement = 120;

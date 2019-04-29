@@ -151,6 +151,7 @@ public class Main {
 	protected static JComboBox corrosiveProjectionBox = new JComboBox();
 	protected static JComboBox shieldDisruptionBox = new JComboBox();
 	protected static JCheckBox headShots = new JCheckBox("Headshots");
+	public static JCheckBox smartMax = new JCheckBox("SmartMax");
 
 	/** Data **/
 
@@ -365,7 +366,6 @@ public class Main {
 		UIBuilder.labelInit(loadingLabel);
 		UIBuilder.numberFieldInit(TTKIterationsField);
 		UIBuilder.numberFieldInit(targetLevelField);
-		// UIBuilder.buttonInit(statsButton);
 		UIBuilder.buttonInit(clearOutputButton);
 		UIBuilder.textAreaInit(output);
 		UIBuilder.scrollPaneInit(outputScroll);
@@ -379,9 +379,8 @@ public class Main {
 		UIBuilder.menuItemInit(loadItem);
 		UIBuilder.menuItemInit(colorOptionsItem);
 		UIBuilder.fileChooserInit(chooser);
-		// UIBuilder.checkBoxInit(TTKBox);
 		UIBuilder.checkBoxInit(headShots);
-		// UIBuilder.checkBoxInit(lightWeightTTKBox);
+		UIBuilder.checkBoxInit(smartMax);
 		UIBuilder.labelInit(corrosiveProjectionLabel);
 		UIBuilder.labelInit(shieldDisruptionLabel);
 		UIBuilder.labelInit(targetGroupLabel);
@@ -389,7 +388,6 @@ public class Main {
 		UIBuilder.comboBoxInit(shieldDisruptionBox);
 		UIBuilder.comboBoxInit(targetGroupBox);
 		UIBuilder.listInit(enemyList);
-		// UIBuilder.scrollPaneInit(enemyScroll);
 
 		enemyList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		enemyList.setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -473,6 +471,7 @@ public class Main {
 		buttonPanel.add(calculateButton);
 		buttonPanel.add(maximizeButton);
 		buttonPanel.add(clearOutputButton);
+		buttonPanel.add(smartMax);
 
 		headShots.setToolTipText("Calcualtes TTK as if you are getting only headshots. Not related to effects triggered by headshots.");
 		corrosiveProjectionLabel.setToolTipText("Number of Corrosive Projection auras active.");
@@ -481,22 +480,15 @@ public class Main {
 		shieldDisruptionBox.setToolTipText("Number of Shield Disruption auras active.");
 		targetGroupLabel.setToolTipText("Target group to run calculations against.");
 		targetGroupBox.setToolTipText("Target group to run calculations against.");
-		// TTKBox.setToolTipText("Warning: This will cause a significantly performance
-		// hit compared to not running TTK.");
 		TTKIterationsField.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
 		TTKIterationsLabel.setToolTipText("Set the number of TTK simulation iterations. 10000 by defautl, 1000 for lightweight TTK.");
-		// lightWeightTTKBox.setToolTipText("<HTML>This will be significantly faster,
-		// but will be far less accurate. No min/max TTK values.<br>Even less accurate
-		// on slow-firing weapons</HTML>");
 		maximizeButton.setToolTipText("Test every combination of mods in empty mod slots for the best builds. Will take time to complete");
 		targetLevelLabel.setToolTipText("Override the default level");
 		targetLevelField.setToolTipText("Override the default level");
 		quickTargetButton.setToolTipText("Add targets to the current group");
 		removeTargetButton.setToolTipText("Remove selected target from the current group");
 		meleePanel.setToolTipText("WARNING: Melee is incomplete and very inaccurate.");
-
-		// TTKBox.setSelected(true);
-		// lightWeightTTKBox.setSelected(false);
+		smartMax.setToolTipText("Allows the maximizer to skip bad builds. Disable if you want complete results");
 
 		JPanel bottomRightPanel = new JPanel();
 		UIBuilder.panelInit(bottomRightPanel);
@@ -547,6 +539,8 @@ public class Main {
 		mainFrame.setTitle(Constants.APP_TITLE + " " + Constants.APP_VERSION);
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+		smartMax.setSelected(true);
+		
 		// Loading screen
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setBackground(Color.BLACK);
@@ -2301,10 +2295,10 @@ public class Main {
 					groupTargets.add(target);
 				}
 			}
-			Vector<TTKNamePair> TTKGraphVec = new Vector<TTKNamePair>();
+			//Vector<TTKNamePair> TTKGraphVec = new Vector<TTKNamePair>();
 			for (TTKTarget target : groupTargets) {
 				output.append(target.printAdvancedData());
-				TTKGraphVec.add(target.getTTKNamePair());
+				//TTKGraphVec.add(target.getTTKNamePair());
 			}
 		}
 	}
@@ -2628,6 +2622,7 @@ public class Main {
 				setup = true;
 				maxxing = true;
 				theMaximizer = new Maximizer();
+				
 				new Thread(new Runnable() {
 					public void run() {
 						theMaximizer.Maximizer();

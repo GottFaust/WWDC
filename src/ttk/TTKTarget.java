@@ -109,7 +109,6 @@ public class TTKTarget implements Comparable {
 	protected double armorDamage = 0;
 	protected double averageArmorMult = 0;
 	protected int spliterations;
-	protected boolean stopWastingTime = false;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -466,22 +465,29 @@ public class TTKTarget implements Comparable {
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		shieldDisruptionMult = Main.getShieldDisruptionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
-		
+
 		int cores = Runtime.getRuntime().availableProcessors();
 		spliterations = (Main.complexTTKIterations / cores);
 		clearValues();
-		
-		stopWastingTime = false;
 
 		ExecutorService es = Executors.newCachedThreadPool();
 		for (int i = 0; i < cores; i++) {
 			es.execute(new Runnable() {
 				public void run() {
 					for (int i = 0; i < spliterations; i++) {
-						TTKVec.add(calculateRandomizedTimeToKill());
-						if (stopWastingTime == true) {
-							break;
+						double time = calculateRandomizedTimeToKill();
+						TTKVec.add(time);
+						TTK += time;
+						
+						// Check if we're wasting time
+						if (Main.smartMax.isSelected() && Main.maxxing && TTKVec.size() > 10) {
+							double localAverageTTK = TTK / TTKVec.size();
+							if (localAverageTTK > (Main.theMaximizer.bestTTK * 1.2)) {
+								TTK = Double.POSITIVE_INFINITY;
+								break;
+							}
 						}
+
 					}
 				}
 			});
@@ -492,10 +498,6 @@ public class TTKTarget implements Comparable {
 				;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-
-		for (Double d : TTKVec) {
-			TTK += d;
 		}
 
 		TTK /= TTKVec.size();
@@ -660,7 +662,8 @@ public class TTKTarget implements Comparable {
 		double viralHealth = 0;
 		double magneticShields = 0;
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
-		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
+		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
+		// puncture, ice, blast, knockdown, radiation
 		int statusEffects[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int rampMult = 0;
 		int millisecondMult = 5;
@@ -991,12 +994,7 @@ public class TTKTarget implements Comparable {
 
 				statusTimer = 1000;
 			}
-			
-			// Check if we're wasting time
-			if (Main.maxxing && (timeToKill / 10000.0) > (Main.theMaximizer.bestTTK * 1.5)) {
-				stopWastingTime = true;
-				return Main.maxTTKTime / 10000.0;
-			}
+
 			// Check for Death
 			if (targetCurrentHealth < 0.0) {
 				return timeToKill / 10000.0;

@@ -52,8 +52,8 @@ public class Maximizer {
 			TTKs.add(target.TTK);
 			total += target.TTK;
 			times.add(target.TTK);
-			if (target.maxTTK > currentMaxTTK) {
-				currentMaxTTK = target.maxTTK;
+			if (target.TTK > currentMaxTTK) {
+				currentMaxTTK = target.TTK;
 			}
 		}
 		targets = Main.groupTargets.size();
