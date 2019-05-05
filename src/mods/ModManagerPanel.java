@@ -150,7 +150,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JLabel dispoRecoilLabel = new JLabel("Weapon Recoil - ");
 	protected JLabel dispoZoomLabel = new JLabel("Zoom - ");
 	protected JLabel dispoPTLabel = new JLabel("Punch Through - ");
-
+	
 	protected JTextField dispoMultishotPositiveField = new JTextField();
 	protected JTextField dispoDamagePositiveField = new JTextField();
 	protected JTextField dispoPhysicalPositiveField = new JTextField();

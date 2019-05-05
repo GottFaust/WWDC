@@ -1357,7 +1357,7 @@ public class Main {
 			double firstFireDelay = baseFireDelay * 5 / 2;
 			double secondFireDelay = baseFireDelay * 5 / 3;
 			double thirdFireDelay = baseFireDelay * 5 / 4;
-			if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // Kohm's effective magazine size -o
+			if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // Kohm's effective magazine size
 				finalMag = (int) Math.round(projectileCount + (finalMag - (projectileCount / 3 - 1) - (projectileCount * (projectileCount + 1) / 2) / 3) / (projectileCount / 3));
 			}
 			finalIterationTime = (firstFireDelay + secondFireDelay + thirdFireDelay + ((finalMag - 4) * baseFireDelay)) + finalReloadTime;
@@ -1370,9 +1370,14 @@ public class Main {
 			finalIterationTime = ((finalMag - 1) / finalFireRate) + finalReloadTime;
 		}
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
-
-		averageCritMult = (1 - finalCritChance) + (finalCritChance + vigilante) * finalCritMult;
-
+		
+		if (headShot) {
+			headShotMult = 2;
+		} else {
+			headShotBonus = 1;
+		}
+		
+		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1));
 	}
 
 	/**
@@ -1424,12 +1429,6 @@ public class Main {
 			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
 			burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
 		}
-
-		if (headShot) {
-			headShotMult = 2 + 2 * Math.min(1, finalCritChance);
-			headShotMult *= headShotBonus;
-		}
-
 	}
 
 	/**
@@ -1438,10 +1437,10 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * startingCombo;
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus;
 
 		// Calculate crit damage per shot values
-		raw.critPerShot = raw.perShot * finalCritMult;
+		raw.critPerShot = raw.perShot * finalCritMult * headShotMult * headShotBonus;
 
 		finalFirstShotDamageMult -= 1;
 		// Calculate first-shot damage
@@ -1457,11 +1456,6 @@ public class Main {
 		infested.perShot = raw.perShot * finalInfestedMult;
 		corrupted.perShot = raw.perShot * finalCorruptedMult;
 
-		corpus.critPerShot = corpus.perShot * finalCritMult;
-		grineer.critPerShot = grineer.perShot * finalCritMult;
-		infested.critPerShot = infested.perShot * finalCritMult;
-		corrupted.critPerShot = corrupted.perShot * finalCritMult;
-
 		corpus.firstShot = corpus.perShot * averageCritMult * finalFirstShotDamageMult;
 		grineer.firstShot = grineer.perShot * averageCritMult * finalFirstShotDamageMult;
 		infested.firstShot = infested.perShot * averageCritMult * finalFirstShotDamageMult;
@@ -1473,21 +1467,26 @@ public class Main {
 		corrupted.lastShot = corrupted.perShot * averageCritMult * finalLastShotDamageMult;
 
 		if (updateOutput) {
+			
+			corpus.critPerShot = corpus.perShot * finalCritMult;
+			grineer.critPerShot = grineer.perShot * finalCritMult;
+			infested.critPerShot = infested.perShot * finalCritMult;
+			corrupted.critPerShot = corrupted.perShot * finalCritMult;
 
 			// Calculate base damage per shot values
-			impact.perShot = (impact.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			puncture.perShot = (puncture.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			slash.perShot = (slash.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			fire.perShot = (fire.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			ice.perShot = (ice.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			electric.perShot = (electric.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			toxin.perShot = (toxin.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			blast.perShot = (blast.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			magnetic.perShot = (magnetic.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			gas.perShot = (gas.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			radiation.perShot = (radiation.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			corrosive.perShot = (corrosive.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
-			viral.perShot = (viral.finalBase * averageProjectileCount) * finalDeadAimMult * headShotMult;
+			impact.perShot = impact.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			puncture.perShot = puncture.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			slash.perShot = slash.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			fire.perShot = fire.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			ice.perShot = ice.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			electric.perShot = electric.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			toxin.perShot = toxin.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			blast.perShot = blast.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			magnetic.perShot = magnetic.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			gas.perShot = gas.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			radiation.perShot = radiation.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			corrosive.perShot = corrosive.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			viral.perShot = viral.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
 
 			// Surface-specific
 
@@ -1739,7 +1738,7 @@ public class Main {
 	 */
 	protected static void calculateDamagePerIteration() {
 		raw.perIteration = raw.perShot * finalMag * averageCritMult + raw.firstShot + raw.lastShot;
-
+		
 		corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
 		grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
 		infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
@@ -1827,11 +1826,9 @@ public class Main {
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
-		double gasHeadMult = 1;
-		if (headShotMult > 1) {
-			gasHeadMult = 2 * Main.headShotBonus;
-		}
-		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult;
+		double gasHeadMult = headShotMult * Main.headShotBonus;
+
+		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
 		double DoTBase = rawBase * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
 		double bleedDamage = DoTBase * 0.35 * hunterMult;
@@ -2314,7 +2311,7 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-			double totalmult = finalProjectileCount * averageCritMult * startingCombo * finalDeadAimMult * headShotMult * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 			DPSPanel.impactField.setText(f.format(totalmult * impact.finalBase));
 			DPSPanel.punctureField.setText(f.format(totalmult * puncture.finalBase));
 			DPSPanel.slashField.setText(f.format(totalmult * slash.finalBase));
