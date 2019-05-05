@@ -11,10 +11,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.Vector;
 
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -22,8 +20,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import etc.Constants;
 import etc.UIBuilder;
@@ -33,7 +33,7 @@ import mods.WeaponModPanel;
 
 import main.Main;
 
-public class WeaponPanel extends JPanel implements ActionListener {
+public class WeaponPanel extends JPanel implements ActionListener, ChangeListener {
 
 	/**
 	 * ____________________________________________________________ GLOBAL VARIABLES
@@ -60,6 +60,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected JPanel addSC = new JPanel();
 	protected JPanel addDam = new JPanel();
 	protected JPanel addFR = new JPanel();
+	protected JPanel vigiEffects = new JPanel();
 	protected JPanel nums = new JPanel();
 
 	/** JComboBoxes **/
@@ -78,6 +79,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected JLabel addSClabel = new JLabel("Additive Status Chance - ");
 	protected JLabel addDamlabel = new JLabel("Additive Damage - ");
 	protected JLabel addFRlabel = new JLabel("Additive Fire Rate - ");
+	protected JLabel vigiLabel = new JLabel("Additional Vigilante Mods - ");
 
 	/** JTextFields **/
 	protected JTextField totalModCostField = new JTextField(8);
@@ -88,12 +90,13 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	protected JTextField addFRField = new JTextField(8);
 
 	/** JButtons **/
-	protected JButton hideAdd = new JButton("Hide/Show Additive Effects");
+	protected JButton hideAdd = new JButton("Hide/Show Extra Effects");
 
 	/** Data **/
 	public Vector<String> selectedMods = new Vector<String>();
 	protected Vector<Mod> activeMods = new Vector<Mod>();
 	protected Vector<Integer> modLevels = new Vector<Integer>();
+	public JSlider vigiSlider = new JSlider(JSlider.HORIZONTAL, 0, 6, 0);
 
 	public ModInitializer modInit;
 	protected WeaponInitializer weapInit;
@@ -153,6 +156,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		UIBuilder.labelInit(addSClabel);
 		UIBuilder.labelInit(addDamlabel);
 		UIBuilder.labelInit(addFRlabel);
+		UIBuilder.labelInit(vigiLabel);
 
 		UIBuilder.checkBoxInit(refireCancel);
 		UIBuilder.checkBoxInit(potato);
@@ -192,14 +196,21 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		UIBuilder.panelInit(addFR);
 		UIBuilder.panelInit(additiveEffects);
 		UIBuilder.panelInit(nums);
+		UIBuilder.panelInit(vigiEffects);
 
 		UIBuilder.createSepparationBorder(addCC);
 		UIBuilder.createSepparationBorder(addCD);
 		UIBuilder.createSepparationBorder(addSC);
 		UIBuilder.createSepparationBorder(addDam);
 		UIBuilder.createSepparationBorder(addFR);
+		UIBuilder.createSepparationBorder(vigiEffects);
 
-		UIBuilder.createTitledLineBorder(additiveEffects, "ADDITIVE EFFECTS");
+		vigiSlider.setMajorTickSpacing(1);
+		vigiSlider.setPaintLabels(true);
+		vigiSlider.setBackground(Color.BLACK);
+		vigiSlider.setForeground(Color.GREEN);
+
+		UIBuilder.createTitledLineBorder(additiveEffects, "EXTRA EFFECTS");
 
 		attributesPanel.setLayout(new BoxLayout(attributesPanel, BoxLayout.Y_AXIS));
 		modsPanel.setLayout(new BoxLayout(modsPanel, BoxLayout.Y_AXIS));
@@ -221,6 +232,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		addSC.setLayout(new GridLayout(1, 2, 0, 0));
 		addDam.setLayout(new GridLayout(1, 2, 0, 0));
 		addFR.setLayout(new GridLayout(1, 2, 0, 0));
+		vigiEffects.setLayout(new GridLayout(1, 2, 0, 0));
 
 		totalModCostField.setEditable(false);
 
@@ -233,7 +245,9 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		attributesPanel.add(savedWeaponPanel);
 		attributesPanel.add(wap);
 		attributesPanel.add(refireCancelPanel);
-
+		
+		hideAdd.setAlignmentX(CENTER_ALIGNMENT);
+		
 		addCC.add(addCClabel);
 		addCC.add(addCCField);
 		addCD.add(addCDlabel);
@@ -244,24 +258,28 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		addDam.add(addDamField);
 		addFR.add(addFRlabel);
 		addFR.add(addFRField);
+		vigiEffects.add(vigiLabel);
+		vigiEffects.add(vigiSlider);
 		additiveEffects.add(addCC);
 		additiveEffects.add(addCD);
 		additiveEffects.add(addSC);
 		additiveEffects.add(addDam);
 		additiveEffects.add(addFR);
+		additiveEffects.add(vigiEffects);
 		nums.add(attributesPanel);
 		nums.add(hideAdd);
 		nums.add(additiveEffects);
 
 		additiveEffects.setVisible(false);
 
-		additiveEffects.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
-		addCCField.setToolTipText("Additive crit chance as a percent.");
+		additiveEffects.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc");
+		addCCField.setToolTipText("Additive crit chance as a percent");
 		addCDField.setToolTipText("Additive crit damage as a number (IE: 1.5 for knell)");
 		addSCField.setToolTipText("Additive status chance as a percent");
-		addDamField.setToolTipText("Additive damage as a percent");
+		addDamField.setToolTipText("Additive damage as a percent (Chroma)");
 		addFRField.setToolTipText("Additive fire rate as a percent (Toxocyst's is multiplicative)");
-		hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, sniper scope buffs, etc.");
+		vigiSlider.setToolTipText("Vigilante mods attached to your Warframe and/or sentinel weapon");
+		hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, Warframe buffs, etc");
 
 		JPanel modsTopPanel = new JPanel();
 		UIBuilder.panelInit(modsTopPanel);
@@ -303,6 +321,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		weaponBox.addActionListener(this);
 		potato.addActionListener(this);
 		hideAdd.addActionListener(this);
+		vigiSlider.addChangeListener(this);
 
 		wap.chargeTimeField.addActionListener(this);
 		wap.burstCountField.addActionListener(this);
@@ -319,7 +338,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		wap.projectileField.addActionListener(this);
 		wap.statusField.addActionListener(this);
 		wap.drainField.addActionListener(this);
-		
+
 		wap.scopeStrengthField.addActionListener(this);
 		wap.scopeBox.addActionListener(this);
 		wap.scopeStrengthBox.addActionListener(this);
@@ -350,16 +369,24 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	 * Counts the number of mods
 	 */
 	public int countMods() {
-		int count=0;
+		int count = 0;
 		updateDropDownContents();
-		if(modEight.equals("--")) count = modEightPanel.modBox.getItemCount();
-		else if(modSeven.equals("--")) count = modSevenPanel.modBox.getItemCount();
-		else if(modSix.equals("--")) count = modSixPanel.modBox.getItemCount();
-		else if(modFive.equals("--")) count = modFivePanel.modBox.getItemCount();
-		else if(modFour.equals("--")) count = modFourPanel.modBox.getItemCount();
-		else if(modThree.equals("--")) count = modThreePanel.modBox.getItemCount();
-		else if(modTwo.equals("--")) count = modTwoPanel.modBox.getItemCount();
-		else if(modOne.equals("--")) count = modOnePanel.modBox.getItemCount();		
+		if (modEight.equals("--"))
+			count = modEightPanel.modBox.getItemCount();
+		else if (modSeven.equals("--"))
+			count = modSevenPanel.modBox.getItemCount();
+		else if (modSix.equals("--"))
+			count = modSixPanel.modBox.getItemCount();
+		else if (modFive.equals("--"))
+			count = modFivePanel.modBox.getItemCount();
+		else if (modFour.equals("--"))
+			count = modFourPanel.modBox.getItemCount();
+		else if (modThree.equals("--"))
+			count = modThreePanel.modBox.getItemCount();
+		else if (modTwo.equals("--"))
+			count = modTwoPanel.modBox.getItemCount();
+		else if (modOne.equals("--"))
+			count = modOnePanel.modBox.getItemCount();
 		return count;
 	}
 
@@ -765,7 +792,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		}
 		return (StartingCombo);
 	}
-	
+
 	/**
 	 * Gets the sniper scope effect
 	 * 
@@ -793,7 +820,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 		}
 		return (scopeStrength);
 	}
-	
+
 	/**
 	 * Gets the reload timer
 	 * 
@@ -1003,37 +1030,6 @@ public class WeaponPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Gets the total Vigilante effect strength
-	 */
-	public int getVigilanteEffects() {
-		int max = 0;
-		int vigiStrength[] = { modOnePanel.countVigi(), modTwoPanel.countVigi(), modThreePanel.countVigi(), modFourPanel.countVigi(), modFivePanel.countVigi(), modSixPanel.countVigi(), modSevenPanel.countVigi(), modEightPanel.countVigi() };
-		for (int i = 0; i < 8 ; i++) {
-			if (vigiStrength[i] > max) {
-				max = vigiStrength[i];
-			}
-		}
-		return max;
-	}
-
-	/**
-	 * Sets the vigi strength to the same for all vigilante mods
-	 */
-	public void updateVigi(int strength) {
-		setting = true;
-		modOnePanel.setVigi(strength);
-		modTwoPanel.setVigi(strength);
-		modThreePanel.setVigi(strength);
-		modFourPanel.setVigi(strength);
-		modFivePanel.setVigi(strength);
-		modSixPanel.setVigi(strength);
-		modSevenPanel.setVigi(strength);
-		modEightPanel.setVigi(strength);
-		setting = false;
-		Main.updateStats();
-	}
-
-	/**
 	 * Updates the Mod Drop Down Options
 	 */
 	public void updateDropDownContents() {
@@ -1126,14 +1122,14 @@ public class WeaponPanel extends JPanel implements ActionListener {
 			wap.startingComboPanel.setVisible(false);
 			wap.scopePanel.setVisible(false);
 		}
-		
+
 		if (weaponType.equals(Constants.MELEE)) {
 			wap.weaponModeBox.setSelectedIndex(6);
 			wap.weaponModePanel.setVisible(false);
 			wap.projectilePanel.setVisible(false);
 			wap.fireRateLabel.setText("Attack Speed");
 			wap.magSizePanel.setVisible(false);
-			wap.reloadPanel.setVisible(false);	
+			wap.reloadPanel.setVisible(false);
 			wap.startingComboPanel.setVisible(true);
 			wap.weaponModeBox.setSelectedIndex(6);
 			wap.scopePanel.setVisible(false);
@@ -1312,7 +1308,7 @@ public class WeaponPanel extends JPanel implements ActionListener {
 				}
 			}
 			int scopeLevel = wap.scopeStrengthBox.getSelectedIndex();
-			switch(scopeLevel) {
+			switch (scopeLevel) {
 			case 0:
 				wap.scopeStrengthField.setText("0");
 				break;
@@ -1329,6 +1325,12 @@ public class WeaponPanel extends JPanel implements ActionListener {
 
 		}
 		if (!Main.setup && !setting) {
+			Main.updateStats();
+		}
+	}
+
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(vigiSlider)) {
 			Main.updateStats();
 		}
 	}

@@ -990,7 +990,7 @@ public class Main {
 						elements.add("Ice");
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
-					vigilante = 0.05 * selectedWeapon.getVigilanteEffects();
+					vigilante +=1;
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_CRIT)) {
 					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_CRIT)) * (1.0 + modRanks.get(i));
@@ -1377,7 +1377,10 @@ public class Main {
 			headShotBonus = 1;
 		}
 		
-		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1));
+		vigilante += selectedWeapon.vigiSlider.getValue();
+		vigilante *= 0.05;
+		
+		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1)) + (headShotMult * vigilante * finalCritMult - 1);
 	}
 
 	/**
