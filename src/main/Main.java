@@ -1379,8 +1379,8 @@ public class Main {
 		
 		vigilante += selectedWeapon.vigiSlider.getValue();
 		vigilante *= 0.05;
-		
-		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1)) + (headShotMult * vigilante * finalCritMult - 1);
+
+		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1)) + (headShotMult * vigilante * (finalCritMult - 1));
 	}
 
 	/**
