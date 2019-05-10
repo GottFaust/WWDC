@@ -2,7 +2,6 @@ package main;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -40,7 +39,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import etc.Constants;
-import etc.TTKNamePair;
 import etc.DPSPanel;
 import damage.Damage;
 import damage.SurfaceDamage;
@@ -58,6 +56,9 @@ import weapons.WeaponManagerPanel;
 import weapons.WeaponPanel;
 import options.ColorOptionsPanel;
 import Maximizer.Maximizer;
+import Stances.Stance.Combo;
+import Stances.StanceManagerPanel;
+
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -74,8 +75,9 @@ public class Main {
 	protected static JFrame mainFrame = new JFrame();
 	protected static JFrame modManagerFrame = new JFrame();
 	protected static JFrame targetManagerFrame = new JFrame();
-	protected static JFrame weaponManagerFrame = new JFrame();
+	public static JFrame weaponManagerFrame = new JFrame();
 	protected static JFrame colorOptionsFrame = new JFrame();
+	public static JFrame stanceManagerFrame = new JFrame();
 
 	/** JButtons **/
 	protected static JButton calculateButton = new JButton("Calculate");
@@ -119,6 +121,7 @@ public class Main {
 	protected static TTKManagerPanel theTTKManager = null;
 	protected static WeaponManagerPanel theWeaponManager = null;
 	protected static ColorOptionsPanel theColorPanel = null;
+	protected static StanceManagerPanel theStanceManager = null;
 	protected static DPSPanel DPSPanel = new DPSPanel();
 
 	/** JMenuBar **/
@@ -129,6 +132,7 @@ public class Main {
 	protected static JMenuItem modMenu = new JMenuItem("Mod Manager");
 	protected static JMenuItem TTKMenu = new JMenuItem("Target Manager");
 	protected static JMenuItem weaponMenu = new JMenuItem("Weapon Manager");
+	protected static JMenuItem stanceMenu = new JMenuItem("Stance Manager");
 	protected static JMenuItem saveItem = new JMenuItem("Save");
 	protected static JMenuItem loadItem = new JMenuItem("Load");
 	protected static JMenuItem colorOptionsItem = new JMenuItem("Color Options");
@@ -144,6 +148,7 @@ public class Main {
 	protected static Boolean targetManagerInit = false;
 	protected static Boolean weaponManagerInit = false;
 	protected static Boolean colorOptionsInit = false;
+	protected static Boolean stanceManagerInit = false;
 	protected static JLabel targetGroupLabel = new JLabel("Group:");
 	public static JComboBox targetGroupBox = new JComboBox();
 	protected static JLabel corrosiveProjectionLabel = new JLabel("CPs:");
@@ -264,8 +269,6 @@ public class Main {
 	public static SurfaceDamage sinew = new SurfaceDamage();
 
 	// Bunch of unsorted variables
-	public static double totalPhysical;
-	public static double totalElemental;
 	public static double impactProcRate;
 	public static double punctureProcRate;
 	public static double slashProcRate;
@@ -313,7 +316,9 @@ public class Main {
 
 	public static double headShotBonus;
 	public static double headShotMult;
-
+	public static double averageCOMultiplier;
+	public static Combo stanceCombo;
+	
 	/**
 	 * ____________________________________________________________ METHODS
 	 * ____________________________________________________________
@@ -333,6 +338,7 @@ public class Main {
 		meleePanel = new MeleePanel();
 		theModManager = new ModManagerPanel(riflePanel, shotgunPanel, pistolPanel, meleePanel, arcGunPanel);
 		theTTKManager = new TTKManagerPanel();
+		theStanceManager = new StanceManagerPanel();
 		theWeaponManager = new WeaponManagerPanel(riflePanel, shotgunPanel, pistolPanel, meleePanel, arcGunPanel);
 		theColorPanel = new ColorOptionsPanel();
 		buildUI();
@@ -375,6 +381,7 @@ public class Main {
 		UIBuilder.menuItemInit(modMenu);
 		UIBuilder.menuItemInit(TTKMenu);
 		UIBuilder.menuItemInit(weaponMenu);
+		UIBuilder.menuItemInit(stanceMenu);
 		UIBuilder.menuItemInit(saveItem);
 		UIBuilder.menuItemInit(loadItem);
 		UIBuilder.menuItemInit(colorOptionsItem);
@@ -433,6 +440,7 @@ public class Main {
 		modMenu.addActionListener(action);
 		TTKMenu.addActionListener(action);
 		weaponMenu.addActionListener(action);
+		stanceMenu.addActionListener(action);
 		colorOptionsItem.addActionListener(action);
 		headShots.addActionListener(action);
 		targetGroupBox.addActionListener(action);
@@ -445,7 +453,7 @@ public class Main {
 		weaponPane.add(riflePanel, Constants.RIFLE);
 		weaponPane.add(shotgunPanel, Constants.SHOTGUN);
 		weaponPane.add(pistolPanel, Constants.PISTOL);
-		weaponPane.add(meleePanel, "Melee (Incomplete)");
+		weaponPane.add(meleePanel, Constants.MELEE);
 		weaponPane.add(arcGunPanel, Constants.ARCHGUN);
 
 		JPanel targetButtonPanel = new JPanel();
@@ -487,7 +495,6 @@ public class Main {
 		targetLevelField.setToolTipText("Override the default level");
 		quickTargetButton.setToolTipText("Add targets to the current group");
 		removeTargetButton.setToolTipText("Remove selected target from the current group");
-		meleePanel.setToolTipText("WARNING: Melee is incomplete and very inaccurate.");
 		smartMax.setToolTipText("Allows the maximizer to skip bad builds. Disable if you want complete results");
 
 		JPanel bottomRightPanel = new JPanel();
@@ -531,6 +538,7 @@ public class Main {
 		mainMenuBar.add(modMenu);
 		mainMenuBar.add(TTKMenu);
 		mainMenuBar.add(weaponMenu);
+		mainMenuBar.add(stanceMenu);
 
 		mainFrame.setJMenuBar(mainMenuBar);
 		mainFrame.add(secondaryPanel);
@@ -760,6 +768,8 @@ public class Main {
 		groupTargets = null;
 		headShotBonus = 1;
 		headShotMult = 1;
+		averageCOMultiplier = 1;
+		stanceCombo = null;
 	}
 
 	/**
@@ -780,7 +790,8 @@ public class Main {
 		lastShotDamageMult = 1;
 		statusChance = selectedWeapon.getStatusChance();
 		mag = selectedWeapon.getMagSize();
-		if (selectedWeapon.equals(meleePanel)) {
+		stanceCombo = selectedWeapon.getStanceCombo();
+		if (selectedWeapon.weaponType.equals(Constants.MELEE)) {
 			combo = 5;
 		} else {
 			combo = selectedWeapon.getCombo();
@@ -1109,13 +1120,7 @@ public class Main {
 			finalCritChance += critChance * critChanceMods.get(i);
 		}
 		finalCritChance += selectedWeapon.getAddCC();
-		if (selectedWeapon.equals(meleePanel)) {
-			double tempCombo = startingCombo;
-			if (startingCombo < 1.5) {
-				tempCombo = 0;
-			}
-			finalCritChance *= 1 + (tempCombo * comboCrit);
-		}
+		
 		finalCritChance = Math.max(0, finalCritChance);
 
 		finalCritMult = critMult;
@@ -1176,13 +1181,7 @@ public class Main {
 			reloadSpeedMult += reloadTimeMods.get(i);
 		}
 		finalReloadTime /= reloadSpeedMult;
-		if (selectedWeapon.equals(meleePanel)) {
-			finalReloadTime = 0;
-		}
 
-		if (selectedWeapon.equals(meleePanel)) {
-			projectileCount = 1;
-		}
 		finalProjectileCount = projectileCount;
 		for (int i = 0; i < projectileCountMods.size(); i++) {
 			finalProjectileCount += projectileCount * projectileCountMods.get(i);
@@ -1208,16 +1207,9 @@ public class Main {
 			finalStatusChance += localStatus;
 		}
 		finalStatusChance += selectedWeapon.getAddSC();
-
-		if (selectedWeapon.equals(meleePanel)) {
-			double tempCombo = startingCombo;
-			if (startingCombo < 1.5) {
-				tempCombo = 0;
-			}
-			finalStatusChance *= 1 + (tempCombo * comboStatus);
-		}
+		
 		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance ));
-
+		
 		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status
 
 		finalStatusDuration = statusDuration;
@@ -1334,10 +1326,24 @@ public class Main {
 		} else {
 			headShot = false;
 		}
-		if (selectedWeapon.equals(meleePanel)) {
-			finalMag = (int) Double.POSITIVE_INFINITY;
+		
+		if (selectedWeapon.weaponType.equals(Constants.MELEE)) { // Bunch of melee junk
+			if (stanceCombo != null) {
+				finalMag = stanceCombo.hits.size();
+			}
+			finalReloadTime = 1 / finalFireRate;
+			finalProjectileCount = 1;
+			
+			double tempCombo = startingCombo;
+			if (startingCombo < 1.5) {
+				tempCombo = 0;
+			}
+			finalStatusChance *= (1 + (tempCombo * comboStatus));
+			finalCritChance *= (1 + (tempCombo * comboCrit));
 		}
-
+		
+		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance ));
+		
 		if (weaponMode.equals(Constants.BURST)) {
 			if (selectedWeapon.isRefireCanceled()) {
 				finalFireRate += fireRate;
@@ -1388,21 +1394,21 @@ public class Main {
 	 */
 	protected static void calculateMiscValues() {
 		// Status Ratios
-		totalPhysical = impact.finalBase + puncture.finalBase + slash.finalBase;
-		totalElemental = raw.finalBase - totalPhysical;
-		slashProcRate = (4 * slash.finalBase) / ((4 * totalPhysical) + totalElemental);
-		fireProcRate = (fire.finalBase / ((4 * totalPhysical) + totalElemental));
-		toxinProcRate = (toxin.finalBase / ((4 * totalPhysical) + totalElemental));
-		gasProcRate = (gas.finalBase / ((4 * totalPhysical) + totalElemental));
-		electricProcRate = (electric.finalBase / ((4 * totalPhysical) + totalElemental));
-		impactProcRate = (4 * impact.finalBase / ((4 * totalPhysical) + totalElemental));
-		punctureProcRate = (4 * puncture.finalBase / ((4 * totalPhysical) + totalElemental));
-		iceProcRate = (ice.finalBase / ((4 * totalPhysical) + totalElemental));
-		corrosiveProcRate = (corrosive.finalBase / ((4 * totalPhysical) + totalElemental));
-		viralProcRate = (viral.finalBase / ((4 * totalPhysical) + totalElemental));
-		blastProcRate = (blast.finalBase / ((4 * totalPhysical) + totalElemental));
-		radiationProcRate = (radiation.finalBase / ((4 * totalPhysical) + totalElemental));
-		magneticProcRate = (magnetic.finalBase / ((4 * totalPhysical) + totalElemental));
+		double totalPhysical = impact.finalBase + puncture.finalBase + slash.finalBase;
+		double totalprocWeight = ((4 * totalPhysical) + raw.finalBase - totalPhysical);
+		slashProcRate = 4 * slash.finalBase / totalprocWeight;
+		fireProcRate = fire.finalBase / totalprocWeight;
+		toxinProcRate = toxin.finalBase / totalprocWeight;
+		gasProcRate = gas.finalBase / totalprocWeight;
+		electricProcRate = electric.finalBase / totalprocWeight;
+		impactProcRate = 4 * impact.finalBase / totalprocWeight;
+		punctureProcRate = 4 * puncture.finalBase / totalprocWeight;
+		iceProcRate = ice.finalBase / totalprocWeight;
+		corrosiveProcRate = corrosive.finalBase / totalprocWeight;
+		viralProcRate = viral.finalBase / totalprocWeight;
+		blastProcRate = blast.finalBase / totalprocWeight;
+		radiationProcRate = radiation.finalBase / totalprocWeight;
+		magneticProcRate = magnetic.finalBase / totalprocWeight;
 
 		averageProjectileCount = finalProjectileCount;
 		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
@@ -1417,8 +1423,8 @@ public class Main {
 			burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration;
 		}
 		if (fire.finalBase > 0.0) {
-			fireStacks = 1 - Math.pow((1 - fireProcRate), (((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration));
-			burstFireStacks = 1 - Math.pow((1 - fireProcRate), (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration);
+			fireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration)));
+			burstFireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalFireRate* 6 * finalStatusDuration)));
 		}
 		if (toxin.finalBase > 0.0) {
 			toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
@@ -1432,6 +1438,25 @@ public class Main {
 			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
 			burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
 		}
+		
+		//Condition overload
+		averageCOMultiplier = 1;
+		if(conditionOverload > 0) {
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - slashProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - fireProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - toxinProcRate * finalStatusChance), finalFireRate * 8 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - gasProcRate * finalStatusChance), finalFireRate * 8 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - electricProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - impactProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - punctureProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - iceProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - viralProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload); //blast twice on purpose
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - radiationProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - magneticProcRate * finalStatusChance), finalFireRate * 4 * finalStatusDuration)) * conditionOverload);
+		}
 	}
 
 	/**
@@ -1440,7 +1465,7 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus;
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * averageCOMultiplier;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult * headShotMult * headShotBonus;
@@ -1829,15 +1854,14 @@ public class Main {
 			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
-		double gasHeadMult = headShotMult * Main.headShotBonus;
 
-		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
+		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
 		double DoTBase = rawBase * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
 		double bleedDamage = DoTBase * 0.35 * hunterMult;
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
-		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * gasHeadMult;
+		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * headShotMult * headShotBonus;
 
 		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
 		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
@@ -2314,7 +2338,7 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-			double totalmult = finalProjectileCount * averageCritMult * startingCombo * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * averageCOMultiplier * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 			DPSPanel.impactField.setText(f.format(totalmult * impact.finalBase));
 			DPSPanel.punctureField.setText(f.format(totalmult * puncture.finalBase));
 			DPSPanel.slashField.setText(f.format(totalmult * slash.finalBase));
@@ -2367,6 +2391,8 @@ public class Main {
 			DPSPanel.corrosiveChanceField.setText(f.format(finalStatusChance * 100 * corrosiveProcRate) + "%");
 			DPSPanel.viralChanceField.setText(f.format(finalStatusChance * 100 * viralProcRate) + "%");
 
+			DPSPanel.reloadPanel.setVisible(false);
+			DPSPanel.magPanel.setVisible(false);
 			DPSPanel.impactPanel.setVisible(false);
 			DPSPanel.puncturePanel.setVisible(false);
 			DPSPanel.slashPanel.setVisible(false);
@@ -2404,6 +2430,10 @@ public class Main {
 			DPSPanel.infestedPanel.setVisible(false);
 			DPSPanel.corruptedPanel.setVisible(false);
 
+			if(!selectedWeapon.weaponType.equals(Constants.MELEE)){
+				DPSPanel.reloadPanel.setVisible(true);
+				DPSPanel.magPanel.setVisible(true);
+			}	
 			if (finalStatusChance > 0) {
 				DPSPanel.status.setVisible(true);
 			}
@@ -2553,6 +2583,21 @@ public class Main {
 		}
 		colorOptionsFrame.setVisible(true);
 	}
+	
+	/**
+	 * Method to display the stance manager
+	 */
+	protected static void displayStanceManager() {
+		if (!stanceManagerInit) {
+			stanceManagerInit = true;
+			stanceManagerFrame.add(theStanceManager);
+			stanceManagerFrame.pack();
+			stanceManagerFrame.addWindowListener(new StanceWindowListener());
+			stanceManagerFrame.setTitle("Stance Manager");
+			stanceManagerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
+		stanceManagerFrame.setVisible(true);
+	}
 
 	/**
 	 * Method to toggle the enabled state of the mod manager menu item
@@ -2575,6 +2620,13 @@ public class Main {
 	 */
 	protected static void updateWeaponMenuState(boolean enabled) {
 		weaponMenu.setEnabled(enabled);
+	}
+	
+	/**
+	 * Method to toggle the enabled state of the stance manager menu item
+	 */
+	protected static void updateStanceMenuState(boolean enabled) {
+		stanceMenu.setEnabled(enabled);
 	}
 
 	/**
@@ -2728,6 +2780,9 @@ public class Main {
 			} else if (e.getSource().equals(weaponMenu)) {
 				displayWeaponManager();
 				updateWeaponMenuState(false);
+			} else if (e.getSource().equals(stanceMenu)) {
+				displayStanceManager();
+				updateStanceMenuState(false);
 			} else if (e.getSource().equals(colorOptionsItem)) {
 				displayColorOptions();
 			}
@@ -2930,16 +2985,43 @@ public class Main {
 		public void windowOpened(WindowEvent e) {
 		}
 	}
+	
+	protected static class StanceWindowListener implements WindowListener {
 
-	public static Vector<Component> getAllComponents(final Container c) {
-		Component[] comps = c.getComponents();
-		Vector<Component> compList = new Vector<Component>();
-		for (Component comp : comps) {
-			compList.add(comp);
-			if (comp instanceof Container)
-				compList.addAll(getAllComponents((Container) comp));
+		/**
+		 * Default CTOR
+		 */
+		public StanceWindowListener() {
+			// Do Nothing
 		}
-		return compList;
+
+		/**
+		 * Event to indicate that the window has closed
+		 */
+		public void windowClosed(WindowEvent e) {
+			updateStanceMenuState(true);
+		}
+
+		/**
+		 * Unused
+		 */
+		public void windowActivated(WindowEvent e) {
+		}
+
+		public void windowClosing(WindowEvent e) {
+		}
+
+		public void windowDeactivated(WindowEvent e) {
+		}
+
+		public void windowDeiconified(WindowEvent e) {
+		}
+
+		public void windowIconified(WindowEvent e) {
+		}
+
+		public void windowOpened(WindowEvent e) {
+		}
 	}
 
 	public static class DoTPair {

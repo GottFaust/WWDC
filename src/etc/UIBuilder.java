@@ -61,7 +61,7 @@ public class UIBuilder {
   public static Color LABEL_FOREGROUND = new Color(0,204,0);
   
   /** Misc Colors **/
-  public static Color BORDER_COLOR = Color.ORANGE;
+  public static Color BORDER_COLOR = Color.YELLOW;
   public static Color LIGHER_BORDER_COLOR = Color.GREEN;
   public static Color CURRENT_GRAPH_COLOR = Color.YELLOW;
   public static Color PREVIOUS_GRAPH_COLOR = Color.GRAY;
@@ -179,6 +179,8 @@ public class UIBuilder {
   public static void listInit(JList list){
     list.setBackground(TEXT_AREA_BACKGROUND);
     list.setForeground(TEXT_FOREGROUND);
+    list.setSelectionBackground(TEXT_FOREGROUND);
+    list.setSelectionForeground(TEXT_AREA_BACKGROUND);
   }
   
   /**
@@ -197,6 +199,8 @@ public class UIBuilder {
   public static void comboBoxInit(JComboBox box){
     box.setBackground(TEXT_AREA_BACKGROUND);
     box.setForeground(TEXT_FOREGROUND);
+    ((JTextField) box.getEditor().getEditorComponent()).setBackground(TEXT_AREA_BACKGROUND);
+    ((JTextField) box.getEditor().getEditorComponent()).setForeground(TEXT_FOREGROUND);
   }
   
   /**

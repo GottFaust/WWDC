@@ -82,9 +82,77 @@ public class Constants {
   public static final String CHARGEBOW = "Bow (Charge)";
   public static final String AUTOBOW = "Bow (Full-Auto)";
   
+  public static final String[] gunModes = {
+		  BURST,
+		  CHARGE,
+		  CONTINUOUS,
+		  FULL_AUTO,
+		  FULL_AUTO_RAMP_UP,
+		  FULL_AUTO_BULLET_RAMP,
+		  SEMI_AUTO,
+		  SNIPER,
+		  LANKA,
+		  SEMIBOW,
+		  CHARGEBOW ,
+		  AUTOBOW
+  };
+  
+  /** Melee types **/
+  public static final String BLADEWHIP = "Blade and Whip";
+  public static final String CLAWS = "Claws";
+  public static final String DAGGER = "Dagger";
+  public static final String DUALDAGGERS = "Dual Daggers";
+  public static final String DUALSWORDS = "Dual Swords";
+  public static final String FIST = "Fist";
+  public static final String GLAIVE = "Glaive";
+  public static final String GUNBLADE = "Gunblade";
+  public static final String HAMMER = "Hammer";
+  public static final String HEAVYBLADE = "Heavy Blade";
+  public static final String MACHETE = "Machete";
+  public static final String NIKANA = "Nikana";
+  public static final String NUNCHAKU = "Nunchaku";
+  public static final String POLEARM = "Polearm";
+  public static final String RAPIER = "Rapier";
+  public static final String SCYTHE = "Scythe";
+  public static final String SPARRING = "Sparring";
+  public static final String STAFF = "Staff";
+  public static final String SWORD = "Sword";
+  public static final String SWORDSHIELD = "Sword and Shield";
+  public static final String TONFA = "Tonfa";
+  public static final String TWOHANDER = "Two-Handed Nikana";
+  public static final String WARFANS = "Warfans";
+  public static final String WHIP = "Whip";
+  
+  public static final String[] meleeTypes = {
+		BLADEWHIP,
+		CLAWS,
+		DAGGER,
+		DUALDAGGERS,
+		DUALSWORDS,
+		FIST,
+		GLAIVE,
+		GUNBLADE,
+		HAMMER,
+		HEAVYBLADE,
+		MACHETE,
+		NIKANA,
+		NUNCHAKU,
+		POLEARM,
+		RAPIER,
+		SCYTHE,
+		SPARRING,
+		STAFF,
+		SWORD,
+		SWORDSHIELD,
+		TONFA,
+		TWOHANDER,
+		WARFANS,
+		WHIP
+  };
+  
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.11.1";
+  public static final String APP_VERSION = "v0.11.2";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -826,6 +894,14 @@ public class Constants {
 		  "ArchGun,Semi-Auto,Magnetic,Velocitus (Uncharged),1,0,DEPRECIATED,200,0,0,0,5,100,5,4,25,3,25,1,1",
 		  "ArchGun,Continuous,Radiation,Larkspur,0,0,DEPRECIATED,80,10,0,0,12,600,0,12,10,1.4,50,1,1",
 		  "ArchGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1"};
+  
+  public static final String[] stances = {
+		  "Carving Mantis;Dual Swords;"
+		  + "Ambush Predator:1,1.2,00000000000000:0,1.2,00000000000000:1,1.2,00000000000000:0,1.2,00000000000000:1,2.4,00000000000000:0,2.4,00000000000000:0,3.6,10000000100000;"
+		  + "Rapid Incisions:1,1.2,00000000000000:0,1.2,00000000000000:1,2.4,00000000000000:1,2.4,10000000100000:1,3.6,00000000100000:1,1.5,10000000000000:0,3.0,10000000100000:1,2.0,00000000000000:0,6.0,00000000000010;"
+		  + "Biting Mandibles:1,1.2,00000000000000:0,1.2,00000000000000:1,1.2,00000000000000:0,1.2,00000000000000:1,2.4,00000000000000:0,2.4,00000000000000:1,1,00000000000000:0,2,10000000000000:1,3.6,00000000100000:1,2.4,00000000000000:1,2.4,00000000100000:1,6,10000000000010;"
+		  + "Dire Courtship:1,1.2,00000000000000:0,1.2,00000000000000:1,1.2,00000000000000:0,1.2,00000000000000:1,1.8,00000000000000:1,1.5,10000000000000:0,2,10000000000000:1,3.6,00000000100000:1,2,00000000100010:0,6,10000000000010:0,1.2,00000000000000:0,1.2,00000000000000;",
+		  };
   
   public static final String[] rifleDispositions = {
 	"1.55, FLUX RIFLE",

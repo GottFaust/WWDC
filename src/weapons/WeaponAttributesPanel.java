@@ -41,13 +41,19 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel statusPanel = new JPanel();
   protected JPanel drainPanel = new JPanel();
   protected JPanel scopePanel = new JPanel();
+  protected JPanel meleeTypePanel = new JPanel();
+  protected JPanel stancePanel = new JPanel();
+  protected JPanel stanceComboPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> damageTypeBox = new JComboBox<String>();
-  protected JComboBox<String> weaponModeBox = new JComboBox<String>();
+  public JComboBox<String> weaponModeBox = new JComboBox<String>();
   protected JComboBox<String> weaponBox = new JComboBox<String>();
   protected JComboBox<String> scopeBox = new JComboBox<String>();
-  protected JComboBox<String> scopeStrengthBox = new JComboBox<String>();
+  protected JComboBox<String> scopeStrengthBox = new JComboBox<String>(); 
+  protected JComboBox<String> meleeTypeBox = new JComboBox<String>();
+  protected JComboBox<String> stanceBox = new JComboBox<String>();
+  protected JComboBox<String> stanceComboBox = new JComboBox<String>();
   
   /** JLabels **/
   protected JLabel nameLabel = new JLabel("Name - ");
@@ -69,6 +75,9 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel projectileLabel = new JLabel("Projectile Count - ");
   protected JLabel statusLabel = new JLabel("Status Chance - ");
   protected JLabel drainLabel = new JLabel("Ammo Drain - ");
+  protected JLabel meleeTypeLabel = new JLabel("Melee Type - ");
+  protected JLabel stanceLabel = new JLabel("Stance - ");
+  protected JLabel stanceComboLabel = new JLabel("Combo - ");
   
   /** JTextFields **/
   protected JTextField chargeTimeField = new JTextField(8);
@@ -112,6 +121,9 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.comboBoxInit(damageTypeBox);
     UIBuilder.comboBoxInit(scopeBox);
     UIBuilder.comboBoxInit(scopeStrengthBox);
+    UIBuilder.comboBoxInit(meleeTypeBox);
+    UIBuilder.comboBoxInit(stanceBox);
+    UIBuilder.comboBoxInit(stanceComboBox);
     
     UIBuilder.labelInit(nameLabel);
     UIBuilder.labelInit(damageLabel);
@@ -132,6 +144,9 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(projectileLabel);
     UIBuilder.labelInit(statusLabel);
     UIBuilder.labelInit(drainLabel);
+    UIBuilder.labelInit(meleeTypeLabel);
+    UIBuilder.labelInit(stanceLabel);
+    UIBuilder.labelInit(stanceComboLabel);
     
     UIBuilder.textFieldInit(nameField);
     
@@ -173,6 +188,9 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(statusPanel);
     UIBuilder.createSepparationBorder(drainPanel);
     UIBuilder.createSepparationBorder(scopePanel);
+    UIBuilder.createSepparationBorder(meleeTypePanel);
+    UIBuilder.createSepparationBorder(stancePanel);
+    UIBuilder.createSepparationBorder(stanceComboPanel);
     
     UIBuilder.panelInit(this);
     UIBuilder.panelInit(namePanel);
@@ -195,6 +213,9 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(statusPanel);
     UIBuilder.panelInit(drainPanel);
     UIBuilder.panelInit(scopePanel);
+    UIBuilder.panelInit(meleeTypePanel);
+    UIBuilder.panelInit(stancePanel);
+    UIBuilder.panelInit(stanceComboPanel);
     
     nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
     damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -235,19 +256,13 @@ public class WeaponAttributesPanel extends JPanel {
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
     drainField.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
-    
-    weaponModeBox.addItem(Constants.CHARGEBOW);
-    weaponModeBox.addItem(Constants.AUTOBOW);
-    weaponModeBox.addItem(Constants.SEMIBOW);
-    weaponModeBox.addItem(Constants.BURST);
-    weaponModeBox.addItem(Constants.CHARGE);
-    weaponModeBox.addItem(Constants.CONTINUOUS);
-    weaponModeBox.addItem(Constants.FULL_AUTO);
-    weaponModeBox.addItem(Constants.FULL_AUTO_RAMP_UP);
-    weaponModeBox.addItem(Constants.FULL_AUTO_BULLET_RAMP);
-    weaponModeBox.addItem(Constants.SEMI_AUTO);
-    weaponModeBox.addItem(Constants.SNIPER);
-    weaponModeBox.addItem(Constants.LANKA);
+
+    for(String mode : Constants.gunModes) {
+    	weaponModeBox.addItem(mode);
+    }
+    for(String mode : Constants.meleeTypes) {
+    	meleeTypeBox.addItem(mode);
+    }
     
     damageTypeBox.addItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
@@ -291,6 +306,9 @@ public class WeaponAttributesPanel extends JPanel {
     chargeTimePanel.setLayout(new GridLayout(1,2,0,0));
     burstCountPanel.setLayout(new GridLayout(1,2,0,0));
     scopePanel.setLayout(new GridLayout(1,3,0,0));
+    meleeTypePanel.setLayout(new GridLayout(1,2,0,0));
+    stancePanel.setLayout(new GridLayout(1,2,0,0));
+    stanceComboPanel.setLayout(new GridLayout(1,2,0,0));
     
     namePanel.add(nameLabel);
     namePanel.add(nameField);
@@ -333,10 +351,19 @@ public class WeaponAttributesPanel extends JPanel {
     scopePanel.add(scopeBox);
     scopePanel.add(scopeStrengthBox);
     scopePanel.add(scopeStrengthField);
+    meleeTypePanel.add(meleeTypeLabel);
+    meleeTypePanel.add(meleeTypeBox);
+    stancePanel.add(stanceLabel);
+    stancePanel.add(stanceBox);
+    stanceComboPanel.add(stanceComboLabel);
+    stanceComboPanel.add(stanceComboBox);
     
     this.setBorder(null);
     
     this.add(namePanel);
+    this.add(meleeTypePanel);
+    this.add(stancePanel);
+    this.add(stanceComboPanel);
     this.add(weaponModePanel);
     this.add(damageTypePanel);
     this.add(damagePanel);
@@ -367,6 +394,7 @@ public class WeaponAttributesPanel extends JPanel {
   public void clear(){
     weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
     damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
+    meleeTypeBox.setSelectedItem(Constants.BLADEWHIP);
     nameField.setText("");
     chargeTimeField.setText("");
     burstCountField.setText("");
@@ -392,9 +420,11 @@ public class WeaponAttributesPanel extends JPanel {
   /**
    * Sets the UI state to allow custom weapons
    */
+  /*
   public void setCustom(){
     weaponModeBox.setSelectedItem(Constants.SEMI_AUTO);
     damageTypeBox.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
+    meleeTypeBox.setSelectedItem(Constants.BLADEWHIP);
     nameField.setText("");
     chargeTimeField.setText("");
     burstCountField.setText("");
@@ -416,5 +446,6 @@ public class WeaponAttributesPanel extends JPanel {
     scopeStrengthField.setText("");
     scopeStrengthBox.setSelectedIndex(0);
   }
+  */
 
 }

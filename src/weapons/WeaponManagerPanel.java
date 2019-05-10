@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 
 import etc.Constants;
 import etc.UIBuilder;
+import main.Main;
 
 
 public class WeaponManagerPanel extends JPanel implements ActionListener, ListSelectionListener {
@@ -149,6 +150,9 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     this.add(leftPanel);
     this.add(rightPanel);
     
+    attributesPanel.damageTypeBox.addActionListener(this);
+    weaponTypeBox.addActionListener(this);
+    attributesPanel.weaponModeBox.addActionListener(this);
     addUpdateButton.addActionListener(this);
     deleteButton.addActionListener(this);
     saveButton.addActionListener(this);
@@ -223,7 +227,73 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     scope3 = selectedWeapon.scope3;
   }
   
+	protected void updateWeaponModeOptions() {
+		if (attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.BURST)) {
+			attributesPanel.chargeTimePanel.setVisible(false);
+			attributesPanel.burstCountPanel.setVisible(true);
+			attributesPanel.drainPanel.setVisible(false);
+			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(false);
+			attributesPanel.scopePanel.setVisible(false);
+		} else if (attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.CHARGE) || attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.CHARGEBOW)) {
+			attributesPanel.chargeTimePanel.setVisible(true);
+			attributesPanel.burstCountPanel.setVisible(false);
+			attributesPanel.drainPanel.setVisible(false);
+			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(false);
+			attributesPanel.scopePanel.setVisible(false);
+		} else if (attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.CONTINUOUS)) {
+			attributesPanel.chargeTimePanel.setVisible(false);
+			attributesPanel.burstCountPanel.setVisible(false);
+			attributesPanel.drainPanel.setVisible(true);
+			attributesPanel.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(false);
+			attributesPanel.scopePanel.setVisible(false);
+		} else if (attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.SNIPER)) {
+			attributesPanel.chargeTimePanel.setVisible(false);
+			attributesPanel.burstCountPanel.setVisible(false);
+			attributesPanel.drainPanel.setVisible(false);
+			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(true);
+			attributesPanel.scopePanel.setVisible(true);
+		} else if (attributesPanel.weaponModeBox.getSelectedItem().equals(Constants.LANKA)) {
+			attributesPanel.chargeTimePanel.setVisible(true);
+			attributesPanel.burstCountPanel.setVisible(false);
+			attributesPanel.drainPanel.setVisible(false);
+			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(true);
+			attributesPanel.scopePanel.setVisible(true);
+		} else {
+			attributesPanel.chargeTimePanel.setVisible(false);
+			attributesPanel.burstCountPanel.setVisible(false);
+			attributesPanel.drainPanel.setVisible(false);
+			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
+			attributesPanel.comboPanel.setVisible(false);
+			attributesPanel.scopePanel.setVisible(false);
+		}
 
+		if (weaponTypeBox.getSelectedItem().equals(Constants.MELEE)) {
+			attributesPanel.meleeTypePanel.setVisible(true);
+			attributesPanel.weaponModePanel.setVisible(false);
+			attributesPanel.projectilePanel.setVisible(false);
+			attributesPanel.fireRateLabel.setText("Attack Speed");
+			attributesPanel.magSizePanel.setVisible(false);
+			attributesPanel.reloadPanel.setVisible(false);
+			attributesPanel.weaponModeBox.setSelectedIndex(6);
+		} else {
+			attributesPanel.fireRateLabel.setText("Fire Rate");
+			attributesPanel.meleeTypePanel.setVisible(false);
+			attributesPanel.stanceComboPanel.setVisible(false);
+			attributesPanel.stancePanel.setVisible(false);
+		}
+	}
+	
   /**
    * Gets the weapon with the supplied name
    * @param name
@@ -251,7 +321,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     String name = attributesPanel.nameField.getText();
     String chargeTime = attributesPanel.chargeTimeField.getText();
     String burstCount = attributesPanel.burstCountField.getText();
-    String burstFireRate = "DEPRECIATED";
+    String meleeType = (String)attributesPanel.meleeTypeBox.getSelectedItem();
     String damage = attributesPanel.damageField.getText();
     String impact = attributesPanel.impactField.getText();
     String puncture = attributesPanel.punctureField.getText();
@@ -361,7 +431,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+name;
     weaponString += ","+chargeTime;
     weaponString += ","+burstCount;
-    weaponString += ","+burstFireRate;
+    weaponString += ","+meleeType;
     weaponString += ","+damage;
     weaponString += ","+impact;
     weaponString += ","+puncture;
@@ -438,6 +508,16 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     		attributesPanel.scopeStrengthField.setText("0");
     	}
     	currentScope = attributesPanel.scopeStrengthBox.getSelectedIndex();
+    } else if (e.getSource().equals(attributesPanel.weaponModeBox) || e.getSource().equals(weaponTypeBox)){
+    	updateWeaponModeOptions();
+    	Main.weaponManagerFrame.pack();
+    } else if (e.getSource().equals(attributesPanel.damageTypeBox)) {
+		if (attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
+			attributesPanel.damagePanel.setVisible(false);
+		} else {
+			attributesPanel.damagePanel.setVisible(true);
+		}
+    	Main.weaponManagerFrame.pack();
     }
   }
   

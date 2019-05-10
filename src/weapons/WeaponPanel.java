@@ -25,6 +25,9 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import Stances.Stance;
+import Stances.Stance.Combo;
+import Stances.StanceInitializer;
 import etc.Constants;
 import etc.UIBuilder;
 import mods.Mod;
@@ -100,6 +103,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 	public ModInitializer modInit;
 	protected WeaponInitializer weapInit;
+	protected StanceInitializer stanceInit;
 
 	public String modOne = "--";
 	public String modTwo = "--";
@@ -111,6 +115,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public String modEight = "--";
 
 	public String weaponType = "";
+	
+	public Combo stanceCombo;
 
 	protected boolean updatingDropDowns = false;
 	public boolean setting = false;
@@ -135,6 +141,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		// Initialize The Data
 		modInit = ModInitializer.getInstance();
 		weapInit = WeaponInitializer.getInstance();
+		stanceInit = StanceInitializer.getInstance();
 		updateWeaponBox();
 	}
 
@@ -338,10 +345,12 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		wap.projectileField.addActionListener(this);
 		wap.statusField.addActionListener(this);
 		wap.drainField.addActionListener(this);
-
 		wap.scopeStrengthField.addActionListener(this);
 		wap.scopeBox.addActionListener(this);
 		wap.scopeStrengthBox.addActionListener(this);
+		wap.meleeTypeBox.addActionListener(this);
+		wap.stanceBox.addActionListener(this);
+		wap.stanceComboBox.addActionListener(this);
 
 		totalModCostField.addActionListener(this);
 		addCCField.addActionListener(this);
@@ -630,11 +639,11 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public double getProjectiles() {
 		String projectileStr = wap.projectileField.getText();
 		if (projectileStr == null || projectileStr.equals("")) {
-			projectileStr = "0";
+			projectileStr = "1";
 		}
 		double projectile = Double.parseDouble(projectileStr);
-		if (projectile < 0.0) {
-			projectile = 0.0;
+		if (projectile < 1) {
+			projectile = 1;
 		}
 		return (projectile);
 	}
@@ -875,6 +884,25 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	}
 
 	/**
+	 * Gets the melee stance combo
+	 * 
+	 * @return stanceCombo
+	 */
+	public Combo getStanceCombo() {
+		Combo stanceCombo = null;
+		for (Stance s : stanceInit.stances) {
+			if (s.stanceName.equals(wap.stanceBox.getSelectedItem())) {
+				for (Combo c : s.combos) {
+					if (c.comboName.equals(wap.stanceComboBox.getSelectedItem())) {
+						stanceCombo = c;
+					}
+				}
+			}
+		}
+		return stanceCombo;
+	}
+	
+	/**
 	 * Clears all selections and text
 	 */
 
@@ -900,7 +928,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 * Clears everything except mods
 	 */
 	public void setCustom() {
-		wap.setCustom();
+		wap.clear();
 	}
 
 	/**
@@ -927,7 +955,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 				wap.nameField.setText(reader.readLine());
 				wap.chargeTimeField.setText(reader.readLine());
 				wap.burstCountField.setText(reader.readLine());
-				reader.readLine(); // DEPRECIATED
+				wap.meleeTypeBox.setSelectedItem(reader.readLine());
 				wap.nameField.setText(reader.readLine());
 				wap.damageField.setText(reader.readLine());
 				wap.impactField.setText(reader.readLine());
@@ -1124,7 +1152,9 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 
 		if (weaponType.equals(Constants.MELEE)) {
-			wap.weaponModeBox.setSelectedIndex(6);
+			wap.meleeTypePanel.setVisible(true);
+			wap.stanceComboPanel.setVisible(true);
+			wap.stancePanel.setVisible(true);
 			wap.weaponModePanel.setVisible(false);
 			wap.projectilePanel.setVisible(false);
 			wap.fireRateLabel.setText("Attack Speed");
@@ -1133,6 +1163,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			wap.startingComboPanel.setVisible(true);
 			wap.weaponModeBox.setSelectedIndex(6);
 			wap.scopePanel.setVisible(false);
+		} else {
+			wap.meleeTypePanel.setVisible(false);
+			wap.stanceComboPanel.setVisible(false);
+			wap.stancePanel.setVisible(false);
 		}
 		Main.repack();
 	}
@@ -1245,6 +1279,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		if (selectedWeapon != null) {
 			wap.weaponModeBox.setSelectedItem(selectedWeapon.mode);
 			wap.damageTypeBox.setSelectedItem(selectedWeapon.damageType);
+			wap.meleeTypeBox.setSelectedItem(selectedWeapon.meleeType);
 			wap.nameField.setText(selectedWeapon.name);
 			wap.chargeTimeField.setText(selectedWeapon.chargeTime);
 			wap.burstCountField.setText(selectedWeapon.burstCount);
@@ -1323,6 +1358,23 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 				break;
 			}
 
+		} else if (e.getSource().equals(wap.meleeTypeBox)) {
+			wap.stanceBox.removeAllItems();
+			for (Stance s : stanceInit.stances) {
+				if (s.weaponType.equals(wap.meleeTypeBox.getSelectedItem())) {
+					wap.stanceBox.addItem(s.stanceName);
+				}
+			}
+		} else if (e.getSource().equals(wap.stanceBox)) {
+			wap.stanceComboBox.removeAllItems();
+			for (Stance s : stanceInit.stances) {			
+				if (s.stanceName.equals(wap.stanceBox.getSelectedItem())) {				
+					for (Combo c : s.combos) {
+						wap.stanceComboBox.addItem(c.comboName);
+					}
+					break;
+				}
+			}
 		}
 		if (!Main.setup && !setting) {
 			Main.updateStats();

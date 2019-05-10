@@ -478,7 +478,7 @@ public class TTKTarget implements Comparable {
 						double time = calculateRandomizedTimeToKill();
 						TTKVec.add(time);
 						TTK += time;
-						
+
 						// Check if we're wasting time
 						if (Main.smartMax.isSelected() && Main.maxxing && TTKVec.size() > 10) {
 							double localAverageTTK = TTK / TTKVec.size();
@@ -662,14 +662,15 @@ public class TTKTarget implements Comparable {
 		double viralHealth = 0;
 		double magneticShields = 0;
 		Vector<DoTPair> statusStacks = new Vector<DoTPair>();
-		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
-		// puncture, ice, blast, knockdown, radiation
+		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 		int statusEffects[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int rampMult = 0;
 		int millisecondMult = 5;
 		statusStacks.add(new DoTPair(0, 0, 0)); // Dedicated fire stack
 		Random rng = new Random();
 		double coldProcMult = 1;
+		double meleeHitMult = 1;
+		double meleeHitDelay = 1;
 
 		// Find initial starting combo
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
@@ -737,12 +738,18 @@ public class TTKTarget implements Comparable {
 					double comboMult = 1;
 					double comboCritMult = 1;
 					double comboStatusMult = 1;
-					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA) || Main.selectedWeapon.equals(Main.meleePanel)) {
+					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA) || Main.selectedWeapon.weaponType.equals(Constants.MELEE)) {
 						comboCount += multishot;
 						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)));
+
+						double tempCombo = 0;
+						tempCombo = Main.startingCombo;
+						if (Main.startingCombo < 1.5) {
+							tempCombo = 0;
+						}
 						if (comboMult >= 1.5) {
-							comboCritMult += Main.comboCrit * comboMult;
-							comboStatusMult += Main.comboStatus * comboMult;
+							comboCritMult += Main.comboCrit * comboMult / (1 + (tempCombo * Main.comboCrit));
+							comboStatusMult += Main.comboStatus * comboMult / (1 + (tempCombo * Main.comboStatus));
 						}
 						if (comboMult < 1)
 							comboMult = 1;
@@ -754,6 +761,21 @@ public class TTKTarget implements Comparable {
 						for (int status : statusEffects) {
 							if (status > 0) {
 								COMult *= (1 + Main.conditionOverload);
+							}
+						}
+					}
+					
+					// Melee hit stuff
+					if (Main.selectedWeapon.weaponType.equals(Constants.MELEE) && Main.stanceCombo != null) {
+						meleeHitMult = Main.stanceCombo.hits.get(iterations).multiplier;
+						if(iterations != Main.finalMag-1) {
+							meleeHitDelay = Main.stanceCombo.hits.get(iterations + 1).delay;
+						}else {
+							meleeHitDelay = 0;
+						}					
+						for (int i = 0; i < 13; i++) {
+							if (Main.stanceCombo.hits.get(iterations).procs[i].equals("1")) { // Forced procs
+								statusEffects[i] = (int) (60000 * Main.finalStatusDuration);
 							}
 						}
 					}
@@ -799,7 +821,7 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Total multiplier
-						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult * COMult;
+						double totalMult = comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult * COMult * meleeHitMult;
 
 						// Deal Damage
 						if (targetCurrentShields > 0.0) {
@@ -821,14 +843,17 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Status effects
-						// Hunter Munitions proc?
-						boolean munitionsProc = false;
-						if (rng.nextDouble() < Main.hunterMunitions) {
+
+						// Forced procs
+						// slash proc?
+						boolean forcedSlashProc = false;
+						if (rng.nextDouble() < Main.hunterMunitions || Main.stanceCombo.hits.get(iterations).procs[0].equals("1")) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000));
 							targetCurrentHealth -= bleedDamage;
-							munitionsProc = true;
+							statusEffects[0] = slashDuration;
+							forcedSlashProc = true;
 						}
 						// Forced poison proc?
 						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
@@ -848,7 +873,7 @@ public class TTKTarget implements Comparable {
 							double proc = rng.nextDouble();
 
 							// Slash Proc
-							if ((proc -= slashProc) < 0 && munitionsProc == false) {
+							if ((proc -= slashProc) < 0 && forcedSlashProc == false) {
 								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000));
@@ -944,7 +969,10 @@ public class TTKTarget implements Comparable {
 							}
 						}
 					}
-					shotTimer = (millisceondsPerShot * (5 / millisecondMult)) + 1;
+					shotTimer = millisceondsPerShot * (5 / millisecondMult) + 1;
+					if (Main.selectedWeapon.weaponType.equals(Constants.MELEE)) {
+						shotTimer = (int) (10000 * meleeHitDelay / Main.finalFireRate);
+					}
 					iterations++;
 					// Have we unloaded the whole mag and need to reload?
 					if (iterations >= Main.finalMag) {

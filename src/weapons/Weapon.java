@@ -16,7 +16,7 @@ public class Weapon implements Comparable {
 	public String name;
 	public String chargeTime;
 	public String burstCount;
-	public String burstFireRate;
+	public String meleeType;
 	public String damage;
 	public String impact;
 	public String puncture;
@@ -51,7 +51,7 @@ public class Weapon implements Comparable {
 		name = split[3];
 		chargeTime = split[4];
 		burstCount = split[5];
-		burstFireRate = split[6];
+		meleeType = split[6];
 		damage = split[7];
 		impact = split[8];
 		puncture = split[9];
@@ -89,7 +89,7 @@ public class Weapon implements Comparable {
 		weaponString += name + ",";
 		weaponString += chargeTime + ",";
 		weaponString += burstCount + ",";
-		weaponString += burstFireRate + ",";
+		weaponString += meleeType + ",";
 		weaponString += damage + ",";
 		weaponString += impact + ",";
 		weaponString += puncture + ",";
