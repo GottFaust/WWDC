@@ -73,7 +73,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	protected JScrollPane listScroll = new JScrollPane(stanceList);
 
 	protected Stance selectedStance = new Stance(";Blade and Whip;UnnamedCombo");
-	protected Combo selectedCombo;
+	protected Combo selectedCombo = new Combo("", new Vector<Hit>());
 	protected StanceInitializer initializer;
 
 	public StanceManagerPanel() {
@@ -198,12 +198,12 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	}
 
 	public void updateCombo() {
-		boolean foundCombo = false;
 		Vector<Hit> hits = new Vector<Hit>();
 		for (JPanel p : hitsPanels) {
 			double delay = checkNumber(((JTextField) p.getComponent(0)).getText());
 			double multi = checkNumber(((JTextField) p.getComponent(1)).getText());
-			// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
+			// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
+			// puncture, ice, blast, knockdown, radiation
 			String[] procs = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
 			int[] selectedProcs = ((JList) p.getComponent(2)).getSelectedIndices();
 			for (int i : selectedProcs) {
@@ -221,6 +221,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		}
 		Combo c = new Combo((String) comboBox.getSelectedItem(), hits);
 
+		boolean foundCombo = false;
 		for (int i = 0; i < selectedStance.combos.size(); i++) {
 			if (selectedStance.combos.get(i).comboName.equals(c.comboName)) {
 				selectedStance.combos.set(i, c);
@@ -255,12 +256,12 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 				}
 			}
 		});
-	
+
 		procsModel.addElement(new ImageIcon(StanceManagerPanel.class.getResource("/0.png")));
 		procsModel.addElement(new ImageIcon(StanceManagerPanel.class.getResource("/1.png")));
 		procsModel.addElement(new ImageIcon(StanceManagerPanel.class.getResource("/2.png")));
 		procsModel.addElement(new ImageIcon(StanceManagerPanel.class.getResource("/3.png")));
-		
+
 		procs.setLayoutOrientation(JList.VERTICAL_WRAP);
 		procs.setVisibleRowCount(1);
 
@@ -333,17 +334,17 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(addUpdateButton)) {
-			if(!selectedStance.stanceName.equals(nameField.getText())) {
+			if (!selectedStance.stanceName.equals(nameField.getText())) {
 				Stance s = new Stance(selectedStance.writeOut());
 				s.stanceName = nameField.getText();
-				s.weaponType = (String)typeBox.getSelectedItem();
+				s.weaponType = (String) typeBox.getSelectedItem();
 				initializer.stances.add(s);
 				stanceListModel.addElement(s.stanceName);
 				selectedStance = s;
-				stanceList.setSelectedIndex(stanceListModel.size()-1);
-			}else {
+				stanceList.setSelectedIndex(stanceListModel.size() - 1);
+			} else {
 				updateCombo();
-				selectedStance.weaponType = (String)typeBox.getSelectedItem();
+				selectedStance.weaponType = (String) typeBox.getSelectedItem();
 			}
 		} else if (e.getSource().equals(deleteButton)) {
 			if (initializer.stances.contains(selectedStance)) {
@@ -366,24 +367,29 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 			}
 		} else if (e.getSource().equals(saveButton)) {
 			initializer.saveStanceDB();
-		} else if (e.getSource().equals(comboBox) && selectedStance != null) {
-			for (JPanel p : hitsPanels) {
-				hitsPanel.remove(p);
-			}
-			hitsPanels.removeAllElements();		
-			for (Combo c : selectedStance.combos) {
-				if (c.comboName.equals(comboBox.getSelectedItem())) {
-					selectedCombo = c;
-					for (Hit h : selectedCombo.hits) {
-						JPanel p = hitPanel(h);
-						UIBuilder.createSepparationBorder(p);
-						hitsPanels.add(p);
+		} else if (e.getSource().equals(comboBox) && comboBox.getItemCount() > 0) {
+				for (JPanel p : hitsPanels) {
+					hitsPanel.remove(p);
+				}
+				hitsPanels.removeAllElements();
+				boolean foundCombo = false;
+				for (Combo c : selectedStance.combos) {
+					if (c.comboName.equals(comboBox.getSelectedItem())) {
+						selectedCombo = c;
+						foundCombo = true;
+						for (Hit h : selectedCombo.hits) {
+							JPanel p = hitPanel(h);
+							UIBuilder.createSepparationBorder(p);
+							hitsPanels.add(p);
+						}
 					}
 				}
-			}
-			for (JPanel p : hitsPanels) {
-				hitsPanel.add(p);
-			}
+				for (JPanel p : hitsPanels) {
+					hitsPanel.add(p);
+				}
+				if(!foundCombo) {
+					updateCombo();
+				}
 		} else if (e.getSource().equals(addHitButton)) {
 			String[] s = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
 			Hit h = new Stance.Hit(0, 0, s);

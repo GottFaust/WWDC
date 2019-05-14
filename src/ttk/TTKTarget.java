@@ -847,7 +847,7 @@ public class TTKTarget implements Comparable {
 						// Forced procs
 						// slash proc?
 						boolean forcedSlashProc = false;
-						if (rng.nextDouble() < Main.hunterMunitions || Main.stanceCombo.hits.get(iterations).procs[0].equals("1")) {
+						if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000));
