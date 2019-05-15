@@ -202,6 +202,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     //Update the boxes
     weaponTypeBox.setSelectedItem(selectedWeapon.type);
     attributesPanel.weaponModeBox.setSelectedItem(selectedWeapon.mode);
+    attributesPanel.meleeTypeBox.setSelectedItem(selectedWeapon.meleeType);
     attributesPanel.damageTypeBox.setSelectedItem(selectedWeapon.damageType);
     attributesPanel.nameField.setText(selectedWeapon.name);
     attributesPanel.chargeTimeField.setText(selectedWeapon.chargeTime);
