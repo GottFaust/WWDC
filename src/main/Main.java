@@ -57,6 +57,7 @@ import weapons.WeaponPanel;
 import options.ColorOptionsPanel;
 import Maximizer.Maximizer;
 import Stances.Stance.Combo;
+import Stances.Stance.Hit;
 import Stances.StanceManagerPanel;
 
 import javax.swing.JTextField;
@@ -316,9 +317,12 @@ public class Main {
 
 	public static double headShotBonus;
 	public static double headShotMult;
+
 	public static double averageCOMultiplier;
 	public static Combo stanceCombo;
-	
+	public static double avgHit;
+	public static double avgDelay;
+
 	/**
 	 * ____________________________________________________________ METHODS
 	 * ____________________________________________________________
@@ -548,7 +552,7 @@ public class Main {
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		smartMax.setSelected(true);
-		
+
 		// Loading screen
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setBackground(Color.BLACK);
@@ -770,6 +774,8 @@ public class Main {
 		headShotMult = 1;
 		averageCOMultiplier = 1;
 		stanceCombo = null;
+		avgHit = 1;
+		avgDelay = 1;
 	}
 
 	/**
@@ -871,6 +877,7 @@ public class Main {
 		// Initialize mod vectors
 		Vector<Double> magMods = new Vector<Double>();
 		Vector<Double> critChanceMods = new Vector<Double>();
+		Vector<Double> addCritChanceMods = new Vector<Double>();
 		Vector<Double> critMultMods = new Vector<Double>();
 		Vector<Double> fireRateMods = new Vector<Double>();
 		Vector<Double> reloadTimeMods = new Vector<Double>();
@@ -1001,7 +1008,7 @@ public class Main {
 						elements.add("Ice");
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_VIGILANTE)) {
-					vigilante +=1;
+					vigilante += 1;
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_COMBO_CRIT)) {
 					double modPower = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_COMBO_CRIT)) * (1.0 + modRanks.get(i));
@@ -1017,6 +1024,9 @@ public class Main {
 				}
 				if (tempMod.effectTypes.contains(Constants.HEADSHOT_BONUS)) {
 					headShotBonus += ((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.HEADSHOT_BONUS))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ADDITIVE_CC)) {
+					addCritChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ADDITIVE_CC))) * (1.0 + modRanks.get(i)));
 				}
 			}
 		}
@@ -1119,8 +1129,11 @@ public class Main {
 		for (int i = 0; i < critChanceMods.size(); i++) {
 			finalCritChance += critChance * critChanceMods.get(i);
 		}
+		for (int i = 0; i < addCritChanceMods.size(); i++) {
+			finalCritChance += addCritChanceMods.get(i);
+		}
 		finalCritChance += selectedWeapon.getAddCC();
-		
+
 		finalCritChance = Math.max(0, finalCritChance);
 
 		finalCritMult = critMult;
@@ -1129,7 +1142,7 @@ public class Main {
 		}
 		finalCritMult += selectedWeapon.getAddCD();
 		finalCritMult = Math.max(0, finalCritMult);
-		
+
 		finalFlatDamageBonus = flatDamageBonus;
 		for (int i = 0; i < flatDamageMods.size(); i++) {
 			finalFlatDamageBonus += flatDamageMods.get(i);
@@ -1146,7 +1159,7 @@ public class Main {
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 		finalDamageMult = Math.max(0, finalDamageMult);
-		
+
 		startingCombo = Math.max(1, startingCombo);
 
 		finalFireRate = fireRate;
@@ -1207,9 +1220,9 @@ public class Main {
 			finalStatusChance += localStatus;
 		}
 		finalStatusChance += selectedWeapon.getAddSC();
-		
-		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance ));
-		
+
+		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance));
+
 		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status
 
 		finalStatusDuration = statusDuration;
@@ -1326,24 +1339,30 @@ public class Main {
 		} else {
 			headShot = false;
 		}
-		
-		if (selectedWeapon.weaponType.equals(Constants.MELEE)) { // Bunch of melee junk
-			if (stanceCombo != null) {
-				finalMag = stanceCombo.hits.size();
-			}
-			finalReloadTime = 1 / finalFireRate;
+
+		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) { // Bunch of melee junk
+			finalMag = stanceCombo.hits.size();
+
+			finalReloadTime = 0;
 			finalProjectileCount = 1;
-			
+
 			double tempCombo = startingCombo;
 			if (startingCombo < 1.5) {
 				tempCombo = 0;
 			}
 			finalStatusChance *= (1 + (tempCombo * comboStatus));
 			finalCritChance *= (1 + (tempCombo * comboCrit));
+
+			avgHit = 0;
+			avgDelay = 0;
+			for (Hit h : stanceCombo.hits) {
+				avgHit += (h.multiplier / stanceCombo.hits.size());
+				avgDelay += (h.delay / stanceCombo.hits.size());
+			}
 		}
-		
-		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance ));
-		
+
+		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance));
+
 		if (weaponMode.equals(Constants.BURST)) {
 			if (selectedWeapon.isRefireCanceled()) {
 				finalFireRate += fireRate;
@@ -1356,7 +1375,7 @@ public class Main {
 				finalFireRate = 10.0;
 			}
 			double numBursts = finalMag / burstCount;
-			double rawFireTime = numBursts / finalFireRate;
+			double rawFireTime = numBursts / (finalFireRate / avgDelay);
 			finalIterationTime = rawFireTime + finalReloadTime;
 		} else if (weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 			double baseFireDelay = ((1 / finalFireRate));
@@ -1373,16 +1392,16 @@ public class Main {
 		} else if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)) {
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
 		} else {
-			finalIterationTime = ((finalMag - 1) / finalFireRate) + finalReloadTime;
+			finalIterationTime = ((finalMag - 1) / (finalFireRate / avgDelay)) + finalReloadTime;
 		}
 		finalIterationsPerMinute = 60.0 / finalIterationTime;
-		
+
 		if (headShot) {
 			headShotMult = 2;
 		} else {
 			headShotBonus = 1;
 		}
-		
+
 		vigilante += selectedWeapon.vigiSlider.getValue();
 		vigilante *= 0.05;
 
@@ -1415,47 +1434,68 @@ public class Main {
 			averageProjectileCount = finalProjectileCount * ((((projectileCount * (projectileCount + 1) / 2) + projectileCount * (finalMag - projectileCount)) / finalMag) / projectileCount);
 		}
 		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
-		burstProcsPerSecond = averageProjectileCount * finalStatusChance * finalFireRate;
+		burstProcsPerSecond = averageProjectileCount * finalStatusChance * (finalFireRate / avgDelay);
 
-		if (slash.finalBase > 0.0 || hunterMunitions > 0) {
-			double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.max(1, finalCritChance)))); // Rewriting so munitions and natural procs don't stack
-			slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
-			burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * finalFireRate) * 6 * finalStatusDuration;
+		double forcedSlashProcs = 0;
+		double forcedImpactProcs = 0;
+		double forcedPunctureProcs = 0;
+		double forcedKnockdownProcs = 0;
+		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) {
+			for (Hit h : stanceCombo.hits) {
+				if (h.procs[0].equals("1")) {
+					forcedSlashProcs += 1;
+				}
+				if (h.procs[8].equals("1")) {
+					forcedImpactProcs += 1;
+				}
+				if (h.procs[9].equals("1")) {
+					forcedPunctureProcs += 1;
+				}
+				if (h.procs[12].equals("1")) {
+					forcedKnockdownProcs += 1;
+				}
+			}
+			forcedSlashProcs /= stanceCombo.hits.size();
+			forcedImpactProcs /= stanceCombo.hits.size();
+			forcedPunctureProcs /= stanceCombo.hits.size();
+			forcedKnockdownProcs /= stanceCombo.hits.size();
 		}
-		if (fire.finalBase > 0.0) {
-			fireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration)));
-			burstFireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalFireRate* 6 * finalStatusDuration)));
-		}
-		if (toxin.finalBase > 0.0) {
-			toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
-			burstToxinStacks = burstProcsPerSecond * toxinProcRate * 8 * finalStatusDuration;
-		}
+
+		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - forcedSlashProcs));
+		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
+		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * 6 * finalStatusDuration;
+
+		fireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration)));
+		burstFireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * (finalFireRate / avgDelay) * 6 * finalStatusDuration)));
+
+		toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
+		burstToxinStacks = burstProcsPerSecond * toxinProcRate * 8 * finalStatusDuration;
+
 		if (weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
 			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 8 * finalStatusDuration;
-			burstToxinStacks += (averageProjectileCount * finalFireRate) * 8 * finalStatusDuration;
+			burstToxinStacks += (averageProjectileCount * (finalFireRate / avgDelay)) * 8 * finalStatusDuration;
 		}
-		if (gas.finalBase > 0.0) {
-			gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
-			burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
-		}
-		
-		//Condition overload
+
+		gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
+		burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
+
+		// Condition overload
 		averageCOMultiplier = 1;
-		if(conditionOverload > 0) {
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - slashProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - fireProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - toxinProcRate * finalStatusChance), finalFireRate * 8 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - gasProcRate * finalStatusChance), finalFireRate * 8 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - electricProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - impactProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - punctureProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - iceProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - viralProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload); //blast twice on purpose
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - radiationProcRate * finalStatusChance), finalFireRate * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - magneticProcRate * finalStatusChance), finalFireRate * 4 * finalStatusDuration)) * conditionOverload);
+		if (conditionOverload > 0) {
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - slashProcRate * finalStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - fireProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - toxinProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - gasProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - electricProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - impactProcRate * finalStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - punctureProcRate * finalStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - iceProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - viralProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload); // Knockdown
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
+			averageCOMultiplier *= (1 + (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload);
 		}
 	}
 
@@ -1465,7 +1505,7 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * averageCOMultiplier;
+		raw.perShot = raw.finalBase * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * averageCOMultiplier * avgHit;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult * headShotMult * headShotBonus;
@@ -1495,7 +1535,7 @@ public class Main {
 		corrupted.lastShot = corrupted.perShot * averageCritMult * finalLastShotDamageMult;
 
 		if (updateOutput) {
-			
+
 			corpus.critPerShot = corpus.perShot * finalCritMult;
 			grineer.critPerShot = grineer.perShot * finalCritMult;
 			infested.critPerShot = infested.perShot * finalCritMult;
@@ -1766,7 +1806,7 @@ public class Main {
 	 */
 	protected static void calculateDamagePerIteration() {
 		raw.perIteration = raw.perShot * finalMag * averageCritMult + raw.firstShot + raw.lastShot;
-		
+
 		corpus.perIteration = corpus.perShot * finalMag * averageCritMult + corpus.firstShot + corpus.lastShot;
 		grineer.perIteration = grineer.perShot * finalMag * averageCritMult + grineer.firstShot + grineer.lastShot;
 		infested.perIteration = infested.perShot * finalMag * averageCritMult + infested.firstShot + infested.lastShot;
@@ -1851,38 +1891,52 @@ public class Main {
 		// Add in DoTs
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
-			double hunterRatio = (Math.min(1, finalCritChance) * 0.3 / (Math.min(1, finalCritChance) * 0.3 + slashProcRate));
+			double hunterRatio = (Math.min(1, finalCritChance) * hunterMunitions) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance)))));
 			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
+		double stanceSlashMult = 1;
+		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) {
+			stanceSlashMult = 0;
+			double stanceSlashes = 0;
+			for (Hit h : stanceCombo.hits) {
+				if (h.procs[0].equals("1")) {
+					stanceSlashMult += h.multiplier;
+					stanceSlashes += 1;
+				}
+			}
+			stanceSlashMult /= stanceSlashes;
+			double stanceRatio = (stanceSlashes / stanceCombo.hits.size()) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - stanceSlashes / stanceCombo.hits.size())));
+			stanceSlashMult = (stanceRatio * stanceSlashMult + (1 - stanceRatio)) / avgHit;
+		}
 
-		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
+		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
 		double DoTBase = rawBase * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
-		double bleedDamage = DoTBase * 0.35 * hunterMult;
+		double bleedDamage = (DoTBase * 0.35 * hunterMult) * stanceSlashMult;
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * headShotMult * headShotBonus;
 
-		bleedDoTDPS = slashStacks * bleedDamage * (7 / 6);
-		poisonDoTDPS = toxinStacks * poisonDamage * (9 / 8);
-		heatDoTDPS = fireStacks * heatDamage * (7 / 6);
-		cloudDoTDPS = gasStacks * cloudDamage * (9 / 8);
+		bleedDoTDPS = slashStacks * bleedDamage * 7 / 6;
+		poisonDoTDPS = toxinStacks * poisonDamage * 9 / 8;
+		heatDoTDPS = fireStacks * heatDamage * 7 / 6;
+		cloudDoTDPS = gasStacks * cloudDamage * 9 / 8;
 		electricProcDPS = electricProcRate * electricBase * procsPerSecond;
 		gasProcDPS = gasProcRate * poisonDamage * procsPerSecond;
 
-		burstBleedDoTDPS = burstSlashStacks * bleedDamage * (7 / 6);
-		burstPoisonDoTDPS = burstToxinStacks * poisonDamage * (9 / 8);
-		burstHeatDoTDPS = burstFireStacks * heatDamage * (7 / 6);
-		burstCloudDoTDPS = burstGasStacks * cloudDamage * (9 / 8);
+		burstBleedDoTDPS = burstSlashStacks * bleedDamage * 7 / 6;
+		burstPoisonDoTDPS = burstToxinStacks * poisonDamage * 9 / 8;
+		burstHeatDoTDPS = burstFireStacks * heatDamage * 7 / 6;
+		burstCloudDoTDPS = burstGasStacks * cloudDamage * 9 / 8;
 		burstElectricProcDPS = electricProcRate * electricBase * burstProcsPerSecond;
 		burstGasProcDPS = gasProcRate * poisonDamage * burstProcsPerSecond;
 
 		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + gasProcDPS);
 
-		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult + gasProcDPS) * finalCorpusMult * finalCorpusMult;
-		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult + gasProcDPS) * finalGrineerMult * finalGrineerMult;
-		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult + gasProcDPS) * finalInfestedMult * finalInfestedMult;
-		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorruptedMult + gasProcDPS) * finalCorruptedMult * finalCorruptedMult;
+		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult + electricProcDPS + gasProcDPS) * finalCorpusMult * finalCorpusMult;
+		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult + electricProcDPS + gasProcDPS) * finalGrineerMult * finalGrineerMult;
+		infested.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult + electricProcDPS + gasProcDPS) * finalInfestedMult * finalInfestedMult;
+		corrupted.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorruptedMult + electricProcDPS + gasProcDPS) * finalCorruptedMult * finalCorruptedMult;
 
 		if (updateOutput) {
 			impact.perSecond = impact.perMinute / 60.0;
@@ -1929,17 +1983,17 @@ public class Main {
 		raw.rawPerSecond = raw.perIteration * burstTime;
 
 		// Add in DoTs
-		raw.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS + burstGasProcDPS);
+		raw.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstElectricProcDPS + burstCloudDoTDPS + burstGasProcDPS);
 
 		corpus.rawPerSecond = corpus.perIteration * burstTime;
 		grineer.rawPerSecond = grineer.perIteration * burstTime;
 		infested.rawPerSecond = infested.perIteration * burstTime;
 		corrupted.rawPerSecond = corrupted.perIteration * burstTime;
 
-		corpus.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorpusMult + burstGasProcDPS) * finalCorpusMult * finalCorpusMult;
-		grineer.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalGrineerMult + burstGasProcDPS) * finalGrineerMult * finalGrineerMult;
-		infested.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalInfestedMult + burstGasProcDPS) * finalInfestedMult * finalInfestedMult;
-		corrupted.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstCloudDoTDPS * finalCorruptedMult + burstGasProcDPS) * finalCorruptedMult * finalCorruptedMult;
+		corpus.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstElectricProcDPS + burstCloudDoTDPS * finalCorpusMult + burstGasProcDPS) * finalCorpusMult * finalCorpusMult;
+		grineer.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstElectricProcDPS + burstCloudDoTDPS * finalGrineerMult + burstGasProcDPS) * finalGrineerMult * finalGrineerMult;
+		infested.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstElectricProcDPS + burstCloudDoTDPS * finalInfestedMult + burstGasProcDPS) * finalInfestedMult * finalInfestedMult;
+		corrupted.rawPerSecond += (burstBleedDoTDPS + burstPoisonDoTDPS + burstHeatDoTDPS + burstElectricProcDPS + burstCloudDoTDPS * finalCorruptedMult + burstGasProcDPS) * finalCorruptedMult * finalCorruptedMult;
 
 		if (updateOutput) {
 			impact.rawPerSecond = impact.perIteration * burstTime;
@@ -2001,7 +2055,7 @@ public class Main {
 		} else if (mode.equals(Constants.CONTINUOUS)) {
 			delimiter = "ticks";
 		}
-		output.append("\nFire Rate :: " + f.format(finalFireRate) + " " + delimiter + " per second");
+		output.append("\nFire Rate :: " + f.format(finalFireRate / avgDelay) + " " + delimiter + " per second");
 		output.append("\nReload Time :: " + f.format(finalReloadTime) + " seconds");
 		output.append("\nStatus Chance :: " + f.format(finalStatusChance * 100.0) + "%");
 		output.append("\nAverage Projectiles Per Shot :: " + f.format(averageProjectileCount));
@@ -2319,10 +2373,10 @@ public class Main {
 					groupTargets.add(target);
 				}
 			}
-			//Vector<TTKNamePair> TTKGraphVec = new Vector<TTKNamePair>();
+			// Vector<TTKNamePair> TTKGraphVec = new Vector<TTKNamePair>();
 			for (TTKTarget target : groupTargets) {
 				output.append(target.printAdvancedData());
-				//TTKGraphVec.add(target.getTTKNamePair());
+				// TTKGraphVec.add(target.getTTKNamePair());
 			}
 		}
 	}
@@ -2338,7 +2392,7 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-			double totalmult = finalProjectileCount * averageCritMult * startingCombo * averageCOMultiplier * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * averageCOMultiplier * avgHit * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 			DPSPanel.impactField.setText(f.format(totalmult * impact.finalBase));
 			DPSPanel.punctureField.setText(f.format(totalmult * puncture.finalBase));
 			DPSPanel.slashField.setText(f.format(totalmult * slash.finalBase));
@@ -2430,10 +2484,10 @@ public class Main {
 			DPSPanel.infestedPanel.setVisible(false);
 			DPSPanel.corruptedPanel.setVisible(false);
 
-			if(!selectedWeapon.weaponType.equals(Constants.MELEE)){
+			if (!selectedWeapon.weaponType.equals(Constants.MELEE)) {
 				DPSPanel.reloadPanel.setVisible(true);
 				DPSPanel.magPanel.setVisible(true);
-			}	
+			}
 			if (finalStatusChance > 0) {
 				DPSPanel.status.setVisible(true);
 			}
@@ -2583,7 +2637,7 @@ public class Main {
 		}
 		colorOptionsFrame.setVisible(true);
 	}
-	
+
 	/**
 	 * Method to display the stance manager
 	 */
@@ -2621,7 +2675,7 @@ public class Main {
 	protected static void updateWeaponMenuState(boolean enabled) {
 		weaponMenu.setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Method to toggle the enabled state of the stance manager menu item
 	 */
@@ -2674,7 +2728,7 @@ public class Main {
 				setup = true;
 				maxxing = true;
 				theMaximizer = new Maximizer();
-				
+
 				new Thread(new Runnable() {
 					public void run() {
 						theMaximizer.Maximizer();
@@ -2796,7 +2850,7 @@ public class Main {
 		}
 		return mult;
 	}
-	
+
 	public static double getShieldDisruptionMult() {
 		double mult = 1.0 - (0.24 * Double.parseDouble((String) shieldDisruptionBox.getSelectedItem()));
 		return mult;
@@ -2985,7 +3039,7 @@ public class Main {
 		public void windowOpened(WindowEvent e) {
 		}
 	}
-	
+
 	protected static class StanceWindowListener implements WindowListener {
 
 		/**

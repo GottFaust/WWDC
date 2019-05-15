@@ -480,7 +480,7 @@ public class TTKTarget implements Comparable {
 						TTK += time;
 
 						// Check if we're wasting time
-						if (Main.smartMax.isSelected() && Main.maxxing && TTKVec.size() > 10) {
+						if (Main.smartMax.isSelected() && Main.maxxing && TTKVec.size() == 10) {
 							double localAverageTTK = TTK / TTKVec.size();
 							if (localAverageTTK > (Main.theMaximizer.bestTTK * 1.2)) {
 								TTK = Double.POSITIVE_INFINITY;
@@ -494,8 +494,7 @@ public class TTKTarget implements Comparable {
 		}
 		es.shutdown();
 		try {
-			while (!es.awaitTermination(1, TimeUnit.MINUTES))
-				;
+			while (!es.awaitTermination(1, TimeUnit.MINUTES));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -691,7 +690,7 @@ public class TTKTarget implements Comparable {
 		// Run a X second simulation to calculate the time to kill
 		for (timeToKill = 0; timeToKill < Main.maxTTKTime;) {
 
-			// is it time to fire a new projectile?
+			// is it time to shoot?
 			if (shotTimer <= 0) {
 
 				if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
@@ -771,7 +770,7 @@ public class TTKTarget implements Comparable {
 						if(iterations != Main.finalMag-1) {
 							meleeHitDelay = Main.stanceCombo.hits.get(iterations + 1).delay;
 						}else {
-							meleeHitDelay = 0;
+							meleeHitDelay = Main.stanceCombo.hits.get(0).delay;
 						}					
 						for (int i = 0; i < 13; i++) {
 							if (Main.stanceCombo.hits.get(iterations).procs[i].equals("1")) { // Forced procs
@@ -845,7 +844,7 @@ public class TTKTarget implements Comparable {
 						// Status effects
 
 						// Forced procs
-						// slash proc?
+						// Forced slash proc?
 						boolean forcedSlashProc = false;
 						if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
@@ -866,6 +865,7 @@ public class TTKTarget implements Comparable {
 							statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000));
 							targetCurrentHealth -= poisonDamage;
 						}
+						
 						// Do we get a random status proc?
 						if (rng.nextDouble() <= (Main.finalStatusChance * comboStatusMult)) {
 
@@ -904,6 +904,18 @@ public class TTKTarget implements Comparable {
 
 								// Electric Proc
 							} else if ((proc -= electricProc) < 0) {
+								double localElectricMult = electricMult;
+								if (targetCurrentShields > 0.0) {
+									localElectricMult = shieldElectricMult;
+								} else if (targetAdjustedMaxArmor > 0.0) {
+									localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
+								}
+								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5;
+								if (targetCurrentShields > 0) {
+									targetCurrentShields -= electricProcDamage;
+								} else {
+									targetCurrentHealth -= electricProcDamage;
+								}
 								statusEffects[2] = (int) (6 * Main.finalStatusDuration * 10000);
 
 								// Toxin Proc
@@ -981,7 +993,9 @@ public class TTKTarget implements Comparable {
 							millisecondMult = 1;
 						}
 						rampMult = -(reloadTimeMilliseconds + (millisceondsPerShot * (5 / millisecondMult)));
-						shotTimer += reloadTimeMilliseconds;
+						if(!Main.selectedWeapon.weaponType.equals(Constants.MELEE)){
+							shotTimer += reloadTimeMilliseconds;
+						}
 					}
 				}
 			}

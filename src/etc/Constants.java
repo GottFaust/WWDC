@@ -44,6 +44,7 @@ public class Constants {
   public static final String MOD_TYPE_COMBO_CRIT = "ComboCrit";
   public static final String MOD_TYPE_COMBO_STATUS = "ComboStatus";
   public static final String MOD_TYPE_CONDITION_OVERLOAD = "DamagePerStatus";
+  public static final String MOD_TYPE_ADDITIVE_CC = "AdditiveCritChance";
   
   /** Sniper scope effects **/
   public static final String ADDITIVE_CRIT_CHANCE = "Scoped CC";
@@ -152,7 +153,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.11.2";
+  public static final String APP_VERSION = "v0.11.3";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -482,6 +483,7 @@ public class Constants {
                                             "Berserker,Melee,5,1,FireRate,0.125,V,4",
                                             "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
                                             "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
+                                            "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",
                                             //Arch-Gun Mods
                                             "Ammo Chain,ArchGun,5,1,AmmoCap,0.167,~,2",
                                             "Arch-Gun Ace,ArchGun,5,2,FireRate,ReloadSpeed,0.08,0.17,V,6",
@@ -604,6 +606,7 @@ public class Constants {
           "Berserker,Melee,5,1,FireRate,0.125,V,4",
           "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
           "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
+          "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",
           //Arch-Gun Mods
           "Ammo Chain,ArchGun,5,1,AmmoCap,0.167,~,2",
           "Arch-Gun Ace,ArchGun,5,2,FireRate,ReloadSpeed,0.08,0.17,V,6",
@@ -727,7 +730,7 @@ public class Constants {
 		  "Pistol,Full-Auto,Physical,Hystrix (Poison),0,0,DEPRECIATED,0,2.2,31,2.9,7,16,210,1.7,24,2.2,10,1,1",
 		  "Rifle,Continuous,Fire,Ignis,0.0,0,DEPRECIATED,33,0,0,0,8,150,750,2,11,2,27,1,1",
 		  "Rifle,Continuous,Fire,Ignis Wraith,0.0,0,DEPRECIATED,35,0,0,0,8,200,800,1.7,17,2.5,29,1,1",
-		  "Rifle,Charge,Fire,Javlok,0.3,0,DEPRECIATED,280,0,0,0,3.33,6,300,0.6,20,2,25,1,1",
+		  "Rifle,Charge,Fire,Javlok,0.3,0,DEPRECIATED,280,0,0,0,3.33,6,300,1.9,20,2,25,1,1",
 		  "Rifle,Full-Auto,Physical,Karak,0.0,0,DEPRECIATED,0.0,13,8.7,7.3,11.67,30,540,2,9,1.5,15,1,1",
 		  "Rifle,Full-Auto,Physical,Karak Wraith,0.0,0,DEPRECIATED,0.0,14.1,9.3,7.8,11.67,60,540,2,13,2,25,1,1",
 		  "Pistol,Semi-Auto,Physical,Knell,0.0,0,DEPRECIATED,150,63,69,18,4,9999,9999,1,20,1.5,5,1,1",
@@ -901,6 +904,10 @@ public class Constants {
 		  + "Rapid Incisions:1,1.2,00000000000000:0,1.2,00000000000000:1,2.4,00000000000000:1,2.4,10000000100000:1,3.6,00000000100000:1,1.5,10000000000000:0,3.0,10000000100000:1,2.0,00000000000000:0,6.0,00000000000010;"
 		  + "Biting Mandibles:1,1.2,00000000000000:0,1.2,00000000000000:1,1.2,00000000000000:0,1.2,00000000000000:1,2.4,00000000000000:0,2.4,00000000000000:1,1,00000000000000:0,2,10000000000000:1,3.6,00000000100000:1,2.4,00000000000000:1,2.4,00000000100000:1,6,10000000000010;"
 		  + "Dire Courtship:1,1.2,00000000000000:0,1.2,00000000000000:1,1.2,00000000000000:0,1.2,00000000000000:1,1.8,00000000000000:1,1.5,10000000000000:0,2,10000000000000:1,3.6,00000000100000:1,2,00000000100010:0,6,10000000000010:0,1.2,00000000000000:0,1.2,00000000000000;",
+		  "Coiling Viper;Whip;"
+		  + "Whistling Wind:1.0,1.0,00000000000000:1.0,1.0,00000000000000:0.0,1.0,00000000000000:1.0,1.25,00000000100000:0.0,1.25,00000000000000:0.0,1.25,00000000000000:;"
+		  + "Tumbling King:1.0,1.0,00000000000000:1.0,1.0,00000000000000:0.0,1.0,00000000000000:1.0,1.5,00000000000000:1.0,1.5,00000000000010:;"
+		  + "Spiral Cut:0.5,2.14,00000000000000;",
 		  };
   
   public static final String[] rifleDispositions = {

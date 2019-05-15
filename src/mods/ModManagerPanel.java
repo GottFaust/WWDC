@@ -320,6 +320,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_COMBO_STATUS);
 		modEffects.add(Constants.MOD_TYPE_CONDITION_OVERLOAD);
 		modEffects.add(Constants.HEADSHOT_BONUS);
+		modEffects.add(Constants.MOD_TYPE_ADDITIVE_CC);
 		modEffects.add("FlightSpeed");
 		modEffects.add("--");
 
@@ -337,145 +338,6 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			modEffectFourBox.addItem(modEffects.get(i));
 		}
 		updateModList();
-	}
-
-	void calculateRivenStats() {
-
-		// Math stolen from Semlar!
-		int rank = 9 - dispoRank.getSelectedIndex();
-		posMult = Double.parseDouble(dispoDisposition.getText()) * 1.5 * rank / 9;
-		if (hasNegative.isSelected()) {
-			posMult *= 1.25;
-		}
-		if (twoBuffs.isSelected()) {
-			posMult *= 0.66;
-		} else {
-			posMult *= 0.5;
-		}
-
-		negMult = -1 * Double.parseDouble(dispoDisposition.getText()) * 1.5 * rank / 9;
-		if (!hasNegative.isSelected()) {
-			negMult *= 0;
-		}
-		if (twoBuffs.isSelected()) {
-			negMult *= 0.33;
-		} else {
-			negMult *= 0.5;
-		}
-
-		switch ((String) dispoWeaponType.getSelectedItem()) {
-		case Constants.RIFLE:
-			baseMultsihot = 90;
-			baseDamage = 165;
-			basePhysical = 120;
-			baseCC = 150;
-			baseCD = 120;
-			baseElement = 90;
-			baseSC = 90;
-			baseSD = 100;
-			baseFaction = 45;
-			baseFR = 60;
-			baseMag = 50;
-			baseAmmo = 50;
-			basePFS = 90;
-			baseReload = 50;
-			baseRecoil = -90;
-			baseZoom = 60;
-			basePT = 2.7;
-			break;
-		case Constants.PISTOL:
-			baseMultsihot = 120;
-			baseDamage = 220;
-			basePhysical = 120;
-			baseCC = 150;
-			baseCD = 90;
-			baseElement = 90;
-			baseSC = 90;
-			baseSD = 100;
-			baseFaction = 45;
-			baseFR = 75;
-			baseMag = 50;
-			baseAmmo = 90;
-			basePFS = 90;
-			baseReload = 50;
-			baseRecoil = -90;
-			baseZoom = 80;
-			basePT = 2.7;
-			break;
-		case Constants.SHOTGUN:
-			baseMultsihot = 120;
-			baseDamage = 165;
-			basePhysical = 120;
-			baseCC = 90;
-			baseCD = 90;
-			baseElement = 90;
-			baseSC = 90;
-			baseSD = 100;
-			baseFaction = 45;
-			baseFR = 90;
-			baseMag = 50;
-			baseAmmo = 90;
-			basePFS = 90;
-			baseReload = 50;
-			baseRecoil = -90;
-			baseZoom = 0;
-			basePT = 2.7;
-			break;
-		case Constants.ARCHGUN:
-			baseMultsihot = 60;
-			baseDamage = 100;
-			basePhysical = 90;
-			baseCC = 100;
-			baseCD = 80;
-			baseElement = 120;
-			baseSC = 60;
-			baseSD = 100;
-			baseFaction = 45;
-			baseFR = 60;
-			baseMag = 60;
-			baseAmmo = 100;
-			basePFS = 0;
-			baseReload = 100;
-			baseRecoil = -100;
-			baseZoom = 60;
-			basePT = 2.7;
-			break;
-		}
-
-		DecimalFormat f = new DecimalFormat("#.#");
-		dispoMultishotPositiveField.setText(f.format(baseMultsihot * 0.9 * posMult) + "  to  " + f.format(baseMultsihot * 1.1 * posMult));
-		dispoDamagePositiveField.setText(f.format(baseDamage * 0.9 * posMult) + "  to  " + f.format(baseDamage * 1.1 * posMult));
-		dispoPhysicalPositiveField.setText(f.format(basePhysical * 0.9 * posMult) + "  to  " + f.format(basePhysical * 1.1 * posMult));
-		dispoCCPositiveField.setText(f.format(baseCC * 0.9 * posMult) + "  to  " + f.format(baseCC * 1.1 * posMult));
-		dispoCDPositiveField.setText(f.format(baseCD * 0.9 * posMult) + "  to  " + f.format(baseCD * 1.1 * posMult));
-		dispoElementalPositiveField.setText(f.format(baseElement * 0.9 * posMult) + "  to  " + f.format(baseElement * 1.1 * posMult));
-		dispoSCPositiveField.setText(f.format(baseSC * 0.9 * posMult) + "  to  " + f.format(baseSC * 1.1 * posMult));
-		dispoSDPositiveField.setText(f.format(baseSD * 0.9 * posMult) + "  to  " + f.format(baseSD * 1.1 * posMult));
-		dispoFactionPositiveField.setText(f.format(baseFaction * 0.9 * posMult) + "  to  " + f.format(baseFaction * 1.1 * posMult));
-		dispoFRPositiveField.setText(f.format(baseFR * 0.9 * posMult) + "  to  " + f.format(baseFR * 1.1 * posMult));
-		dispoMagPositiveField.setText(f.format(baseMag * 0.9 * posMult) + "  to  " + f.format(baseMag * 1.1 * posMult));
-		dispoAmmoPositiveField.setText(f.format(baseAmmo * 0.9 * posMult) + "  to  " + f.format(baseAmmo * 1.1 * posMult));
-		dispoPFSPositiveField.setText(f.format(basePFS * 0.9 * posMult) + "  to  " + f.format(basePFS * 1.1 * posMult));
-		dispoReloadPositiveField.setText(f.format(baseReload * 0.9 * posMult) + "  to  " + f.format(baseReload * 1.1 * posMult));
-		dispoRecoilPositiveField.setText(f.format(baseRecoil * 0.9 * posMult) + "  to  " + f.format(baseRecoil * 1.1 * posMult));
-		dispoZoomPositiveField.setText(f.format(baseZoom * 0.9 * posMult) + "  to  " + f.format(baseZoom * 1.1 * posMult));
-		dispoPTPositiveField.setText(f.format(basePT * 0.9 * posMult) + "  to  " + f.format(basePT * 1.1 * posMult));
-
-		dispoMultishotNegativeField.setText(f.format(baseMultsihot * 0.9 * negMult) + "  to  " + f.format(baseMultsihot * 1.1 * negMult));
-		dispoDamageNegativeField.setText(f.format(baseDamage * 0.9 * negMult) + "  to  " + f.format(baseDamage * 1.1 * negMult));
-		dispoPhysicalNegativeField.setText(f.format(basePhysical * 0.9 * negMult) + "  to  " + f.format(basePhysical * 1.1 * negMult));
-		dispoCCNegativeField.setText(f.format(baseCC * 0.9 * negMult) + "  to  " + f.format(baseCC * 1.1 * negMult));
-		dispoCDNegativeField.setText(f.format(baseCD * 0.9 * negMult) + "  to  " + f.format(baseCD * 1.1 * negMult));
-		dispoSCNegativeField.setText(f.format(baseSC * 0.9 * negMult) + "  to  " + f.format(baseSC * 1.1 * negMult));
-		dispoSDNegativeField.setText(f.format(baseSD * 0.9 * negMult) + "  to  " + f.format(baseSD * 1.1 * negMult));
-		dispoFactionNegativeField.setText(f.format(baseFaction * 0.9 * negMult) + "  to  " + f.format(baseFaction * 1.1 * negMult));
-		dispoFRNegativeField.setText(f.format(baseFR * 0.9 * negMult) + "  to  " + f.format(baseFR * 1.1 * negMult));
-		dispoMagNegativeField.setText(f.format(baseMag * 0.9 * negMult) + "  to  " + f.format(baseMag * 1.1 * negMult));
-		dispoAmmoNegativeField.setText(f.format(baseAmmo * 0.9 * negMult) + "  to  " + f.format(baseAmmo * 1.1 * negMult));
-		dispoPFSNegativeField.setText(f.format(basePFS * 0.9 * negMult) + "  to  " + f.format(basePFS * 1.1 * negMult));
-		dispoReloadNegativeField.setText(f.format(baseReload * 0.9 * negMult) + "  to  " + f.format(baseReload * 1.1 * negMult));
-		dispoRecoilNegativeField.setText(f.format(baseRecoil * 0.9 * negMult) + "  to  " + f.format(baseRecoil * 1.1 * negMult));
-		dispoZoomNegativeField.setText(f.format(baseZoom * 0.9 * negMult) + "  to  " + f.format(baseZoom * 1.1 * negMult));
 	}
 
 	protected void buildUI() {
@@ -889,6 +751,146 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		clearValues();
 
 		calculateRivenStats();
+	}
+	
+
+	void calculateRivenStats() {
+
+		// Math stolen from Semlar!
+		int rank = 9 - dispoRank.getSelectedIndex();
+		posMult = Double.parseDouble(dispoDisposition.getText()) * 1.5 * rank / 9;
+		if (hasNegative.isSelected()) {
+			posMult *= 1.25;
+		}
+		if (twoBuffs.isSelected()) {
+			posMult *= 0.66;
+		} else {
+			posMult *= 0.5;
+		}
+
+		negMult = -1 * Double.parseDouble(dispoDisposition.getText()) * 1.5 * rank / 9;
+		if (!hasNegative.isSelected()) {
+			negMult *= 0;
+		}
+		if (twoBuffs.isSelected()) {
+			negMult *= 0.33;
+		} else {
+			negMult *= 0.5;
+		}
+
+		switch ((String) dispoWeaponType.getSelectedItem()) {
+		case Constants.RIFLE:
+			baseMultsihot = 90;
+			baseDamage = 165;
+			basePhysical = 120;
+			baseCC = 150;
+			baseCD = 120;
+			baseElement = 90;
+			baseSC = 90;
+			baseSD = 100;
+			baseFaction = 45;
+			baseFR = 60;
+			baseMag = 50;
+			baseAmmo = 50;
+			basePFS = 90;
+			baseReload = 50;
+			baseRecoil = -90;
+			baseZoom = 60;
+			basePT = 2.7;
+			break;
+		case Constants.PISTOL:
+			baseMultsihot = 120;
+			baseDamage = 220;
+			basePhysical = 120;
+			baseCC = 150;
+			baseCD = 90;
+			baseElement = 90;
+			baseSC = 90;
+			baseSD = 100;
+			baseFaction = 45;
+			baseFR = 75;
+			baseMag = 50;
+			baseAmmo = 90;
+			basePFS = 90;
+			baseReload = 50;
+			baseRecoil = -90;
+			baseZoom = 80;
+			basePT = 2.7;
+			break;
+		case Constants.SHOTGUN:
+			baseMultsihot = 120;
+			baseDamage = 165;
+			basePhysical = 120;
+			baseCC = 90;
+			baseCD = 90;
+			baseElement = 90;
+			baseSC = 90;
+			baseSD = 100;
+			baseFaction = 45;
+			baseFR = 90;
+			baseMag = 50;
+			baseAmmo = 90;
+			basePFS = 90;
+			baseReload = 50;
+			baseRecoil = -90;
+			baseZoom = 0;
+			basePT = 2.7;
+			break;
+		case Constants.ARCHGUN:
+			baseMultsihot = 60;
+			baseDamage = 100;
+			basePhysical = 90;
+			baseCC = 100;
+			baseCD = 80;
+			baseElement = 120;
+			baseSC = 60;
+			baseSD = 100;
+			baseFaction = 45;
+			baseFR = 60;
+			baseMag = 60;
+			baseAmmo = 100;
+			basePFS = 0;
+			baseReload = 100;
+			baseRecoil = -100;
+			baseZoom = 60;
+			basePT = 2.7;
+			break;
+		}
+
+		DecimalFormat f = new DecimalFormat("#.#");
+		dispoMultishotPositiveField.setText(f.format(baseMultsihot * 0.9 * posMult) + "  to  " + f.format(baseMultsihot * 1.1 * posMult));
+		dispoDamagePositiveField.setText(f.format(baseDamage * 0.9 * posMult) + "  to  " + f.format(baseDamage * 1.1 * posMult));
+		dispoPhysicalPositiveField.setText(f.format(basePhysical * 0.9 * posMult) + "  to  " + f.format(basePhysical * 1.1 * posMult));
+		dispoCCPositiveField.setText(f.format(baseCC * 0.9 * posMult) + "  to  " + f.format(baseCC * 1.1 * posMult));
+		dispoCDPositiveField.setText(f.format(baseCD * 0.9 * posMult) + "  to  " + f.format(baseCD * 1.1 * posMult));
+		dispoElementalPositiveField.setText(f.format(baseElement * 0.9 * posMult) + "  to  " + f.format(baseElement * 1.1 * posMult));
+		dispoSCPositiveField.setText(f.format(baseSC * 0.9 * posMult) + "  to  " + f.format(baseSC * 1.1 * posMult));
+		dispoSDPositiveField.setText(f.format(baseSD * 0.9 * posMult) + "  to  " + f.format(baseSD * 1.1 * posMult));
+		dispoFactionPositiveField.setText(f.format(baseFaction * 0.9 * posMult) + "  to  " + f.format(baseFaction * 1.1 * posMult));
+		dispoFRPositiveField.setText(f.format(baseFR * 0.9 * posMult) + "  to  " + f.format(baseFR * 1.1 * posMult));
+		dispoMagPositiveField.setText(f.format(baseMag * 0.9 * posMult) + "  to  " + f.format(baseMag * 1.1 * posMult));
+		dispoAmmoPositiveField.setText(f.format(baseAmmo * 0.9 * posMult) + "  to  " + f.format(baseAmmo * 1.1 * posMult));
+		dispoPFSPositiveField.setText(f.format(basePFS * 0.9 * posMult) + "  to  " + f.format(basePFS * 1.1 * posMult));
+		dispoReloadPositiveField.setText(f.format(baseReload * 0.9 * posMult) + "  to  " + f.format(baseReload * 1.1 * posMult));
+		dispoRecoilPositiveField.setText(f.format(baseRecoil * 0.9 * posMult) + "  to  " + f.format(baseRecoil * 1.1 * posMult));
+		dispoZoomPositiveField.setText(f.format(baseZoom * 0.9 * posMult) + "  to  " + f.format(baseZoom * 1.1 * posMult));
+		dispoPTPositiveField.setText(f.format(basePT * 0.9 * posMult) + "  to  " + f.format(basePT * 1.1 * posMult));
+
+		dispoMultishotNegativeField.setText(f.format(baseMultsihot * 0.9 * negMult) + "  to  " + f.format(baseMultsihot * 1.1 * negMult));
+		dispoDamageNegativeField.setText(f.format(baseDamage * 0.9 * negMult) + "  to  " + f.format(baseDamage * 1.1 * negMult));
+		dispoPhysicalNegativeField.setText(f.format(basePhysical * 0.9 * negMult) + "  to  " + f.format(basePhysical * 1.1 * negMult));
+		dispoCCNegativeField.setText(f.format(baseCC * 0.9 * negMult) + "  to  " + f.format(baseCC * 1.1 * negMult));
+		dispoCDNegativeField.setText(f.format(baseCD * 0.9 * negMult) + "  to  " + f.format(baseCD * 1.1 * negMult));
+		dispoSCNegativeField.setText(f.format(baseSC * 0.9 * negMult) + "  to  " + f.format(baseSC * 1.1 * negMult));
+		dispoSDNegativeField.setText(f.format(baseSD * 0.9 * negMult) + "  to  " + f.format(baseSD * 1.1 * negMult));
+		dispoFactionNegativeField.setText(f.format(baseFaction * 0.9 * negMult) + "  to  " + f.format(baseFaction * 1.1 * negMult));
+		dispoFRNegativeField.setText(f.format(baseFR * 0.9 * negMult) + "  to  " + f.format(baseFR * 1.1 * negMult));
+		dispoMagNegativeField.setText(f.format(baseMag * 0.9 * negMult) + "  to  " + f.format(baseMag * 1.1 * negMult));
+		dispoAmmoNegativeField.setText(f.format(baseAmmo * 0.9 * negMult) + "  to  " + f.format(baseAmmo * 1.1 * negMult));
+		dispoPFSNegativeField.setText(f.format(basePFS * 0.9 * negMult) + "  to  " + f.format(basePFS * 1.1 * negMult));
+		dispoReloadNegativeField.setText(f.format(baseReload * 0.9 * negMult) + "  to  " + f.format(baseReload * 1.1 * negMult));
+		dispoRecoilNegativeField.setText(f.format(baseRecoil * 0.9 * negMult) + "  to  " + f.format(baseRecoil * 1.1 * negMult));
+		dispoZoomNegativeField.setText(f.format(baseZoom * 0.9 * negMult) + "  to  " + f.format(baseZoom * 1.1 * negMult));
 	}
 
 	/**
