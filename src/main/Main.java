@@ -1342,8 +1342,7 @@ public class Main {
 
 		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) { // Bunch of melee junk
 			finalMag = stanceCombo.hits.size();
-
-			finalReloadTime = 0;
+			
 			finalProjectileCount = 1;
 
 			double tempCombo = startingCombo;
@@ -1391,6 +1390,8 @@ public class Main {
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
 		} else if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)) {
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
+		} else if (selectedWeapon.weaponType.equals(Constants.MELEE)) {
+			finalIterationTime = ((finalMag) / (finalFireRate / avgDelay));
 		} else {
 			finalIterationTime = ((finalMag - 1) / (finalFireRate / avgDelay)) + finalReloadTime;
 		}
