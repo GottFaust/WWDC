@@ -321,6 +321,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_CONDITION_OVERLOAD);
 		modEffects.add(Constants.HEADSHOT_BONUS);
 		modEffects.add(Constants.MOD_TYPE_ADDITIVE_CC);
+		modEffects.add(Constants.MOD_TYPE_SHATTERING_IMPACT);
 		modEffects.add("FlightSpeed");
 		modEffects.add("--");
 

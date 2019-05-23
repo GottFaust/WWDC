@@ -27,7 +27,7 @@ public class TTKTarget implements Comparable {
 	protected int baseLevel = 0;
 	public int currentLevel = 0;
 	public int defaultLevel = 0;
-	protected int baseArmor = 0;
+	protected double baseArmor = 0;
 	protected int baseHealth = 0;
 	protected int baseShields = 0;
 	protected int maxArmor = 0;
@@ -109,6 +109,7 @@ public class TTKTarget implements Comparable {
 	protected double armorDamage = 0;
 	protected double averageArmorMult = 0;
 	protected int spliterations;
+	int bursts;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -462,6 +463,11 @@ public class TTKTarget implements Comparable {
 		averageArmorMult /= Main.raw.finalBase;
 		averageArmorMult = 1 / averageArmorMult;
 
+		bursts = 1;
+		if (Main.weaponMode.equals(Constants.BURST)) {
+			bursts = Main.burstCount;
+		}
+		
 		corrosiveProjectionMult = Main.getCorrosiveProjectionMult();
 		shieldDisruptionMult = Main.getShieldDisruptionMult();
 		DoTBase = (Main.raw.base * Main.finalDamageMult) * Main.finalDeadAimMult;
@@ -670,6 +676,8 @@ public class TTKTarget implements Comparable {
 		double coldProcMult = 1;
 		double meleeHitMult = 1;
 		double meleeHitDelay = 1;
+		int shatteringImpacts = 0;
+		double shatteringImpactMult = 1;
 
 		// Find initial starting combo
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
@@ -692,66 +700,48 @@ public class TTKTarget implements Comparable {
 
 			// is it time to shoot?
 			if (shotTimer <= 0) {
-
-				if (Main.weaponMode.equals(Constants.FULL_AUTO_RAMP_UP) || Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-					millisecondMult++;
-					if (millisecondMult > 5) {
-						millisecondMult = 5;
-					}
-				}
+				
+				millisecondMult = Math.min(millisecondMult += 1 , 5);
+						
 				// Kohm Pellets
 				localProjectileCount = Main.finalProjectileCount;
 				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
-					double rampBulletMult = ((iterations + 1) / Main.projectileCount);
-					if (rampBulletMult > 1)
-						rampBulletMult = 1;
-					localProjectileCount *= rampBulletMult;
+					localProjectileCount *= Math.min(1 , ((iterations + 1) / Main.projectileCount));
 				}
-				// Bursts
-				int bursts = 1;
-				if (Main.weaponMode.equals(Constants.BURST)) {
-					bursts = Main.burstCount;
-				}
+
 				for (int b = 0; b < bursts; b++) {
 
 					// Find multishot
-					double tempMultishots = localProjectileCount + 1;
-					int multishot = 0;
-					for (int p = 0; p < localProjectileCount; p++) {
-						tempMultishots--;
-						if (rng.nextDouble() < tempMultishots) {
-							multishot++;
-						}
-					}
+					int multishot = (int) localProjectileCount;
+					if (rng.nextDouble() <  (localProjectileCount - multishot)) {
+						multishot++;
+					}				
+					
 					// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
 					double beamMult = 1;
 					if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
-						beamMult = 0.2 + (rampMult / 6000) * 0.8;
-						if (beamMult > 1) {
-							beamMult = 1;
-						}
+						beamMult = Math.min(1 , 0.2 + (rampMult / 6000) * 0.8);
 						beamMult *= multishot;
 						multishot = 1;
 					}
+					
 					// Combo multipliers
 					double comboMult = 1;
 					double comboCritMult = 1;
 					double comboStatusMult = 1;
 					if (Main.weaponMode.equals(Constants.SNIPER) || Main.weaponMode.equals(Constants.LANKA) || Main.selectedWeapon.weaponType.equals(Constants.MELEE)) {
 						comboCount += multishot;
-						comboMult = 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3)));
+						comboMult = Math.max(1, 0.5 * (int) (Math.log((27 * comboCount) / Main.combo) / (Math.log(3))));
 
-						double tempCombo = 0;
-						tempCombo = Main.startingCombo;
-						if (Main.startingCombo < 1.5) {
+						double tempCombo = Main.startingCombo;
+						if (tempCombo < 1.5) {
 							tempCombo = 0;
 						}
+						
 						if (comboMult >= 1.5) {
 							comboCritMult += Main.comboCrit * comboMult / (1 + (tempCombo * Main.comboCrit));
 							comboStatusMult += Main.comboStatus * comboMult / (1 + (tempCombo * Main.comboStatus));
 						}
-						if (comboMult < 1)
-							comboMult = 1;
 					}
 
 					// Condition Overload
@@ -763,6 +753,10 @@ public class TTKTarget implements Comparable {
 							}
 						}
 					}
+					
+					// Shattering Impact
+					shatteringImpactMult = Math.max(0, (baseArmor - shatteringImpacts * Main.shatteringImpact)) / baseArmor;
+					
 					
 					// Melee hit stuff
 					if (Main.selectedWeapon.weaponType.equals(Constants.MELEE) && Main.stanceCombo != null) {
@@ -794,18 +788,14 @@ public class TTKTarget implements Comparable {
 					for (int p = 0; p < multishot; p++) {
 
 						// Find Crit
-						double tempCrit = comboCritMult * Main.finalCritChance + 1;
-						int crit = 0;
-						for (int a = 0; a < Main.finalCritChance; a++) {
-							tempCrit--;
-							if (rng.nextDouble() < tempCrit) {
-								crit++;
-							}
+						int crit = (int) (comboCritMult * Main.finalCritChance);
+						if (rng.nextDouble() < (comboCritMult * Main.finalCritChance) - crit) {
+							crit++;
 						}
 						double localCritMult = 1 + crit * (Main.finalCritMult - 1);
 
 						// Vigilante Proc?
-						if (Main.vigilante > 0 && Main.vigilante > rng.nextDouble()) {
+						if (Main.vigilante > rng.nextDouble()) {
 							localCritMult += (Main.finalCritMult - 1);
 						}
 
@@ -834,8 +824,8 @@ public class TTKTarget implements Comparable {
 								shieldDifference = 1.0 - (unabsorbed / raw);
 								targetCurrentShields = 0.0;
 							}
-							if (targetAdjustedMaxArmor > 0.0) {
-								targetCurrentHealth -= armorDamage / (1 + (targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference;
+							if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+								targetCurrentHealth -= armorDamage / (1 + (shatteringImpactMult * targetAdjustedMaxArmor * averageArmorMult)) * totalMult * shieldDifference;
 							} else {
 								targetCurrentHealth -= healthDamage * totalMult * shieldDifference;
 							}
@@ -857,8 +847,8 @@ public class TTKTarget implements Comparable {
 						// Forced poison proc?
 						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
 							double localToxinMult = toxinMult;
-							if (targetAdjustedMaxArmor > 0.0) {
-								localToxinMult = (toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
+							if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+								localToxinMult = (toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
 							}
 							double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * localToxinMult * totalMult * 0.5;
 							int toxinDuration = (int) (8 * Main.finalStatusDuration * 10000);
@@ -885,8 +875,8 @@ public class TTKTarget implements Comparable {
 								double localFireMult = fireMult;
 								if (targetCurrentShields > 0.0) {
 									localFireMult = shieldFireMult;
-								} else if (targetAdjustedMaxArmor > 0.0) {
-									localFireMult = (fireMult * armorFireMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
+								} else if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+									localFireMult = (fireMult * armorFireMult) / (1 + ((shatteringImpactMult * targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
 								}
 								double heatDamage = DoTBase * (1 + Main.globalFire) * localFireMult * totalMult * typeMult * 0.5;
 								int heatDuration = (int) (6 * Main.finalStatusDuration * 10000);
@@ -907,8 +897,8 @@ public class TTKTarget implements Comparable {
 								double localElectricMult = electricMult;
 								if (targetCurrentShields > 0.0) {
 									localElectricMult = shieldElectricMult;
-								} else if (targetAdjustedMaxArmor > 0.0) {
-									localElectricMult = (electricMult * armorElectricMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
+								} else if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+									localElectricMult = (electricMult * armorElectricMult) / (1 + ((shatteringImpactMult * targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
 								}
 								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * localElectricMult * totalMult * 0.5;
 								if (targetCurrentShields > 0) {
@@ -921,8 +911,8 @@ public class TTKTarget implements Comparable {
 								// Toxin Proc
 							} else if ((proc -= toxinProc) < 0) {
 								double localToxinMult = toxinMult;
-								if (targetAdjustedMaxArmor > 0.0) {
-									localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+								if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+									localToxinMult = ((toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 								}
 								double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * localToxinMult * totalMult * 0.5;
 								int toxinDuration = (int) (8 * Main.finalStatusDuration * 10000);
@@ -933,8 +923,8 @@ public class TTKTarget implements Comparable {
 								// Gas Proc
 							} else if ((proc -= gasProc) < 0) {
 								double localGasMult = toxinMult;
-								if (targetAdjustedMaxArmor > 0.0) {
-									localGasMult = ((toxinMult * armorToxinMult) / (1 + ((targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+								if (shatteringImpactMult * targetAdjustedMaxArmor > 0.0) {
+									localGasMult = ((toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
 								}
 								double gasHeadMult = 1;
 								if (headShotMult > 1) {
@@ -980,12 +970,22 @@ public class TTKTarget implements Comparable {
 								statusEffects[13] = (int) (60000 * Main.finalStatusDuration);
 							}
 						}
+						
+						if(Main.shatteringImpact > 0 && Main.impact.finalBase > 0) {
+							shatteringImpacts += 1;
+						}
+						
 					}
+					
+					//Done Shooting
+					iterations++;
+					
+					//Find next shot time
 					shotTimer = millisceondsPerShot * (5 / millisecondMult) + 1;
 					if (Main.selectedWeapon.weaponType.equals(Constants.MELEE)) {
 						shotTimer = (int) (10000 * meleeHitDelay / Main.finalFireRate);
 					}
-					iterations++;
+					
 					// Have we unloaded the whole mag and need to reload?
 					if (iterations >= Main.finalMag) {
 						iterations = 0;
@@ -1018,7 +1018,6 @@ public class TTKTarget implements Comparable {
 				for (int j = 0; j < 14; j++) {
 					statusEffects[j] -= (1000 / coldProcMult);
 				}
-
 				// If viral proc is expired
 				if (statusEffects[6] <= 0) {
 					targetCurrentHealth += viralHealth;

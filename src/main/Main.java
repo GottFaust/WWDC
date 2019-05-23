@@ -201,6 +201,7 @@ public class Main {
 	public static double startingCombo = 0;
 	public static int burstCount = 0;
 	public static double drain = 1;
+	public static int shatteringImpact = 0;
 
 	/** Calculated Values **/
 	public static int finalMag = 0;
@@ -776,6 +777,7 @@ public class Main {
 		stanceCombo = null;
 		avgHit = 1;
 		avgDelay = 1;
+		shatteringImpact = 0;
 	}
 
 	/**
@@ -796,8 +798,8 @@ public class Main {
 		lastShotDamageMult = 1;
 		statusChance = selectedWeapon.getStatusChance();
 		mag = selectedWeapon.getMagSize();
-		stanceCombo = selectedWeapon.getStanceCombo();
 		if (selectedWeapon.weaponType.equals(Constants.MELEE)) {
+			stanceCombo = selectedWeapon.getStanceCombo();
 			combo = 5;
 		} else {
 			combo = selectedWeapon.getCombo();
@@ -1027,6 +1029,9 @@ public class Main {
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_ADDITIVE_CC)) {
 					addCritChanceMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_ADDITIVE_CC))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_SHATTERING_IMPACT)) {
+					shatteringImpact += (1.0 + modRanks.get(i));
 				}
 			}
 		}
@@ -1909,6 +1914,9 @@ public class Main {
 			double stanceRatio = (stanceSlashes / stanceCombo.hits.size()) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - stanceSlashes / stanceCombo.hits.size())));
 			stanceSlashMult = (stanceRatio * stanceSlashMult + (1 - stanceRatio)) / avgHit;
 		}
+		if(Double.isNaN(stanceSlashMult)){
+			stanceSlashMult = 1;
+		}
 
 		double rawBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus;
 		double DoTBase = rawBase * averageCritMult;
@@ -1932,7 +1940,7 @@ public class Main {
 		burstElectricProcDPS = electricProcRate * electricBase * burstProcsPerSecond;
 		burstGasProcDPS = gasProcRate * poisonDamage * burstProcsPerSecond;
 
-		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + gasProcDPS);
+		raw.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS + electricProcDPS + gasProcDPS);
 
 		corpus.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalCorpusMult + electricProcDPS + gasProcDPS) * finalCorpusMult * finalCorpusMult;
 		grineer.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalGrineerMult + electricProcDPS + gasProcDPS) * finalGrineerMult * finalGrineerMult;
@@ -2446,6 +2454,7 @@ public class Main {
 			DPSPanel.corrosiveChanceField.setText(f.format(finalStatusChance * 100 * corrosiveProcRate) + "%");
 			DPSPanel.viralChanceField.setText(f.format(finalStatusChance * 100 * viralProcRate) + "%");
 
+			DPSPanel.burstPanel.setVisible(false);
 			DPSPanel.reloadPanel.setVisible(false);
 			DPSPanel.magPanel.setVisible(false);
 			DPSPanel.impactPanel.setVisible(false);
@@ -2488,6 +2497,7 @@ public class Main {
 			if (!selectedWeapon.weaponType.equals(Constants.MELEE)) {
 				DPSPanel.reloadPanel.setVisible(true);
 				DPSPanel.magPanel.setVisible(true);
+				DPSPanel.burstPanel.setVisible(true);
 			}
 			if (finalStatusChance > 0) {
 				DPSPanel.status.setVisible(true);

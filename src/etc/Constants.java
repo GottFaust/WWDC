@@ -45,6 +45,7 @@ public class Constants {
   public static final String MOD_TYPE_COMBO_STATUS = "ComboStatus";
   public static final String MOD_TYPE_CONDITION_OVERLOAD = "DamagePerStatus";
   public static final String MOD_TYPE_ADDITIVE_CC = "AdditiveCritChance";
+  public static final String MOD_TYPE_SHATTERING_IMPACT = "ShatteringImpact";
   
   /** Sniper scope effects **/
   public static final String ADDITIVE_CRIT_CHANCE = "Scoped CC";
@@ -153,7 +154,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.11.3";
+  public static final String APP_VERSION = "v0.11.4";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -484,6 +485,7 @@ public class Constants {
                                             "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
                                             "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
                                             "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",
+                                            "Shattering Imapact,Melee,5,1,ShatteringImpact,1,D,4",
                                             //Arch-Gun Mods
                                             "Ammo Chain,ArchGun,5,1,AmmoCap,0.167,~,2",
                                             "Arch-Gun Ace,ArchGun,5,2,FireRate,ReloadSpeed,0.08,0.17,V,6",
@@ -607,6 +609,7 @@ public class Constants {
           "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
           "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
           "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",
+          "Shattering Imapact,Melee,5,1,ShatteringImpact,1,D,4",
           //Arch-Gun Mods
           "Ammo Chain,ArchGun,5,1,AmmoCap,0.167,~,2",
           "Arch-Gun Ace,ArchGun,5,2,FireRate,ReloadSpeed,0.08,0.17,V,6",
@@ -793,7 +796,7 @@ public class Constants {
 		  "Rifle,Sniper (Semi-Auto),Physical,Rubico Prime,0,0,DEPRECIATED,0,149.6,28.1,9.3,3.67,5,1,2,38,3,16,1,1,Scoped CD,35,50",
 		  "Pistol,Semi-Auto,Electric,Sancti Castanas,0.0,0,DEPRECIATED,300,0,0,0,3.33,2,18,1,24,2,34,1,1",
 		  "Shotgun,Burst,Physical,Sancti Tigris,0.0,2,DEPRECIATED,0.0,126,126,1008,2,2,120,1.5,15,1.5,28,6,1",
-		  "Rifle,Full-Auto,Corrosive,Scourge,0,0,DEPRECIATED,100,0,0,0,2.67,20,100,0.6,2,1.5,30,1,1",
+		  "Rifle,Full-Auto,Corrosive,Scourge,0,0,DEPRECIATED,125,0,0,0,2.67,40,100,0.6,2,1.5,30,1,1",
 		  "Pistol,Full-Auto (Ramp-up),Physical,Secura Dual Cestra,0.0,0,DEPRECIATED,0.0,5.6,22.4,0,12.5,120,480,3.5,16,1.6,28,1,1",
 		  "Rifle,Semi-Auto,Blast,Secura Penta,0,0,DEPRECIATED,300,0,0,0,2,7,28,2.5,26,2,26,1,1",
 		  "Pistol,Semi-Auto,Physical,Seer,0,0,DEPRECIATED,0,33.67,33.67,33.67,2,8,210,2.8,5,1.5,13,1,1",
@@ -896,7 +899,10 @@ public class Constants {
 		  "ArchGun,Charge,Magnetic,Velocitus (Charged),1,0,DEPRECIATED,1800,0,0,0,5,100,5,4,25,3,25,1,1",
 		  "ArchGun,Semi-Auto,Magnetic,Velocitus (Uncharged),1,0,DEPRECIATED,200,0,0,0,5,100,5,4,25,3,25,1,1",
 		  "ArchGun,Continuous,Radiation,Larkspur,0,0,DEPRECIATED,80,10,0,0,12,600,0,12,10,1.4,50,1,1",
-		  "ArchGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1"};
+		  "ArchGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1",
+		  "Rifle,Continuous,Electric,Fulmin (Beam),0.0,0,Blade and Whip,25,8,0,0,9.33,60,0,1,28,2.4,10,1,0.5,null,null,null,null",
+		  "Rifle,Semi-Auto,Electric,Fulmin (Slug),0.0,0,Blade and Whip,400,100,0,0,2.17,6,0,1,30,2.2,16,1,0,null,null,null,null"
+  		};
   
   public static final String[] stances = {
 		  "Carving Mantis;Dual Swords;"

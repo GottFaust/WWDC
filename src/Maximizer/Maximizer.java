@@ -17,6 +17,7 @@ public class Maximizer {
 	protected int completedIterations;
 	protected int totalIterations;
 	protected int modCount;
+	int emptyMods;
 	protected Vector<Integer> modsToChange = new Vector<Integer>();
 	protected int targets = 0;
 	protected File maximizerResults;
@@ -79,8 +80,10 @@ public class Maximizer {
 			updateRanks();
 			calculateAndStore();
 		} else {
-			for (int i = 0; i < modCount - 1; i++) {
-				simulatedMods.set(modsToChange.get(modSlot - 1), null);
+			for (int i = 0; i < modCount - (emptyMods - modSlot); i++) {			
+				for(int j = modSlot; j > 0; j--) {
+					simulatedMods.set(modsToChange.get(j - 1), null);
+				}					
 				updateMods();
 				simulatedMods.set(modsToChange.get(modSlot - 1), possibleMods.get(i));
 				thatThang(modSlot - 1);
@@ -108,7 +111,7 @@ public class Maximizer {
 
 	public void Maximizer() {
 		DecimalFormat f = new DecimalFormat("#.###");
-		int emptyMods = 0;
+		emptyMods = 0;
 		Main.stop = false;
 		completedIterations = 0;
 		bestTTK = Double.POSITIVE_INFINITY;
@@ -124,7 +127,7 @@ public class Maximizer {
 				modsToChange.add(i);
 			}
 		}
-		modCount = Main.selectedWeapon.countMods() - (emptyMods - 1);
+		modCount = Main.selectedWeapon.countMods() - 1;
 		totalIterations = (int) Math.pow(modCount - 1, emptyMods);
 
 		// Initial mod list
