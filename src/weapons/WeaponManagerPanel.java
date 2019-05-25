@@ -292,6 +292,10 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.meleeTypePanel.setVisible(false);
 			attributesPanel.stanceComboPanel.setVisible(false);
 			attributesPanel.stancePanel.setVisible(false);
+			attributesPanel.weaponModePanel.setVisible(true);
+			attributesPanel.projectilePanel.setVisible(true);
+			attributesPanel.magSizePanel.setVisible(true);
+			attributesPanel.reloadPanel.setVisible(true);
 		}
 	}
 	
