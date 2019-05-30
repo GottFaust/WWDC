@@ -27,7 +27,7 @@ public class TTKTarget implements Comparable {
 	protected int baseLevel = 0;
 	public int currentLevel = 0;
 	public int defaultLevel = 0;
-	protected double baseArmor = 0;
+	protected int baseArmor = 0;
 	protected int baseHealth = 0;
 	protected int baseShields = 0;
 	protected int maxArmor = 0;
@@ -755,7 +755,7 @@ public class TTKTarget implements Comparable {
 					}
 					
 					// Shattering Impact
-					shatteringImpactMult = Math.max(0, (baseArmor - shatteringImpacts * Main.shatteringImpact)) / baseArmor;
+					shatteringImpactMult = Math.max(0, ((double)baseArmor - shatteringImpacts * Main.shatteringImpact)) / baseArmor;
 					
 					
 					// Melee hit stuff
