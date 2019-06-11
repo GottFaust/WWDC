@@ -44,6 +44,11 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel meleeTypePanel = new JPanel();
   protected JPanel stancePanel = new JPanel();
   protected JPanel stanceComboPanel = new JPanel();
+
+  protected JPanel explosiveDamagePanel = new JPanel();
+  protected JPanel explosiveImpactPanel = new JPanel();
+  protected JPanel explosivePuncturePanel = new JPanel();
+  protected JPanel explosiveSlashPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> damageTypeBox = new JComboBox<String>();
@@ -78,6 +83,10 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel meleeTypeLabel = new JLabel("Melee Type - ");
   protected JLabel stanceLabel = new JLabel("Stance - ");
   protected JLabel stanceComboLabel = new JLabel("Combo - ");
+  protected JLabel explosiveDamageLabel = new JLabel("Explosion Elemental - ");
+  protected JLabel explosiveImpactLabel = new JLabel("Explosion Impact - ");
+  protected JLabel explosivePunctureLabel = new JLabel("Explosion Puncture - ");
+  protected JLabel explosiveSlashLabel = new JLabel("Explosion Slash - ");
   
   /** JTextFields **/
   protected JTextField chargeTimeField = new JTextField(8);
@@ -98,6 +107,10 @@ public class WeaponAttributesPanel extends JPanel {
   protected JTextField statusField = new JTextField(8);
   protected JTextField drainField = new JTextField(8);
   protected JTextField scopeStrengthField = new JTextField(4);
+  protected JTextField explosiveDamageField = new JTextField(8);
+  protected JTextField explosiveImpactField = new JTextField(8);
+  protected JTextField explosivePunctureField = new JTextField(8);
+  protected JTextField explosiveSlashField = new JTextField(8);
   
   
   /**
@@ -147,6 +160,10 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(meleeTypeLabel);
     UIBuilder.labelInit(stanceLabel);
     UIBuilder.labelInit(stanceComboLabel);
+    UIBuilder.labelInit(explosiveDamageLabel);
+    UIBuilder.labelInit(explosiveImpactLabel);
+    UIBuilder.labelInit(explosivePunctureLabel);
+    UIBuilder.labelInit(explosiveSlashLabel);
     
     UIBuilder.textFieldInit(nameField);
     
@@ -167,6 +184,10 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.numberFieldInit(statusField);
     UIBuilder.numberFieldInit(drainField);
     UIBuilder.numberFieldInit(scopeStrengthField);
+    UIBuilder.numberFieldInit(explosiveDamageField);
+    UIBuilder.numberFieldInit(explosiveImpactField);
+    UIBuilder.numberFieldInit(explosivePunctureField);
+    UIBuilder.numberFieldInit(explosiveSlashField);
     
     UIBuilder.createSepparationBorder(namePanel);
     UIBuilder.createSepparationBorder(damagePanel);
@@ -191,6 +212,10 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(meleeTypePanel);
     UIBuilder.createSepparationBorder(stancePanel);
     UIBuilder.createSepparationBorder(stanceComboPanel);
+    UIBuilder.createSepparationBorder(explosiveDamagePanel);
+    UIBuilder.createSepparationBorder(explosiveImpactPanel);
+    UIBuilder.createSepparationBorder(explosivePuncturePanel);
+    UIBuilder.createSepparationBorder(explosiveSlashPanel);
     
     UIBuilder.panelInit(this);
     UIBuilder.panelInit(namePanel);
@@ -216,6 +241,10 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(meleeTypePanel);
     UIBuilder.panelInit(stancePanel);
     UIBuilder.panelInit(stanceComboPanel);
+    UIBuilder.panelInit(explosiveDamagePanel);
+    UIBuilder.panelInit(explosiveImpactPanel);
+    UIBuilder.panelInit(explosivePuncturePanel);
+    UIBuilder.panelInit(explosiveSlashPanel);
     
     nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
     damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -276,6 +305,18 @@ public class WeaponAttributesPanel extends JPanel {
     damageTypeBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
     
+    damageTypeBox.addItem(Constants.EX_PHYSICAL_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_FIRE_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_ICE_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_ELECTRIC_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_TOXIN_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_BLAST_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_MAGNETIC_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_GAS_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_RADIATION_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_CORROSIVE_WEAPON_DAMAGE);
+    damageTypeBox.addItem(Constants.EX_VIRAL_WEAPON_DAMAGE);
+    
     scopeBox.addItem(Constants.ADDITIVE_CRIT_CHANCE);
     scopeBox.addItem(Constants.ADDITIVE_CRIT_DAMAGE);
     scopeBox.addItem(Constants.HEADSHOT_BONUS);
@@ -309,6 +350,10 @@ public class WeaponAttributesPanel extends JPanel {
     meleeTypePanel.setLayout(new GridLayout(1,2,0,0));
     stancePanel.setLayout(new GridLayout(1,2,0,0));
     stanceComboPanel.setLayout(new GridLayout(1,2,0,0));
+    explosiveDamagePanel.setLayout(new GridLayout(1,2,0,0));
+    explosiveImpactPanel.setLayout(new GridLayout(1,2,0,0));
+    explosivePuncturePanel.setLayout(new GridLayout(1,2,0,0));
+    explosiveSlashPanel.setLayout(new GridLayout(1,2,0,0));
     
     namePanel.add(nameLabel);
     namePanel.add(nameField);
@@ -357,6 +402,14 @@ public class WeaponAttributesPanel extends JPanel {
     stancePanel.add(stanceBox);
     stanceComboPanel.add(stanceComboLabel);
     stanceComboPanel.add(stanceComboBox);
+    explosiveDamagePanel.add(explosiveDamageLabel);
+    explosiveDamagePanel.add(explosiveDamageField);
+    explosiveImpactPanel.add(explosiveImpactLabel);
+    explosiveImpactPanel.add(explosiveImpactField);
+    explosivePuncturePanel.add(explosivePunctureLabel);
+    explosivePuncturePanel.add(explosivePunctureField);
+    explosiveSlashPanel.add(explosiveSlashLabel);
+    explosiveSlashPanel.add(explosiveSlashField);
     
     this.setBorder(null);
     
@@ -370,6 +423,10 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(impactPanel);
     this.add(puncturePanel);
     this.add(slashPanel);
+    this.add(explosiveDamagePanel);
+    this.add(explosiveImpactPanel);
+    this.add(explosivePuncturePanel);
+    this.add(explosiveSlashPanel);
     this.add(chargeTimePanel);
     this.add(burstCountPanel);
     this.add(projectilePanel);

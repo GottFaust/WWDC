@@ -34,6 +34,11 @@ public class Weapon implements Comparable {
 	public String scope1;
 	public String scope2;
 	public String scope3;
+	
+	public String explosiveDamage;
+	public String explosiveImpact;
+	public String explosivePuncture;
+	public String explosiveSlash;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -75,6 +80,12 @@ public class Weapon implements Comparable {
 				scope3 = null;
 			}
 		}
+		if (split.length > 24) { // explosions
+			explosiveDamage = split[24];
+			explosiveImpact = split[25];
+			explosivePuncture = split[26];
+			explosiveSlash = split[27];
+		}
 	}
 
 	/**
@@ -103,29 +114,19 @@ public class Weapon implements Comparable {
 		weaponString += status + ",";
 		weaponString += projeciles + ",";
 		weaponString += drain;
-		try {
-			weaponString += "," + scopeBonus;
-		} catch (Exception ex) {
-			weaponString += ",";
-		}
-		try {
-			weaponString += "," + scope1;
-		} catch (Exception ex) {
-			weaponString += ",";
-		}
-		try {
-			weaponString += "," + scope2;
-		} catch (Exception ex) {
-			weaponString += ",";
-		}
-		try {
-			weaponString += "," + scope3;
-		} catch (Exception ex) {
-			weaponString += ",";
-		}
+		
+		weaponString += "," + scopeBonus;
+		weaponString += "," + scope1;
+		weaponString += "," + scope2;
+		weaponString += "," + scope3;
+		
+		weaponString += "," + explosiveDamage;
+		weaponString += "," + explosiveImpact;
+		weaponString += "," + explosivePuncture;
+		weaponString += "," + explosiveSlash;
+
 		return weaponString;
 	}
-
 	/**
 	 * Compares this to other weapons
 	 */

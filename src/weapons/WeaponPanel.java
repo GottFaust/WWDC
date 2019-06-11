@@ -595,9 +595,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		double FR = Double.parseDouble(FRstr);
 		FR /= 100.0;
-		if (FR < 0) {
-			FR = 0;
-		}
+
 		return (FR);
 	}
 
@@ -724,6 +722,74 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 */
 	public double getSlashDamage() {
 		String damageStr = wap.slashField.getText();
+		if (damageStr == null || damageStr.equals("")) {
+			damageStr = "0";
+		}
+		double damage = Double.parseDouble(damageStr);
+		if (damage < 0.0) {
+			damage = 0.0;
+		}
+		return (damage);
+	}
+	
+	/**
+	 * Gets the explosion's base damage
+	 * 
+	 * @return damage
+	 */
+	public double getExplosiveBaseDamage() {
+		String damageStr = wap.explosiveDamageField.getText();
+		if (damageStr == null || damageStr.equals("")) {
+			damageStr = "0";
+		}
+		double damage = Double.parseDouble(damageStr);
+		if (damage < 0.0) {
+			damage = 0.0;
+		}
+		return (damage);
+	}
+
+	/**
+	 * Gets the impact damage
+	 * 
+	 * @return damage
+	 */
+	public double getExplosiveImpactDamage() {
+		String damageStr = wap.explosiveImpactField.getText();
+		if (damageStr == null || damageStr.equals("")) {
+			damageStr = "0";
+		}
+		double damage = Double.parseDouble(damageStr);
+		if (damage < 0.0) {
+			damage = 0.0;
+		}
+		return (damage);
+	}
+
+	/**
+	 * Gets the puncture damage
+	 * 
+	 * @return damage
+	 */
+	public double getExplosivePunctureDamage() {
+		String damageStr = wap.explosivePunctureField.getText();
+		if (damageStr == null || damageStr.equals("")) {
+			damageStr = "0";
+		}
+		double damage = Double.parseDouble(damageStr);
+		if (damage < 0.0) {
+			damage = 0.0;
+		}
+		return (damage);
+	}
+
+	/**
+	 * Gets the slash damage
+	 * 
+	 * @return damage
+	 */
+	public double getExplosiveSlashDamage() {
+		String damageStr = wap.explosiveSlashField.getText();
 		if (damageStr == null || damageStr.equals("")) {
 			damageStr = "0";
 		}
@@ -1177,11 +1243,38 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 * @param type
 	 */
 	protected void updateWeaponDamageOptions(String type) {
-		if (type.equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
+		if (type.equals(Constants.PHYSICAL_WEAPON_DAMAGE) || type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)) {
 			wap.damagePanel.setVisible(false);
 		} else {
 			wap.damagePanel.setVisible(true);
 		}
+		
+		if( //this can't be the way i should do this
+				type.equals(Constants.EX_FIRE_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_ICE_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_ELECTRIC_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_TOXIN_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_BLAST_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_MAGNETIC_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_GAS_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_RADIATION_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_CORROSIVE_WEAPON_DAMAGE) ||
+				   type.equals(Constants.EX_VIRAL_WEAPON_DAMAGE)) {
+					
+					wap.explosiveDamagePanel.setVisible(true);
+				}else {
+					wap.explosiveDamagePanel.setVisible(false);
+				}
+				
+				if(type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)){
+					wap.explosiveImpactPanel.setVisible(true);
+					wap.explosivePuncturePanel.setVisible(true);
+					wap.explosiveSlashPanel.setVisible(true);
+				}else {
+					wap.explosiveImpactPanel.setVisible(false);
+					wap.explosivePuncturePanel.setVisible(false);
+					wap.explosiveSlashPanel.setVisible(false);
+				}
 	}
 
 	/**
@@ -1299,6 +1392,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			wap.scopeBox.setSelectedItem(selectedWeapon.scopeBonus);
 			wap.scopeStrengthBox.setSelectedIndex(0);
 			wap.scopeStrengthField.setText("0");
+			wap.explosiveDamageField.setText(selectedWeapon.explosiveDamage);
+			wap.explosiveImpactField.setText(selectedWeapon.explosiveImpact);
+			wap.explosivePunctureField.setText(selectedWeapon.explosivePuncture);
+			wap.explosiveSlashField.setText(selectedWeapon.explosiveSlash);
 		}
 	}
 
@@ -1348,13 +1445,25 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 				wap.scopeStrengthField.setText("0");
 				break;
 			case 1:
+				try {
 				wap.scopeStrengthField.setText(selectedWeapon.scope1);
+				} catch (Exception ex) {
+					wap.scopeStrengthField.setText("0");
+				}
 				break;
 			case 2:
+				try {
 				wap.scopeStrengthField.setText(selectedWeapon.scope2);
+				} catch (Exception ex){
+					wap.scopeStrengthField.setText("0");
+				}
 				break;
 			case 3:
+				try {
 				wap.scopeStrengthField.setText(selectedWeapon.scope3);
+				} catch (Exception ex){
+					wap.scopeStrengthField.setText("0");
+				}
 				break;
 			}
 

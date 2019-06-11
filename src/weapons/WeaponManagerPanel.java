@@ -226,6 +226,11 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     scope1 = selectedWeapon.scope1;
     scope2 = selectedWeapon.scope2;
     scope3 = selectedWeapon.scope3;
+    
+    attributesPanel.explosiveDamageField.setText(selectedWeapon.explosiveDamage);
+    attributesPanel.explosiveImpactField.setText(selectedWeapon.explosiveImpact);
+    attributesPanel.explosivePunctureField.setText(selectedWeapon.explosivePuncture);
+    attributesPanel.explosiveSlashField.setText(selectedWeapon.explosiveSlash);
   }
   
 	protected void updateWeaponModeOptions() {
@@ -349,6 +354,11 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 	} else if (attributesPanel.scopeStrengthBox.getSelectedIndex() == 3) {
 		scope3 = attributesPanel.scopeStrengthField.getText();
 	}
+
+	String explosiveDamage = attributesPanel.explosiveDamageField.getText();
+	String explosiveImpact = attributesPanel.explosiveImpactField.getText();
+	String explosivePuncture = attributesPanel.explosivePunctureField.getText();
+	String explosiveSlash = attributesPanel.explosiveSlashField.getText();
     
     if(name.equals("")){
       name = "Unnamed Weapon";
@@ -430,6 +440,27 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
       projeciles = "0";
     }
     
+    try{
+        double testDouble = Double.parseDouble(explosiveDamage);
+      }catch(Exception ex){
+    	  explosiveDamage = "0";
+      }
+    try{
+        double testDouble = Double.parseDouble(explosiveImpact);
+      }catch(Exception ex){
+    	  explosiveImpact = "0";
+      }
+    try{
+        double testDouble = Double.parseDouble(explosivePuncture);
+      }catch(Exception ex){
+    	  explosivePuncture = "0";
+      }
+    try{
+        double testDouble = Double.parseDouble(explosiveSlash);
+      }catch(Exception ex){
+    	  explosiveSlash = "0";
+      }
+    
     String weaponString = type;
     weaponString += ","+mode;
     weaponString += ","+damageType;
@@ -454,6 +485,10 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+scope1;
     weaponString += ","+scope2;
     weaponString += ","+scope3;
+    weaponString += ","+explosiveDamage;
+    weaponString += ","+explosiveImpact;
+    weaponString += ","+explosivePuncture;
+    weaponString += ","+explosiveSlash;
     return weaponString;
   }
 
@@ -517,11 +552,39 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     	updateWeaponModeOptions();
     	Main.weaponManagerFrame.pack();
     } else if (e.getSource().equals(attributesPanel.damageTypeBox)) {
-		if (attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.PHYSICAL_WEAPON_DAMAGE)) {
+		if (attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.PHYSICAL_WEAPON_DAMAGE) || attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)) {
 			attributesPanel.damagePanel.setVisible(false);
 		} else {
 			attributesPanel.damagePanel.setVisible(true);
 		}
+	
+		if( //this can't be the way i should do this
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_FIRE_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_ICE_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_ELECTRIC_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_TOXIN_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_BLAST_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_MAGNETIC_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_GAS_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_RADIATION_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_CORROSIVE_WEAPON_DAMAGE) ||
+		   attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_VIRAL_WEAPON_DAMAGE)) {
+			
+			attributesPanel.explosiveDamagePanel.setVisible(true);
+		}else {
+			attributesPanel.explosiveDamagePanel.setVisible(false);
+		}
+		
+		if(attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)){
+			attributesPanel.explosiveImpactPanel.setVisible(true);
+			attributesPanel.explosivePuncturePanel.setVisible(true);
+			attributesPanel.explosiveSlashPanel.setVisible(true);
+		}else {
+			attributesPanel.explosiveImpactPanel.setVisible(false);
+			attributesPanel.explosivePuncturePanel.setVisible(false);
+			attributesPanel.explosiveSlashPanel.setVisible(false);
+		}
+		
     	Main.weaponManagerFrame.pack();
     }
   }

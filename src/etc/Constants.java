@@ -68,6 +68,18 @@ public class Constants {
   public static final String CORROSIVE_WEAPON_DAMAGE = "Corrosive";
   public static final String VIRAL_WEAPON_DAMAGE = "Viral";
   
+  public static final String EX_PHYSICAL_WEAPON_DAMAGE = "Explosive Physical";
+  public static final String EX_FIRE_WEAPON_DAMAGE = "Explosive Fire";
+  public static final String EX_ICE_WEAPON_DAMAGE = "Explosive Ice";
+  public static final String EX_ELECTRIC_WEAPON_DAMAGE = "Explosive Electric";
+  public static final String EX_TOXIN_WEAPON_DAMAGE = "Explosive Toxin";
+  public static final String EX_BLAST_WEAPON_DAMAGE = "Explosive Blast";
+  public static final String EX_MAGNETIC_WEAPON_DAMAGE = "Explosive Magnetic";
+  public static final String EX_GAS_WEAPON_DAMAGE = "Explosive Gas";
+  public static final String EX_RADIATION_WEAPON_DAMAGE = "Explosive Radiation";
+  public static final String EX_CORROSIVE_WEAPON_DAMAGE = "Explosive Corrosive";
+  public static final String EX_VIRAL_WEAPON_DAMAGE = "Explosive Viral";
+  
   public static final String NO_WEAPON_DAMAGE = "None";
   
   /** Weapon Modes **/
@@ -95,7 +107,7 @@ public class Constants {
 		  SNIPER,
 		  LANKA,
 		  SEMIBOW,
-		  CHARGEBOW ,
+		  CHARGEBOW,
 		  AUTOBOW
   };
   
@@ -154,7 +166,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.11.4";
+  public static final String APP_VERSION = "v0.11.5";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -666,7 +678,7 @@ public class Constants {
 		  "Pistol,Semi-Auto,Physical,Arca Scisco,0,0,DEPRECIATED,0,0,36,24,4.67,36,288,2.2,18,1.6,26,1,1",
 		  "Rifle,Full-Auto,Physical,Argonak (Full-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,6,43,540,2.4,9,1.5,27,1,1",
 		  "Rifle,Semi-Auto,Physical,Argonak (Semi-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,4.33,43,473,2.4,27,2.3,19,1,1",
-		  "Shotgun,Full-Auto,Physical,Astilla,0,0,DEPRECIATED,190,70.3,41.8,77.9,4.33,16,112,2,17,1.9,33,1,1",
+		  "Shotgun,Full-Auto,Explosive Physical,Astilla,0,0,Blade and Whip,190,25.9,15.4,28.7,4.33,16,112,2,17,1.9,33,1,1,null,null,null,null,0,44.4,26.4,49.2",
 		  "Pistol,Continuous,Fire,Atomos,0,0,DEPRECIATED,29,0,0,0,8,70,300,2,15,1.7,21,1,1",
 		  "Rifle,Bow (Full-Auto),Physical,Attica,0,0,DEPRECIATED,0,4,60,16,3.67,20,540,2.8,25,3,10,1,1",
 		  "Pistol,Full-Auto,Physical,Azima,0,0,DEPRECIATED,0,2,5,13,10,75,525,1.4,16,2,16,1,1",
@@ -903,7 +915,8 @@ public class Constants {
 		  "ArchGun,Continuous,Radiation,Larkspur,0,0,DEPRECIATED,80,10,0,0,12,600,0,12,10,1.4,50,1,1",
 		  "ArchGun,Continuous,Radiation,Larkspur (Atmosphere),0,0,DEPRECIATED,80,10,0,0,12,100,0,2.5,10,1.4,50,1,1",
 		  "Rifle,Continuous,Electric,Fulmin (Beam),0.0,0,Blade and Whip,25,8,0,0,9.33,60,0,1,28,2.4,10,1,0.5,null,null,null,null",
-		  "Rifle,Semi-Auto,Electric,Fulmin (Slug),0.0,0,Blade and Whip,400,100,0,0,2.17,6,0,1,30,2.2,16,1,0,null,null,null,null"
+		  "Rifle,Semi-Auto,Electric,Fulmin (Slug),0.0,0,Blade and Whip,400,100,0,0,2.17,6,0,1,30,2.2,16,1,0,null,null,null,null",
+		  "Rifle,Sniper (Semi-Auto),Explosive Viral,Komorex (High Zoom),0.0,0,Blade and Whip,0,17.4,73,83.6,6,20,5,3,16,2.1,35,1,0,Scoped CC,0,0,0,66,0,0,0"
   		};
   
   public static final String[] stances = {
