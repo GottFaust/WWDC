@@ -1423,7 +1423,7 @@ public class Main {
 
 		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance));
 
-		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Correctly handling multi-projectile status
+		finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 / projectileCount))); // Multi-projectile status
 
 		finalStatusDuration = statusDuration;
 		for (int i = 0; i < statusDurationMods.size(); i++) {
@@ -2162,7 +2162,7 @@ public class Main {
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
 			double hunterRatio = (Math.min(1, finalCritChance) * hunterMunitions) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance)))));
-			hunterMult = (hunterRatio * finalCritMult + (1 - hunterRatio) * averageCritMult) / averageCritMult;
+			hunterMult = (hunterRatio * finalCritMult * headShotMult * headShotBonus + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
 		double stanceSlashMult = 1;
 		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) {

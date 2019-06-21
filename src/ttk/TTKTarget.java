@@ -748,6 +748,7 @@ public class TTKTarget implements Comparable {
 		double meleeHitDelay = 1;
 		int shatteringImpacts = 0;
 		double shatteringImpactMult = 1;
+		double localStatus = Main.finalStatusChance;
 		
 		// Find initial starting combo
 		double comboCount = Main.combo * Math.pow(3, ((Main.startingCombo - 1) / 0.5) - 1);
@@ -777,6 +778,10 @@ public class TTKTarget implements Comparable {
 				localProjectileCount = Main.finalProjectileCount;
 				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 					localProjectileCount *= Math.min(1 , ((iterations + 1) / Main.projectileCount));
+					
+					// Recalculate status chance
+					localStatus = 1 - Math.pow(1 - Main.finalStatusChance, Main.projectileCount);
+					localStatus = 1 - Math.pow(1 - localStatus, Math.min(Main.projectileCount, 1 / ((double) iterations + 1)));
 				}
 
 				for (int b = 0; b < bursts; b++) {
@@ -927,7 +932,7 @@ public class TTKTarget implements Comparable {
 						}
 						
 						// Do we get a random status proc?
-						if (rng.nextDouble() <= (Main.finalStatusChance * comboStatusMult)) {
+						if (rng.nextDouble() <= (localStatus * comboStatusMult)) {
 
 							// Which Proc?
 							double proc = rng.nextDouble();
@@ -1118,7 +1123,7 @@ public class TTKTarget implements Comparable {
 							}
 							
 							// Do we get a random status proc?
-							if (rng.nextDouble() <= (Main.finalStatusChance * comboStatusMult)) {
+							if (rng.nextDouble() <= (localStatus * comboStatusMult)) {
 
 								// Which Proc?
 								double proc = rng.nextDouble();
