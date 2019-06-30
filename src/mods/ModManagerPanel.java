@@ -36,7 +36,7 @@ import javax.swing.event.ListSelectionListener;
 
 import etc.Constants;
 import etc.UIBuilder;
-
+import main.Main;
 import weapons.WeaponPanel;
 
 public class ModManagerPanel extends JPanel implements ActionListener, ListSelectionListener {
@@ -706,7 +706,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		threeBuffs.setSelected(true);
 		hasNegative.setSelected(true);
 
-		updateDispoList(Constants.rifleDispositions);
+		updateDispoList();
 		
 		dispoRank.addItem("Rank 8");
 		dispoRank.addItem("Rank 7");
@@ -948,15 +948,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			}
 		} else if (e.getSource().equals(dispoWeaponType)) {
 			updating = true;
-			if (dispoWeaponType.getSelectedItem().equals(Constants.RIFLE)) {
-				updateDispoList(Constants.rifleDispositions);
-			} else if (dispoWeaponType.getSelectedItem().equals(Constants.PISTOL)) {
-				updateDispoList(Constants.pistolDispositions);
-			} else if (dispoWeaponType.getSelectedItem().equals(Constants.SHOTGUN)){
-				updateDispoList(Constants.shotgunDispositions);
-			} else {
-				updateDispoList(Constants.ArchGunDispositions);
-			}
+			updateDispoList();
 			calculateRivenStats();
 			updating = false;
 		} else if (e.getSource().equals(gradeButton)) {
@@ -969,14 +961,50 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	/**
 	 * Updates the weapons in the dispo list
 	 */
-	public void updateDispoList(String[] list) {
+	public void updateDispoList() {
+		String[] list = Constants.rifleDispositions;
+		String file = "RifleDispos.db";	
+		Vector<String> weaponDispos = new Vector<String>();
 		dispoWeapon.removeAllItems();
 		dispoDisposition.setText("1.00");
-		Vector<String> weaponDispos = new Vector<String>();
-		weaponDispos.add("--");
-		for (String weapon : list) {
-			weaponDispos.add(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
+		
+		if (dispoWeaponType.getSelectedItem().equals(Constants.PISTOL)) {
+			file = "PistolDispos.db";
+			list = Constants.pistolDispositions;
+		} else if (dispoWeaponType.getSelectedItem().equals(Constants.SHOTGUN)){
+			file = "ShotgunDispos.db";
+			list = Constants.shotgunDispositions;
+		} else if (dispoWeaponType.getSelectedItem().equals(Constants.ARCHGUN)){
+			file = "ArchgunDispos.db";
+			list = Constants.ArchGunDispositions;
 		}
+		
+		File dispoFile = new File(file);
+		try {
+			if (dispoFile.exists()) {
+				weaponDispos.clear();
+				BufferedReader reader = new BufferedReader(new FileReader(dispoFile));
+				String line = reader.readLine();
+				while (line != null) {
+					weaponDispos.add(line.split(", ")[1] + ", " + line.split(",")[0]);
+					line = reader.readLine();
+				}
+				reader.close();
+			} else {
+				weaponDispos.clear();
+				dispoFile.createNewFile();
+				BufferedWriter writer = new BufferedWriter(new FileWriter(dispoFile));
+				for (String weapon : list) {
+					writer.write(weapon + "\n");
+					weaponDispos.add(weapon.split(", ")[1] + ", " + weapon.split(",")[0]);
+				}
+				writer.close();
+
+			}
+		} catch (Exception e) {
+			Main.output.append("Could not access mods.db");
+		}
+		weaponDispos.add("--");
 		Collections.sort(weaponDispos);
 		dispoWeapon.setModel(new DefaultComboBoxModel(weaponDispos));
 	}
