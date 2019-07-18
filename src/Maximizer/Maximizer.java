@@ -3,6 +3,7 @@ package Maximizer;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Vector;
@@ -80,10 +81,10 @@ public class Maximizer {
 			updateRanks();
 			calculateAndStore();
 		} else {
-			for (int i = 0; i < modCount - (emptyMods - modSlot); i++) {			
-				for(int j = modSlot; j > 0; j--) {
+			for (int i = 0; i < modCount - (emptyMods - modSlot); i++) {
+				for (int j = modSlot; j > 0; j--) {
 					simulatedMods.set(modsToChange.get(j - 1), null);
-				}					
+				}
 				updateMods();
 				simulatedMods.set(modsToChange.get(modSlot - 1), possibleMods.get(i));
 				thatThang(modSlot - 1);
@@ -128,7 +129,10 @@ public class Maximizer {
 			}
 		}
 		modCount = Main.selectedWeapon.countMods() - 1;
-		totalIterations = (int) Math.pow(modCount - 1, emptyMods);
+		totalIterations = 1;
+		for (int g = modCount; g > (modCount - emptyMods); g--) {
+			totalIterations *= g;
+		}
 
 		// Initial mod list
 		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modOnePanel.getSelectedMod()));
@@ -260,5 +264,4 @@ public class Maximizer {
 			this.minmax = minmax;
 		}
 	}
-
 }

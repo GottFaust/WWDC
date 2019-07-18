@@ -1127,7 +1127,6 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 * Updates the Mod Drop Down Options
 	 */
 	public void updateDropDownContents() {
-
 		selectedMods.clear();
 		selectedMods.add(modOne);
 		selectedMods.add(modTwo);

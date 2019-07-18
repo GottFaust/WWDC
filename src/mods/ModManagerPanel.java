@@ -1488,6 +1488,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			pistol.updateDropDownContents();
 			melee.InitMods(modFile);
 			melee.updateDropDownContents();
+			ARCHGUN.InitMods(modFile);
+			ARCHGUN.updateDropDownContents();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
