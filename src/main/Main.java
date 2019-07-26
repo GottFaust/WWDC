@@ -470,8 +470,6 @@ public class Main {
 
 		calculateButton.addActionListener(action);
 		maximizeButton.addActionListener(action);
-		// TTKBox.addActionListener(action);
-		// lightWeightTTKBox.addActionListener(action);
 		stopButton.addActionListener(action);
 		quickTargetButton.addActionListener(action);
 		removeTargetButton.addActionListener(action);
@@ -1159,12 +1157,56 @@ public class Main {
 				}
 			}
 		}
-		if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
-			elements.add(damageType);
 		
-		if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
-			elements2.add(damageType);
+		// Mutalist Quanta: get bubble counts
+		int mQ1 = 0;
+		int mQ2 = 0;
+		int mQ3 = 0;
+		try {
+			mQ1 = Integer.parseInt(selectedWeapon.mQ1Field.getText());
+		} catch(Exception e) {
+		}
+		try {
+			mQ2 = Integer.parseInt(selectedWeapon.mQ2Field.getText());
+		} catch(Exception e) {
+		}
+		try {
+			mQ3 = Integer.parseInt(selectedWeapon.mQ3Field.getText());
+		} catch(Exception e) {
+		}
+		
+		// Mutalist Quanta: If innate heat, the innate element combines before M. Quanta's added electric
+		if(damageType.equals("Fire")) {
+			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
+				elements.add(damageType);
+			
+			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				elements2.add(damageType);
+		}
 
+		// Mutalist Quanta: If NOT hitscan, add element to be combined
+		if((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && !selectedWeapon.mQCombineElement.isSelected()) {
+			
+			globalElectric += mQ1;
+			globalElectric += mQ2 * 3.65;
+			globalElectric += mQ3 * 5;
+			
+			if (!elements.contains("Electric")) {
+				elements.add("Electric");
+			}
+			if (!elements2.contains("Electric")) {
+				elements2.add("Electric");
+			}
+		}
+
+		if(!damageType.equals("Fire")) {
+			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
+				elements.add(damageType);
+			
+			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				elements2.add(damageType);
+		}
+		
 		// Combine elements
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
@@ -1219,6 +1261,22 @@ public class Main {
 				i -= 1;
 			}
 		}
+		
+		// Mutalist Quanta: If hitscan, add electric damage
+		if((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && selectedWeapon.mQCombineElement.isSelected()) {
+			
+			globalElectric += mQ1;
+			globalElectric += mQ2 * 3.65;
+			globalElectric += mQ3 * 5;
+			
+			if (!elements.contains("Electric")) {
+				elements.add("Electric");
+			}
+			if (!elements2.contains("Electric")) {
+				elements2.add("Electric");
+			}
+		}
+		
 		// Uncombined elements
 		if (elements.contains("Fire")) {
 			fireDamageMods.add(globalFire);
@@ -1232,7 +1290,9 @@ public class Main {
 		if (elements.contains("Ice")) {
 			iceDamageMods.add(globalIce);
 		}
-
+		
+		//Mutalist Quanta note: Only projectile weapons cause explosions, so we know it will combine (already added correctly from previous step).
+		
 		// Combine elements for the explosion
 		for (int i = 0; i < elements2.size() - 1; i++) {
 			String element1 = elements2.get(i);
@@ -1304,7 +1364,7 @@ public class Main {
 		// Scope effects
 		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
 			if (selectedWeapon.getScopeEffect() == Constants.ADDITIVE_CRIT_CHANCE) {
-				critChanceMods.add(selectedWeapon.getScopeStrength());
+				addCritChanceMods.add(selectedWeapon.getScopeStrength());
 			}
 			if (selectedWeapon.getScopeEffect() == Constants.ADDITIVE_CRIT_DAMAGE) {
 				critMultMods.add(selectedWeapon.getScopeStrength());
@@ -1312,6 +1372,12 @@ public class Main {
 			if (selectedWeapon.getScopeEffect() == Constants.HEADSHOT_BONUS) {
 				headShotBonus += selectedWeapon.getScopeStrength();
 			}
+		}
+		
+		// Mutalist Quanta: crit stuff
+		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
+			addCritChanceMods.add(0.25 * (mQ1 + mQ2 + mQ3));
+			critMultMods.add(0.25 * (mQ1 + mQ2 + mQ3));
 		}
 
 		// Calculate finals
@@ -1359,6 +1425,11 @@ public class Main {
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
 		finalDamageMult = Math.max(0, finalDamageMult);
+		
+		// Mutalist Quanta: damage stuff
+		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
+			finalDamageMult *= Math.pow(0.66, mQ1 + mQ2 + mQ3);
+		}
 
 		startingCombo = Math.max(1, startingCombo);
 
@@ -1602,7 +1673,6 @@ public class Main {
 				avgDelay += (h.delay / stanceCombo.hits.size());
 			}
 		}
-
 		finalStatusChance = Math.max(0, Math.min(1, finalStatusChance));
 
 		if (weaponMode.equals(Constants.BURST)) {

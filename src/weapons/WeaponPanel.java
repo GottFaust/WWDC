@@ -64,6 +64,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JPanel addDam = new JPanel();
 	protected JPanel addFR = new JPanel();
 	protected JPanel vigiEffects = new JPanel();
+	protected JPanel mQuantaBubbles = new JPanel();
+	protected JPanel mQuantaOptions = new JPanel();
 	protected JPanel nums = new JPanel();
 
 	/** JComboBoxes **/
@@ -72,6 +74,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/** JCheckBoxes **/
 	protected JCheckBox refireCancel = new JCheckBox();
 	protected JCheckBox potato = new JCheckBox("Catalyst Installed");
+	public JCheckBox mQCombineElement = new JCheckBox("Hitscan");
 
 	/** JLabels **/
 	protected JLabel weaponLabel = new JLabel("Weapon - ");
@@ -83,6 +86,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JLabel addDamlabel = new JLabel("Additive Damage - ");
 	protected JLabel addFRlabel = new JLabel("Additive Fire Rate - ");
 	protected JLabel vigiLabel = new JLabel("Additional Vigilante Mods - ");
+	protected JLabel mQuantaLabel = new JLabel("Mutalist Quanta Bubbles - ");
+	protected JLabel mQ1Label = new JLabel(" 1: ");
+	protected JLabel mQ2Label = new JLabel(" 2: ");
+	protected JLabel mQ3Label = new JLabel(" 3: ");
 
 	/** JTextFields **/
 	protected JTextField totalModCostField = new JTextField(8);
@@ -91,6 +98,9 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JTextField addSCField = new JTextField(8);
 	protected JTextField addDamField = new JTextField(8);
 	protected JTextField addFRField = new JTextField(8);
+	public JTextField mQ1Field = new JTextField(2);
+	public JTextField mQ2Field = new JTextField(2);
+	public JTextField mQ3Field = new JTextField(2);
 
 	/** JButtons **/
 	protected JButton hideAdd = new JButton("Hide/Show Extra Effects");
@@ -164,9 +174,14 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.labelInit(addDamlabel);
 		UIBuilder.labelInit(addFRlabel);
 		UIBuilder.labelInit(vigiLabel);
+		UIBuilder.labelInit(mQuantaLabel);
+		UIBuilder.labelInit(mQ1Label);
+		UIBuilder.labelInit(mQ2Label);
+		UIBuilder.labelInit(mQ3Label);
 
 		UIBuilder.checkBoxInit(refireCancel);
 		UIBuilder.checkBoxInit(potato);
+		UIBuilder.checkBoxInit(mQCombineElement);
 
 		UIBuilder.textFieldInit(totalModCostField);
 
@@ -175,6 +190,9 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.numberFieldInit(addSCField);
 		UIBuilder.numberFieldInit(addDamField);
 		UIBuilder.numberFieldInit(addFRField);
+		UIBuilder.numberFieldInit(mQ1Field);
+		UIBuilder.numberFieldInit(mQ2Field);
+		UIBuilder.numberFieldInit(mQ3Field);
 
 		UIBuilder.buttonInit(hideAdd);
 
@@ -204,6 +222,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.panelInit(additiveEffects);
 		UIBuilder.panelInit(nums);
 		UIBuilder.panelInit(vigiEffects);
+		UIBuilder.panelInit(mQuantaBubbles);
+		UIBuilder.panelInit(mQuantaOptions);
 
 		UIBuilder.createSepparationBorder(addCC);
 		UIBuilder.createSepparationBorder(addCD);
@@ -211,6 +231,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.createSepparationBorder(addDam);
 		UIBuilder.createSepparationBorder(addFR);
 		UIBuilder.createSepparationBorder(vigiEffects);
+		UIBuilder.createSepparationBorder(mQuantaBubbles);
 
 		vigiSlider.setMajorTickSpacing(1);
 		vigiSlider.setPaintLabels(true);
@@ -240,6 +261,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addDam.setLayout(new GridLayout(1, 2, 0, 0));
 		addFR.setLayout(new GridLayout(1, 2, 0, 0));
 		vigiEffects.setLayout(new GridLayout(1, 2, 0, 0));
+		mQuantaBubbles.setLayout(new GridLayout(1, 2, 0, 0));
+		mQuantaOptions.setLayout(new BoxLayout(mQuantaOptions, BoxLayout.X_AXIS));
 
 		totalModCostField.setEditable(false);
 
@@ -267,12 +290,22 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addFR.add(addFRField);
 		vigiEffects.add(vigiLabel);
 		vigiEffects.add(vigiSlider);
+		mQuantaBubbles.add(mQuantaLabel);
+		mQuantaOptions.add(mQ1Label);
+		mQuantaOptions.add(mQ1Field);
+		mQuantaOptions.add(mQ2Label);
+		mQuantaOptions.add(mQ2Field);
+		mQuantaOptions.add(mQ3Label);
+		mQuantaOptions.add(mQ3Field);
+		mQuantaOptions.add(mQCombineElement);
+		mQuantaBubbles.add(mQuantaOptions);
 		additiveEffects.add(addCC);
 		additiveEffects.add(addCD);
 		additiveEffects.add(addSC);
 		additiveEffects.add(addDam);
 		additiveEffects.add(addFR);
 		additiveEffects.add(vigiEffects);
+		additiveEffects.add(mQuantaBubbles);
 		nums.add(attributesPanel);
 		nums.add(hideAdd);
 		nums.add(additiveEffects);
@@ -287,7 +320,15 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addFRField.setToolTipText("Additive fire rate as a percent (Toxocyst's is multiplicative)");
 		vigiSlider.setToolTipText("Vigilante mods attached to your Warframe and/or sentinel weapon");
 		hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, Warframe buffs, etc");
-
+		mQuantaBubbles.setToolTipText("Mutalist Quanta bubbles you are shooting through and how many of each stack level. ie if shooting through one bubble that has been stacked 3 times, but 1 into the 3: textbox.");
+		mQ1Field.setToolTipText("The number of unstacked bubbles");
+		mQ1Label.setToolTipText("The number of unstacked bubbles");
+		mQ2Field.setToolTipText("The number of twice-stacked bubbles");
+		mQ2Label.setToolTipText("The number of twice-stacked bubbles");
+		mQ3Field.setToolTipText("The number of thrice-stacked bubbles");
+		mQ3Label.setToolTipText("The number of thrice-stacked bubbles");
+		mQCombineElement.setToolTipText("Whether the weapon is projectile-based or hitscan. Hitscan weapons do not combine the additional electric damage with other elements.");
+		
 		JPanel modsTopPanel = new JPanel();
 		UIBuilder.panelInit(modsTopPanel);
 		modsTopPanel.setLayout(new BoxLayout(modsTopPanel, BoxLayout.X_AXIS));
@@ -358,12 +399,20 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addSCField.addActionListener(this);
 		addDamField.addActionListener(this);
 		addFRField.addActionListener(this);
+		mQ1Field.addActionListener(this);
+		mQ2Field.addActionListener(this);
+		mQ3Field.addActionListener(this);
+		mQCombineElement.addActionListener(this);
 
 		updateDropDownContents();
 
 		weaponBox.setSelectedItem(Constants.CUSTOM_WEAPON);
 		totalModCostField.setText("60");
 		potato.setSelected(true);
+		
+		mQ1Field.setText("0");
+		mQ2Field.setText("0");
+		mQ3Field.setText("0");
 	}
 
 	/**
