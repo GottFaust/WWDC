@@ -46,6 +46,7 @@ public class Constants {
   public static final String MOD_TYPE_CONDITION_OVERLOAD = "DamagePerStatus";
   public static final String MOD_TYPE_ADDITIVE_CC = "AdditiveCritChance";
   public static final String MOD_TYPE_SHATTERING_IMPACT = "ShatteringImpact";
+  public static final String MOD_TYPE_MULTI_RATE = "FireRate(Multiplicative)";
   
   /** Sniper scope effects **/
   public static final String ADDITIVE_CRIT_CHANCE = "Scoped CC";
@@ -166,7 +167,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.11.7";
+  public static final String APP_VERSION = "v0.11.8";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -343,11 +344,11 @@ public class Constants {
                                             "Critical Deceleration,Shotgun,5,2,CritChance,FireRate,0.08,-0.05,V,4",
                                             "Critical Delay,Rifle,5,2,CritChance,FireRate,0.08,-0.06,~,4",
                                             "Cryo Rounds,Rifle,5,1,IceDamage,0.15,D,6",
-                                            "Deadly Sequence,Rifle,3,1,CritChance,0.5,V,4",
+                                            "Deadly Sequence,Rifle,3,1,CritChance,0.5,V,4,Prisma Grinlok",
                                             "Deep Freeze,Pistol,5,1,IceDamage,0.15,D,6",
                                             "Disruptor,Shotgun,5,1,ImpactDamage,0.05,~,4",
                                             "Eagle Eye,Rifle,3,1,Zoom,0.0,~,4",
-                                            "Entropy Burst,Rifle,3,1,FlatStatusBonus,0.05,V,4",
+                                            "Entropy Burst,Rifle,3,1,FlatStatusBonus,0.05,V,4,Supra Vandal",
                                             "Erroding Blight,Pistol,3,1,MagCap,0.5,D,4",
                                             "Expel Corpus,Pistol,5,1,CorpusDamage,0.05,V,4",
                                             "Expel Grineer,Pistol,5,1,GrineerDamage,0.05,V,4",
@@ -365,7 +366,7 @@ public class Constants {
                                             "Fridgid Blast,Shotgun,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
                                             "Frostbite,Pistol,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
                                             "Full Contact,Shotgun,5,1,ImpactDamage,0.2,~,6",
-                                            "Gilded Truth,Rifle,3,1,FireRate,0.2,V,4",
+                                            "Gilded Truth,Rifle,3,1,FireRate,0.2,V,4,Burston Prime",
                                             "Gunslinger,Pistol,5,1,FireRate,0.12,V,4",
                                             "Hammer Shot,Rifle,3,2,StatusChance,CritMultiplier,0.1,0.15,D,6",
                                             "Hawk Eye,Pistol,3,1,Zoom,0.0,~,4",
@@ -381,7 +382,7 @@ public class Constants {
                                             "Incendiary Coat,Shotgun,5,1,FireDamage,0.15,~,6",
                                             "Infected Clip,Rifle,5,1,ToxinDamage,0.15,~,6",
                                             "Jolt,Pistol,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
-                                            "Lasting Purity,Rifle,3,1,DeadAim,0.15,~,4",
+                                            "Lasting Purity,Rifle,3,1,DeadAim,0.15,~,4,Vulkar Wraith",
                                             "Lethal Torrent,Pistol,5,2,FireRate,Multishot,0.1,0.1,V,6",
                                             "Lingering Torment,Shotgun,5,1,StatusDuration,0.05,V,6",
                                             "Magazine Warp,Rifle,5,1,MagCap,0.05,~,4",
@@ -413,14 +414,14 @@ public class Constants {
                                             "Rime Rounds,Rifle,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
                                             "Rupture,Rifle,5,1,ImpactDamage,0.05,~,4",
                                             "Sawtooth Clip,Rifle,5,1,SlashDamage,0.05,~,4",
-                                            "Scattered Justice,Shotgun,3,1,Multishot,0.5,V,4",
+                                            "Scattered Justice,Shotgun,3,1,Multishot,0.5,V,4,Hek",
                                             "Scattering Inferno,Shotgun,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
                                             "Scorch,Pistol,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
                                             "Seeker,Pistol,5,1,PunchThrough,0.0,~,10",
                                             "Seeking Force,Shotgun,5,1,PunchThrough,0.0,~,10",
                                             "Seeking Fury,Shotgun,5,2,PunchThrough,ReloadSpeed,0.002,0.025,V,6",
                                             "Serration,Rifle,10,1,Damage,0.15,V,4",
-                                            "Shattering Justice,Shotgun,3,1,FlatStatusBonus,0.05,~,4",
+                                            "Shattering Justice,Shotgun,3,1,FlatStatusBonus,0.05,~,4,Sobek",
                                             "Shell Compression,Shotgun,5,1,AmmoCap,0.05,~,2",
                                             "Shell Shock,Shotgun,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
                                             "Shotgun Mutation,Shotgun,3,1,AmmoMutator,0.0,~,4",
@@ -434,7 +435,7 @@ public class Constants {
                                             "Split Chamber,Rifle,5,1,Multishot,0.15,V,10",
                                             "Stabilizer,Rifle,3,1,RecoilBonus,-0.15,~,6",
                                             "Steady hands,Pistol,3,1,RecoilBonus,-0.15,~,6",
-                                            "Stinging Truth,Pistol,3,1,FlatMagBonus,0.1,D,4",
+                                            "Stinging Truth,Pistol,3,1,FlatMagBonus,0.1,D,4,Viper Wraith",
                                             "Stormbringer,Rifle,5,1,ElectricDamage,0.15,~,6",
                                             "Stunning Speed,Pistol,3,2,StatusChance,ReloadSpeed,0.025,0.1,~,6",
                                             "Suppress,Pistol,3,1,Silence,0.25,~,2",
@@ -448,7 +449,7 @@ public class Constants {
                                             "Thermite Rounds,Rifle,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
                                             "Thunderbolt,Rifle,0,1,FlatDamage,2.0,V,9",
                                             "Toxic Barrage,Shotgun,3,2,ToxinDamage,StatusChance,0.15,0.15,V,4",
-                                            "Toxic Sequence,Pistol,3,1,StatusDuration,0.5,D,4",
+                                            "Toxic Sequence,Pistol,3,1,StatusDuration,0.5,D,4,Acrid",
                                             "Trick Mag,Pistol,5,1,AmmoCap,0.15,~,2",
                                             "Vicious Spread,Shotgun,5,2,Damage,SpreadBonus,0.15,0.1,V,4",
                                             "Vile Acceleration,Rifle,5,2,FireRate,Damage,0.15,-0.025,V,4",
@@ -493,7 +494,7 @@ public class Constants {
                                             "Voltaic Strike,Melee,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
                                             "Volcanic Edge,Melee,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
                                             "Vicious Frost,Melee,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
-                                            "Berserker,Melee,5,1,FireRate,0.125,V,4",
+                                            "Berserker,Melee,5,1,FireRate(Multiplicative),0.125,V,4",
                                             "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
                                             "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
                                             "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",
@@ -617,7 +618,7 @@ public class Constants {
           "Voltaic Strike,Melee,3,2,ElectricDamage,StatusChance,0.15,0.15,V,4",
           "Volcanic Edge,Melee,3,2,FireDamage,StatusChance,0.15,0.15,V,4",
           "Vicious Frost,Melee,3,2,IceDamage,StatusChance,0.15,0.15,V,4",
-          "Berserker,Melee,5,1,FireRate,0.125,V,4",
+          "Berserker,Melee,5,1,FireRate(Multiplicative),0.125,V,4",
           "Sacrificial Steel,Melee,10,1,CritChance,0.1,V,6",
           "Primed Fever Strike,Melee,10,1,ToxinDamage,0.15,~,6",
           "Maiming Strike,Melee,5,1,AdditiveCritChance,0.15,V,2",

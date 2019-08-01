@@ -983,6 +983,7 @@ public class Main {
 		Vector<Double> addCritChanceMods = new Vector<Double>();
 		Vector<Double> critMultMods = new Vector<Double>();
 		Vector<Double> fireRateMods = new Vector<Double>();
+		Vector<Double> multiplicativeFireRateMods = new Vector<Double>();
 		Vector<Double> reloadTimeMods = new Vector<Double>();
 		Vector<Double> damageMultMods = new Vector<Double>();
 		Vector<Double> impactDamageMods = new Vector<Double>();
@@ -1041,6 +1042,9 @@ public class Main {
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_FIRE_RATE)) {
 					fireRateMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_FIRE_RATE))) * (1.0 + modRanks.get(i)));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MULTI_RATE)) {
+					multiplicativeFireRateMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MULTI_RATE))) * (1.0 + modRanks.get(i)));
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_RELOAD_SPEED)) {
 					reloadTimeMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_RELOAD_SPEED))) * (1.0 + modRanks.get(i)));
@@ -1377,7 +1381,6 @@ public class Main {
 		// Mutalist Quanta: crit stuff
 		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
 			addCritChanceMods.add(0.25 * (mQ1 + mQ2 + mQ3));
-			critMultMods.add(0.25 * (mQ1 + mQ2 + mQ3));
 		}
 
 		// Calculate finals
@@ -1407,6 +1410,9 @@ public class Main {
 			finalCritMult += critMult * critMultMods.get(i);
 		}
 		finalCritMult += selectedWeapon.getAddCD();
+		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) { //Mutalist Quanta
+			finalCritMult *= 1.25;
+		}
 		finalCritMult = Math.max(0, finalCritMult);
 
 		finalFlatDamageBonus = flatDamageBonus;
@@ -1456,6 +1462,9 @@ public class Main {
 			if (finalFireRate > 10.0) {
 				finalFireRate = 10.0;
 			}
+		}
+		for (int i = 0; i < multiplicativeFireRateMods.size(); i++) { // Berserker only at this time
+			finalFireRate *= (1 + multiplicativeFireRateMods.get(i));
 		}
 		finalFireRate = Math.max(0, finalFireRate);
 

@@ -97,7 +97,9 @@ public class Maximizer {
 		for (Mod mod : Main.selectedWeapon.modInit.mods) {
 			if (!simulatedMods.contains(mod)) {
 				if (mod.type.equals(Main.selectedWeapon.weaponType)) {
-					possibleMods.add(mod);
+					if (mod.weaponLock.equals(Main.selectedWeapon.weaponName) || mod.weaponLock.equals("None")) {
+						possibleMods.add(mod);
+					}
 				}
 			}
 		}

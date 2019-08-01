@@ -37,6 +37,8 @@ import javax.swing.event.ListSelectionListener;
 import etc.Constants;
 import etc.UIBuilder;
 import main.Main;
+import weapons.Weapon;
+import weapons.WeaponInitializer;
 import weapons.WeaponPanel;
 
 public class ModManagerPanel extends JPanel implements ActionListener, ListSelectionListener {
@@ -62,6 +64,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JPanel effectTwoSubPanel = new JPanel();
 	protected JPanel effectThreeSubPanel = new JPanel();
 	protected JPanel effectFourSubPanel = new JPanel();
+	protected JPanel weaponLockPanel = new JPanel();
 	protected JPanel buttonPanel = new JPanel();
 	protected JPanel filePanel = new JPanel();
 	protected JPanel gradeButtonPanel = new JPanel();
@@ -79,6 +82,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JComboBox<String> modEffectTwoBox = new JComboBox<String>();
 	protected JComboBox<String> modEffectThreeBox = new JComboBox<String>();
 	protected JComboBox<String> modEffectFourBox = new JComboBox<String>();
+	protected JComboBox<String> weaponLockBox = new JComboBox<String>();
 
 	/** JLabels **/
 	protected JLabel nameLabel = new JLabel("Name - ");
@@ -86,6 +90,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JLabel polarityLabel = new JLabel("Polarity - ");
 	protected JLabel ranksLabel = new JLabel("Ranks - ");
 	protected JLabel costLabel = new JLabel("Base Point cost - ");
+	protected JLabel weaponLockLabel = new JLabel("Weapon Unique - ");
 
 	/** JTextFields **/
 	protected JTextField nameField = new JTextField(10);
@@ -311,10 +316,6 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_FLAT_MAG);
 		modEffects.add(Constants.MOD_TYPE_MUNITIONS);
 		modEffects.add(Constants.MOD_TYPE_VIGILANTE);
-		modEffects.add(Constants.MOD_TYPE_VIGILANTE);
-		modEffects.add(Constants.MOD_TYPE_VIGILANTE);
-		modEffects.add(Constants.MOD_TYPE_VIGILANTE);
-		modEffects.add(Constants.MOD_TYPE_VIGILANTE);
 		modEffects.add(Constants.MOD_TYPE_COMBO_DURATION);
 		modEffects.add(Constants.MOD_TYPE_COMBO_CRIT);
 		modEffects.add(Constants.MOD_TYPE_COMBO_STATUS);
@@ -322,6 +323,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.HEADSHOT_BONUS);
 		modEffects.add(Constants.MOD_TYPE_ADDITIVE_CC);
 		modEffects.add(Constants.MOD_TYPE_SHATTERING_IMPACT);
+		modEffects.add(Constants.MOD_TYPE_MULTI_RATE);
 		modEffects.add("FlightSpeed");
 		modEffects.add("--");
 
@@ -368,6 +370,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.panelInit(dispoStatsPanel);
 		UIBuilder.panelInit(dispoWeaponPanel);
 		UIBuilder.panelInit(dispoRivenPanel);
+		UIBuilder.panelInit(weaponLockPanel);
 
 		UIBuilder.labelInit(nameLabel);
 		UIBuilder.labelInit(typeLabel);
@@ -391,6 +394,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.labelInit(dispoRecoilLabel);
 		UIBuilder.labelInit(dispoZoomLabel);
 		UIBuilder.labelInit(dispoPTLabel);
+		UIBuilder.labelInit(weaponLockLabel);
 
 		UIBuilder.listInit(modList);
 
@@ -405,6 +409,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.comboBoxInit(dispoWeapon);
 		UIBuilder.comboBoxInit(dispoWeaponType);
 		UIBuilder.comboBoxInit(dispoRank);
+		UIBuilder.comboBoxInit(weaponLockBox);
 
 		UIBuilder.textFieldInit(nameField);
 		UIBuilder.numberFieldInit(ranksField);
@@ -476,6 +481,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffectTwoBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
 		modEffectThreeBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
 		modEffectFourBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
+		weaponLockBox.setPrototypeDisplayValue("XXXXXXXXXXXXXX");
 
 		modTypeBox.addItem(Constants.PISTOL);
 		modTypeBox.addItem(Constants.RIFLE);
@@ -502,6 +508,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		rightPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		namePanel.setLayout(new GridLayout(1, 2, 0, 0));
 		typePanel.setLayout(new GridLayout(1, 2, 0, 0));
+		weaponLockPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		polarityPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		costPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		ranksPanel.setLayout(new GridLayout(1, 2, 0, 0));
@@ -545,6 +552,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		effectThreeSubPanel.add(modPowerThreeGrade, gbc);
 		effectFourSubPanel.add(modPowerFourField, gbc);
 		effectFourSubPanel.add(modPowerFourGrade, gbc);
+		weaponLockPanel.add(weaponLockLabel);
+		weaponLockPanel.add(weaponLockBox);
 
 		effectOnePanel.add(modEffectOneBox);
 		effectOnePanel.add(effectOneSubPanel);
@@ -568,6 +577,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		rightPanel.add(filePanel);
 		rightPanel.add(namePanel);
 		rightPanel.add(typePanel);
+		rightPanel.add(weaponLockPanel);
 		rightPanel.add(polarityPanel);
 		rightPanel.add(costPanel);
 		rightPanel.add(ranksPanel);
@@ -727,6 +737,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		deleteButton.addActionListener(this);
 		saveButton.addActionListener(this);
 		gradeButton.addActionListener(this);
+		modTypeBox.addActionListener(this);
 
 		regularMods.addActionListener(this);
 		maximizerMods.addActionListener(this);
@@ -953,7 +964,10 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			updating = false;
 		} else if (e.getSource().equals(gradeButton)) {
 			gradeRiven();
-		} else {
+		} else if (e.getSource().equals(modTypeBox)) {
+			updateWeapons();
+		}
+			else {
 			calculateRivenStats();
 		}
 	}
@@ -1321,6 +1335,20 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffectFourBox.setSelectedIndex(0);
 		this.revalidate();
 	}
+	
+	/**
+	 * Updates the weapon lock list
+	 */
+	public void updateWeapons() {
+		weaponLockBox.removeAllItems();
+		weaponLockBox.addItem("None");
+		WeaponInitializer weapInit = WeaponInitializer.getInstance();
+		for(Weapon w : weapInit.weapons) {
+			if (w.type.equals(modTypeBox.getSelectedItem())) {
+				weaponLockBox.addItem(w.name);
+			}
+		}
+	}
 
 	/**
 	 * Updates the values on the right side to those of the mod selected on the left
@@ -1334,6 +1362,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		// Update the new values
 		modTypeBox.setSelectedItem(selectedMod.type);
 		modPolarityBox.setSelectedItem(selectedMod.polarity);
+		weaponLockBox.setSelectedItem(selectedMod.weaponLock);
 
 		nameField.setText(selectedMod.name);
 		ranksField.setText("" + selectedMod.ranks);
@@ -1472,7 +1501,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 			newModString += newModPowerFour + ",";
 		}
 
-		newModString += newPolarity + "," + newCost;
+		newModString += newPolarity + "," + newCost + "," + weaponLockBox.getSelectedItem();
 
 		return newModString;
 	}

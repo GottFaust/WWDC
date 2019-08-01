@@ -19,6 +19,7 @@ public class Mod implements Comparable {
   public String type = "";
   public String polarity = "";
   public int baseCost = 0;
+  public String weaponLock = "";
   public Vector<String> effectTypes = new Vector<String>();
   public Vector<Double> effectStrengths = new Vector<Double>();
   
@@ -65,6 +66,12 @@ public class Mod implements Comparable {
     }
     polarity = tempPolarity;
     baseCost = Integer.parseInt(tempCost);
+    
+    try {
+    	weaponLock = tok.nextToken();
+    }catch(Exception ex){
+    	weaponLock = "None";
+    }
   }
 
   /**
@@ -84,6 +91,9 @@ public class Mod implements Comparable {
     }
     
     out += ","+polarity+","+baseCost;
+    
+    out += ","+weaponLock;
+    
     return out;
   }
 

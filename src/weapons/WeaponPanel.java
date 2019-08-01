@@ -125,6 +125,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public String modEight = "--";
 
 	public String weaponType = "";
+	public String weaponName = "";
 	
 	public Combo stanceCombo;
 
@@ -1185,15 +1186,17 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		selectedMods.add(modSix);
 		selectedMods.add(modSeven);
 		selectedMods.add(modEight);
+		
+		weaponName = wap.nameField.getText();
 
-		modOnePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modTwoPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modThreePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modFourPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modFivePanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modSixPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modSevenPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
-		modEightPanel.updateDropDowns(selectedMods, modInit.mods, weaponType);
+		modOnePanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modTwoPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modThreePanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modFourPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modFivePanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modSixPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modSevenPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modEightPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
 	}
 
 	/**
@@ -1469,6 +1472,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 				setting = false;
 				Main.repack();
 			}
+			updateDropDownContents();
 		} else if (e.getSource().equals(potato)) {
 			calculateModCosts();
 		} else if (e.getSource().equals(hideAdd)) {
