@@ -324,7 +324,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_ADDITIVE_CC);
 		modEffects.add(Constants.MOD_TYPE_SHATTERING_IMPACT);
 		modEffects.add(Constants.MOD_TYPE_MULTI_RATE);
-		modEffects.add("FlightSpeed");
+		modEffects.add(Constants.MOD_TYPE_RANGE);
+		modEffects.add(Constants.MOD_TYPE_PFS);
 		modEffects.add("--");
 
 		Collections.sort(modEffects);
@@ -1111,127 +1112,127 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		double compareTo = 0;
 
 		switch (effect) {
-		case "Multishot":
+		case Constants.MOD_TYPE_MULTISHOT:
 			if (power > 0) {
 				compareTo = baseMultsihot * posMult;
 			} else {
 				compareTo = baseMultsihot * negMult;
 			}
 			break;
-		case "Damage":
+		case Constants.MOD_TYPE_DAMAGE_BONUS:
 			if (power > 0) {
 				compareTo = baseDamage * posMult;
 			} else {
 				compareTo = baseDamage * negMult;
 			}
 			break;
-		case "ImpactDamage":
-		case "PunctureDamage":
-		case "SlashDamage":
+		case Constants.MOD_TYPE_IMPACT_DAMAGE:
+		case Constants.MOD_TYPE_PUNCTURE_DAMAGE:
+		case Constants.MOD_TYPE_SLASH_DAMAGE:
 			if (power > 0) {
 				compareTo = basePhysical * posMult;
 			} else {
 				compareTo = basePhysical * negMult;
 			}
 			break;
-		case "CritChance":
+		case Constants.MOD_TYPE_CRIT_CHANCE:
 			if (power > 0) {
 				compareTo = baseCC * posMult;
 			} else {
 				compareTo = baseCC * negMult;
 			}
 			break;
-		case "CritMultiplier":
+		case Constants.MOD_TYPE_CRIT_MULTIPLIER:
 			if (power > 0) {
 				compareTo = baseCD * posMult;
 			} else {
 				compareTo = baseCD * negMult;
 			}
 			break;
-		case "ElectricDamage":
-		case "FireDamage":
-		case "ToxinDamage":
-		case "IceDamage":
+		case Constants.MOD_TYPE_LIGHTNING_DAMAGE:
+		case Constants.MOD_TYPE_FIRE_DAMAGE:
+		case Constants.MOD_TYPE_TOXIN_DAMAGE:
+		case Constants.MOD_TYPE_ICE_DAMAGE:
 			if (power > 0) {
 				compareTo = baseElement * posMult;
 			} else {
 				compareTo = baseElement * negMult;
 			}
 			break;
-		case "StatusChance":
+		case Constants.MOD_TYPE_STATUS_CHANCE:
 			if (power > 0) {
 				compareTo = baseSC * posMult;
 			} else {
 				compareTo = baseSC * negMult;
 			}
 			break;
-		case "StatusDuration":
+		case Constants.MOD_TYPE_STATUS_DURATION:
 			if (power > 0) {
 				compareTo = baseSD * posMult;
 			} else {
 				compareTo = baseSD * negMult;
 			}
 			break;
-		case "GrineerDamage":
-		case "InfestedDamage":
-		case "CorpusDamage":
-		case "CorruptedDamage":
+		case Constants.MOD_TYPE_GRINEER_DAMAGE:
+		case Constants.MOD_TYPE_INFESTED_DAMAGE:
+		case Constants.MOD_TYPE_CORPUS_DAMAGE:
+		case Constants.MOD_TYPE_CORRUPTED_DAMAGE:
 			if (power > 0) {
 				compareTo = baseFaction * posMult;
 			} else {
 				compareTo = baseFaction * negMult;
 			}
 			break;
-		case "FireRate":
+		case Constants.MOD_TYPE_FIRE_RATE:
 			if (power > 0) {
 				compareTo = baseFR * posMult;
 			} else {
 				compareTo = baseFR * negMult;
 			}
 			break;
-		case "MagCap":
+		case Constants.MOD_TYPE_MAG_CAP:
 			if (power > 0) {
 				compareTo = baseMag * posMult;
 			} else {
 				compareTo = baseMag * negMult;
 			}
 			break;
-		case "AmmoCap":
+		case Constants.MOD_TYPE_AMMO_CAP:
 			if (power > 0) {
 				compareTo = baseAmmo * posMult;
 			} else {
 				compareTo = baseAmmo * negMult;
 			}
 			break;
-		case "FlightSpeed":
+		case Constants.MOD_TYPE_PFS:
 			if (power > 0) {
 				compareTo = basePFS * posMult;
 			} else {
 				compareTo = basePFS * negMult;
 			}
 			break;
-		case "ReloadSpeed":
+		case Constants.MOD_TYPE_RELOAD_SPEED:
 			if (power > 0) {
 				compareTo = baseReload * posMult;
 			} else {
 				compareTo = baseReload * negMult;
 			}
 			break;
-		case "RecoilBonus":
+		case Constants.MOD_TYPE_RECOIL:
 			if (power < 0) {
 				compareTo = baseRecoil * posMult;
 			} else {
 				compareTo = baseRecoil * negMult;
 			}
 			break;
-		case "Zoom":
+		case Constants.MOD_TYPE_ZOOM:
 			if (power > 0) {
 				compareTo = baseZoom * posMult;
 			} else {
 				compareTo = baseZoom * negMult;
 			}
 			break;
-		case "PunchThrough":
+		case Constants.MOD_TYPE_OBJECT_PIERCE:
 			if (power > 0) {
 				compareTo = basePT * posMult;
 			} else {
