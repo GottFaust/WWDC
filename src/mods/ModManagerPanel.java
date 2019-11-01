@@ -68,6 +68,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JPanel buttonPanel = new JPanel();
 	protected JPanel filePanel = new JPanel();
 	protected JPanel gradeButtonPanel = new JPanel();
+	//protected JPanel exilusPanel = new JPanel();
 
 	/** JButtons **/
 	protected JButton addUpdateButton = new JButton("Add or Update");
@@ -91,6 +92,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected JLabel ranksLabel = new JLabel("Ranks - ");
 	protected JLabel costLabel = new JLabel("Base Point cost - ");
 	protected JLabel weaponLockLabel = new JLabel("Weapon Unique - ");
+	//protected JLabel exilusLabel = new JLabel("Exilus Mod - ");
 
 	/** JTextFields **/
 	protected JTextField nameField = new JTextField(10);
@@ -126,6 +128,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 	protected static JRadioButton regularMods = new JRadioButton("Regular Mods");
 	protected static JRadioButton maximizerMods = new JRadioButton("Maximizer Mods");
 	protected ButtonGroup moddy = new ButtonGroup();
+	protected JCheckBox exilusBox = new JCheckBox("Exilus Mod");
 	protected JButton resetButton = new JButton("Reset Mods");
 	protected static String modFile = "mods.db";
 
@@ -372,6 +375,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.panelInit(dispoWeaponPanel);
 		UIBuilder.panelInit(dispoRivenPanel);
 		UIBuilder.panelInit(weaponLockPanel);
+		//UIBuilder.panelInit(exilusPanel);
 
 		UIBuilder.labelInit(nameLabel);
 		UIBuilder.labelInit(typeLabel);
@@ -396,6 +400,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.labelInit(dispoZoomLabel);
 		UIBuilder.labelInit(dispoPTLabel);
 		UIBuilder.labelInit(weaponLockLabel);
+		//UIBuilder.labelInit(exilusLabel);
 
 		UIBuilder.listInit(modList);
 
@@ -470,6 +475,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		UIBuilder.checkBoxInit(hasNegative);
 		UIBuilder.radioButtonInit(twoBuffs);
 		UIBuilder.radioButtonInit(threeBuffs);
+		UIBuilder.checkBoxInit(exilusBox);
 
 		UIBuilder.createTitledLineBorder(dispoLabelsPanel, "Effects");
 		UIBuilder.createTitledLineBorder(dispoPositivesPanel, "Positive");
@@ -510,6 +516,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		namePanel.setLayout(new GridLayout(1, 2, 0, 0));
 		typePanel.setLayout(new GridLayout(1, 2, 0, 0));
 		weaponLockPanel.setLayout(new GridLayout(1, 2, 0, 0));
+		//exilusPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		polarityPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		costPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		ranksPanel.setLayout(new GridLayout(1, 2, 0, 0));
@@ -555,6 +562,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		effectFourSubPanel.add(modPowerFourGrade, gbc);
 		weaponLockPanel.add(weaponLockLabel);
 		weaponLockPanel.add(weaponLockBox);
+		//exilusPanel.add(exilusLabel);
+		//exilusPanel.add(exilusBox);
 
 		effectOnePanel.add(modEffectOneBox);
 		effectOnePanel.add(effectOneSubPanel);
@@ -576,6 +585,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		moddy.add(maximizerMods);
 
 		rightPanel.add(filePanel);
+		rightPanel.add(exilusBox);
 		rightPanel.add(namePanel);
 		rightPanel.add(typePanel);
 		rightPanel.add(weaponLockPanel);
@@ -1334,6 +1344,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffectThreeBox.setSelectedIndex(0);
 		modPowerFourField.setText("0");
 		modEffectFourBox.setSelectedIndex(0);
+		exilusBox.setSelected(false);
 		this.revalidate();
 	}
 	
@@ -1364,10 +1375,12 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modTypeBox.setSelectedItem(selectedMod.type);
 		modPolarityBox.setSelectedItem(selectedMod.polarity);
 		weaponLockBox.setSelectedItem(selectedMod.weaponLock);
+		exilusBox.setSelected(selectedMod.exilus);
 
 		nameField.setText(selectedMod.name);
 		ranksField.setText("" + selectedMod.ranks);
 		costField.setText("" + selectedMod.baseCost);
+		exilusBox.setSelected(selectedMod.exilus);
 
 		if (selectedMod.effectTypes.size() == 1) {
 			modPowerOneField.setText("" + (selectedMod.effectStrengths.get(0) * 100.0));
@@ -1501,8 +1514,8 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		if (modEffectFourBox.getSelectedIndex() > 0) {
 			newModString += newModPowerFour + ",";
 		}
-
-		newModString += newPolarity + "," + newCost + "," + weaponLockBox.getSelectedItem();
+		
+		newModString += newPolarity + "," + newCost + "," + weaponLockBox.getSelectedItem() + "," + (exilusBox.isSelected() ? "true" : "false");
 
 		return newModString;
 	}

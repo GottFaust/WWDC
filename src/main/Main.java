@@ -186,12 +186,12 @@ public class Main {
 	protected static double chargeTime = 0.0;
 	public static double fireRate = 0.0;
 	protected static double reloadTime = 0.0;
-	protected static double critChance = 0.0;
+	public static double critChance = 0.0;
 	protected static double critMult = 0.0;
 	public static double projectileCount = 0.0;
 	protected static double firstShotDamageMult = 1.0;
 	protected static double lastShotDamageMult = 1.0;
-	protected static double statusChance = 0.0;
+	public static double statusChance = 0.0;
 	protected static double statusDuration = 1.0;
 	protected static double damageMult = 1.0;
 	protected static double deadAimMult = 1.0;
@@ -260,7 +260,7 @@ public class Main {
 	public static Damage radiation = new Damage();
 	public static Damage corrosive = new Damage();
 	public static Damage viral = new Damage();
-	
+
 	public static Damage explosiveRaw = new Damage();
 	public static Damage explosiveImpact = new Damage();
 	public static Damage explosivePuncture = new Damage();
@@ -275,7 +275,7 @@ public class Main {
 	public static Damage explosiveRadiation = new Damage();
 	public static Damage explosiveCorrosive = new Damage();
 	public static Damage explosiveViral = new Damage();
-	
+
 	public static SurfaceDamage corpus = new SurfaceDamage();
 	public static SurfaceDamage grineer = new SurfaceDamage();
 	public static SurfaceDamage infested = new SurfaceDamage();
@@ -306,7 +306,7 @@ public class Main {
 	public static double blastProcRate;
 	public static double radiationProcRate;
 	public static double magneticProcRate;
-	
+
 	public static double explosiveImpactProcRate;
 	public static double explosivePunctureProcRate;
 	public static double explosiveSlashProcRate;
@@ -355,10 +355,14 @@ public class Main {
 	public static double headShotBonus;
 	public static double headShotMult;
 
-	public static double averageCOMultiplier;
 	public static Combo stanceCombo;
 	public static double avgHit;
 	public static double avgDelay;
+	
+	static double forcedSlashProcs = 0;
+	static double forcedImpactProcs = 0;
+	static double forcedPunctureProcs = 0;
+	static double forcedKnockdownProcs = 0;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -645,7 +649,7 @@ public class Main {
 
 		// Calculate the final values based on weapon parameters and Active Mods
 		calculateFinals();
-
+		
 		// Calculate miscellaneous values
 		calculateMiscValues();
 
@@ -821,7 +825,6 @@ public class Main {
 		groupTargets = null;
 		headShotBonus = 1;
 		headShotMult = 1;
-		averageCOMultiplier = 1;
 		stanceCombo = null;
 		avgHit = 1;
 		avgDelay = 1;
@@ -839,6 +842,10 @@ public class Main {
 		explosiveBlastProcRate = 0;
 		explosiveRadiationProcRate = 0;
 		explosiveMagneticProcRate = 0;
+		forcedSlashProcs = 0;
+		forcedImpactProcs = 0;
+		forcedPunctureProcs = 0;
+		forcedKnockdownProcs = 0;
 	}
 
 	/**
@@ -874,7 +881,6 @@ public class Main {
 		explosiveImpact.base = selectedWeapon.getExplosiveImpactDamage();
 		explosivePuncture.base = selectedWeapon.getExplosivePunctureDamage();
 		explosiveSlash.base = selectedWeapon.getExplosiveSlashDamage();
-		
 
 		switch (damageType) {
 		case Constants.FIRE_WEAPON_DAMAGE:
@@ -929,8 +935,9 @@ public class Main {
 			break;
 		}
 		raw.base = impact.base + puncture.base + slash.base + fire.base + ice.base + electric.base + toxin.base + blast.base + magnetic.base + gas.base + radiation.base + corrosive.base + viral.base;
-		explosiveRaw.base = explosiveImpact.base + explosivePuncture.base + explosiveSlash.base + explosiveFire.base + explosiveIce.base + explosiveElectric.base + explosiveToxin.base + explosiveBlast.base + explosiveMagnetic.base + explosiveGas.base + explosiveRadiation.base + explosiveCorrosive.base + explosiveViral.base;
-		
+		explosiveRaw.base = explosiveImpact.base + explosivePuncture.base + explosiveSlash.base + explosiveFire.base + explosiveIce.base + explosiveElectric.base + explosiveToxin.base + explosiveBlast.base + explosiveMagnetic.base + explosiveGas.base + explosiveRadiation.base
+				+ explosiveCorrosive.base + explosiveViral.base;
+
 		// Factor for multiple projectiles per shot
 		if (projectileCount > 1.0) {
 			raw.base /= projectileCount;
@@ -947,7 +954,7 @@ public class Main {
 			radiation.base /= projectileCount;
 			corrosive.base /= projectileCount;
 			viral.base /= projectileCount;
-			
+
 			explosiveRaw.base /= projectileCount;
 			explosiveImpact.base /= projectileCount;
 			explosivePuncture.base /= projectileCount;
@@ -999,7 +1006,7 @@ public class Main {
 		Vector<Double> radiationDamageMods = new Vector<Double>();
 		Vector<Double> corrosiveDamageMods = new Vector<Double>();
 		Vector<Double> viralDamageMods = new Vector<Double>();
-		
+
 		Vector<Double> explosiveFireDamageMods = new Vector<Double>();
 		Vector<Double> explosiveIceDamageMods = new Vector<Double>();
 		Vector<Double> explosiveElectricDamageMods = new Vector<Double>();
@@ -1010,7 +1017,7 @@ public class Main {
 		Vector<Double> explosiveRadiationDamageMods = new Vector<Double>();
 		Vector<Double> explosiveCorrosiveDamageMods = new Vector<Double>();
 		Vector<Double> explosiveViralDamageMods = new Vector<Double>();
-		
+
 		Vector<Double> projectileCountMods = new Vector<Double>();
 		Vector<Double> firstShotDamageMods = new Vector<Double>();
 		Vector<Double> lastShotDamageMods = new Vector<Double>();
@@ -1161,40 +1168,41 @@ public class Main {
 				}
 			}
 		}
-		
+
 		// Mutalist Quanta: get bubble counts
 		int mQ1 = 0;
 		int mQ2 = 0;
 		int mQ3 = 0;
 		try {
 			mQ1 = Integer.parseInt(selectedWeapon.mQ1Field.getText());
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 		try {
 			mQ2 = Integer.parseInt(selectedWeapon.mQ2Field.getText());
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 		try {
 			mQ3 = Integer.parseInt(selectedWeapon.mQ3Field.getText());
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
-		
-		// Mutalist Quanta: If innate heat, the innate element combines before M. Quanta's added electric
-		if(damageType.equals("Fire")) {
+
+		// Mutalist Quanta: If innate heat, the innate element combines before M.
+		// Quanta's added electric
+		if (damageType.equals("Fire")) {
 			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
 				elements.add(damageType);
-			
+
 			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
 				elements2.add(damageType);
 		}
 
 		// Mutalist Quanta: If NOT hitscan, add element to be combined
-		if((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && !selectedWeapon.mQCombineElement.isSelected()) {
-			
+		if ((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && !selectedWeapon.mQCombineElement.isSelected()) {
+
 			globalElectric += mQ1;
 			globalElectric += mQ2 * 3.65;
 			globalElectric += mQ3 * 5;
-			
+
 			if (!elements.contains("Electric")) {
 				elements.add("Electric");
 			}
@@ -1203,14 +1211,14 @@ public class Main {
 			}
 		}
 
-		if(!damageType.equals("Fire")) {
+		if (!damageType.equals("Fire")) {
 			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
 				elements.add(damageType);
-			
+
 			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
 				elements2.add(damageType);
 		}
-		
+
 		// Combine elements
 		for (int i = 0; i < elements.size() - 1; i++) {
 			String element1 = elements.get(i);
@@ -1265,14 +1273,14 @@ public class Main {
 				i -= 1;
 			}
 		}
-		
+
 		// Mutalist Quanta: If hitscan, add electric damage
-		if((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && selectedWeapon.mQCombineElement.isSelected()) {
-			
+		if ((mQ1 > 0 || mQ2 > 0 || mQ3 > 0) && selectedWeapon.mQCombineElement.isSelected()) {
+
 			globalElectric += mQ1;
 			globalElectric += mQ2 * 3.65;
 			globalElectric += mQ3 * 5;
-			
+
 			if (!elements.contains("Electric")) {
 				elements.add("Electric");
 			}
@@ -1280,7 +1288,7 @@ public class Main {
 				elements2.add("Electric");
 			}
 		}
-		
+
 		// Uncombined elements
 		if (elements.contains("Fire")) {
 			fireDamageMods.add(globalFire);
@@ -1294,9 +1302,10 @@ public class Main {
 		if (elements.contains("Ice")) {
 			iceDamageMods.add(globalIce);
 		}
-		
-		//Mutalist Quanta note: Only projectile weapons cause explosions, so we know it will combine (already added correctly from previous step).
-		
+
+		// Mutalist Quanta note: Only projectile weapons cause explosions, so we know it
+		// will combine (already added correctly from previous step).
+
 		// Combine elements for the explosion
 		for (int i = 0; i < elements2.size() - 1; i++) {
 			String element1 = elements2.get(i);
@@ -1364,7 +1373,7 @@ public class Main {
 		if (elements2.contains("Ice")) {
 			explosiveIceDamageMods.add(globalIce);
 		}
-		
+
 		// Scope effects
 		if (weaponMode.equals(Constants.LANKA) || weaponMode.equals(Constants.SNIPER)) {
 			if (selectedWeapon.getScopeEffect() == Constants.ADDITIVE_CRIT_CHANCE) {
@@ -1377,9 +1386,9 @@ public class Main {
 				headShotBonus += selectedWeapon.getScopeStrength();
 			}
 		}
-		
+
 		// Mutalist Quanta: crit stuff
-		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
+		if (mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
 			addCritChanceMods.add(0.25 * (mQ1 + mQ2 + mQ3));
 		}
 
@@ -1410,7 +1419,7 @@ public class Main {
 			finalCritMult += critMult * critMultMods.get(i);
 		}
 		finalCritMult += selectedWeapon.getAddCD();
-		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) { //Mutalist Quanta
+		if (mQ1 > 0 || mQ2 > 0 || mQ3 > 0) { // Mutalist Quanta
 			finalCritMult *= 1.25;
 		}
 		finalCritMult = Math.max(0, finalCritMult);
@@ -1424,16 +1433,17 @@ public class Main {
 		for (int i = 0; i < deadAimMods.size(); i++) {
 			finalDeadAimMult += deadAimMult * deadAimMods.get(i);
 		}
-
+	
 		finalDamageMult = damageMult;
 		for (int i = 0; i < damageMultMods.size(); i++) {
 			finalDamageMult += damageMult * damageMultMods.get(i);
 		}
 		finalDamageMult += damageMult * selectedWeapon.getAddDam();
+
 		finalDamageMult = Math.max(0, finalDamageMult);
 		
 		// Mutalist Quanta: damage stuff
-		if(mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
+		if (mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
 			finalDamageMult *= Math.pow(0.66, mQ1 + mQ2 + mQ3);
 		}
 
@@ -1517,9 +1527,7 @@ public class Main {
 			impact.finalBase += impact.base * impactDamageMods.get(i);
 			explosiveImpact.finalBase += explosiveImpact.base * impactDamageMods.get(i);
 		}
-		impact.finalBase *= finalDamageMult;
 		impact.finalBase = Math.max(0, impact.finalBase);
-		explosiveImpact.finalBase *= finalDamageMult;
 		explosiveImpact.finalBase = Math.max(0, explosiveImpact.finalBase);
 
 		puncture.finalBase = puncture.base;
@@ -1528,9 +1536,7 @@ public class Main {
 			puncture.finalBase += puncture.base * punctureDamageMods.get(i);
 			explosivePuncture.finalBase += explosivePuncture.base * punctureDamageMods.get(i);
 		}
-		puncture.finalBase *= finalDamageMult;
 		puncture.finalBase = Math.max(0, puncture.finalBase);
-		explosivePuncture.finalBase *= finalDamageMult;
 		explosivePuncture.finalBase = Math.max(0, explosivePuncture.finalBase);
 
 		slash.finalBase = slash.base;
@@ -1539,9 +1545,7 @@ public class Main {
 			slash.finalBase += slash.base * slashDamageMods.get(i);
 			explosiveSlash.finalBase += explosiveSlash.base * slashDamageMods.get(i);
 		}
-		slash.finalBase *= finalDamageMult;
 		slash.finalBase = Math.max(0, slash.finalBase);
-		explosiveSlash.finalBase *= finalDamageMult;
 		explosiveSlash.finalBase = Math.max(0, explosiveSlash.finalBase);
 
 		fire.finalBase = fire.base;
@@ -1550,8 +1554,6 @@ public class Main {
 			fire.finalBase += raw.base * fireDamageMods.get(i);
 			explosiveFire.finalBase += explosiveRaw.base * fireDamageMods.get(i);
 		}
-		fire.finalBase *= finalDamageMult;
-		explosiveFire.finalBase *= finalDamageMult;
 
 		ice.finalBase = ice.base;
 		explosiveIce.finalBase = explosiveIce.base;
@@ -1559,8 +1561,6 @@ public class Main {
 			ice.finalBase += raw.base * iceDamageMods.get(i);
 			explosiveIce.finalBase += explosiveRaw.base * iceDamageMods.get(i);
 		}
-		ice.finalBase *= finalDamageMult;
-		explosiveIce.finalBase *= finalDamageMult;
 
 		electric.finalBase = electric.base;
 		explosiveElectric.finalBase = explosiveElectric.base;
@@ -1568,8 +1568,6 @@ public class Main {
 			electric.finalBase += raw.base * electricDamageMods.get(i);
 			explosiveElectric.finalBase += explosiveRaw.base * electricDamageMods.get(i);
 		}
-		electric.finalBase *= finalDamageMult;
-		explosiveElectric.finalBase *= finalDamageMult;
 
 		toxin.finalBase = toxin.base;
 		explosiveToxin.finalBase = explosiveToxin.base;
@@ -1577,8 +1575,6 @@ public class Main {
 			toxin.finalBase += raw.base * toxinDamageMods.get(i);
 			explosiveToxin.finalBase += explosiveRaw.base * toxinDamageMods.get(i);
 		}
-		toxin.finalBase *= finalDamageMult;
-		explosiveToxin.finalBase *= finalDamageMult;
 
 		blast.finalBase = blast.base;
 		explosiveBlast.finalBase = explosiveBlast.base;
@@ -1586,8 +1582,6 @@ public class Main {
 			blast.finalBase += raw.base * blastDamageMods.get(i);
 			explosiveBlast.finalBase += explosiveRaw.base * blastDamageMods.get(i);
 		}
-		blast.finalBase *= finalDamageMult;
-		explosiveBlast.finalBase *= finalDamageMult;
 
 		magnetic.finalBase = magnetic.base;
 		explosiveMagnetic.finalBase = explosiveMagnetic.base;
@@ -1595,8 +1589,6 @@ public class Main {
 			magnetic.finalBase += raw.base * magneticDamageMods.get(i);
 			explosiveMagnetic.finalBase += explosiveRaw.base * magneticDamageMods.get(i);
 		}
-		magnetic.finalBase *= finalDamageMult;
-		explosiveMagnetic.finalBase *= finalDamageMult;
 
 		gas.finalBase = gas.base;
 		explosiveGas.finalBase = explosiveGas.base;
@@ -1604,8 +1596,6 @@ public class Main {
 			gas.finalBase += raw.base * gasDamageMods.get(i);
 			explosiveGas.finalBase += explosiveRaw.base * gasDamageMods.get(i);
 		}
-		gas.finalBase *= finalDamageMult;
-		explosiveGas.finalBase *= finalDamageMult;
 
 		radiation.finalBase = radiation.base;
 		explosiveRadiation.finalBase = explosiveRadiation.base;
@@ -1613,8 +1603,6 @@ public class Main {
 			radiation.finalBase += raw.base * radiationDamageMods.get(i);
 			explosiveRadiation.finalBase += explosiveRaw.base * radiationDamageMods.get(i);
 		}
-		radiation.finalBase *= finalDamageMult;
-		explosiveRadiation.finalBase *= finalDamageMult;
 
 		corrosive.finalBase = corrosive.base;
 		explosiveCorrosive.finalBase = explosiveCorrosive.base;
@@ -1622,8 +1610,6 @@ public class Main {
 			corrosive.finalBase += raw.base * corrosiveDamageMods.get(i);
 			explosiveCorrosive.finalBase += explosiveRaw.base * corrosiveDamageMods.get(i);
 		}
-		corrosive.finalBase *= finalDamageMult;
-		explosiveCorrosive.finalBase *= finalDamageMult;
 
 		viral.finalBase = viral.base;
 		explosiveViral.finalBase = explosiveViral.base;
@@ -1631,12 +1617,11 @@ public class Main {
 			viral.finalBase += raw.base * viralDamageMods.get(i);
 			explosiveViral.finalBase += explosiveRaw.base * viralDamageMods.get(i);
 		}
-		viral.finalBase *= finalDamageMult;
-		explosiveViral.finalBase *= finalDamageMult;
 
 		raw.finalBase = impact.finalBase + puncture.finalBase + slash.finalBase + fire.finalBase + ice.finalBase + electric.finalBase + toxin.finalBase + blast.finalBase + magnetic.finalBase + gas.finalBase + radiation.finalBase + corrosive.finalBase + viral.finalBase;
-		explosiveRaw.finalBase = explosiveImpact.finalBase + explosivePuncture.finalBase + explosiveSlash.finalBase + explosiveFire.finalBase + explosiveIce.finalBase + explosiveElectric.finalBase + explosiveToxin.finalBase + explosiveBlast.finalBase + explosiveMagnetic.finalBase + explosiveGas.finalBase + explosiveRadiation.finalBase + explosiveCorrosive.finalBase + explosiveViral.finalBase;
-		
+		explosiveRaw.finalBase = explosiveImpact.finalBase + explosivePuncture.finalBase + explosiveSlash.finalBase + explosiveFire.finalBase + explosiveIce.finalBase + explosiveElectric.finalBase + explosiveToxin.finalBase + explosiveBlast.finalBase + explosiveMagnetic.finalBase
+				+ explosiveGas.finalBase + explosiveRadiation.finalBase + explosiveCorrosive.finalBase + explosiveViral.finalBase;
+
 		finalCorpusMult = 1.0;
 		for (int i = 0; i < corpusMods.size(); i++) {
 			finalCorpusMult += corpusMods.get(i);
@@ -1665,15 +1650,16 @@ public class Main {
 
 		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) { // Bunch of melee junk
 			finalMag = stanceCombo.hits.size();
-			
+
 			finalProjectileCount = 1;
 
 			double tempCombo = startingCombo;
 			if (startingCombo < 1.5) {
 				tempCombo = 0;
 			}
-			finalStatusChance *= (1 + (tempCombo * comboStatus));
-			finalCritChance *= (1 + (tempCombo * comboCrit));
+			startingCombo = 1; // Melee no long multiplies damage by combo
+			finalStatusChance += (tempCombo * comboStatus * statusChance);
+			finalCritChance += (tempCombo * comboCrit * critChance);
 
 			avgHit = 0;
 			avgDelay = 0;
@@ -1751,11 +1737,11 @@ public class Main {
 		blastProcRate = blast.finalBase / totalprocWeight;
 		radiationProcRate = radiation.finalBase / totalprocWeight;
 		magneticProcRate = magnetic.finalBase / totalprocWeight;
-		
+
 		double explosiveTotalPhysical = explosiveImpact.finalBase + explosivePuncture.finalBase + explosiveSlash.finalBase;
 		double explosiveTotalprocWeight = ((4 * explosiveTotalPhysical) + explosiveRaw.finalBase - explosiveTotalPhysical);
-		
-		if(explosiveTotalprocWeight != 0) {
+
+		if (explosiveTotalprocWeight != 0) {
 			explosiveSlashProcRate = 4 * explosiveSlash.finalBase / explosiveTotalprocWeight;
 			explosiveFireProcRate = explosiveFire.finalBase / explosiveTotalprocWeight;
 			explosiveToxinProcRate = explosiveToxin.finalBase / explosiveTotalprocWeight;
@@ -1771,17 +1757,10 @@ public class Main {
 			explosiveMagneticProcRate = explosiveMagnetic.finalBase / explosiveTotalprocWeight;
 		}
 		
-		averageProjectileCount = finalProjectileCount;
-		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
-			averageProjectileCount = finalProjectileCount * ((((projectileCount * (projectileCount + 1) / 2) + projectileCount * (finalMag - projectileCount)) / finalMag) / projectileCount);
-		}
-		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
-		burstProcsPerSecond = averageProjectileCount * finalStatusChance * (finalFireRate / avgDelay);
-
-		double forcedSlashProcs = 0;
-		double forcedImpactProcs = 0;
-		double forcedPunctureProcs = 0;
-		double forcedKnockdownProcs = 0;
+		forcedSlashProcs = 0;
+		forcedImpactProcs = 0;
+		forcedPunctureProcs = 0;
+		forcedKnockdownProcs = 0;
 		if (selectedWeapon.weaponType.equals(Constants.MELEE) && stanceCombo != null) {
 			for (Hit h : stanceCombo.hits) {
 				if (h.procs[0].equals("1")) {
@@ -1802,50 +1781,109 @@ public class Main {
 			forcedPunctureProcs /= stanceCombo.hits.size();
 			forcedKnockdownProcs /= stanceCombo.hits.size();
 		}
+		
+		// Condition overload
+		if (conditionOverload > 0) {
+			finalDamageMult += (1 - Math.pow((1 - slashProcRate * finalStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - fireProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - toxinProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - gasProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - electricProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - impactProcRate * finalStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - punctureProcRate * finalStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - iceProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - viralProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload; // Knockdown
+			finalDamageMult += (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			finalDamageMult += (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload;
+		}
+
+		averageProjectileCount = finalProjectileCount;
+		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
+			averageProjectileCount = finalProjectileCount * ((((projectileCount * (projectileCount + 1) / 2) + projectileCount * (finalMag - projectileCount)) / finalMag) / projectileCount);
+		}
+		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
+		burstProcsPerSecond = averageProjectileCount * finalStatusChance * (finalFireRate / avgDelay);
 
 		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - forcedSlashProcs));
-		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
-		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * 6 * finalStatusDuration;
+		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration + 1);
+		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration + 1);
 		double explosiveSlashProcsPerPellet = 1 - ((1 - (explosiveSlashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - forcedSlashProcs));
-		explosiveSlashStacks = explosiveSlashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 6 * finalStatusDuration;
-		explosiveBurstSlashStacks = explosiveSlashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * 6 * finalStatusDuration;
+		explosiveSlashStacks = explosiveSlashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration + 1);
+		explosiveBurstSlashStacks = explosiveSlashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration + 1);
 
-		fireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration)));
-		burstFireStacks = (1 - Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * (finalFireRate / avgDelay) * 6 * finalStatusDuration)));
 
-		toxinStacks = procsPerSecond * toxinProcRate * 8 * finalStatusDuration;
-		burstToxinStacks = burstProcsPerSecond * toxinProcRate * 8 * finalStatusDuration;
-		explosiveToxinStacks = procsPerSecond * explosiveToxinProcRate * 8 * finalStatusDuration;
-		explosiveBurstToxinStacks = burstProcsPerSecond * explosiveToxinProcRate * 8 * finalStatusDuration;
+		 //non-stacking fire stacks	 
+		 if (DPSPanel.fireProcLabel.isSelected()) {
+			 fireStacks = procsPerSecond * fireProcRate * 7;
+			 burstFireStacks = burstProcsPerSecond * fireProcRate * 7;
+		 } else if (fireProcRate > 0) {
+			 fireStacks = 1 / Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration));
+			 burstFireStacks = 1 / Math.pow((1 - fireProcRate * finalStatusChance), (averageProjectileCount * (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+		 }
+
+		toxinStacks = procsPerSecond * toxinProcRate * (8 * finalStatusDuration + 1);
+		burstToxinStacks = burstProcsPerSecond * toxinProcRate * (8 * finalStatusDuration + 1);
+		explosiveToxinStacks = procsPerSecond * explosiveToxinProcRate * (8 * finalStatusDuration + 1);
+		explosiveBurstToxinStacks = burstProcsPerSecond * explosiveToxinProcRate * (8 * finalStatusDuration + 1);
 
 		if (weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
-			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * 8 * finalStatusDuration;
-			burstToxinStacks += (averageProjectileCount * (finalFireRate / avgDelay)) * 8 * finalStatusDuration;
+			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (8 * finalStatusDuration + 1);
+			burstToxinStacks += (averageProjectileCount * (finalFireRate / avgDelay)) * (8 * finalStatusDuration + 1);
 		}
 
-		gasStacks = procsPerSecond * gasProcRate * 8 * finalStatusDuration;
-		burstGasStacks = burstProcsPerSecond * gasProcRate * 8 * finalStatusDuration;
-		gasStacks += procsPerSecond * explosiveGasProcRate * 8 * finalStatusDuration;
-		burstGasStacks += burstProcsPerSecond * explosiveGasProcRate * 8 * finalStatusDuration;
+		gasStacks = procsPerSecond * gasProcRate * (8 * finalStatusDuration + 1);
+		burstGasStacks = burstProcsPerSecond * gasProcRate * (8 * finalStatusDuration + 1);
+		gasStacks += procsPerSecond * explosiveGasProcRate * (8 * finalStatusDuration + 1);
+		burstGasStacks += burstProcsPerSecond * explosiveGasProcRate * (8 * finalStatusDuration + 1);
+		
+		
+		// Final Damage values
+		impact.finalBase *= finalDamageMult;
+		explosiveImpact.finalBase *= finalDamageMult;
 
-		// Condition overload
-		averageCOMultiplier = 1;
-		if (conditionOverload > 0) {
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - slashProcRate * finalStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - fireProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - toxinProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - gasProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - electricProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - impactProcRate * finalStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - punctureProcRate * finalStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - iceProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - viralProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - blastProcRate * finalStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload); // Knockdown
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload);
-			averageCOMultiplier *= (1 + (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload);
-		}
+		puncture.finalBase *= finalDamageMult;
+		explosivePuncture.finalBase *= finalDamageMult;
+
+		slash.finalBase *= finalDamageMult;
+		explosiveSlash.finalBase *= finalDamageMult;
+
+		fire.finalBase *= finalDamageMult;
+		explosiveFire.finalBase *= finalDamageMult;
+
+		ice.finalBase *= finalDamageMult;
+		explosiveIce.finalBase *= finalDamageMult;
+
+		electric.finalBase *= finalDamageMult;
+		explosiveElectric.finalBase *= finalDamageMult;
+
+		toxin.finalBase *= finalDamageMult;
+		explosiveToxin.finalBase *= finalDamageMult;
+
+		blast.finalBase *= finalDamageMult;
+		explosiveBlast.finalBase *= finalDamageMult;
+
+		magnetic.finalBase *= finalDamageMult;
+		explosiveMagnetic.finalBase *= finalDamageMult;
+
+		gas.finalBase *= finalDamageMult;
+		explosiveGas.finalBase *= finalDamageMult;
+
+		radiation.finalBase *= finalDamageMult;
+		explosiveRadiation.finalBase *= finalDamageMult;
+
+		corrosive.finalBase *= finalDamageMult;
+		explosiveCorrosive.finalBase *= finalDamageMult;
+
+		viral.finalBase *= finalDamageMult;
+		explosiveViral.finalBase *= finalDamageMult;
+
+		raw.finalBase = impact.finalBase + puncture.finalBase + slash.finalBase + fire.finalBase + ice.finalBase + electric.finalBase + toxin.finalBase + blast.finalBase + magnetic.finalBase + gas.finalBase + radiation.finalBase + corrosive.finalBase + viral.finalBase;
+		explosiveRaw.finalBase = explosiveImpact.finalBase + explosivePuncture.finalBase + explosiveSlash.finalBase + explosiveFire.finalBase + explosiveIce.finalBase + explosiveElectric.finalBase + explosiveToxin.finalBase + explosiveBlast.finalBase + explosiveMagnetic.finalBase
+		+ explosiveGas.finalBase + explosiveRadiation.finalBase + explosiveCorrosive.finalBase + explosiveViral.finalBase;
+		
 	}
 
 	/**
@@ -1854,7 +1892,7 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = (raw.finalBase + explosiveRaw.finalBase) * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * averageCOMultiplier * avgHit;
+		raw.perShot = (raw.finalBase + explosiveRaw.finalBase) * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * avgHit;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult * headShotMult * headShotBonus;
@@ -2257,42 +2295,42 @@ public class Main {
 			double stanceRatio = (stanceSlashes / stanceCombo.hits.size()) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - stanceSlashes / stanceCombo.hits.size())));
 			stanceSlashMult = (stanceRatio * stanceSlashMult + (1 - stanceRatio)) / avgHit;
 		}
-		if(Double.isNaN(stanceSlashMult)){
+		if (Double.isNaN(stanceSlashMult)) {
 			stanceSlashMult = 1;
 		}
 
-		double DoTBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
+		double DoTBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
 		double bleedDamage = (DoTBase * 0.35 * hunterMult) * stanceSlashMult;
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * headShotMult * headShotBonus;
-		
-		double explosiveDoTBase = explosiveRaw.base * finalDamageMult * finalDeadAimMult * startingCombo * averageCOMultiplier * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
+
+		double explosiveDoTBase = explosiveRaw.base * finalDamageMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
 		double explosiveElectricBase = explosiveDoTBase * (1 + globalElectric) * 0.5;
 		double explosiveBleedDamage = (explosiveDoTBase * 0.35 * hunterMult) * stanceSlashMult;
 		double explosivePoisonDamage = (explosiveDoTBase * (1 + globalToxin)) * 0.5;
 		double explosiveHeatDamage = (explosiveDoTBase * (1 + globalFire)) * 0.5;
 		double explosiveCloudDamage = explosiveDoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * headShotMult * headShotBonus;
-		
-		bleedDoTDPS = slashStacks * bleedDamage * 7 / 6;
-		bleedDoTDPS += explosiveSlashStacks * explosiveBleedDamage * 7 / 6;
-		poisonDoTDPS = toxinStacks * poisonDamage * 9 / 8;
-		poisonDoTDPS += explosiveToxinStacks * explosivePoisonDamage * 9 / 8;
-		heatDoTDPS = fireStacks * heatDamage * 7 / 6;
-		cloudDoTDPS = gasStacks * cloudDamage * 9 / 8;
-		cloudDoTDPS += explosiveGasStacks * explosiveCloudDamage * 9 / 8;
+
+		bleedDoTDPS = slashStacks * bleedDamage;
+		bleedDoTDPS += explosiveSlashStacks * explosiveBleedDamage;
+		poisonDoTDPS = toxinStacks * poisonDamage;
+		poisonDoTDPS += explosiveToxinStacks * explosivePoisonDamage;
+		heatDoTDPS = fireStacks * heatDamage;
+		cloudDoTDPS = gasStacks * cloudDamage;
+		cloudDoTDPS += explosiveGasStacks * explosiveCloudDamage;
 		electricProcDPS = electricProcRate * electricBase * procsPerSecond;
 		gasProcDPS = gasProcRate * poisonDamage * procsPerSecond;
 		gasProcDPS += explosiveGasProcRate * explosivePoisonDamage * procsPerSecond;
 
-		burstBleedDoTDPS = burstSlashStacks * bleedDamage * 7 / 6;
-		burstBleedDoTDPS += explosiveBurstSlashStacks * explosiveBleedDamage * 7 / 6;
-		burstPoisonDoTDPS = burstToxinStacks * poisonDamage * 9 / 8;
-		burstPoisonDoTDPS += explosiveBurstToxinStacks * explosivePoisonDamage * 9 / 8;
-		burstHeatDoTDPS = burstFireStacks * heatDamage * 7 / 6;
-		burstCloudDoTDPS = burstGasStacks * cloudDamage * 9 / 8;
-		burstCloudDoTDPS += explosiveBurstGasStacks * explosiveCloudDamage * 9 / 8;
+		burstBleedDoTDPS = burstSlashStacks * bleedDamage;
+		burstBleedDoTDPS += explosiveBurstSlashStacks * explosiveBleedDamage;
+		burstPoisonDoTDPS = burstToxinStacks * poisonDamage;
+		burstPoisonDoTDPS += explosiveBurstToxinStacks * explosivePoisonDamage;
+		burstHeatDoTDPS = burstFireStacks * heatDamage;
+		burstCloudDoTDPS = burstGasStacks * cloudDamage;
+		burstCloudDoTDPS += explosiveBurstGasStacks * explosiveCloudDamage;
 		burstElectricProcDPS = electricProcRate * electricBase * burstProcsPerSecond;
 		burstGasProcDPS = gasProcRate * poisonDamage * burstProcsPerSecond;
 
@@ -2757,7 +2795,7 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-			double totalmult = finalProjectileCount * averageCritMult * startingCombo * averageCOMultiplier * avgHit * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * avgHit * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 			DPSPanel.impactField.setText(f.format(totalmult * (impact.finalBase + explosiveImpact.finalBase)));
 			DPSPanel.punctureField.setText(f.format(totalmult * (puncture.finalBase + explosivePuncture.finalBase)));
 			DPSPanel.slashField.setText(f.format(totalmult * (slash.finalBase + explosiveSlash.finalBase)));
@@ -2925,18 +2963,32 @@ public class Main {
 			if (heatDoTDPS > 0) {
 				DPSPanel.fireProcPanel.setVisible(true);
 			}
+			String faction = "";
+			Double factionMult = 1.0;
 			if (finalCorpusMult > 1) {
 				DPSPanel.corpusPanel.setVisible(true);
+				faction = "to Corpus";
+				factionMult = finalCorpusMult;
 			}
 			if (finalGrineerMult > 1) {
 				DPSPanel.grineerPanel.setVisible(true);
+				faction = "to Grineer";
+				factionMult = finalGrineerMult;
 			}
 			if (finalInfestedMult > 1) {
 				DPSPanel.infestedPanel.setVisible(true);
+				faction = "to Infested";
+				factionMult = finalInfestedMult;
 			}
 			if (finalCorruptedMult > 1) {
 				DPSPanel.corruptedPanel.setVisible(true);
+				faction = "to Infested";
+				factionMult = finalInfestedMult;
 			}
+			DPSPanel.slashProcField.setToolTipText(f.format(factionMult * factionMult * (bleedDoTDPS) / slashStacks) + " Damage per tick" + faction);
+			DPSPanel.toxinProcField.setToolTipText(f.format(factionMult * factionMult * (poisonDoTDPS) / toxinStacks) + " Damage per tick" + faction);
+			DPSPanel.gasProcField.setToolTipText(f.format(factionMult * factionMult * factionMult * (cloudDoTDPS) / gasStacks) + " Damage per tick" + faction);
+			DPSPanel.fireProcField.setToolTipText(f.format(factionMult * factionMult * (heatDoTDPS) / fireStacks) + " Damage per tick" + faction);
 		}
 		useComplexTTK = true;
 
@@ -3098,7 +3150,7 @@ public class Main {
 
 				new Thread(new Runnable() {
 					public void run() {
-						theMaximizer.Maximizer();
+						theMaximizer.Maximize();
 						loadingScreen.setVisible(false);
 						setup = false;
 						maxxing = false;
@@ -3449,11 +3501,19 @@ public class Main {
 		public double damage = 0.0;
 		public int duration = 0;
 		public int timer = 0;
+		public double healthMult = 0;
+		public double armorMult = 0;
+		public double shieldMult = 0;
+		public boolean slash = false;
 
-		public DoTPair(double damage, int duration, int timer) {
+		public DoTPair(double damage, int duration, int timer, double healthMult, double armorMult, double shieldMult, boolean slash) {
 			this.damage = damage;
 			this.duration = duration;
 			this.timer = timer;
+			this.healthMult = healthMult;
+			this.armorMult = armorMult;
+			this.shieldMult = shieldMult;
+			this.slash = slash;
 		}
 	}
 }

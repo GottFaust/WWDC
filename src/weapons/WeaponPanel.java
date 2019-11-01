@@ -27,6 +27,7 @@ import javax.swing.event.ChangeListener;
 
 import Stances.Stance;
 import Stances.Stance.Combo;
+import Stances.Stance.Hit;
 import Stances.StanceInitializer;
 import etc.Constants;
 import etc.UIBuilder;
@@ -55,6 +56,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public WeaponModPanel modSixPanel = new WeaponModPanel("6", this);
 	public WeaponModPanel modSevenPanel = new WeaponModPanel("7", this);
 	public WeaponModPanel modEightPanel = new WeaponModPanel("8", this);
+	public WeaponModPanel modNinePanel = new WeaponModPanel("Exilus", this);
 	protected JPanel savedWeaponPanel = new JPanel();
 	protected JPanel refireCancelPanel = new JPanel();
 	protected JPanel additiveEffects = new JPanel();
@@ -123,6 +125,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public String modSix = "--";
 	public String modSeven = "--";
 	public String modEight = "--";
+	public String modNine = "--";
 
 	public String weaponType = "";
 	public String weaponName = "";
@@ -213,6 +216,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.panelInit(modSixPanel);
 		UIBuilder.panelInit(modSevenPanel);
 		UIBuilder.panelInit(modEightPanel);
+		UIBuilder.panelInit(modNinePanel);
 		UIBuilder.panelInit(refireCancelPanel);
 		UIBuilder.panelInit(savedWeaponPanel);
 		UIBuilder.panelInit(addCC);
@@ -251,6 +255,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modSixPanel.setLayout(new BoxLayout(modSixPanel, BoxLayout.Y_AXIS));
 		modSevenPanel.setLayout(new BoxLayout(modSevenPanel, BoxLayout.Y_AXIS));
 		modEightPanel.setLayout(new BoxLayout(modEightPanel, BoxLayout.Y_AXIS));
+		modNinePanel.setLayout(new BoxLayout(modNinePanel, BoxLayout.Y_AXIS));
 		additiveEffects.setLayout(new BoxLayout(additiveEffects, BoxLayout.Y_AXIS));
 		nums.setLayout(new BoxLayout(nums, BoxLayout.Y_AXIS));
 
@@ -330,6 +335,14 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		mQ3Label.setToolTipText("The number of thrice-stacked bubbles");
 		mQCombineElement.setToolTipText("Whether the weapon is projectile-based or hitscan. Hitscan weapons do not combine the additional electric damage with other elements.");
 		
+		JPanel modsAllPanel = new JPanel();
+		UIBuilder.panelInit(modsAllPanel);
+		modsAllPanel.setLayout(new BoxLayout(modsAllPanel, BoxLayout.X_AXIS));
+		
+		JPanel modsBothRowsPanel = new JPanel();
+		UIBuilder.panelInit(modsBothRowsPanel);
+		modsBothRowsPanel.setLayout(new BoxLayout(modsBothRowsPanel, BoxLayout.Y_AXIS));
+		
 		JPanel modsTopPanel = new JPanel();
 		UIBuilder.panelInit(modsTopPanel);
 		modsTopPanel.setLayout(new BoxLayout(modsTopPanel, BoxLayout.X_AXIS));
@@ -350,16 +363,24 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modsBottomPanel.add(modSixPanel);
 		modsBottomPanel.add(modSevenPanel);
 		modsBottomPanel.add(modEightPanel);
+		
+		modsBothRowsPanel.add(modsTopPanel);
+		modsBothRowsPanel.add(modsBottomPanel);
+		modsAllPanel.add(modsBothRowsPanel);
+		modsAllPanel.add(modNinePanel);
 
 		totalModCostPanel.add(totalModCostLabel);
 		totalModCostPanel.add(totalModCostField);
 		totalModCostPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		totalModCostPanel.add(potato);
 
-		modsPanel.add(modsTopPanel);
-		modsPanel.add(modsBottomPanel);
+		//modsPanel.add(modsTopPanel);
+		//modsPanel.add(modsBottomPanel);
+		modsPanel.add(modsAllPanel);
 		modsPanel.add(totalModCostPanel);
 
+		modNinePanel.setMaximumSize(new Dimension(200, 140));
+		
 		UIBuilder.panelInit(this);
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(nums);
@@ -421,7 +442,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 */
 	public String getModsOutput() {
 		return "\n" + modOne + "[" + modOnePanel.getModRank() + "], " + modTwo + "[" + modTwoPanel.getModRank() + "], " + modThree + "[" + modThreePanel.getModRank() + "], " + modFour + "[" + modFourPanel.getModRank() + "]\n" + modFive + "[" + modFivePanel.getModRank() + "], " + modSix + "["
-				+ modSixPanel.getModRank() + "], " + modSeven + "[" + modSevenPanel.getModRank() + "], " + modEight + "[" + modEightPanel.getModRank() + "]";
+				+ modSixPanel.getModRank() + "], " + modSeven + "[" + modSevenPanel.getModRank() + "], " + modEight + "[" + modEightPanel.getModRank() + "]\n" + modNine + "[" + modNinePanel.getModRank() + "]";
 	}
 
 	/**
@@ -486,6 +507,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		if (!modEight.equals("--")) {
 			activeMods.add(getModByName(modEight));
 			modLevels.add(Integer.parseInt(modEightPanel.getModRank()));
+		}
+		if (!modNine.equals("--")) {
+			activeMods.add(getModByName(modNine));
+			modLevels.add(Integer.parseInt(modNinePanel.getModRank()));
 		}
 	}
 
@@ -1005,7 +1030,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 * @return stanceCombo
 	 */
 	public Combo getStanceCombo() {
-		Combo stanceCombo = null;
+		Combo stanceCombo = new Combo("BalnkCombo", new Vector<Hit>());
 		for (Stance s : stanceInit.stances) {
 			if (s.stanceName.equals(wap.stanceBox.getSelectedItem())) {
 				for (Combo c : s.combos) {
@@ -1038,6 +1063,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modSixPanel.clear();
 		modSevenPanel.clear();
 		modEightPanel.clear();
+		modNinePanel.clear();
 	}
 
 	/**
@@ -1156,6 +1182,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			totalModCost += modSixPanel.getModCost();
 			totalModCost += modSevenPanel.getModCost();
 			totalModCost += modEightPanel.getModCost();
+			totalModCost += modNinePanel.getModCost();
 			int capacity = 60;
 			if (!potato.isSelected())
 				capacity = 30;
@@ -1186,6 +1213,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		selectedMods.add(modSix);
 		selectedMods.add(modSeven);
 		selectedMods.add(modEight);
+		selectedMods.add(modNine);
 		
 		weaponName = wap.nameField.getText();
 
@@ -1197,6 +1225,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modSixPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
 		modSevenPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
 		modEightPanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
+		modNinePanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
 	}
 
 	/**
@@ -1384,6 +1413,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			modEight = modEightPanel.getSelectedMod();
 			selectedMod = getModByName(modEight);
 			modEightPanel.setSelectedMod(selectedMod);
+		} else if (panel.equals(modNinePanel)) {
+			modNine = modNinePanel.getSelectedMod();
+			selectedMod = getModByName(modNine);
+			modNinePanel.setSelectedMod(selectedMod);
 		}
 		updateDropDownContents();
 		calculateModCosts();

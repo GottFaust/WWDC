@@ -198,7 +198,11 @@ public class WeaponModPanel extends JPanel implements ActionListener {
 			if (!selectedMods.contains(mod.name) || mod.name.equals(selectedName)) {
 				if (mod.type.equals(weaponType)) {
 					if (mod.weaponLock.equals(weaponName) || mod.weaponLock.equals("None")) {
-						modBox.addItem(mod.name);
+						if (!title.equals("Exilus")) {
+							modBox.addItem(mod.name);
+						} else if (mod.exilus) {
+							modBox.addItem(mod.name);
+						}
 					}
 				}
 			}

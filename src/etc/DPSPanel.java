@@ -5,9 +5,11 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.Box;
 
@@ -89,7 +91,7 @@ public class DPSPanel extends JPanel {
 	protected JLabel toxinProcLabel = new JLabel("Toxin Proc DPS - ");
 	protected JLabel gasProcLabel = new JLabel("GasProcDPS - ");
 	protected JLabel electricProcLabel = new JLabel("Electric Proc DPS - ");
-	protected JLabel fireProcLabel = new JLabel("Fire Proc DPS - ");
+	public JCheckBox fireProcLabel = new JCheckBox("Fire Proc DPS - ");
 	protected JLabel burstLabel = new JLabel("Burst DPS - ");
 	protected JLabel sustainedLabel = new JLabel("Sustained DPS - ");
 	protected JLabel impactChanceLabel = new JLabel("Impact Chance - ");
@@ -188,7 +190,7 @@ public class DPSPanel extends JPanel {
 		UIBuilder.labelInit(toxinProcLabel);
 		UIBuilder.labelInit(gasProcLabel);
 		UIBuilder.labelInit(electricProcLabel);
-		UIBuilder.labelInit(fireProcLabel);
+		UIBuilder.checkBoxInit(fireProcLabel);
 		UIBuilder.labelInit(burstLabel);
 		UIBuilder.labelInit(sustainedLabel);
 		UIBuilder.labelInit(impactChanceLabel);
@@ -675,8 +677,11 @@ public class DPSPanel extends JPanel {
 		toxinProcField.setToolTipText("Maximum sustained poison damage per second");
 		gasProcField.setToolTipText("Maximum sustained gas cloud damage per second");
 		electricProcField.setToolTipText("damage from electric procs damage per second");
-		fireProcField.setToolTipText("Maximum sustained ignite damage per second");
+		fireProcField.setToolTipText("Ignite DPS after 6 seconds. Uncheck to see max DPS");
+		fireProcLabel.setToolTipText("Ignite DPS after 6 seconds. Uncheck to see max DPS");
 		burstField.setToolTipText("Damage per second without reload time");
 		sustainedField.setToolTipText("Damage per second with reload time");
+		
+		fireProcLabel.setSelected(true);
 	}
 }

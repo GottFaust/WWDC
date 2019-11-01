@@ -47,6 +47,12 @@ public class Maximizer {
 
 		String build1 = "[" + simulatedMods.get(0).name + "][" + simulatedMods.get(1).name + "][" + simulatedMods.get(2).name + "][" + simulatedMods.get(3).name + "]";
 		String build2 = "[" + simulatedMods.get(4).name + "][" + simulatedMods.get(5).name + "][" + simulatedMods.get(6).name + "][" + simulatedMods.get(7).name + "]";
+		String build3;
+		try {
+			build3 = "[" + simulatedMods.get(8).name + "]";
+		} catch (Exception ex) {
+			build3 = "[No Exilus]";
+		}
 
 		double DPS = Main.raw.perSecond;
 		for (TTKTarget target : Main.groupTargets) {
@@ -61,7 +67,7 @@ public class Maximizer {
 		targets = Main.groupTargets.size();
 		double average = total / targets;
 		double minmax = Collections.max(times);
-		results.add(new TTKresult(build1, build2, DPS, average, minmax, TTKs));
+		results.add(new TTKresult(build1, build2, build3, DPS, average, minmax, TTKs));
 
 		if (currentMaxTTK < bestTTK) {
 			bestTTK = currentMaxTTK;
@@ -82,23 +88,35 @@ public class Maximizer {
 			calculateAndStore();
 		} else {
 			for (int i = 0; i < modCount - (emptyMods - modSlot); i++) {
+				
 				for (int j = modSlot; j > 0; j--) {
 					simulatedMods.set(modsToChange.get(j - 1), null);
 				}
-				updateMods();
-				simulatedMods.set(modsToChange.get(modSlot - 1), possibleMods.get(i));
-				thatThang(modSlot - 1);
+				
+				updateMods(modsToChange.get(modSlot - 1));
+				
+				try {
+					simulatedMods.set(modsToChange.get(modSlot - 1), possibleMods.get(i));
+					thatThang(modSlot - 1);
+				} catch (Exception ex) {
+					break;
+				}
+				
 			}
 		}
 	}
 
-	public void updateMods() {
+	public void updateMods(int slot) {
 		possibleMods = new Vector<Mod>();
 		for (Mod mod : Main.selectedWeapon.modInit.mods) {
 			if (!simulatedMods.contains(mod)) {
 				if (mod.type.equals(Main.selectedWeapon.weaponType)) {
 					if (mod.weaponLock.equals(Main.selectedWeapon.weaponName) || mod.weaponLock.equals("None")) {
-						possibleMods.add(mod);
+						if (slot != 8) {
+							possibleMods.add(mod);
+						} else if (mod.exilus) {
+							possibleMods.add(mod);
+						}
 					}
 				}
 			}
@@ -112,7 +130,7 @@ public class Maximizer {
 		}
 	}
 
-	public void Maximizer() {
+	public void Maximize() {
 		DecimalFormat f = new DecimalFormat("#.###");
 		emptyMods = 0;
 		Main.stop = false;
@@ -130,11 +148,11 @@ public class Maximizer {
 				modsToChange.add(i);
 			}
 		}
-		modCount = Main.selectedWeapon.countMods() - 1;
-		totalIterations = 1;
-		for (int g = modCount; g > (modCount - emptyMods); g--) {
-			totalIterations *= g;
-		}
+
+		/*
+		 * modCount = Main.selectedWeapon.countMods() - 1; totalIterations = 1; for (int
+		 * g = modCount; g > (modCount - emptyMods); g--) { totalIterations *= g; }
+		 */
 
 		// Initial mod list
 		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modOnePanel.getSelectedMod()));
@@ -145,6 +163,28 @@ public class Maximizer {
 		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modSixPanel.getSelectedMod()));
 		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modSevenPanel.getSelectedMod()));
 		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modEightPanel.getSelectedMod()));
+		simulatedMods.add(Main.selectedWeapon.getModByName(Main.selectedWeapon.modNinePanel.getSelectedMod()));
+
+		updateMods(100);
+		modCount = possibleMods.size();
+		int hasExilus = 0;
+		
+		totalIterations = 1;		
+		if (Main.selectedWeapon.selectedMods.get(8).equals("--")) {
+			updateMods(8);
+			if(possibleMods.size() > 0) {
+				modsToChange.add(8);
+				totalIterations *= possibleMods.size();
+				hasExilus = 1;
+				emptyMods++;
+			} else {
+				simulatedMods.remove(8);
+			}
+		}
+
+		for (int g = modCount - hasExilus; g > ((modCount - hasExilus) - (emptyMods- hasExilus)); g--) {
+			totalIterations *= g;
+		}
 
 		// Do
 		thatThang(emptyMods);
@@ -169,6 +209,7 @@ public class Maximizer {
 				Main.output.append("Build with the fasted kill time on " + results.get(0).TTKs.get(2 * k) + "\n");
 				Main.output.append(results.get(0).build1 + "\n");
 				Main.output.append(results.get(0).build2 + "\n");
+				Main.output.append(results.get(0).build3 + "\n");
 				Main.output.append("DPS: " + f.format(results.get(0).DPS) + "\n");
 				Main.output.append("Time: " + f.format(results.get(0).TTKs.get(1 + 2 * k)) + " seconds" + "\n");
 			}
@@ -183,6 +224,7 @@ public class Maximizer {
 			Main.output.append("Build with the highest DPS" + "\n");
 			Main.output.append(results.get(0).build1 + "\n");
 			Main.output.append(results.get(0).build2 + "\n");
+			Main.output.append(results.get(0).build3 + "\n");
 			Main.output.append("DPS: " + f.format(results.get(0).DPS) + "\n");
 
 			// Find build with lowest average kill time
@@ -195,6 +237,7 @@ public class Maximizer {
 			Main.output.append("Build with the Lowest average kill time on selected targets" + "\n");
 			Main.output.append(results.get(0).build1 + "\n");
 			Main.output.append(results.get(0).build2 + "\n");
+			Main.output.append(results.get(0).build3 + "\n");
 			Main.output.append("Average time to kill: " + f.format(results.get(0).average) + "\n");
 			Main.output.append("--------------------------Individual TTKs----------------------------" + "\n");
 			for (int k = 0; k < targets; k++) {
@@ -212,6 +255,7 @@ public class Maximizer {
 		Main.output.append("Build with the Lowest maximum kill time on selected targets:" + "\n");
 		Main.output.append(results.get(0).build1 + "\n");
 		Main.output.append(results.get(0).build2 + "\n");
+		Main.output.append(results.get(0).build3 + "\n");
 		Main.output.append("Maximum kill time: " + f.format(results.get(0).minmax) + "\n");
 		Main.output.append("--------------------------Individual TTKs----------------------------" + "\n");
 		for (int k = 0; k < targets; k++) {
@@ -252,14 +296,16 @@ public class Maximizer {
 	class TTKresult {
 		public String build1 = "";
 		public String build2 = "";
+		public String build3 = "";
 		public double DPS = 0;
 		public Vector<Double> TTKs;
 		public double average = 0;
 		public double minmax = 0;
 
-		public TTKresult(String build1, String build2, double DPS, double average, double minmax, Vector TTKs) {
+		public TTKresult(String build1, String build2, String build3, double DPS, double average, double minmax, Vector TTKs) {
 			this.build1 = build1;
 			this.build2 = build2;
+			this.build3 = build3;
 			this.DPS = DPS;
 			this.TTKs = TTKs;
 			this.average = average;

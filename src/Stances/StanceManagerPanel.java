@@ -54,6 +54,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	protected JLabel comboLabel = new JLabel("Combo - ");
 	protected JLabel delayLabel = new JLabel("Delay");
 	protected JLabel multiLabel = new JLabel("Multiplier");
+	protected JLabel combLabel = new JLabel("Combo Increase");
 	protected JLabel procLabel = new JLabel("Status Procs");
 
 	protected JComboBox<String> typeBox = new JComboBox<String>();
@@ -99,6 +100,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		UIBuilder.labelInit(comboLabel);
 		UIBuilder.labelInit(delayLabel);
 		UIBuilder.labelInit(multiLabel);
+		UIBuilder.labelInit(combLabel);
 		UIBuilder.labelInit(procLabel);
 
 		UIBuilder.listInit(stanceList);
@@ -149,6 +151,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 
 		hitLabelsPanel.add(delayLabel);
 		hitLabelsPanel.add(multiLabel);
+		hitLabelsPanel.add(combLabel);
 		hitLabelsPanel.add(procLabel);
 
 		hitButtonsPanel.add(addHitButton);
@@ -202,10 +205,10 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		for (JPanel p : hitsPanels) {
 			double delay = checkNumber(((JTextField) p.getComponent(0)).getText());
 			double multi = checkNumber(((JTextField) p.getComponent(1)).getText());
-			// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
-			// puncture, ice, blast, knockdown, radiation
+			double comb = checkNumber(((JTextField) p.getComponent(2)).getText());
+			// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 			String[] procs = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
-			int[] selectedProcs = ((JList) p.getComponent(2)).getSelectedIndices();
+			int[] selectedProcs = ((JList) p.getComponent(3)).getSelectedIndices();
 			for (int i : selectedProcs) {
 				if (i == 0) {
 					procs[8] = "1";
@@ -217,7 +220,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 					procs[12] = "1";
 				}
 			}
-			hits.add(new Hit(delay, multi, procs));
+			hits.add(new Hit(delay, multi, procs, (int) comb));
 		}
 		Combo c = new Combo((String) comboBox.getSelectedItem(), hits);
 
@@ -238,12 +241,14 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		JPanel hitPanel = new JPanel();
 		JTextField delay = new JTextField();
 		JTextField multi = new JTextField();
+		JTextField combs = new JTextField();
 		DefaultListModel procsModel = new DefaultListModel();
 		JList procs = new JList(procsModel);
 
 		UIBuilder.panelInit(hitPanel);
 		UIBuilder.numberFieldInit(delay);
 		UIBuilder.numberFieldInit(multi);
+		UIBuilder.numberFieldInit(combs);
 		UIBuilder.listInit(procs);
 
 		procs.setSelectionModel(new DefaultListSelectionModel() {
@@ -268,10 +273,12 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		hitPanel.setLayout(new GridLayout(1, 4, 0, 0));
 		hitPanel.add(delay);
 		hitPanel.add(multi);
+		hitPanel.add(combs);
 		hitPanel.add(procs);
 
 		delay.setText(Double.toString(h.delay));
 		multi.setText(Double.toString(h.multiplier));
+		combs.setText(Double.toString(h.comboIncrease));
 
 		int size = 0;
 		for (int i = 0; i < 14; i++) {
@@ -392,7 +399,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 				}
 		} else if (e.getSource().equals(addHitButton)) {
 			String[] s = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
-			Hit h = new Stance.Hit(0, 0, s);
+			Hit h = new Stance.Hit(0, 0, s, 0);
 			JPanel p = hitPanel(h);
 			UIBuilder.createSepparationBorder(p);
 			hitsPanels.add(p);

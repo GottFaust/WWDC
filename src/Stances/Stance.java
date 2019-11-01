@@ -20,7 +20,8 @@ public class Stance {
 				double delay = Double.parseDouble(hitSplit[0]);
 				double multiplier = Double.parseDouble(hitSplit[1]);
 				String[] procs = hitSplit[2].split("");
-				hits.add(new Hit(delay, multiplier, procs));
+				double combs = Double.parseDouble(hitSplit[3]);
+				hits.add(new Hit(delay, multiplier, procs, combs));
 			}			
 			combos.add(new Combo(comboName, hits));
 		}
@@ -37,6 +38,7 @@ public class Stance {
 				for(String proc : hit.procs) {
 					stanceString += proc;
 				}
+				stanceString += "," + hit.comboIncrease;
 				stanceString += ":";
 			}
 			stanceString += ";";
@@ -58,11 +60,13 @@ public class Stance {
 		public double delay;
 		public double multiplier;
 		public String[] procs;
+		public double comboIncrease;
 
-		public Hit(double delay, double muliplier, String[] procs) {
+		public Hit(double delay, double muliplier, String[] procs, double comboIncrease) {
 			this.delay = delay;
 			this.multiplier = muliplier;
 			this.procs = procs;
+			this.comboIncrease = comboIncrease;
 		}
 	}
 }
