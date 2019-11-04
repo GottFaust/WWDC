@@ -751,6 +751,7 @@ public class TTKTarget implements Comparable {
 		int shatteringImpacts = 0;
 		double shatteringImpactMult = 1;
 		double localStatus = Main.finalStatusChance;
+		double localCritChance = Main.finalCritChance;
 
 		// Find initial starting combo
 		double comboCount = 0;
@@ -818,15 +819,18 @@ public class TTKTarget implements Comparable {
 					// Melee Combo Stuff
 					double comboCritMult = 0;
 					double comboStatusMult = 1;
+					localCritChance = Main.finalCritChance;
 					if (Main.selectedWeapon.weaponType.equals(Constants.MELEE)) {
 						comboCount = Math.min(comboCount += Main.stanceCombo.hits.get(iterations).comboIncrease, 220);
 						int meleeComboMult = (int) (comboCount / 20);
 
 						if (meleeComboMult >= 2) {
 							localStatus = Main.statusChance;
-							comboCritMult = Main.comboCrit * meleeComboMult;
-							comboStatusMult = (Main.comboStatus * meleeComboMult) + (Main.finalStatusChance / Main.statusChance);
+							comboCritMult = Main.comboCrit * (meleeComboMult);
+							comboStatusMult = (Main.comboStatus * (meleeComboMult)) + (Main.finalStatusChance / Main.statusChance);
 						}
+						
+						localCritChance = (1 + comboCritMult + ((Main.finalCritChance/Main.critChance) - 1)) * Main.critChance;
 					}
 
 					// Condition Overload
@@ -834,7 +838,7 @@ public class TTKTarget implements Comparable {
 					if (Main.conditionOverload > 0) {
 						for (int status : statusEffects) {
 							if (status > 0) {
-								COMult += (1 + Main.conditionOverload);
+								COMult += (Main.conditionOverload);
 							}
 						}
 					}
@@ -872,8 +876,8 @@ public class TTKTarget implements Comparable {
 					for (int p = 0; p < multishot; p++) {
 
 						// Find Crit
-						int crit = (int) ((comboCritMult + Main.finalCritMult) * Main.critChance);
-						if (rng.nextDouble() < ((comboCritMult + Main.finalCritMult) * Main.critChance) - crit) {
+						int crit = (int) localCritChance;
+						if (rng.nextDouble() < localCritChance - crit) {
 							crit++;
 						}
 						double localCritMult = 1 + crit * (Main.finalCritMult - 1);
@@ -947,13 +951,14 @@ public class TTKTarget implements Comparable {
 							double proc = rng.nextDouble();
 
 							// Slash Proc
-							if ((proc -= slashProc) < 0 && forcedSlashProc == false) {
-								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
-								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
-								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true));
-								targetCurrentHealth -= bleedDamage;
-								statusEffects[0] = slashDuration;
-
+							if ((proc -= slashProc) < 0) {
+								if (forcedSlashProc == false) {
+									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+									int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
+									statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true));
+									targetCurrentHealth -= bleedDamage;
+									statusEffects[0] = slashDuration;
+								}
 								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 
@@ -1066,8 +1071,8 @@ public class TTKTarget implements Comparable {
 						// different way without breaking multithreading.
 						if (Main.explosiveRaw.finalBase > 0) {
 							// Find Crit
-							crit = (int) (comboCritMult * Main.finalCritChance);
-							if (rng.nextDouble() < (comboCritMult * Main.finalCritChance) - crit) {
+							crit = (int) localCritChance;
+							if (rng.nextDouble() < localCritChance - crit) {
 								crit++;
 							}
 							localCritMult = 1 + crit * (Main.finalCritMult - 1);
@@ -1088,7 +1093,9 @@ public class TTKTarget implements Comparable {
 							}
 
 							// Total multiplier
-							//totalMult = ((comboMult * beamMult * headShotMult * localCritMult * typeMult * firstShotMult * lastShotMult * meleeHitMult) / Main.finalDamageMult) * (COMult + Main.finalDamageMult);
+							// totalMult = ((comboMult * beamMult * headShotMult * localCritMult * typeMult
+							// * firstShotMult * lastShotMult * meleeHitMult) / Main.finalDamageMult) *
+							// (COMult + Main.finalDamageMult);
 
 							// Deal Damage
 							if (targetCurrentShields > 0.0) {
@@ -1281,11 +1288,13 @@ public class TTKTarget implements Comparable {
 			}
 
 			// Check status stacks every 0.1 seconds
-			if (timeToKill % 1000 == 0) {
+			if (timeToKill % 1000 == 0 && timeToKill > 0) {
 
 				// Heat proc stuff
-				if (statusEffects[1] > 0 && statusStacks.get(0).timer == 0) {
-					heatProcMult = Math.max(heatProcMult - 0.1, 0.5);
+				if (statusEffects[1] > 0) {
+					if (statusStacks.get(0).timer == 0) {
+						heatProcMult = Math.max(heatProcMult - 0.1, 0.5);
+					}
 				} else {
 					statusStacks.get(0).damage = 0;
 				}

@@ -210,6 +210,7 @@ public class Main {
 	protected static double finalIterationsPerMinute = 0.0;
 	protected static double averageCritMult = 0.0;
 	public static double finalCritChance = 0.0;
+	public static double finalComboCrit = 0.0;
 	public static double finalCritMult = 0.0;
 	public static double finalFireRate = 0.0;
 	public static double finalReloadTime = 0.0;
@@ -363,6 +364,8 @@ public class Main {
 	static double forcedImpactProcs = 0;
 	static double forcedPunctureProcs = 0;
 	static double forcedKnockdownProcs = 0;
+	
+	static double COMult = 0;
 
 	/**
 	 * ____________________________________________________________ METHODS
@@ -846,6 +849,8 @@ public class Main {
 		forcedImpactProcs = 0;
 		forcedPunctureProcs = 0;
 		forcedKnockdownProcs = 0;
+		COMult = 1;
+		finalComboCrit = 0.0;
 	}
 
 	/**
@@ -1654,12 +1659,12 @@ public class Main {
 			finalProjectileCount = 1;
 
 			double tempCombo = startingCombo;
-			if (startingCombo < 1.5) {
+			if (startingCombo < 2) {
 				tempCombo = 0;
 			}
 			startingCombo = 1; // Melee no long multiplies damage by combo
 			finalStatusChance += (tempCombo * comboStatus * statusChance);
-			finalCritChance += (tempCombo * comboCrit * critChance);
+			finalComboCrit = (tempCombo * comboCrit * critChance);
 
 			avgHit = 0;
 			avgDelay = 0;
@@ -1714,7 +1719,7 @@ public class Main {
 		vigilante += selectedWeapon.vigiSlider.getValue();
 		vigilante *= 0.05;
 
-		averageCritMult = Math.max(0, 1 - finalCritChance) + headShotMult * (finalCritChance * finalCritMult - Math.max(0, finalCritChance - 1)) + (headShotMult * vigilante * (finalCritMult - 1));
+		averageCritMult = Math.max(0, 1 - (finalCritChance + finalComboCrit)) + headShotMult * ((finalCritChance + finalComboCrit) * finalCritMult - Math.max(0, (finalCritChance + finalComboCrit) - 1)) + (headShotMult * vigilante * (finalCritMult - 1));
 	}
 
 	/**
@@ -1784,20 +1789,20 @@ public class Main {
 		
 		// Condition overload
 		if (conditionOverload > 0) {
-			finalDamageMult += (1 - Math.pow((1 - slashProcRate * finalStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - fireProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - toxinProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - gasProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - electricProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - impactProcRate * finalStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - punctureProcRate * finalStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - iceProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - viralProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload; // Knockdown
-			finalDamageMult += (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
-			finalDamageMult += (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - slashProcRate * finalStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - fireProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - toxinProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - gasProcRate * finalStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - electricProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - impactProcRate * finalStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - punctureProcRate * finalStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - iceProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - corrosiveProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - viralProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - blastProcRate * finalStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload; // Knockdown
+			COMult += (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
+			COMult += (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload;
 		}
 
 		averageProjectileCount = finalProjectileCount;
@@ -1807,10 +1812,10 @@ public class Main {
 		procsPerSecond = ((averageProjectileCount * finalMag) * finalStatusChance) * (1 / finalIterationTime);
 		burstProcsPerSecond = averageProjectileCount * finalStatusChance * (finalFireRate / avgDelay);
 
-		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - forcedSlashProcs));
+		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
 		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration + 1);
 		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration + 1);
-		double explosiveSlashProcsPerPellet = 1 - ((1 - (explosiveSlashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - forcedSlashProcs));
+		double explosiveSlashProcsPerPellet = 1 - ((1 - (explosiveSlashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
 		explosiveSlashStacks = explosiveSlashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration + 1);
 		explosiveBurstSlashStacks = explosiveSlashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration + 1);
 
@@ -1892,7 +1897,7 @@ public class Main {
 	protected static void calculateDamagePerShot() {
 
 		// Calculate base damage per shot values
-		raw.perShot = (raw.finalBase + explosiveRaw.finalBase) * averageProjectileCount * finalDeadAimMult * startingCombo * headShotMult * headShotBonus * avgHit;
+		raw.perShot = (raw.finalBase + explosiveRaw.finalBase) * averageProjectileCount * finalDeadAimMult * COMult * startingCombo * headShotMult * headShotBonus * avgHit;
 
 		// Calculate crit damage per shot values
 		raw.critPerShot = raw.perShot * finalCritMult * headShotMult * headShotBonus;
@@ -1929,19 +1934,19 @@ public class Main {
 			corrupted.critPerShot = corrupted.perShot * finalCritMult;
 
 			// Calculate base damage per shot values
-			impact.perShot = impact.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			puncture.perShot = puncture.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			slash.perShot = slash.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			fire.perShot = fire.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			ice.perShot = ice.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			electric.perShot = electric.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			toxin.perShot = toxin.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			blast.perShot = blast.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			magnetic.perShot = magnetic.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			gas.perShot = gas.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			radiation.perShot = radiation.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			corrosive.perShot = corrosive.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
-			viral.perShot = viral.finalBase * averageProjectileCount * finalDeadAimMult * headShotMult * headShotBonus;
+			impact.perShot = impact.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			puncture.perShot = puncture.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			slash.perShot = slash.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			fire.perShot = fire.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			ice.perShot = ice.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			electric.perShot = electric.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			toxin.perShot = toxin.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			blast.perShot = blast.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			magnetic.perShot = magnetic.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			gas.perShot = gas.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			radiation.perShot = radiation.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			corrosive.perShot = corrosive.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
+			viral.perShot = viral.finalBase * averageProjectileCount * finalDeadAimMult * COMult * headShotMult * headShotBonus;
 
 			// Surface-specific
 
@@ -2278,7 +2283,7 @@ public class Main {
 		// Add in DoTs
 		double hunterMult = 1;
 		if (hunterMunitions > 0) { // Need to fix because hunter munitions stacks are always on crit
-			double hunterRatio = (Math.min(1, finalCritChance) * hunterMunitions) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance)))));
+			double hunterRatio = (Math.min(1, finalCritChance + finalComboCrit) * hunterMunitions) / (1 - ((1 - (slashProcRate * finalStatusChance)) * (1 - (hunterMunitions * Math.min(1, finalCritChance + finalComboCrit)))));
 			hunterMult = (hunterRatio * finalCritMult * headShotMult * headShotBonus + (1 - hunterRatio) * averageCritMult) / averageCritMult;
 		}
 		double stanceSlashMult = 1;
@@ -2299,14 +2304,14 @@ public class Main {
 			stanceSlashMult = 1;
 		}
 
-		double DoTBase = raw.base * finalDamageMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
+		double DoTBase = raw.base * finalDamageMult * COMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
 		double electricBase = DoTBase * (1 + globalElectric) * 0.5;
 		double bleedDamage = (DoTBase * 0.35 * hunterMult) * stanceSlashMult;
 		double poisonDamage = (DoTBase * (1 + globalToxin)) * 0.5;
 		double heatDamage = (DoTBase * (1 + globalFire)) * 0.5;
 		double cloudDamage = DoTBase * (0.25 * (1 + globalToxin) * (1 + globalToxin)) * headShotMult * headShotBonus;
 
-		double explosiveDoTBase = explosiveRaw.base * finalDamageMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
+		double explosiveDoTBase = explosiveRaw.base * finalDamageMult * COMult * finalDeadAimMult * startingCombo * avgHit * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag) * headShotMult * headShotBonus * averageCritMult;
 		double explosiveElectricBase = explosiveDoTBase * (1 + globalElectric) * 0.5;
 		double explosiveBleedDamage = (explosiveDoTBase * 0.35 * hunterMult) * stanceSlashMult;
 		double explosivePoisonDamage = (explosiveDoTBase * (1 + globalToxin)) * 0.5;
@@ -2449,7 +2454,7 @@ public class Main {
 		output.append("\nName :: " + weaponName);
 		output.append("\nMagazine Size :: " + finalMag);
 		output.append("\nTotal Ammo :: " + (finalMag + finalAmmo));
-		output.append("\nCrit Chance :: " + f.format(finalCritChance * 100.0) + "%");
+		output.append("\nCrit Chance :: " + f.format((finalCritChance + finalComboCrit) * 100.0) + "%");
 		output.append("\nCrit Damage Multiplier :: " + f.format(finalCritMult * 100.0) + "%");
 		String delimiter = "rounds";
 		String mode = selectedWeapon.getWeaponMode();
@@ -2795,7 +2800,7 @@ public class Main {
 			updateOutput = true;
 
 			DecimalFormat f = new DecimalFormat("#.###");
-			double totalmult = finalProjectileCount * averageCritMult * startingCombo * avgHit * finalDeadAimMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
+			double totalmult = finalProjectileCount * averageCritMult * startingCombo * avgHit * finalDeadAimMult * COMult * headShotMult * headShotBonus * (1 + (finalFirstShotDamageMult + finalLastShotDamageMult) / finalMag);
 			DPSPanel.impactField.setText(f.format(totalmult * (impact.finalBase + explosiveImpact.finalBase)));
 			DPSPanel.punctureField.setText(f.format(totalmult * (puncture.finalBase + explosivePuncture.finalBase)));
 			DPSPanel.slashField.setText(f.format(totalmult * (slash.finalBase + explosiveSlash.finalBase)));
@@ -2814,7 +2819,7 @@ public class Main {
 				DPSPanel.projectilesField.setText(f.format(projectileCount));
 			}
 			DPSPanel.FRField.setText(f.format(finalFireRate));
-			DPSPanel.CCField.setText(f.format(100 * finalCritChance) + "%");
+			DPSPanel.CCField.setText(f.format(100 * (finalCritChance + finalComboCrit)) + "%");
 			DPSPanel.CDField.setText(f.format(finalCritMult));
 			DPSPanel.SCField.setText(f.format(100 * finalStatusChance) + "%");
 			DPSPanel.modifiedSCField.setText(f.format(100 * (1 - Math.pow(1 - finalStatusChance, finalProjectileCount))) + "%");

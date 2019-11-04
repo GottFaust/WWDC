@@ -169,7 +169,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.12.0";
+  public static final String APP_VERSION = "v0.12.1";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -318,7 +318,7 @@ public static final String[] baseModDB = {
     "Ammo Drum,"+RIFLE+",5,1,"+MOD_TYPE_AMMO_CAP+",0.05,~,2,None,true",
     "Ammo Stock,"+SHOTGUN+",5,1,"+MOD_TYPE_MAG_CAP+",0.1,~,2,None,false",
     "Anemic Agility,"+PISTOL+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_DAMAGE_BONUS+",0.15,-0.025,~,4,None,false",
-    "Arrow Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,false",
+    "Arrow Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,true",
     "Bane of Corpus,"+RIFLE+",5,1,"+MOD_TYPE_CORPUS_DAMAGE+",0.05,V,4,None,false",
     "Bane of Grineer,"+RIFLE+",5,1,"+MOD_TYPE_GRINEER_DAMAGE+",0.05,V,4,None,false",
     "Bane of Corrupted,"+RIFLE+",5,1,"+MOD_TYPE_CORRUPTED_DAMAGE+",0.05,V,4,None,false",
@@ -350,7 +350,7 @@ public static final String[] baseModDB = {
     "Deadly Sequence,"+RIFLE+",3,1,"+MOD_TYPE_CRIT_CHANCE+",0.5,V,4,Prisma Grinlok,false",
     "Deep Freeze,"+PISTOL+",5,1,"+MOD_TYPE_ICE_DAMAGE+",0.15,D,6,None,false",
     "Disruptor,"+SHOTGUN+",5,1,"+MOD_TYPE_IMPACT_DAMAGE+",0.05,~,4,None,false",
-    "Eagle Eye,"+RIFLE+",3,1,"+MOD_TYPE_ZOOM+",0.0,~,4,None,false",
+    "Eagle Eye,"+RIFLE+",3,1,"+MOD_TYPE_ZOOM+",0.0,~,4,None,true",
     "Entropy Burst,"+RIFLE+",3,1,"+MOD_TYPE_FLAT_STATUS+",0.05,V,4,Supra Vandal,false",
     "Erroding Blight,"+PISTOL+",3,1,"+MOD_TYPE_MAG_CAP+",0.5,D,4,None,false",
     "Expel Corpus,"+PISTOL+",5,1,"+MOD_TYPE_CORPUS_DAMAGE+",0.05,V,4,None,false",
@@ -380,7 +380,7 @@ public static final String[] baseModDB = {
     "High Voltage,"+RIFLE+",3,2,"+MOD_TYPE_LIGHTNING_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
     "Hollow Point,"+PISTOL+",5,2,"+MOD_TYPE_CRIT_MULTIPLIER+","+MOD_TYPE_DAMAGE_BONUS+",0.1,-0.025,~,4,None,false",
     "Hornet Strike,"+PISTOL+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.2,V,4,None,false",
-    "Hush,"+RIFLE+",3,1,"+MOD_TYPE_SILENCE+",0.25,~,2,None,false",
+    "Hush,"+RIFLE+",3,1,"+MOD_TYPE_SILENCE+",0.25,~,2,None,true",
     "Ice Storm,"+PISTOL+",3,2,"+MOD_TYPE_MAG_CAP+","+MOD_TYPE_ICE_DAMAGE+",0.1,0.1,V,6,None,false",
     "Incendiary Coat,"+SHOTGUN+",5,1,"+MOD_TYPE_FIRE_DAMAGE+",0.15,~,6,None,false",
     "Infected Clip,"+RIFLE+",5,1,"+MOD_TYPE_TOXIN_DAMAGE+",0.15,~,6,None,false",
@@ -399,7 +399,7 @@ public static final String[] baseModDB = {
     "Piercing Caliber,"+RIFLE+",5,1,"+MOD_TYPE_PUNCTURE_DAMAGE+",0.2,~,6,None,false",
     "Piercing Hit,"+RIFLE+",5,1,"+MOD_TYPE_PUNCTURE_DAMAGE+",0.05,~,4,None,false",
     "Pistol Gambit,"+PISTOL+",5,1,"+MOD_TYPE_CRIT_CHANCE+",0.2,V,4,None,false",
-    "Pistol Mutation,"+PISTOL+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,false",
+    "Pistol Mutation,"+PISTOL+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,true",
     "Pistol Pestilence,"+PISTOL+",3,2,"+MOD_TYPE_TOXIN_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
     "Point Blank,"+SHOTGUN+",5,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
     "Point Strike,"+RIFLE+",5,1,"+MOD_TYPE_CRIT_CHANCE+",0.25,V,4,None,false",
@@ -413,7 +413,7 @@ public static final String[] baseModDB = {
     "Ravage,"+SHOTGUN+",5,1,"+MOD_TYPE_CRIT_MULTIPLIER+",0.1,V,4,None,false",
     "Razor Shot,"+PISTOL+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.1,~,2,None,false",
     "Rifle Aptitude,"+RIFLE+",5,1,"+MOD_TYPE_STATUS_CHANCE+",0.025,D,4,None,false",
-    "Rifle Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,false",
+    "Rifle Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,true",
     "Rime Rounds,"+RIFLE+",3,2,"+MOD_TYPE_ICE_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
     "Rupture,"+RIFLE+",5,1,"+MOD_TYPE_IMPACT_DAMAGE+",0.05,~,4,None,false",
     "Sawtooth Clip,"+RIFLE+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.05,~,4,None,false",
@@ -425,23 +425,23 @@ public static final String[] baseModDB = {
     "Seeking Fury,"+SHOTGUN+",5,2,"+MOD_TYPE_OBJECT_PIERCE+","+MOD_TYPE_RELOAD_SPEED+",0.002,0.025,V,6,None,false",
     "Serration,"+RIFLE+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
     "Shattering Justice,"+SHOTGUN+",3,1,"+MOD_TYPE_FLAT_STATUS+",0.05,~,4,Sobek,false",
-    "Shell Compression,"+SHOTGUN+",5,1,"+MOD_TYPE_AMMO_CAP+",0.05,~,2,None,false",
+    "Shell Compression,"+SHOTGUN+",5,1,"+MOD_TYPE_AMMO_CAP+",0.05,~,2,None,true",
     "Shell Shock,"+SHOTGUN+",3,2,"+MOD_TYPE_LIGHTNING_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
-    "Shotgun Mutation,"+SHOTGUN+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,false",
+    "Shotgun Mutation,"+SHOTGUN+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,true",
     "Shotgun Savvy,"+SHOTGUN+",5,1,"+MOD_TYPE_STATUS_CHANCE+",0.05,D,4,None,false",
     "Shotgun Spazz,"+SHOTGUN+",5,1,"+MOD_TYPE_FIRE_RATE+",0.15,V,4,None,false",
     "Shred,"+RIFLE+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_OBJECT_PIERCE+",0.05,0.0,V,6,None,false",
     "Shredder,"+SHOTGUN+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.05,~,4,None,false",
     "Slip Magazine,"+PISTOL+",5,1,"+MOD_TYPE_MAG_CAP+",0.05,~,4,None,false",
-    "Sniper Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,false",
+    "Sniper Mutation,"+RIFLE+",3,1,"+MOD_TYPE_AMMO_MUTATOR+",0.0,~,4,None,true",
     "Speed Trigger,"+RIFLE+",5,1,"+MOD_TYPE_FIRE_RATE+",0.1,V,4,None,false",
     "Split Chamber,"+RIFLE+",5,1,"+MOD_TYPE_MULTISHOT+",0.15,V,10,None,false",
-    "Stabilizer,"+RIFLE+",3,1,"+MOD_TYPE_RECOIL+",-0.15,~,6,None,false",
-    "Steady hands,"+PISTOL+",3,1,"+MOD_TYPE_RECOIL+",-0.15,~,6,None,false",
+    "Stabilizer,"+RIFLE+",3,1,"+MOD_TYPE_RECOIL+",-0.15,~,6,None,true",
+    "Steady hands,"+PISTOL+",3,1,"+MOD_TYPE_RECOIL+",-0.15,~,6,None,true",
     "Stinging Truth,"+PISTOL+",3,1,"+MOD_TYPE_FLAT_MAG+",0.1,D,4,Viper Wraith,false",
     "Stormbringer,"+RIFLE+",5,1,"+MOD_TYPE_LIGHTNING_DAMAGE+",0.15,~,6,None,false",
     "Stunning Speed,"+PISTOL+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_RELOAD_SPEED+",0.025,0.1,~,6,None,false",
-    "Suppress,"+PISTOL+",3,1,"+MOD_TYPE_SILENCE+",0.25,~,2,None,false",
+    "Suppress,"+PISTOL+",3,1,"+MOD_TYPE_SILENCE+",0.25,~,2,None,true",
     "Sure Shot,"+PISTOL+",5,1,"+MOD_TYPE_STATUS_CHANCE+",0.025,D,2,None,false",
     "Sweeping Serration,"+SHOTGUN+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.2,~,6,None,false",
     "Tactical Pump,"+SHOTGUN+",5,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,false",
@@ -453,10 +453,10 @@ public static final String[] baseModDB = {
     "Thunderbolt,"+RIFLE+",0,1,"+MOD_TYPE_FLAT_DAMAGE+",2.0,V,9,None,false",
     "Toxic Barrage,"+SHOTGUN+",3,2,"+MOD_TYPE_TOXIN_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
     "Toxic Sequence,"+PISTOL+",3,1,"+MOD_TYPE_STATUS_DURATION+",0.5,D,4,Acrid,false",
-    "Trick Mag,"+PISTOL+",5,1,"+MOD_TYPE_AMMO_CAP+",0.15,~,2,None,false",
+    "Trick Mag,"+PISTOL+",5,1,"+MOD_TYPE_AMMO_CAP+",0.15,~,2,None,true",
     "Vicious Spread,"+SHOTGUN+",5,2,"+MOD_TYPE_DAMAGE_BONUS+","+MOD_TYPE_SPREAD+",0.15,0.1,V,4,None,false",
     "Vile Acceleration,"+RIFLE+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_DAMAGE_BONUS+",0.15,-0.025,V,4,None,false",
-    "Vile Precision,"+RIFLE+",5,2,"+MOD_TYPE_RECOIL+","+MOD_TYPE_FIRE_RATE+",-0.1,-0.06,~,6,None,false",
+    "Vile Precision,"+RIFLE+",5,2,"+MOD_TYPE_RECOIL+","+MOD_TYPE_FIRE_RATE+",-0.1,-0.06,~,6,None,true",
     "Vital Sense,"+RIFLE+",5,1,"+MOD_TYPE_CRIT_MULTIPLIER+",0.2,V,4,None,false",
     "Wildfire,"+RIFLE+",3,2,"+MOD_TYPE_FIRE_DAMAGE+","+MOD_TYPE_MAG_CAP+",0.15,0.05,V,6,None,false",
     "Depleted Reload,"+RIFLE+",5,2,"+MOD_TYPE_MAG_CAP+","+MOD_TYPE_RELOAD_SPEED+",-0.1,0.08,~,2,None,false",
@@ -465,6 +465,8 @@ public static final String[] baseModDB = {
 		"Vigilante Fervor,"+RIFLE+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_VIGILANTE+",0.075,0,V,4,None,false",
 		"Vigilante Armaments,"+SHOTGUN+",5,2,"+MOD_TYPE_MULTISHOT+","+MOD_TYPE_VIGILANTE+",0.1,0,~,4,None,false",
 		"Vigilante Fervor,"+SHOTGUN+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_VIGILANTE+",0.075,0,V,4,None,false",
+		"Vigilante Supplies,"+RIFLE+",5,1,"+MOD_TYPE_VIGILANTE+",0.0,~,4,None,true",
+		"Vigilante Supplies,"+SHOTGUN+",5,1,"+MOD_TYPE_VIGILANTE+",0.0,~,4,None,true",
 		"Primed Quickdraw,"+PISTOL+",10,1,"+MOD_TYPE_RELOAD_SPEED+",0.08,~,2,None,false",
 		"Primed Slip Magazine,"+PISTOL+",10,1,"+MOD_TYPE_MAG_CAP+",0.05,~,4,None,false",
 		"Auger Pact,"+PISTOL+",5,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,2,None,false",
@@ -488,7 +490,7 @@ public static final String[] baseModDB = {
     "Primed Pressure Point,"+MELEE+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
     "Primed Reach,"+MELEE+",10,1,"+MOD_TYPE_RANGE+",0.15,V,4,None,false",
     "Organ Shatter,"+MELEE+",5,1,"+MOD_TYPE_CRIT_MULTIPLIER+",0.15,V,4,None,false",
-    "Blood Rush,"+MELEE+",10,1,"+MOD_TYPE_COMBO_CRIT+",0.055,V,4,None,false",
+    "Blood Rush,"+MELEE+",10,1,"+MOD_TYPE_COMBO_CRIT+",0.05454545,V,4,None,false",
     "Weeping Wounds,"+MELEE+",5,1,"+MOD_TYPE_COMBO_STATUS+",0.0667,V,4,None,false",
     "Drifting Contact,"+MELEE+",3,2,"+MOD_TYPE_COMBO_DURATION+","+MOD_TYPE_STATUS_CHANCE+",0.025,0.1,D,2,None,false",
     "Condition Overload,"+MELEE+",5,1,"+MOD_TYPE_CONDITION_OVERLOAD+",0.2,V,10,None,false",
@@ -612,7 +614,7 @@ public static final String[] maximizerModDB = {
 "Primed Pressure Point,"+MELEE+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
 "Primed Reach,"+MELEE+",10,1,Range,0.15,V,4,None,false",
 "Organ Shatter,"+MELEE+",5,1,"+MOD_TYPE_CRIT_MULTIPLIER+",0.15,V,4,None,false",
-"Blood Rush,"+MELEE+",10,1,"+MOD_TYPE_COMBO_CRIT+",0.055,V,4,None,false",
+"Blood Rush,"+MELEE+",10,1,"+MOD_TYPE_COMBO_CRIT+",0.05454545,V,4,None,false",
 "Weeping Wounds,"+MELEE+",5,1,"+MOD_TYPE_COMBO_STATUS+",0.0667,V,4,None,false",
 "Drifting Contact,"+MELEE+",3,2,"+MOD_TYPE_COMBO_DURATION+","+MOD_TYPE_STATUS_CHANCE+",0.025,0.1,D,2,None,false",
 "Condition Overload,"+MELEE+",5,1,"+MOD_TYPE_DAMAGE_BONUS+"PerStatus,0.2,V,10,None,false",
@@ -922,12 +924,17 @@ PISTOL+","+FULL_AUTO+","+EX_GAS_WEAPON_DAMAGE+",Cyanex (Primary),0,0,Blade and W
 PISTOL+","+FULL_AUTO+","+ELECTRIC_WEAPON_DAMAGE+",Quatz (Auto),0.0,0,Blade and Whip,11,9,2,7,15,72,0,2.7,13,1.5,27,1,0,null,null,null,null,0,0,0,0",
 PISTOL+","+BURST+","+ELECTRIC_WEAPON_DAMAGE+",Quatz (Burst),0.0,4,Blade and Whip,11,9,2,7,10,72,0,2.7,27,2.5,19,1,0,null,null,null,null,0,0,0,0",
 RIFLE+","+AUTOBOW+","+PHYSICAL_WEAPON_DAMAGE+",Zhuge Prime,0.0,0,Blade and Whip,0.0,21.2,26,42.3,5.5,30,540,3,26,2,30,1,1,null,null,null,null,0,0,0,0",
-SHOTGUN+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Acceltra,0.0,0,Blade and Whip,0.0,35,0,0,12,96,0,2,32,2.8,6,1,0,null,null,null,null,0,0,35.2,8.8"
+SHOTGUN+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Acceltra,0.0,0,Blade and Whip,0.0,35,0,0,12,96,0,2,32,2.8,6,1,0,null,null,null,null,0,0,35.2,8.8",
+MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Dual Ether,0.0,0,Dual Swords,0.0,27,27,126,1,0,0,0.0,20,2,28,0,0,null,null,null,null,0,0,0,0"
 };
 
 public static final String[] stances = {
 "Shimmering Blight;Polearm;"
-+"Slashing Wind:1.0,1.0,00000000000000,1:1.0,2.0,00000000000000,2:0.0,2.0,00000000000000,2;"
++"Slashing Wind:1.0,1.0,00000000000000,1:1.0,2.0,00000000000000,2:0.0,2.0,00000000000000,2;",
+"Carving Mantis;Dual Swords;"
++ "Rapid Incisions:0.737,2.0,00000000000000,2.0:0.166,1.0,10000000000000,1.0:0.612,3.0,00000000000010,3.0:0.614,3.0,00000000100000,3.0:0.0,3.0,00000000000000,3.0:0.455,3.0,10000000000000,3.0:0.774,2.0,00000000000000,2.0:1.026,2.0,10000000000000,2.0:;"
++ "Ambush Predator:0.5,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.1,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.1,1.0,00000000000000,1.0:0.5,2.0,00000000100000,2.0:0.5,3.0,00000000000000,3.0:;"
++ "Biting Mandibles:1.25,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.9,2.0,00000000100000,2.0:0.3,2.0,10000000000000,2.0:0.7,4.0,00000000000010,4.0:;"
 };
 
 public static final String[] rifleDispositions = {
