@@ -1191,14 +1191,20 @@ public class Main {
 		} catch (Exception e) {
 		}
 
+		//Temporary damage type for explosive weapons
+		String dtype = damageType;
+		if(damageType.split(" ").length > 1) {
+			dtype = damageType.split(" ")[1];
+		}
+		
 		// Mutalist Quanta: If innate heat, the innate element combines before M.
 		// Quanta's added electric
-		if (damageType.equals("Fire")) {
-			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
-				elements.add(damageType);
+		if (dtype.equals("Fire")){
+			if (!elements.contains(dtype) && selectedWeapon.getBaseDamage() > 0)
+				elements.add(dtype);
 
-			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
-				elements2.add(damageType);
+			if (!elements2.contains(dtype) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				elements2.add(dtype);
 		}
 
 		// Mutalist Quanta: If NOT hitscan, add element to be combined
@@ -1216,12 +1222,12 @@ public class Main {
 			}
 		}
 
-		if (!damageType.equals("Fire")) {
-			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
-				elements.add(damageType);
+		if (!dtype.equals("Fire")) {
+			if (!elements.contains(dtype) && selectedWeapon.getBaseDamage() > 0)
+				elements.add(dtype);
 
-			if (!elements2.contains(damageType) && selectedWeapon.getExplosiveBaseDamage() > 0)
-				elements2.add(damageType);
+			if (!elements2.contains(dtype) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				elements2.add(dtype);
 		}
 
 		// Combine elements
@@ -1233,42 +1239,42 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
 					blastDamageMods.add(globalFire + globalIce);
-					if (damageType.equals("Fire") || damageType.equals("Ice"))
+					if (dtype.equals("Fire") || dtype.equals("Ice"))
 						blastDamageMods.add(1.0);
 					fire.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements.add("Corrosive");
 					corrosiveDamageMods.add(globalElectric + globalToxin);
-					if (damageType.equals("Electric") || damageType.equals("Toxin"))
+					if (dtype.equals("Electric") || dtype.equals("Toxin"))
 						corrosiveDamageMods.add(1.0);
 					electric.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements.add("Gas");
 					gasDamageMods.add(globalFire + globalToxin);
-					if (damageType.equals("Fire") || damageType.equals("Toxin"))
+					if (dtype.equals("Fire") || dtype.equals("Toxin"))
 						gasDamageMods.add(1.0);
 					fire.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements.add("Magnetic");
 					magneticDamageMods.add(globalElectric + globalIce);
-					if (damageType.equals("Electric") || damageType.equals("Ice"))
+					if (dtype.equals("Electric") || dtype.equals("Ice"))
 						magneticDamageMods.add(1.0);
 					electric.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements.add("Radiation");
 					radiationDamageMods.add(globalFire + globalElectric);
-					if (damageType.equals("Fire") || damageType.equals("Electric"))
+					if (dtype.equals("Fire") || dtype.equals("Electric"))
 						radiationDamageMods.add(1.0);
 					fire.base = 0.0;
 					electric.base = 0.0;
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements.add("Viral");
 					viralDamageMods.add(globalToxin + globalIce);
-					if (damageType.equals("Toxin") || damageType.equals("Ice"))
+					if (dtype.equals("Toxin") || dtype.equals("Ice"))
 						viralDamageMods.add(1.0);
 					toxin.base = 0.0;
 					ice.base = 0.0;
@@ -1308,8 +1314,7 @@ public class Main {
 			iceDamageMods.add(globalIce);
 		}
 
-		// Mutalist Quanta note: Only projectile weapons cause explosions, so we know it
-		// will combine (already added correctly from previous step).
+		// Mutalist Quanta note: Only projectile weapons cause explosions, so we know it will combine (already added correctly from previous step).
 
 		// Combine elements for the explosion
 		for (int i = 0; i < elements2.size() - 1; i++) {
@@ -1320,42 +1325,42 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements2.add("Blast");
 					explosiveBlastDamageMods.add(globalFire + globalIce);
-					if (damageType.equals("Fire") || damageType.equals("Ice"))
+					if (dtype.equals("Fire") || dtype.equals("Ice"))
 						explosiveBlastDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveIce.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements2.add("Corrosive");
 					explosiveCorrosiveDamageMods.add(globalElectric + globalToxin);
-					if (damageType.equals("Electric") || damageType.equals("Toxin"))
+					if (dtype.equals("Electric") || dtype.equals("Toxin"))
 						explosiveCorrosiveDamageMods.add(1.0);
 					explosiveElectric.base = 0.0;
 					explosiveToxin.base = 0.0;
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements2.add("Gas");
 					explosiveGasDamageMods.add(globalFire + globalToxin);
-					if (damageType.equals("Fire") || damageType.equals("Toxin"))
+					if (dtype.equals("Fire") || dtype.equals("Toxin"))
 						explosiveGasDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveToxin.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements2.add("Magnetic");
 					explosiveMagneticDamageMods.add(globalElectric + globalIce);
-					if (damageType.equals("Electric") || damageType.equals("Ice"))
+					if (dtype.equals("Electric") || dtype.equals("Ice"))
 						explosiveMagneticDamageMods.add(1.0);
 					explosiveElectric.base = 0.0;
 					explosiveIce.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements2.add("Radiation");
 					explosiveRadiationDamageMods.add(globalFire + globalElectric);
-					if (damageType.equals("Fire") || damageType.equals("Electric"))
+					if (dtype.equals("Fire") || dtype.equals("Electric"))
 						explosiveRadiationDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveElectric.base = 0.0;
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements2.add("Viral");
 					explosiveViralDamageMods.add(globalToxin + globalIce);
-					if (damageType.equals("Toxin") || damageType.equals("Ice"))
+					if (dtype.equals("Toxin") || dtype.equals("Ice"))
 						explosiveViralDamageMods.add(1.0);
 					explosiveToxin.base = 0.0;
 					explosiveIce.base = 0.0;
