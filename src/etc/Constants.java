@@ -169,7 +169,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.12.2";
+  public static final String APP_VERSION = "v0.12.3";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -362,7 +362,7 @@ public static final String[] baseModDB = {
     "Primed Expel Corrupted,"+PISTOL+",10,1,"+MOD_TYPE_CORRUPTED_DAMAGE+",0.05,V,4,None,false",
     "Primed Expel Infested,"+PISTOL+",10,1,"+MOD_TYPE_INFESTED_DAMAGE+",0.05,V,4,None,false",
     "Fanged Fusillade,"+RIFLE+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.2,~,6,None,false",
-    "Fast Hands,"+RIFLE+",5,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,true",
+    "Fast Hands,"+RIFLE+",5,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,false",
     "Firestorm,"+RIFLE+",3,1,"+MOD_TYPE_MISC_DAMAGE+",0.0,V,6,None,false",
     "Flechette,"+SHOTGUN+",5,1,"+MOD_TYPE_PUNCTURE_DAMAGE+",0.05,~,4,None,false",
     "Frail Momentum,"+SHOTGUN+",5,2,"+MOD_TYPE_FIRE_RATE+","+MOD_TYPE_DAMAGE_BONUS+",0.15,-0.025,V,4,None,false",
@@ -404,7 +404,7 @@ public static final String[] baseModDB = {
     "Point Blank,"+SHOTGUN+",5,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
     "Point Strike,"+RIFLE+",5,1,"+MOD_TYPE_CRIT_CHANCE+",0.25,V,4,None,false",
     "Primed Chamber,"+RIFLE+",3,1,"+MOD_TYPE_FIRST_SHOT_DAMAGE+",0.25,V,4,None,false",
-    "Primed Fast Hands,"+RIFLE+",10,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,true",
+    "Primed Fast Hands,"+RIFLE+",10,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,false",
     "Primed Heated Charge,"+PISTOL+",10,1,"+MOD_TYPE_FIRE_DAMAGE+",0.15,~,6,None,false",
     "Primed Pistol Gambit,"+PISTOL+",10,1,"+MOD_TYPE_CRIT_CHANCE+",0.17,V,2,None,false",
     "Primed Point Blank,"+SHOTGUN+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
@@ -578,7 +578,7 @@ public static final String[] maximizerModDB = {
 "Pistol Pestilence,"+PISTOL+",3,2,"+MOD_TYPE_TOXIN_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
 "Point Strike,"+RIFLE+",5,1,"+MOD_TYPE_CRIT_CHANCE+",0.25,V,4,None,false",
 "Primed Cryo Rounds,"+RIFLE+",10,1,"+MOD_TYPE_ICE_DAMAGE+",0.15,D,6,None,false",
-"Primed Fast Hands,"+RIFLE+",10,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,true",
+"Primed Fast Hands,"+RIFLE+",10,1,"+MOD_TYPE_RELOAD_SPEED+",0.05,~,2,None,false",
 "Primed Heated Charge,"+PISTOL+",10,1,"+MOD_TYPE_FIRE_DAMAGE+",0.15,~,6,None,false",
 "Primed Pistol Gambit,"+PISTOL+",10,1,"+MOD_TYPE_CRIT_CHANCE+",0.17,V,2,None,false",
 "Primed Point Blank,"+SHOTGUN+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
@@ -683,7 +683,7 @@ SHOTGUN+","+SEMI_AUTO+","+RADIATION_WEAPON_DAMAGE+",Arca Plasmor,0,0,DEPRECIATED
 PISTOL+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Arca Scisco,0,0,DEPRECIATED,0,0,36,24,4.67,36,288,2.2,18,1.6,26,1,1",
 RIFLE+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Argonak (Full-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,6,43,540,2.4,9,1.5,27,1,1",
 RIFLE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Argonak (Semi-auto),0.0,0,DEPRECIATED,0.0,24.5,6.3,26.2,4.33,43,473,2.4,27,2.3,19,1,1",
-SHOTGUN+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Astilla,0,0,Blade and Whip,190,25.9,15.4,28.7,4.33,16,112,2,17,1.9,33,1,1,null,null,null,null,0,44.4,26.4,49.2",
+SHOTGUN+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Astilla,0,0,Blade and Whip,190,70,0,0,4.33,16,112,2,17,1.9,33,1,1,null,null,null,null,0,0,42,78",
 PISTOL+","+CONTINUOUS+","+FIRE_WEAPON_DAMAGE+",Atomos,0,0,DEPRECIATED,29,0,0,0,8,70,300,2,15,1.7,21,1,1",
 RIFLE+","+AUTOBOW+","+PHYSICAL_WEAPON_DAMAGE+",Attica,0,0,DEPRECIATED,0,4,60,16,3.67,20,540,2.8,25,3,10,1,1",
 PISTOL+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Azima,0,0,DEPRECIATED,0,2,5,13,10,75,525,1.4,16,2,16,1,1",
@@ -930,16 +930,21 @@ RIFLE+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Baza Prime,0.0,0,Blade and Whip
 RIFLE+","+FULL_AUTO+","+ICE_WEAPON_DAMAGE+",Quellor,0.0,0,Blade and Whip,16,8,22,12,6,300,0,4,12,1.6,38,1,0,null,null,null,null,0,0,0,0",
 
 //Melee
-MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Dual Ether,0.0,0,Dual Swords,0.0,27,27,126,1,0,0,0.0,20,2,28,0,0,null,null,null,null,0,0,0,0"
+MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Dual Ether,0.0,0,Dual Swords,0.0,27,27,126,1,0,0,0.0,20,2,28,0,0,null,null,null,null,0,0,0,0",
+MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Dual Keres,0.0,0,Dual Swords,0.0,13.8,34.5,66.7,1.25,0,0,0.0,28,2.6,14,0,0,null,null,null,null,0,0,0,0",
+MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Nami Skyla Prime,0.0,0,Dual Swords,0.0,18,36,126,1.33,0,0,0.0,22,2,34,0,0,null,null,null,null,0,0,0,0"
 };
 
 public static final String[] stances = {
-"Shimmering Blight;Polearm;"
-+"Slashing Wind:1.0,1.0,00000000000000,1:1.0,2.0,00000000000000,2:0.0,2.0,00000000000000,2;",
 "Carving Mantis;Dual Swords;"
 + "Rapid Incisions:0.737,2.0,00000000000000,2.0:0.166,1.0,10000000000000,1.0:0.612,3.0,00000000000010,3.0:0.614,3.0,00000000100000,3.0:0.0,3.0,00000000000000,3.0:0.455,3.0,10000000000000,3.0:0.774,2.0,00000000000000,2.0:1.026,2.0,10000000000000,2.0:;"
 + "Ambush Predator:0.5,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.1,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.5,1.0,00000000000000,1.0:0.1,1.0,00000000000000,1.0:0.5,2.0,00000000100000,2.0:0.5,3.0,00000000000000,3.0:;"
-+ "Biting Mandibles:1.25,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.9,2.0,00000000100000,2.0:0.3,2.0,10000000000000,2.0:0.7,4.0,00000000000010,4.0:;"
++ "Biting Mandibles:1.25,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.0,1.0,00000000000000,1.0:0.9,2.0,00000000100000,2.0:0.3,2.0,10000000000000,2.0:0.7,4.0,00000000000010,4.0:;",
+"Swirling Tiger;Dual Swords;"
++ "Winding Claws:0.14,1.0,00000000000000,1.0:0.09,1.0,00000000000000,1.0:0.09,1.0,00000000000000,1.0:0.14,1.0,00000000000000,1.0:0.05,1.0,00000000000000,1.0:0.15,1.0,10000000000000,1.0:0.25,3.0,10000000000000,3.0:0.67,1.0,00000000100000,1.0:0.07,3.0,00000000000010,3.0:0.33,1.0,00000000000000,1.0:;Twin Fang:;",
+"Crossing Snakes;Dual Swords;"
++ "Twin Fang:0.55,1.0,00000000100000,1.0:0.0,1.0,00000000000010,1.0:0.48,1.0,10000000000000,1.0:0.37,1.0,10000000000000,1.0:0.82,1.0,00000000000010,1.0:0.14,1.0,00000000000000,1.0:;"
+
 };
 
 public static final String[] rifleDispositions = {
