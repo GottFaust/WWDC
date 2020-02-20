@@ -593,7 +593,7 @@ public class Main {
 		mainFrame.setTitle(Constants.APP_TITLE + " " + Constants.APP_VERSION);
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		smartMax.setSelected(true);
+		smartMax.setSelected(false);
 
 		// Loading screen
 		progressBar = new JProgressBar(0, 100);
@@ -849,7 +849,7 @@ public class Main {
 		forcedImpactProcs = 0;
 		forcedPunctureProcs = 0;
 		forcedKnockdownProcs = 0;
-		COMult = 1;
+		COMult = 0;
 		finalComboCrit = 0.0;
 	}
 
@@ -1809,6 +1809,8 @@ public class Main {
 			COMult += (1 - Math.pow((1 - radiationProcRate * finalStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration)) * conditionOverload;
 			COMult += (1 - Math.pow((1 - magneticProcRate * finalStatusChance), (finalFireRate / avgDelay) * 4 * finalStatusDuration)) * conditionOverload;
 		}
+		//adjust COMult for base damage mods
+		COMult = (COMult + finalDamageMult) / (finalDamageMult);
 
 		averageProjectileCount = finalProjectileCount;
 		if (weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) { // kohm's average projectile count
