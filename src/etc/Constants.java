@@ -925,14 +925,12 @@ PISTOL+","+FULL_AUTO_RAMP_UP+","+PHYSICAL_WEAPON_DAMAGE+",Aksomati Prime,0.0,0,B
 RIFLE+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Baza Prime,0.0,0,Blade and Whip,0.0,5.8,6.7,3.5,16.67,60,800,1.1,28,3,14,1,1,null,null,null,null,0,0,0,0",
 RIFLE+","+FULL_AUTO+","+ICE_WEAPON_DAMAGE+",Quellor,0.0,0,Blade and Whip,16,8,22,12,6,300,0,4,12,1.6,38,1,0,null,null,null,null,0,0,0,0",
 RIFLE+","+SEMI_AUTO+","+FIRE_WEAPON_DAMAGE+",Shedu,0.0,0,Blade and Whip,71,0,0,0,2.5,7,0,1,25,2.1,23,1,0,null,null,null,null,87,0,0,0,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+ELECTRIC_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
-
-
-//SHOTGUN+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Astilla,0,0,Blade and Whip,190,70,0,0,4.33,16,112,2,17,1.9,33,1,1,null,null,null,null,0,0,42,78",
-//RIFLE+","+CHARGE+","+EX_FIRE_WEAPON_DAMAGE+",Javlok,0.3,0,Blade and Whip,230,0,0,0,3.33,6,300,1.9,20,2,25,1,1,null,null,null,null,50,0,0,0",
-//RIFLE+","+SNIPER+","+EX_VIRAL_WEAPON_DAMAGE+",Komorex (High Zoom),0.0,0,Blade and Whip,0,17.4,73,83.6,6,20,5,3,16,2.1,35,1,0,Scoped CC,0,0,0,66,0,0,0",
-//PISTOL+","+FULL_AUTO+","+EX_GAS_WEAPON_DAMAGE+",Cyanex (Primary),0,0,Blade and Whip,0,50,0,0,4.67,11,999,2.2,8,1.4,32,1,0.5,null,null,null,null,41,0,0,0",
-//RIFLE+","+FULL_AUTO+","+EX_PHYSICAL_WEAPON_DAMAGE+",Acceltra,0.0,0,Blade and Whip,0.0,35,0,0,12,96,0,2,32,2.8,6,1,0,null,null,null,null,0,0,35.2,8.8",
-//RIFLE+","+FULL_AUTO+","+EX_CORROSIVE_WEAPON_DAMAGE+",Scourge,0,0,Blade and Whip,70,0,0,0,2.67,40,100,0.6,2,1.5,30,1,1,null,null,null,null,55,0,0,0",
+SHOTGUN+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Astilla,0.0,0,Blade and Whip,0.0,70,0,0,4.33,16,0,2,17,1.9,33,1,0,null,null,null,null,0.0,0,42,78,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+PHYSICAL_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
+RIFLE+","+CHARGE+","+FIRE_WEAPON_DAMAGE+",Javlok,0.3,0,Blade and Whip,160,0,0,0,3.33,6,0,1.9,20,2,25,1,0,null,null,null,null,120,0,0,0,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+FIRE_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
+RIFLE+","+SNIPER+","+PHYSICAL_WEAPON_DAMAGE+",Komorex,0.3,0,Blade and Whip,0.0,17.4,73,83.6,1.5,20,5,3,16,2.1,35,1,0,Scoped CC,0,0,0,66,0,0,0,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+VIRAL_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
+PISTOL+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Cyanex,0.3,0,Blade and Whip,0.0,50,0,0,4.67,11,5,2.2,8,1.4,32,1,0,null,null,null,null,41,0,0,0,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+GAS_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
+RIFLE+","+FULL_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Acceltra,0.3,0,Blade and Whip,0.0,35,0,0,12,48,5,2,32,2.8,6,1,0,null,null,null,null,0.0,0,35.2,8.8,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+PHYSICAL_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
+RIFLE+","+FULL_AUTO+","+CORROSIVE_WEAPON_DAMAGE+",Scourge,0.3,0,Blade and Whip,70,0,0,0,2.67,40,5,2.5,2,1.5,30,1,0,null,null,null,null,55,0,0,0,"+PHYSICAL_WEAPON_DAMAGE+",0.0,"+CORROSIVE_WEAPON_DAMAGE+","+PHYSICAL_WEAPON_DAMAGE+",0.0",
 
 //Melee
 MELEE+","+SEMI_AUTO+","+PHYSICAL_WEAPON_DAMAGE+",Dual Ether,0.0,0,Dual Swords,0.0,27,27,126,1,0,0,0.0,20,2,28,0,0,null,null,null,null,0,0,0,0",
