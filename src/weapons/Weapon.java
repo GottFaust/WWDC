@@ -12,15 +12,10 @@ public class Weapon implements Comparable {
 	/** Weapon parameters */
 	public String mode;
 	public String type;
-	public String damageType;
 	public String name;
 	public String chargeTime;
 	public String burstCount;
 	public String meleeType;
-	public String damage;
-	public String impact;
-	public String puncture;
-	public String slash;
 	public String fireRate;
 	public String magSize;
 	public String combo;
@@ -35,7 +30,18 @@ public class Weapon implements Comparable {
 	public String scope2;
 	public String scope3;
 	
+	public String damageType;
+	public String damageType2;
+	public String damage;
+	public String damage2;
+	public String impact;
+	public String puncture;
+	public String slash;
+	
+	public String explosiveType1;
+	public String explosiveType2;
 	public String explosiveDamage;
+	public String explosiveDamage2;
 	public String explosiveImpact;
 	public String explosivePuncture;
 	public String explosiveSlash;
@@ -86,6 +92,23 @@ public class Weapon implements Comparable {
 			explosivePuncture = split[26];
 			explosiveSlash = split[27];
 		}
+		if (split.length > 28) { // multi-element weapons
+			damageType2 = split[28];
+			damage2 = split[29];
+			explosiveType1 = split[30];
+			explosiveType2 = split[31];
+			explosiveDamage2 = split[32];
+		}
+		
+		if(damageType2 == null || damageType2.equals("")) {
+			damageType2 = Constants.PHYSICAL_WEAPON_DAMAGE;
+		}
+		if(explosiveType1 == null || explosiveType1.equals("")) {
+			explosiveType1 = Constants.PHYSICAL_WEAPON_DAMAGE;
+		}
+		if(explosiveType2 == null || explosiveType2.equals("")) {
+			explosiveType2 = Constants.PHYSICAL_WEAPON_DAMAGE;
+		}
 	}
 
 	/**
@@ -124,6 +147,12 @@ public class Weapon implements Comparable {
 		weaponString += "," + explosiveImpact;
 		weaponString += "," + explosivePuncture;
 		weaponString += "," + explosiveSlash;
+		
+		weaponString += "," + damageType2;
+		weaponString += "," + damage2;
+		weaponString += "," + explosiveType1;
+		weaponString += "," + explosiveType2;
+		weaponString += "," + explosiveDamage2;
 
 		return weaponString;
 	}

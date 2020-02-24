@@ -150,7 +150,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     this.add(leftPanel);
     this.add(rightPanel);
     
-    attributesPanel.damageTypeBox.addActionListener(this);
+    //attributesPanel.damageTypeBox.addActionListener(this);
     weaponTypeBox.addActionListener(this);
     attributesPanel.weaponModeBox.addActionListener(this);
     addUpdateButton.addActionListener(this);
@@ -227,10 +227,17 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     scope2 = selectedWeapon.scope2;
     scope3 = selectedWeapon.scope3;
     
-    attributesPanel.explosiveDamageField.setText(selectedWeapon.explosiveDamage);
     attributesPanel.explosiveImpactField.setText(selectedWeapon.explosiveImpact);
     attributesPanel.explosivePunctureField.setText(selectedWeapon.explosivePuncture);
     attributesPanel.explosiveSlashField.setText(selectedWeapon.explosiveSlash);
+    
+    attributesPanel.damageType2Box.setSelectedItem(selectedWeapon.damageType2);
+    attributesPanel.explosiveDamageType1Box.setSelectedItem(selectedWeapon.explosiveType1);
+    attributesPanel.explosiveDamageType2Box.setSelectedItem(selectedWeapon.explosiveType2);
+    attributesPanel.damage2Field.setText(selectedWeapon.damage2);
+    attributesPanel.explosiveDamage1Field.setText(selectedWeapon.explosiveDamage);
+    attributesPanel.explosiveDamage2Field.setText(selectedWeapon.explosiveDamage2);
+    
   }
   
 	protected void updateWeaponModeOptions() {
@@ -238,7 +245,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(false);
 			attributesPanel.burstCountPanel.setVisible(true);
 			attributesPanel.drainPanel.setVisible(false);
-			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(false);
 			attributesPanel.scopePanel.setVisible(false);
@@ -246,7 +252,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(true);
 			attributesPanel.burstCountPanel.setVisible(false);
 			attributesPanel.drainPanel.setVisible(false);
-			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(false);
 			attributesPanel.scopePanel.setVisible(false);
@@ -254,7 +259,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(false);
 			attributesPanel.burstCountPanel.setVisible(false);
 			attributesPanel.drainPanel.setVisible(true);
-			attributesPanel.damageLabel.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.CONTINUOUS_DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(false);
 			attributesPanel.scopePanel.setVisible(false);
@@ -262,7 +266,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(false);
 			attributesPanel.burstCountPanel.setVisible(false);
 			attributesPanel.drainPanel.setVisible(false);
-			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(true);
 			attributesPanel.scopePanel.setVisible(true);
@@ -270,7 +273,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(true);
 			attributesPanel.burstCountPanel.setVisible(false);
 			attributesPanel.drainPanel.setVisible(false);
-			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(true);
 			attributesPanel.scopePanel.setVisible(true);
@@ -278,7 +280,6 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.chargeTimePanel.setVisible(false);
 			attributesPanel.burstCountPanel.setVisible(false);
 			attributesPanel.drainPanel.setVisible(false);
-			attributesPanel.damageLabel.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
 			attributesPanel.comboPanel.setVisible(false);
 			attributesPanel.scopePanel.setVisible(false);
@@ -355,10 +356,16 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 		scope3 = attributesPanel.scopeStrengthField.getText();
 	}
 
-	String explosiveDamage = attributesPanel.explosiveDamageField.getText();
+	String explosiveDamage1 = attributesPanel.explosiveDamage1Field.getText();
 	String explosiveImpact = attributesPanel.explosiveImpactField.getText();
 	String explosivePuncture = attributesPanel.explosivePunctureField.getText();
 	String explosiveSlash = attributesPanel.explosiveSlashField.getText();
+	
+	String explosiveDamage2 = attributesPanel.explosiveDamage2Field.getText();
+	String damageType2 = (String)attributesPanel.damageType2Box.getSelectedItem();
+	String explosiveDamageType1 = (String)attributesPanel.explosiveDamageType1Box.getSelectedItem();
+	String explosiveDamageType2 = (String)attributesPanel.explosiveDamageType2Box.getSelectedItem();
+    String damage2 = attributesPanel.damage2Field.getText();
     
     if(name.equals("")){
       name = "Unnamed Weapon";
@@ -373,6 +380,11 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     }catch(Exception ex){
       damage = "0.0";
     }
+    try{
+        double testDouble = Double.parseDouble(damage2);
+      }catch(Exception ex){
+        damage2 = "0.0";
+      }
     try{
       double testDouble = Double.parseDouble(impact);
     }catch(Exception ex){
@@ -441,24 +453,29 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     }
     
     try{
-        double testDouble = Double.parseDouble(explosiveDamage);
+        double testDouble = Double.parseDouble(explosiveDamage1);
       }catch(Exception ex){
-    	  explosiveDamage = "0";
+    	  explosiveDamage1 = "0.0";
       }
     try{
         double testDouble = Double.parseDouble(explosiveImpact);
       }catch(Exception ex){
-    	  explosiveImpact = "0";
+    	  explosiveImpact = "0.0";
       }
     try{
         double testDouble = Double.parseDouble(explosivePuncture);
       }catch(Exception ex){
-    	  explosivePuncture = "0";
+    	  explosivePuncture = "0.0";
       }
     try{
         double testDouble = Double.parseDouble(explosiveSlash);
       }catch(Exception ex){
-    	  explosiveSlash = "0";
+    	  explosiveSlash = "0.0";
+      }
+    try{
+        double testDouble = Double.parseDouble(explosiveDamage2);
+      }catch(Exception ex){
+    	  explosiveDamage2 = "0.0";
       }
     
     String weaponString = type;
@@ -485,10 +502,16 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     weaponString += ","+scope1;
     weaponString += ","+scope2;
     weaponString += ","+scope3;
-    weaponString += ","+explosiveDamage;
+    weaponString += ","+explosiveDamage1;
     weaponString += ","+explosiveImpact;
     weaponString += ","+explosivePuncture;
     weaponString += ","+explosiveSlash;
+    weaponString += ","+damageType2;
+    weaponString += ","+damage2;
+    weaponString += ","+explosiveDamageType1;
+    weaponString += ","+explosiveDamageType2;
+    weaponString += ","+explosiveDamage2;
+    
     return weaponString;
   }
 
@@ -551,6 +574,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
     } else if (e.getSource().equals(attributesPanel.weaponModeBox) || e.getSource().equals(weaponTypeBox)){
     	updateWeaponModeOptions();
     	Main.weaponManagerFrame.pack();
+    	/*
     } else if (e.getSource().equals(attributesPanel.damageTypeBox)) {
 		if (attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.PHYSICAL_WEAPON_DAMAGE) || attributesPanel.damageTypeBox.getSelectedItem().equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)) {
 			attributesPanel.damagePanel.setVisible(false);
@@ -584,6 +608,7 @@ public class WeaponManagerPanel extends JPanel implements ActionListener, ListSe
 			attributesPanel.explosivePuncturePanel.setVisible(false);
 			attributesPanel.explosiveSlashPanel.setVisible(false);
 		}
+		*/
 		
     	Main.weaponManagerFrame.pack();
     }

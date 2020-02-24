@@ -183,6 +183,9 @@ public class Main {
 	public static String weaponName = "";
 	public static String weaponMode = "";
 	protected static String damageType = "";
+	protected static String damage2Type = "";
+	protected static String explosiveDamage1Type = "";
+	protected static String explosiveDamage2Type = "";
 	protected static double chargeTime = 0.0;
 	public static double fireRate = 0.0;
 	protected static double reloadTime = 0.0;
@@ -723,6 +726,9 @@ public class Main {
 		weaponName = "";
 		weaponMode = "";
 		damageType = "";
+		damage2Type = "";
+		explosiveDamage1Type = "";
+		explosiveDamage2Type = "";
 		chargeTime = 0.0;
 		drain = 0;
 		raw.clear();
@@ -886,59 +892,145 @@ public class Main {
 		explosiveImpact.base = selectedWeapon.getExplosiveImpactDamage();
 		explosivePuncture.base = selectedWeapon.getExplosivePunctureDamage();
 		explosiveSlash.base = selectedWeapon.getExplosiveSlashDamage();
+		
+		damage2Type = selectedWeapon.getDamage2Type();
+		explosiveDamage1Type = selectedWeapon.getExplosiveDamage1Type();
+		explosiveDamage2Type = selectedWeapon.getExplosiveDamage2Type();
 
+		
+		
 		switch (damageType) {
 		case Constants.FIRE_WEAPON_DAMAGE:
-		case Constants.EX_FIRE_WEAPON_DAMAGE:
 			fire.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.ICE_WEAPON_DAMAGE:
+			ice.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.ELECTRIC_WEAPON_DAMAGE:
+			electric.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.TOXIN_WEAPON_DAMAGE:
+			toxin.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.BLAST_WEAPON_DAMAGE:
+			blast.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.MAGNETIC_WEAPON_DAMAGE:
+			magnetic.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.GAS_WEAPON_DAMAGE:
+			gas.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.RADIATION_WEAPON_DAMAGE:
+			radiation.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.CORROSIVE_WEAPON_DAMAGE:
+			corrosive.base = selectedWeapon.getBaseDamage();
+			break;
+		case Constants.VIRAL_WEAPON_DAMAGE:
+			viral.base = selectedWeapon.getBaseDamage();
+			break;
+		}
+		
+		switch (damage2Type) {
+		case Constants.FIRE_WEAPON_DAMAGE:
+			fire.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.ICE_WEAPON_DAMAGE:
+			ice.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.ELECTRIC_WEAPON_DAMAGE:
+			electric.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.TOXIN_WEAPON_DAMAGE:
+			toxin.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.BLAST_WEAPON_DAMAGE:
+			blast.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.MAGNETIC_WEAPON_DAMAGE:
+			magnetic.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.GAS_WEAPON_DAMAGE:
+			gas.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.RADIATION_WEAPON_DAMAGE:
+			radiation.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.CORROSIVE_WEAPON_DAMAGE:
+			corrosive.base = selectedWeapon.getBaseDamage2();
+			break;
+		case Constants.VIRAL_WEAPON_DAMAGE:
+			viral.base = selectedWeapon.getBaseDamage2();
+			break;
+		}
+		
+		switch (explosiveDamage1Type) {
+		case Constants.FIRE_WEAPON_DAMAGE:
 			explosiveFire.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.ICE_WEAPON_DAMAGE:
-		case Constants.EX_ICE_WEAPON_DAMAGE:
-			ice.base = selectedWeapon.getBaseDamage();
 			explosiveIce.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.ELECTRIC_WEAPON_DAMAGE:
-		case Constants.EX_ELECTRIC_WEAPON_DAMAGE:
-			electric.base = selectedWeapon.getBaseDamage();
 			explosiveElectric.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.TOXIN_WEAPON_DAMAGE:
-		case Constants.EX_TOXIN_WEAPON_DAMAGE:
-			toxin.base = selectedWeapon.getBaseDamage();
 			explosiveToxin.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.BLAST_WEAPON_DAMAGE:
-		case Constants.EX_BLAST_WEAPON_DAMAGE:
-			blast.base = selectedWeapon.getBaseDamage();
 			explosiveBlast.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.MAGNETIC_WEAPON_DAMAGE:
-		case Constants.EX_MAGNETIC_WEAPON_DAMAGE:
-			magnetic.base = selectedWeapon.getBaseDamage();
 			explosiveMagnetic.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.GAS_WEAPON_DAMAGE:
-		case Constants.EX_GAS_WEAPON_DAMAGE:
-			gas.base = selectedWeapon.getBaseDamage();
 			explosiveGas.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.RADIATION_WEAPON_DAMAGE:
-		case Constants.EX_RADIATION_WEAPON_DAMAGE:
-			radiation.base = selectedWeapon.getBaseDamage();
 			explosiveRadiation.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.CORROSIVE_WEAPON_DAMAGE:
-		case Constants.EX_CORROSIVE_WEAPON_DAMAGE:
-			corrosive.base = selectedWeapon.getBaseDamage();
 			explosiveCorrosive.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		case Constants.VIRAL_WEAPON_DAMAGE:
-		case Constants.EX_VIRAL_WEAPON_DAMAGE:
-			viral.base = selectedWeapon.getBaseDamage();
 			explosiveViral.base = selectedWeapon.getExplosiveBaseDamage();
 			break;
 		}
+		
+		switch (explosiveDamage2Type) {
+		case Constants.FIRE_WEAPON_DAMAGE:
+			explosiveFire.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.ICE_WEAPON_DAMAGE:
+			explosiveIce.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.ELECTRIC_WEAPON_DAMAGE:
+			explosiveElectric.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.TOXIN_WEAPON_DAMAGE:
+			explosiveToxin.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.BLAST_WEAPON_DAMAGE:
+			explosiveBlast.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.MAGNETIC_WEAPON_DAMAGE:
+			explosiveMagnetic.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.GAS_WEAPON_DAMAGE:
+			explosiveGas.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.RADIATION_WEAPON_DAMAGE:
+			explosiveRadiation.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.CORROSIVE_WEAPON_DAMAGE:
+			explosiveCorrosive.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		case Constants.VIRAL_WEAPON_DAMAGE:
+			explosiveViral.base = selectedWeapon.getExplosiveBaseDamage2();
+			break;
+		}
+		
 		raw.base = impact.base + puncture.base + slash.base + fire.base + ice.base + electric.base + toxin.base + blast.base + magnetic.base + gas.base + radiation.base + corrosive.base + viral.base;
 		explosiveRaw.base = explosiveImpact.base + explosivePuncture.base + explosiveSlash.base + explosiveFire.base + explosiveIce.base + explosiveElectric.base + explosiveToxin.base + explosiveBlast.base + explosiveMagnetic.base + explosiveGas.base + explosiveRadiation.base
 				+ explosiveCorrosive.base + explosiveViral.base;
@@ -1190,21 +1282,23 @@ public class Main {
 			mQ3 = Integer.parseInt(selectedWeapon.mQ3Field.getText());
 		} catch (Exception e) {
 		}
-
-		//Temporary damage type for explosive weapons
-		String dtype = damageType;
-		if(damageType.split(" ").length > 1) {
-			dtype = damageType.split(" ")[1];
-		}
 		
-		// Mutalist Quanta: If innate heat, the innate element combines before M.
-		// Quanta's added electric
-		if (dtype.equals("Fire")){
-			if (!elements.contains(dtype) && selectedWeapon.getBaseDamage() > 0)
-				elements.add(dtype);
-
-			if (!elements2.contains(dtype) && selectedWeapon.getExplosiveBaseDamage() > 0)
-				elements2.add(dtype);
+		// Mutalist Quanta: If innate heat, the innate element combines before M.Quanta's added electric
+		if (damageType.equals("Fire")){
+			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
+				elements.add(damageType);
+		}
+		if (damage2Type.equals("Fire")){
+			if (!elements.contains(damage2Type) && selectedWeapon.getBaseDamage2() > 0)
+				elements.add(damage2Type);
+		}
+		if (explosiveDamage1Type.equals("Fire")){
+			if (!elements2.contains(explosiveDamage1Type) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				elements2.add(explosiveDamage1Type);
+		}
+		if (explosiveDamage2Type.equals("Fire")){
+			if (!elements2.contains(explosiveDamage2Type) && selectedWeapon.getExplosiveBaseDamage2() > 0)
+				elements2.add(explosiveDamage2Type);
 		}
 
 		// Mutalist Quanta: If NOT hitscan, add element to be combined
@@ -1222,12 +1316,29 @@ public class Main {
 			}
 		}
 
-		if (!dtype.equals("Fire")) {
-			if (!elements.contains(dtype) && selectedWeapon.getBaseDamage() > 0)
-				elements.add(dtype);
-
-			if (!elements2.contains(dtype) && selectedWeapon.getExplosiveBaseDamage() > 0)
-				elements2.add(dtype);
+		if (!damageType.equals("Fire")){
+			if (!elements.contains(damageType) && selectedWeapon.getBaseDamage() > 0)
+				if(damageType.equals("Ice") || damageType.equals("Toxin") || damageType.equals("Electric")) {
+					elements.add(damageType);
+				}
+		}
+		if (!damage2Type.equals("Fire")){
+			if (!elements.contains(damage2Type) && selectedWeapon.getBaseDamage2() > 0)
+				if(damage2Type.equals("Ice") || damage2Type.equals("Toxin") || damage2Type.equals("Electric")) {
+					elements.add(damage2Type);
+				}
+		}
+		if (!explosiveDamage1Type.equals("Fire")){
+			if (!elements2.contains(explosiveDamage1Type) && selectedWeapon.getExplosiveBaseDamage() > 0)
+				if(explosiveDamage1Type.equals("Ice") || explosiveDamage1Type.equals("Toxin") || explosiveDamage1Type.equals("Electric")) {
+					elements2.add(explosiveDamage1Type);
+				}
+		}
+		if (!explosiveDamage2Type.equals("Fire")){
+			if (!elements2.contains(explosiveDamage2Type) && selectedWeapon.getExplosiveBaseDamage2() > 0)
+				if(explosiveDamage2Type.equals("Ice") || explosiveDamage2Type.equals("Toxin") || explosiveDamage2Type.equals("Electric")) {
+					elements2.add(explosiveDamage2Type);
+				}
 		}
 
 		// Combine elements
@@ -1239,42 +1350,42 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
 					blastDamageMods.add(globalFire + globalIce);
-					if (dtype.equals("Fire") || dtype.equals("Ice"))
+					if (damageType.equals("Fire") || damageType.equals("Ice") || damage2Type.equals("Fire") || damage2Type.equals("Ice"))
 						blastDamageMods.add(1.0);
 					fire.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements.add("Corrosive");
 					corrosiveDamageMods.add(globalElectric + globalToxin);
-					if (dtype.equals("Electric") || dtype.equals("Toxin"))
+					if (damageType.equals("Electric") || damageType.equals("Toxin") || damage2Type.equals("Electric") || damage2Type.equals("Toxin"))
 						corrosiveDamageMods.add(1.0);
 					electric.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements.add("Gas");
 					gasDamageMods.add(globalFire + globalToxin);
-					if (dtype.equals("Fire") || dtype.equals("Toxin"))
+					if (damageType.equals("Fire") || damageType.equals("Toxin") || damage2Type.equals("Fire") || damage2Type.equals("Toxin"))
 						gasDamageMods.add(1.0);
 					fire.base = 0.0;
 					toxin.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements.add("Magnetic");
 					magneticDamageMods.add(globalElectric + globalIce);
-					if (dtype.equals("Electric") || dtype.equals("Ice"))
+					if (damageType.equals("Electric") || damageType.equals("Ice") || damage2Type.equals("Electric") || damage2Type.equals("Ice"))
 						magneticDamageMods.add(1.0);
 					electric.base = 0.0;
 					ice.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements.add("Radiation");
 					radiationDamageMods.add(globalFire + globalElectric);
-					if (dtype.equals("Fire") || dtype.equals("Electric"))
+					if (damageType.equals("Fire") || damageType.equals("Electric") || damage2Type.equals("Fire") || damage2Type.equals("Electric"))
 						radiationDamageMods.add(1.0);
 					fire.base = 0.0;
 					electric.base = 0.0;
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements.add("Viral");
 					viralDamageMods.add(globalToxin + globalIce);
-					if (dtype.equals("Toxin") || dtype.equals("Ice"))
+					if (damageType.equals("Toxin") || damageType.equals("Ice") || damage2Type.equals("Toxin") || damage2Type.equals("Ice"))
 						viralDamageMods.add(1.0);
 					toxin.base = 0.0;
 					ice.base = 0.0;
@@ -1325,42 +1436,42 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements2.add("Blast");
 					explosiveBlastDamageMods.add(globalFire + globalIce);
-					if (dtype.equals("Fire") || dtype.equals("Ice"))
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Ice"))
 						explosiveBlastDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveIce.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements2.add("Corrosive");
 					explosiveCorrosiveDamageMods.add(globalElectric + globalToxin);
-					if (dtype.equals("Electric") || dtype.equals("Toxin"))
+					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Toxin"))
 						explosiveCorrosiveDamageMods.add(1.0);
 					explosiveElectric.base = 0.0;
 					explosiveToxin.base = 0.0;
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements2.add("Gas");
 					explosiveGasDamageMods.add(globalFire + globalToxin);
-					if (dtype.equals("Fire") || dtype.equals("Toxin"))
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Toxin"))
 						explosiveGasDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveToxin.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements2.add("Magnetic");
 					explosiveMagneticDamageMods.add(globalElectric + globalIce);
-					if (dtype.equals("Electric") || dtype.equals("Ice"))
+					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Ice"))
 						explosiveMagneticDamageMods.add(1.0);
 					explosiveElectric.base = 0.0;
 					explosiveIce.base = 0.0;
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements2.add("Radiation");
 					explosiveRadiationDamageMods.add(globalFire + globalElectric);
-					if (dtype.equals("Fire") || dtype.equals("Electric"))
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Electric") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Electric"))
 						explosiveRadiationDamageMods.add(1.0);
 					explosiveFire.base = 0.0;
 					explosiveElectric.base = 0.0;
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements2.add("Viral");
 					explosiveViralDamageMods.add(globalToxin + globalIce);
-					if (dtype.equals("Toxin") || dtype.equals("Ice"))
+					if (explosiveDamage1Type.equals("Toxin") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Toxin") || explosiveDamage2Type.equals("Ice"))
 						explosiveViralDamageMods.add(1.0);
 					explosiveToxin.base = 0.0;
 					explosiveIce.base = 0.0;
@@ -1559,73 +1670,93 @@ public class Main {
 		explosiveSlash.finalBase = Math.max(0, explosiveSlash.finalBase);
 
 		fire.finalBase = fire.base;
-		explosiveFire.finalBase = explosiveFire.base;
 		for (int i = 0; i < fireDamageMods.size(); i++) {
 			fire.finalBase += raw.base * fireDamageMods.get(i);
-			explosiveFire.finalBase += explosiveRaw.base * fireDamageMods.get(i);
+		}
+		explosiveFire.finalBase = explosiveFire.base;
+		for (int i = 0; i < explosiveFireDamageMods.size(); i++) {
+			explosiveFire.finalBase += explosiveRaw.base * explosiveFireDamageMods.get(i);
 		}
 
 		ice.finalBase = ice.base;
-		explosiveIce.finalBase = explosiveIce.base;
 		for (int i = 0; i < iceDamageMods.size(); i++) {
 			ice.finalBase += raw.base * iceDamageMods.get(i);
-			explosiveIce.finalBase += explosiveRaw.base * iceDamageMods.get(i);
+		}
+		explosiveIce.finalBase = explosiveIce.base;
+		for (int i = 0; i < explosiveIceDamageMods.size(); i++) {
+			explosiveIce.finalBase += explosiveRaw.base * explosiveIceDamageMods.get(i);
 		}
 
 		electric.finalBase = electric.base;
-		explosiveElectric.finalBase = explosiveElectric.base;
 		for (int i = 0; i < electricDamageMods.size(); i++) {
 			electric.finalBase += raw.base * electricDamageMods.get(i);
-			explosiveElectric.finalBase += explosiveRaw.base * electricDamageMods.get(i);
+		}
+		explosiveElectric.finalBase = explosiveElectric.base;
+		for (int i = 0; i < explosiveElectricDamageMods.size(); i++) {
+			explosiveElectric.finalBase += explosiveRaw.base * explosiveElectricDamageMods.get(i);
 		}
 
 		toxin.finalBase = toxin.base;
-		explosiveToxin.finalBase = explosiveToxin.base;
 		for (int i = 0; i < toxinDamageMods.size(); i++) {
 			toxin.finalBase += raw.base * toxinDamageMods.get(i);
-			explosiveToxin.finalBase += explosiveRaw.base * toxinDamageMods.get(i);
+		}
+		explosiveToxin.finalBase = explosiveToxin.base;
+		for (int i = 0; i < explosiveToxinDamageMods.size(); i++) {
+			explosiveToxin.finalBase += explosiveRaw.base * explosiveToxinDamageMods.get(i);
 		}
 
 		blast.finalBase = blast.base;
-		explosiveBlast.finalBase = explosiveBlast.base;
 		for (int i = 0; i < blastDamageMods.size(); i++) {
 			blast.finalBase += raw.base * blastDamageMods.get(i);
-			explosiveBlast.finalBase += explosiveRaw.base * blastDamageMods.get(i);
+		}
+		explosiveBlast.finalBase = explosiveBlast.base;
+		for (int i = 0; i < explosiveBlastDamageMods.size(); i++) {
+			explosiveBlast.finalBase += explosiveRaw.base * explosiveBlastDamageMods.get(i);
 		}
 
 		magnetic.finalBase = magnetic.base;
-		explosiveMagnetic.finalBase = explosiveMagnetic.base;
 		for (int i = 0; i < magneticDamageMods.size(); i++) {
 			magnetic.finalBase += raw.base * magneticDamageMods.get(i);
-			explosiveMagnetic.finalBase += explosiveRaw.base * magneticDamageMods.get(i);
+		}
+		explosiveMagnetic.finalBase = explosiveMagnetic.base;
+		for (int i = 0; i < explosiveMagneticDamageMods.size(); i++) {
+			explosiveMagnetic.finalBase += explosiveRaw.base * explosiveMagneticDamageMods.get(i);
 		}
 
 		gas.finalBase = gas.base;
-		explosiveGas.finalBase = explosiveGas.base;
 		for (int i = 0; i < gasDamageMods.size(); i++) {
 			gas.finalBase += raw.base * gasDamageMods.get(i);
-			explosiveGas.finalBase += explosiveRaw.base * gasDamageMods.get(i);
+		}
+		explosiveGas.finalBase = explosiveGas.base;
+		for (int i = 0; i < explosiveGasDamageMods.size(); i++) {
+			explosiveGas.finalBase += explosiveRaw.base * explosiveGasDamageMods.get(i);
 		}
 
 		radiation.finalBase = radiation.base;
-		explosiveRadiation.finalBase = explosiveRadiation.base;
 		for (int i = 0; i < radiationDamageMods.size(); i++) {
 			radiation.finalBase += raw.base * radiationDamageMods.get(i);
-			explosiveRadiation.finalBase += explosiveRaw.base * radiationDamageMods.get(i);
+		}
+		explosiveRadiation.finalBase = explosiveRadiation.base;
+		for (int i = 0; i < explosiveRadiationDamageMods.size(); i++) {
+			explosiveRadiation.finalBase += explosiveRaw.base * explosiveRadiationDamageMods.get(i);
 		}
 
 		corrosive.finalBase = corrosive.base;
-		explosiveCorrosive.finalBase = explosiveCorrosive.base;
 		for (int i = 0; i < corrosiveDamageMods.size(); i++) {
 			corrosive.finalBase += raw.base * corrosiveDamageMods.get(i);
-			explosiveCorrosive.finalBase += explosiveRaw.base * corrosiveDamageMods.get(i);
+		}
+		explosiveCorrosive.finalBase = explosiveCorrosive.base;
+		for (int i = 0; i < explosiveCorrosiveDamageMods.size(); i++) {
+			explosiveCorrosive.finalBase += explosiveRaw.base * explosiveCorrosiveDamageMods.get(i);
 		}
 
 		viral.finalBase = viral.base;
-		explosiveViral.finalBase = explosiveViral.base;
 		for (int i = 0; i < viralDamageMods.size(); i++) {
 			viral.finalBase += raw.base * viralDamageMods.get(i);
-			explosiveViral.finalBase += explosiveRaw.base * viralDamageMods.get(i);
+		}
+		explosiveViral.finalBase = explosiveViral.base;
+		for (int i = 0; i < explosiveViralDamageMods.size(); i++) {
+			explosiveViral.finalBase += explosiveRaw.base * explosiveViralDamageMods.get(i);
 		}
 
 		raw.finalBase = impact.finalBase + puncture.finalBase + slash.finalBase + fire.finalBase + ice.finalBase + electric.finalBase + toxin.finalBase + blast.finalBase + magnetic.finalBase + gas.finalBase + radiation.finalBase + corrosive.finalBase + viral.finalBase;
