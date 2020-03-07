@@ -1964,13 +1964,18 @@ public class Main {
 		// viral multiplier
 		if (viralProcRate > 0) {
 			viralMult = 1 / (int) (procsPerSecond * 6 * finalStatusDuration);
-			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (Math.pow(viralProcRate, 1) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1) * 2); // first proc chance
+			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (Math.pow(viralProcRate, 1) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)) * 2; // first proc chance
 			for (int i = 2; i < procsPerSecond * 6 * finalStatusDuration; i++) {
 				double chance = binomial((int) (procsPerSecond * 6 * finalStatusDuration), i).doubleValue() * Math.pow(viralProcRate, i) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - i); // more than 1 proc chance
 				double mult = Math.min(2 + i * 0.25, 4.25);
 				viralMult += chance * mult;
+				if (Double.isNaN(viralMult) || viralMult > 4.25) { // ugh
+					viralMult = 4.25;
+					break;
+				}
 			}
 		}
+		
 		
 		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * averageStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
 		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration + 1);
@@ -3429,7 +3434,7 @@ public class Main {
 	}
 
 	public static double getCorrosiveProjectionMult() {
-		double mult = 1.0 - (0.3 * Double.parseDouble((String) corrosiveProjectionBox.getSelectedItem()));
+		double mult = 1.0 - (0.18 * Double.parseDouble((String) corrosiveProjectionBox.getSelectedItem()));
 		if (mult < 0.0) {
 			mult = 0.0;
 		}
