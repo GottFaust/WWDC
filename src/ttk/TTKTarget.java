@@ -175,7 +175,8 @@ public class TTKTarget implements Comparable {
 		} else {
 			currentLevel = defaultLevel;
 		}
-		int OLDmaxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 * baseArmor) + baseArmor);
+		// maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 *
+		// baseArmor) + baseArmor);
 		maxArmor = baseArmor * (1 + (int) (0.45 * Math.pow((currentLevel - baseLevel), 0.7))); // New formula?
 		maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
 		maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
@@ -794,11 +795,8 @@ public class TTKTarget implements Comparable {
 				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 					localProjectileCount *= Math.min(1, ((iterations + 1) / Main.projectileCount));
 
-					/*
-					 * Recalculate status chance localStatus = 1 - Math.pow(1 -
-					 * Main.finalStatusChance, Main.projectileCount); localStatus = 1 - Math.pow(1 -
-					 * localStatus, Math.min(Main.projectileCount, 1 / ((double) iterations + 1)));
-					 */
+					 // Rough approximation of kohm status
+					localStatus = (1 - Math.pow(1 - Main.finalStatusChance/3, Math.min(Main.projectileCount, 1 / ((double) iterations + 1)))) * 3;
 				}
 
 				for (int b = 0; b < bursts; b++) {
@@ -931,7 +929,7 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Status effects
-
+						
 						// Forced procs
 						// Forced slash proc?
 						boolean forcedSlashProc = false;
@@ -958,9 +956,14 @@ public class TTKTarget implements Comparable {
 							statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
 							targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 						}
+						
+						// Find number of status effects
+						int statuses = (int) (localStatus * comboStatusMult);
+						if (rng.nextDouble() <= (localStatus * comboStatusMult - statuses)) {
+							statuses++;
+						}
 
-						// Do we get a random status proc?
-						if (rng.nextDouble() <= (localStatus * comboStatusMult)) {
+						for (; statuses > 0; statuses--) {
 
 							// Which Proc?
 							double proc = rng.nextDouble();
@@ -1015,10 +1018,10 @@ public class TTKTarget implements Comparable {
 									elecHeadMult = 2 * Main.headShotBonus;
 								}
 								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
-								
+
 								int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
-								
+
 								if (targetCurrentShields > 0) {
 									targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
 								} else {
@@ -1043,7 +1046,7 @@ public class TTKTarget implements Comparable {
 								double localGasMult = toxinMult;
 								if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
 									localGasMult = ((toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
-								}	
+								}
 								double poisonDamage = DoTBase * typeMult * totalMult * 0.5;
 								int gasDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(poisonDamage, gasDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, false));
@@ -1165,8 +1168,13 @@ public class TTKTarget implements Comparable {
 								targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 							}
 
-							// Do we get a random status proc?
-							if (rng.nextDouble() <= (localStatus * comboStatusMult)) {
+							// Find number of status effects
+							statuses = (int) (localStatus * comboStatusMult);
+							if (rng.nextDouble() <= (localStatus * comboStatusMult - statuses)) {
+								statuses++;
+							}
+
+							for (; statuses > 0; statuses--) {
 
 								// Which Proc?
 								double proc = rng.nextDouble();
@@ -1219,10 +1227,10 @@ public class TTKTarget implements Comparable {
 										elecHeadMult = 2 * Main.headShotBonus;
 									}
 									double electricProcDamage = explosiveDoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
-									
+
 									int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
-									
+
 									if (targetCurrentShields > 0) {
 										targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
 									} else {
@@ -1247,7 +1255,7 @@ public class TTKTarget implements Comparable {
 									double localGasMult = toxinMult;
 									if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
 										localGasMult = ((toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
-									}	
+									}
 									double poisonDamage = explosiveDoTBase * typeMult * totalMult * 0.5;
 									int gasDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(poisonDamage, gasDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, false));

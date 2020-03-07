@@ -648,8 +648,6 @@ public class DPSPanel extends JPanel {
 		radiationChanceField.setEditable(false);
 		corrosiveChanceField.setEditable(false);
 		viralChanceField.setEditable(false);
-		
-		status.setVisible(false);
 
 		impactField.setToolTipText("Raw impact damage per shot");
 		punctureField.setToolTipText("Raw puncture damage per shot");
