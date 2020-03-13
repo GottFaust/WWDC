@@ -1358,45 +1358,57 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements.add("Blast");
 					blastDamageMods.add(globalFire + globalIce);
-					if (damageType.equals("Fire") || damageType.equals("Ice") || damage2Type.equals("Fire") || damage2Type.equals("Ice"))
-						blastDamageMods.add(1.0);
-					fire.base = 0.0;
-					ice.base = 0.0;
+					if (damageType.equals("Fire") || damageType.equals("Ice") || damage2Type.equals("Fire") || damage2Type.equals("Ice")) {
+						blastDamageMods.add(fire.base / raw.base);
+						blastDamageMods.add(ice.base / raw.base);
+						fire.base = 0.0;
+						ice.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements.add("Corrosive");
 					corrosiveDamageMods.add(globalElectric + globalToxin);
-					if (damageType.equals("Electric") || damageType.equals("Toxin") || damage2Type.equals("Electric") || damage2Type.equals("Toxin"))
-						corrosiveDamageMods.add(1.0);
-					electric.base = 0.0;
-					toxin.base = 0.0;
+					if (damageType.equals("Electric") || damageType.equals("Toxin") || damage2Type.equals("Electric") || damage2Type.equals("Toxin")) {
+						corrosiveDamageMods.add(electric.base / raw.base);
+						corrosiveDamageMods.add(toxin.base / raw.base);
+						electric.base = 0.0;
+						toxin.base = 0.0;
+					}
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements.add("Gas");
 					gasDamageMods.add(globalFire + globalToxin);
-					if (damageType.equals("Fire") || damageType.equals("Toxin") || damage2Type.equals("Fire") || damage2Type.equals("Toxin"))
-						gasDamageMods.add(1.0);
-					fire.base = 0.0;
-					toxin.base = 0.0;
+					if (damageType.equals("Fire") || damageType.equals("Toxin") || damage2Type.equals("Fire") || damage2Type.equals("Toxin")) {
+						gasDamageMods.add(fire.base / raw.base);
+						gasDamageMods.add(toxin.base / raw.base);
+						fire.base = 0.0;
+						toxin.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements.add("Magnetic");
 					magneticDamageMods.add(globalElectric + globalIce);
-					if (damageType.equals("Electric") || damageType.equals("Ice") || damage2Type.equals("Electric") || damage2Type.equals("Ice"))
-						magneticDamageMods.add(1.0);
-					electric.base = 0.0;
-					ice.base = 0.0;
+					if (damageType.equals("Electric") || damageType.equals("Ice") || damage2Type.equals("Electric") || damage2Type.equals("Ice")) {
+						magneticDamageMods.add(electric.base / raw.base);
+						magneticDamageMods.add(ice.base / raw.base);
+						electric.base = 0.0;
+						ice.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements.add("Radiation");
 					radiationDamageMods.add(globalFire + globalElectric);
-					if (damageType.equals("Fire") || damageType.equals("Electric") || damage2Type.equals("Fire") || damage2Type.equals("Electric"))
-						radiationDamageMods.add(1.0);
-					fire.base = 0.0;
-					electric.base = 0.0;
+					if (damageType.equals("Fire") || damageType.equals("Electric") || damage2Type.equals("Fire") || damage2Type.equals("Electric")) {
+						radiationDamageMods.add(fire.base / raw.base);
+						radiationDamageMods.add(electric.base / raw.base);
+						fire.base = 0.0;
+						electric.base = 0.0;
+					}
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements.add("Viral");
 					viralDamageMods.add(globalToxin + globalIce);
-					if (damageType.equals("Toxin") || damageType.equals("Ice") || damage2Type.equals("Toxin") || damage2Type.equals("Ice"))
-						viralDamageMods.add(1.0);
-					toxin.base = 0.0;
-					ice.base = 0.0;
+					if (damageType.equals("Toxin") || damageType.equals("Ice") || damage2Type.equals("Toxin") || damage2Type.equals("Ice")) {
+						viralDamageMods.add(toxin.base / raw.base);
+						viralDamageMods.add(ice.base / raw.base);
+						toxin.base = 0.0;
+						ice.base = 0.0;
+					}
 				}
 				elements.remove(i);
 				elements.remove(i);
@@ -1445,45 +1457,57 @@ public class Main {
 				if ((element1.equals("Fire") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Fire"))) {
 					elements2.add("Blast");
 					explosiveBlastDamageMods.add(globalFire + globalIce);
-					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Ice"))
-						explosiveBlastDamageMods.add(1.0);
-					explosiveFire.base = 0.0;
-					explosiveIce.base = 0.0;
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Ice")) {
+						explosiveBlastDamageMods.add(explosiveFire.base / explosiveRaw.base);
+						explosiveBlastDamageMods.add(explosiveIce.base / explosiveRaw.base);
+						explosiveFire.base = 0.0;
+						explosiveIce.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Electric"))) {
 					elements2.add("Corrosive");
 					explosiveCorrosiveDamageMods.add(globalElectric + globalToxin);
-					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Toxin"))
-						explosiveCorrosiveDamageMods.add(1.0);
-					explosiveElectric.base = 0.0;
-					explosiveToxin.base = 0.0;
+					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Toxin")) {
+						explosiveCorrosiveDamageMods.add(explosiveElectric.base / explosiveRaw.base);
+						explosiveCorrosiveDamageMods.add(explosiveToxin.base / explosiveRaw.base);
+						explosiveElectric.base = 0.0;
+						explosiveToxin.base = 0.0;
+					}
 				} else if ((element1.equals("Fire") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Fire"))) {
 					elements2.add("Gas");
 					explosiveGasDamageMods.add(globalFire + globalToxin);
-					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Toxin"))
-						explosiveGasDamageMods.add(1.0);
-					explosiveFire.base = 0.0;
-					explosiveToxin.base = 0.0;
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Toxin") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Toxin")) {
+						explosiveGasDamageMods.add(explosiveFire.base / explosiveRaw.base);
+						explosiveGasDamageMods.add(explosiveToxin.base / explosiveRaw.base);
+						explosiveFire.base = 0.0;
+						explosiveToxin.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Ice")) || (element1.equals("Ice") && element2.equals("Electric"))) {
 					elements2.add("Magnetic");
 					explosiveMagneticDamageMods.add(globalElectric + globalIce);
-					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Ice"))
-						explosiveMagneticDamageMods.add(1.0);
-					explosiveElectric.base = 0.0;
-					explosiveIce.base = 0.0;
+					if (explosiveDamage1Type.equals("Electric") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Electric") || explosiveDamage2Type.equals("Ice")) {
+						explosiveMagneticDamageMods.add(explosiveElectric.base / explosiveRaw.base);
+						explosiveMagneticDamageMods.add(explosiveIce.base / explosiveRaw.base);
+						explosiveElectric.base = 0.0;
+						explosiveIce.base = 0.0;
+					}
 				} else if ((element1.equals("Electric") && element2.equals("Fire")) || (element1.equals("Fire") && element2.equals("Electric"))) {
 					elements2.add("Radiation");
 					explosiveRadiationDamageMods.add(globalFire + globalElectric);
-					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Electric") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Electric"))
-						explosiveRadiationDamageMods.add(1.0);
-					explosiveFire.base = 0.0;
-					explosiveElectric.base = 0.0;
+					if (explosiveDamage1Type.equals("Fire") || explosiveDamage1Type.equals("Electric") || explosiveDamage2Type.equals("Fire") || explosiveDamage2Type.equals("Electric")) {
+						explosiveRadiationDamageMods.add(explosiveElectric.base / explosiveRaw.base);
+						explosiveRadiationDamageMods.add(explosiveFire.base / explosiveRaw.base);
+						explosiveFire.base = 0.0;
+						explosiveElectric.base = 0.0;
+					}
 				} else if ((element1.equals("Ice") && element2.equals("Toxin")) || (element1.equals("Toxin") && element2.equals("Ice"))) {
 					elements2.add("Viral");
 					explosiveViralDamageMods.add(globalToxin + globalIce);
-					if (explosiveDamage1Type.equals("Toxin") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Toxin") || explosiveDamage2Type.equals("Ice"))
-						explosiveViralDamageMods.add(1.0);
-					explosiveToxin.base = 0.0;
-					explosiveIce.base = 0.0;
+					if (explosiveDamage1Type.equals("Toxin") || explosiveDamage1Type.equals("Ice") || explosiveDamage2Type.equals("Toxin") || explosiveDamage2Type.equals("Ice")) {
+						explosiveViralDamageMods.add(explosiveToxin.base / explosiveRaw.base);
+						explosiveViralDamageMods.add(explosiveIce.base / explosiveRaw.base);
+						explosiveToxin.base = 0.0;
+						explosiveIce.base = 0.0;
+					}
 				}
 				elements2.remove(i);
 				elements2.remove(i);
@@ -1975,8 +1999,7 @@ public class Main {
 				}
 			}
 		}
-		
-		
+
 		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * averageStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
 		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
 		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
@@ -3669,12 +3692,11 @@ public class Main {
 	}
 
 	static BigInteger binomial(final int N, final int K) {
-	    BigInteger ret = BigInteger.ONE;
-	    for (int k = 0; k < K; k++) {
-	        ret = ret.multiply(BigInteger.valueOf(N-k))
-	                 .divide(BigInteger.valueOf(k+1));
-	    }
-	    return ret;
+		BigInteger ret = BigInteger.ONE;
+		for (int k = 0; k < K; k++) {
+			ret = ret.multiply(BigInteger.valueOf(N - k)).divide(BigInteger.valueOf(k + 1));
+		}
+		return ret;
 	}
 
 	public static class DoTPair {
