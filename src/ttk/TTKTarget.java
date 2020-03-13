@@ -178,8 +178,10 @@ public class TTKTarget implements Comparable {
 		// maxArmor = (int) ((Math.pow((currentLevel - baseLevel), 1.75) * 0.005 *
 		// baseArmor) + baseArmor);
 		maxArmor = baseArmor * (1 + (int) (0.45 * Math.pow((currentLevel - baseLevel), 0.7))); // New formula?
-		maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
-		maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
+		//maxShields = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.0075 * baseShields) + baseShields);
+		maxShields = baseShields * (1 + (int) (0.45 * Math.pow((currentLevel - baseLevel), 0.7)));
+		//maxHealth = (int) ((Math.pow((currentLevel - baseLevel), 2.0) * 0.015 * baseHealth) + baseHealth);
+		maxHealth = baseHealth * (1 + (int) (0.45 * Math.pow((currentLevel - baseLevel), 0.7)));
 
 		// Health Mults
 		switch (surfaceType) {
@@ -937,11 +939,6 @@ public class TTKTarget implements Comparable {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
-							if (targetCurrentShields > 0) {
-								targetCurrentShields -= bleedDamage * magMult;
-							} else {
-								targetCurrentHealth -= bleedDamage * viralMult;
-							}
 							statusEffects[0] = slashDuration;
 							forcedSlashProc = true;
 						}
@@ -954,7 +951,6 @@ public class TTKTarget implements Comparable {
 							double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * totalMult * 0.5;
 							int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-							targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 						}
 						
 						// Find number of status effects
@@ -974,11 +970,6 @@ public class TTKTarget implements Comparable {
 									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 									int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= bleedDamage * magMult;
-									} else {
-										targetCurrentHealth -= bleedDamage * viralMult;
-									}
 									statusEffects[0] = slashDuration;
 								}
 								// Fire Proc
@@ -997,12 +988,6 @@ public class TTKTarget implements Comparable {
 								}
 								statusStacks.get(0).damage += heatDamage;
 								statusStacks.get(0).duration = heatDuration;
-
-								if (targetCurrentShields > 0) {
-									targetCurrentShields -= heatDamage * localFireMult * magMult;
-								} else {
-									targetCurrentHealth -= heatDamage * localFireMult * viralMult;
-								}
 								statusEffects[1] = heatDuration;
 
 								// Electric Proc
@@ -1038,7 +1023,6 @@ public class TTKTarget implements Comparable {
 								double poisonDamage = DoTBase * (1 + Main.globalToxin) * typeMult * totalMult * 0.5;
 								int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-								targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 								statusEffects[3] = toxinDuration;
 
 								// Gas Proc
@@ -1050,7 +1034,6 @@ public class TTKTarget implements Comparable {
 								double poisonDamage = DoTBase * typeMult * totalMult * 0.5;
 								int gasDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(poisonDamage, gasDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, false));
-								targetCurrentHealth -= poisonDamage * localGasMult * viralMult;
 								statusEffects[4] = gasDuration;
 
 								// Magnetic Proc
@@ -1148,11 +1131,6 @@ public class TTKTarget implements Comparable {
 								double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
-								if (targetCurrentShields > 0) {
-									targetCurrentShields -= bleedDamage * magMult;
-								} else {
-									targetCurrentHealth -= bleedDamage * viralMult;
-								}
 								statusEffects[0] = slashDuration;
 								forcedSlashProc = true;
 							}
@@ -1165,7 +1143,6 @@ public class TTKTarget implements Comparable {
 								double poisonDamage = (explosiveDoTBase * (1 + Main.globalToxin) * typeMult) * totalMult * 0.5;
 								int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-								targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 							}
 
 							// Find number of status effects
@@ -1184,11 +1161,6 @@ public class TTKTarget implements Comparable {
 									double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
 									int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= bleedDamage * magMult;
-									} else {
-										targetCurrentHealth -= bleedDamage * viralMult;
-									}
 									statusEffects[0] = slashDuration;
 
 									// Fire Proc
@@ -1206,12 +1178,6 @@ public class TTKTarget implements Comparable {
 									}
 									statusStacks.get(0).damage += heatDamage;
 									statusStacks.get(0).duration = heatDuration;
-
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= heatDamage * localFireMult * magMult;
-									} else {
-										targetCurrentHealth -= heatDamage * localFireMult * viralMult;
-									}
 									statusEffects[1] = heatDuration;
 
 									// Electric Proc
@@ -1247,7 +1213,6 @@ public class TTKTarget implements Comparable {
 									double poisonDamage = explosiveDoTBase * (1 + Main.globalToxin) * typeMult * totalMult * 0.5;
 									int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-									targetCurrentHealth -= poisonDamage * localToxinMult * viralMult;
 									statusEffects[3] = toxinDuration;
 
 									// Gas Proc
@@ -1259,7 +1224,6 @@ public class TTKTarget implements Comparable {
 									double poisonDamage = explosiveDoTBase * typeMult * totalMult * 0.5;
 									int gasDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(poisonDamage, gasDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, false));
-									targetCurrentHealth -= poisonDamage * localGasMult * viralMult;
 									statusEffects[4] = gasDuration;
 
 									// Magnetic Proc
@@ -1274,7 +1238,15 @@ public class TTKTarget implements Comparable {
 
 									// Corrosive Proc
 								} else if ((proc -= Main.explosiveCorrosiveProcRate) < 0) {
-									corroStacks.add(80000 * Main.finalStatusDuration);
+									corroStacks.add(80000 * Main.finalStatusDuration);								
+									if (corroMult == 1) { // first effect
+										corroMult = 0.74;
+									} else { // subsequent effects
+										corroMult -= 0.06;
+									}
+									if (corroMult < 0.2) { // Capped at 80% reduction
+										corroMult = 0.2;
+									}
 									statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
 								} else if ((proc -= Main.explosiveImpactProcRate) < 0) {
 									statusEffects[8] = (int) (60000 * Main.finalStatusDuration);
