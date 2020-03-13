@@ -3710,6 +3710,7 @@ public class Main {
 		public boolean tox = false;
 
 		public DoTPair(double damage, int duration, int timer, double healthMult, double armorMult, double shieldMult, boolean slash, boolean tox) {
+			this.damage = damage;
 			this.duration = duration;
 			this.timer = timer;
 			this.healthMult = healthMult;
