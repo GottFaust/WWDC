@@ -171,7 +171,7 @@ public class Constants {
   
   /** Frame Title **/
   public static final String APP_TITLE = "Warframe Weapon DPS Calculator";
-  public static final String APP_VERSION = "v0.13.3";
+  public static final String APP_VERSION = "v0.13.4";
   
   /** ToolTips **/
   public static final String NAME_TOOL_TIP = "The weapon's name.";
@@ -373,7 +373,7 @@ public static final String[] baseModDB = {
     "Full Contact,"+SHOTGUN+",5,1,"+MOD_TYPE_IMPACT_DAMAGE+",0.2,~,6,None,false",
     "Gilded Truth,"+RIFLE+",3,1,"+MOD_TYPE_FIRE_RATE+",0.2,V,4,Burston Prime,false",
     "Gunslinger,"+PISTOL+",5,1,"+MOD_TYPE_FIRE_RATE+",0.12,V,4,None,false",
-    "Hammer Shot,"+RIFLE+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_CRIT_MULTIPLIER+",0.1,0.15,D,6,None,false",
+    "Hammer Shot,"+RIFLE+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_CRIT_MULTIPLIER+",0.2,0.15,D,6,None,false",
     "Hawk Eye,"+PISTOL+",3,1,"+MOD_TYPE_ZOOM+",0.0,~,4,None,false",
     "Heated Charge,"+PISTOL+",5,1,"+MOD_TYPE_FIRE_DAMAGE+",0.15,~,6,None,false",
     "Heavy Caliber,"+RIFLE+",10,2,"+MOD_TYPE_DAMAGE_BONUS+","+MOD_TYPE_ACCURACY+",0.15,-0.05,V,6,None,false",
@@ -442,7 +442,7 @@ public static final String[] baseModDB = {
     "Steady hands,"+PISTOL+",3,1,"+MOD_TYPE_RECOIL+",-0.15,~,6,None,true",
     "Stinging Truth,"+PISTOL+",3,1,"+MOD_TYPE_FLAT_MAG+",0.1,D,4,Viper Wraith,false",
     "Stormbringer,"+RIFLE+",5,1,"+MOD_TYPE_LIGHTNING_DAMAGE+",0.15,~,6,None,false",
-    "Stunning Speed,"+PISTOL+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_RELOAD_SPEED+",0.025,0.1,~,6,None,false",
+    "Stunning Speed,"+PISTOL+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_RELOAD_SPEED+",0.075,0.1,~,6,None,false",
     "Suppress,"+PISTOL+",3,1,"+MOD_TYPE_SILENCE+",0.25,~,2,None,true",
     "Sure Shot,"+PISTOL+",5,1,"+MOD_TYPE_STATUS_CHANCE+",0.15,D,2,None,false",
     "Sweeping Serration,"+SHOTGUN+",5,1,"+MOD_TYPE_SLASH_DAMAGE+",0.2,~,6,None,false",
@@ -558,7 +558,7 @@ public static final String[] maximizerModDB = {
 "Fridgid Blast,"+SHOTGUN+",3,2,"+MOD_TYPE_ICE_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
 "Frostbite,"+PISTOL+",3,2,"+MOD_TYPE_ICE_DAMAGE+","+MOD_TYPE_STATUS_CHANCE+",0.15,0.15,V,4,None,false",
 "Gunslinger,"+PISTOL+",5,1,"+MOD_TYPE_FIRE_RATE+",0.12,V,4,None,false",
-"Hammer Shot,"+RIFLE+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_CRIT_MULTIPLIER+",0.1,0.15,D,6,None,false",
+"Hammer Shot,"+RIFLE+",3,2,"+MOD_TYPE_STATUS_CHANCE+","+MOD_TYPE_CRIT_MULTIPLIER+",0.2,0.15,D,6,None,false",
 "Heavy Caliber,"+RIFLE+",10,2,"+MOD_TYPE_DAMAGE_BONUS+","+MOD_TYPE_ACCURACY+",0.15,-0.05,V,6,None,false",
 "Hell's Chamber,"+SHOTGUN+",5,1,"+MOD_TYPE_MULTISHOT+",0.2,V,10,None,false",
 "Hellfire,"+RIFLE+",5,1,"+MOD_TYPE_FIRE_DAMAGE+",0.15,~,6,None,false",

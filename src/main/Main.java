@@ -1952,20 +1952,20 @@ public class Main {
 
 		// Condition overload
 		if (conditionOverload > 0) {
-			COMult += (1 - Math.pow((1 - slashProcRate * averageStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - fireProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - toxinProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - gasProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - electricProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - impactProcRate * averageStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - punctureProcRate * averageStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - iceProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - corrosiveProcRate * averageStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - viralProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - blastProcRate * averageStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)); // Knockdown
-			COMult += (1 - Math.pow((1 - radiationProcRate * averageStatusChance), (finalFireRate / avgDelay) * 12 * finalStatusDuration));
-			COMult += (1 - Math.pow((1 - magneticProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - slashProcRate * averageStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - fireProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - toxinProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - gasProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - electricProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - impactProcRate * averageStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - punctureProcRate * averageStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - iceProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - corrosiveProcRate * averageStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - viralProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)); // Knockdown
+			COMult += replaceNaN(1 - Math.pow((1 - radiationProcRate * averageStatusChance), (finalFireRate / avgDelay) * 12 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - magneticProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
 			COMult *= conditionOverload;
 		}
 		// adjust COMult for base damage mods
@@ -3697,6 +3697,13 @@ public class Main {
 			ret = ret.multiply(BigInteger.valueOf(N - k)).divide(BigInteger.valueOf(k + 1));
 		}
 		return ret;
+	}
+	
+	static double replaceNaN(double n) {
+		if (Double.isNaN(n)) {
+			n = 1;
+		}
+		return n;
 	}
 
 	public static class DoTPair {
