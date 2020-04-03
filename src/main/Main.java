@@ -569,7 +569,7 @@ public class Main {
 		bottomLeftPanel.add(targetButtonPanel, gbc);
 		UIBuilder.panelInit(bottomLeftFillPanel);
 
-		outputScroll.getViewport().setPreferredSize(new Dimension(750, 250));
+		outputScroll.getViewport().setPreferredSize(new Dimension(850, 250));
 		bottomLeftFillPanel.setPreferredSize(new Dimension(300, 250));
 		buttonPanel.setSize(new Dimension(200, 30));
 		targetLevelField.setPreferredSize(new Dimension(0, 24));
@@ -1987,8 +1987,9 @@ public class Main {
 
 		// viral multiplier
 		if (viralProcRate > 0) {
-			viralMult = 1 / (int) (procsPerSecond * 6 * finalStatusDuration);
-			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (Math.pow(viralProcRate, 1) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)) * 2; // first proc chance
+			//viralMult = 1 / (procsPerSecond * 6 * finalStatusDuration);
+			viralMult = 1;
+			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (viralProcRate * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)) * 2; // first proc chance
 			for (int i = 2; i < procsPerSecond * 6 * finalStatusDuration; i++) {
 				double chance = binomial((int) (procsPerSecond * 6 * finalStatusDuration), i).doubleValue() * Math.pow(viralProcRate, i) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - i); // more than 1 proc chance
 				double mult = Math.min(2 + i * 0.25, 4.25);

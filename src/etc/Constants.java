@@ -71,20 +71,6 @@ public class Constants {
   public static final String CORROSIVE_WEAPON_DAMAGE = "Corrosive";
   public static final String VIRAL_WEAPON_DAMAGE = "Viral";
   
-  /*
-  public static final String EX_PHYSICAL_WEAPON_DAMAGE = "Explosive Physical";
-  public static final String EX_FIRE_WEAPON_DAMAGE = "Explosive Fire";
-  public static final String EX_ICE_WEAPON_DAMAGE = "Explosive Ice";
-  public static final String EX_ELECTRIC_WEAPON_DAMAGE = "Explosive Electric";
-  public static final String EX_TOXIN_WEAPON_DAMAGE = "Explosive Toxin";
-  public static final String EX_BLAST_WEAPON_DAMAGE = "Explosive Blast";
-  public static final String EX_MAGNETIC_WEAPON_DAMAGE = "Explosive Magnetic";
-  public static final String EX_GAS_WEAPON_DAMAGE = "Explosive Gas";
-  public static final String EX_RADIATION_WEAPON_DAMAGE = "Explosive Radiation";
-  public static final String EX_CORROSIVE_WEAPON_DAMAGE = "Explosive Corrosive";
-  public static final String EX_VIRAL_WEAPON_DAMAGE = "Explosive Viral";
-  */
-  
   public static final String NO_WEAPON_DAMAGE = "None";
   
   /** Weapon Modes **/
@@ -193,6 +179,9 @@ public class Constants {
   public static final String BURST_COUNT_TOOL_TIP = "The number of bullets fired in each burst.";
   public static final String BURST_FIRE_RATE_TOOL_TIP = "The rate of fire during each burst iteration";
   public static final String STATUS_TOOL_TIP = "The base status chance of this weapon.";
+  
+  public static final String STANCE_AU_TIP = "Adds a new stance if it has a new name. Updates the stance otherwise.";
+  public static final String COMBO_AU_TIP = "Adds a new combo if it has a new name. Updates the combo otherwise.";
   
   /** Weapon Types **/
   public static final String SHOTGUN = "Shotgun";

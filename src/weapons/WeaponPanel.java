@@ -78,7 +78,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JCheckBox potato = new JCheckBox("Catalyst Installed");
 	public JCheckBox mQCombineElement = new JCheckBox("Hitscan");
 	
-	protected JCheckBox showExilus = new JCheckBox("Show Exilus Slot");
+	public JCheckBox showExilus = new JCheckBox("Show Exilus Slot");
 
 	/** JLabels **/
 	protected JLabel weaponLabel = new JLabel("Weapon - ");

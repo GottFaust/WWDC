@@ -60,9 +60,9 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	protected JComboBox<String> typeBox = new JComboBox<String>();
 	protected JComboBox<String> comboBox = new JComboBox<String>();
 
-	protected JButton addUpdateButton = new JButton("A/U Stance");
+	protected JButton addUpdateButton = new JButton("Add/Update Stance");
 	protected JButton deleteButton = new JButton("Delete Stance");
-	protected JButton addUpdateComboButton = new JButton("Update Combo");
+	protected JButton addUpdateComboButton = new JButton("Add/Update Combo");
 	protected JButton deleteComboButton = new JButton("Delete Combo");
 	protected JButton addHitButton = new JButton("Add Hit");
 	protected JButton delHitButton = new JButton("Delete Hit");
@@ -180,6 +180,9 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		stanceList.getSelectionModel().addListSelectionListener(this);
 
 		UIBuilder.createTitledLineBorder(hitsPanel, "HITS IN COMBO");
+		
+		addUpdateButton.setToolTipText(Constants.STANCE_AU_TIP);
+		addUpdateComboButton.setToolTipText(Constants.COMBO_AU_TIP);
 	}
 
 	public void init() {

@@ -170,7 +170,7 @@ public class Maximizer {
 		int hasExilus = 0;
 		
 		totalIterations = 1;		
-		if (Main.selectedWeapon.selectedMods.get(8).equals("--")) {
+		if (Main.selectedWeapon.selectedMods.get(8).equals("--") && Main.selectedWeapon.showExilus.isSelected()) {
 			updateMods(8);
 			if(possibleMods.size() > 0) {
 				modsToChange.add(8);
