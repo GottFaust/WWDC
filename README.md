@@ -26,3 +26,10 @@ You will need to do some preparation to reduce calculation time:
 * The most valuable results will be presented in the text box and the complete results stored in a file called "MaximizerResults.csv" in the install folder for your personal review and archiving.
 
 ![alt text](https://i.imgur.com/kPPC8RJ.png)
+
+## Stance Manager
+Most ingame stances have not been added to the calculator. You will need to do so manually:
+<details>
+  <summary>Super ugly MS Paint guide!</summary>
+![alt text](https://i.imgur.com/rS86fhq.png)
+</details>
