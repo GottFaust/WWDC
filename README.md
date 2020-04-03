@@ -31,5 +31,7 @@ You will need to do some preparation to reduce calculation time:
 Most ingame stances have not been added to the calculator. You will need to do so manually:
 <details>
   <summary>Super ugly MS Paint guide!</summary>
+  
 ![alt text](https://i.imgur.com/rS86fhq.png)
+
 </details>
