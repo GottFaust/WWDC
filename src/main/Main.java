@@ -1989,10 +1989,10 @@ public class Main {
 		if (viralProcRate > 0) {
 			//viralMult = 1 / (procsPerSecond * 6 * finalStatusDuration);
 			viralMult = 1;
-			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (viralProcRate * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)) * 2; // first proc chance
+			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (viralProcRate * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)); // first proc chance
 			for (int i = 2; i < procsPerSecond * 6 * finalStatusDuration; i++) {
 				double chance = binomial((int) (procsPerSecond * 6 * finalStatusDuration), i).doubleValue() * Math.pow(viralProcRate, i) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - i); // more than 1 proc chance
-				double mult = Math.min(2 + i * 0.25, 4.25);
+				double mult = Math.min(2 + (i-1) * 0.25, 4.25);
 				viralMult += chance * mult;
 				if (Double.isNaN(viralMult) || viralMult > 4.25) { // ugh
 					viralMult = 4.25;
