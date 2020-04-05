@@ -35,3 +35,5 @@ Most ingame stances have not been added to the calculator. You will need to do s
 ![alt text](https://i.imgur.com/rS86fhq.png)
 
 </details>
+
+Remember to hit "save" once you're done adding a stance or combo.
