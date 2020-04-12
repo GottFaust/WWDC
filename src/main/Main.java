@@ -1987,18 +1987,17 @@ public class Main {
 
 		// viral multiplier
 		if (viralProcRate > 0) {
-			//viralMult = 1 / (procsPerSecond * 6 * finalStatusDuration);
 			viralMult = 1;
-			viralMult += binomial((int) (procsPerSecond * 6 * finalStatusDuration), 1).doubleValue() * (viralProcRate * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - 1)); // first proc chance
-			for (int i = 2; i < procsPerSecond * 6 * finalStatusDuration; i++) {
-				double chance = binomial((int) (procsPerSecond * 6 * finalStatusDuration), i).doubleValue() * Math.pow(viralProcRate, i) * Math.pow(1 - viralProcRate, (int) (procsPerSecond * 6 * finalStatusDuration) - i); // more than 1 proc chance
-				double mult = Math.min(2 + (i-1) * 0.25, 4.25);
+			int procCountTotal = (int) (procsPerSecond * 6 * finalStatusDuration);
+			double totalChance = binomial(procCountTotal, 0).doubleValue() * Math.pow(viralProcRate, 0) * Math.pow(1 - viralProcRate, procCountTotal - 0);
+			for (int i = 1; i < Math.min(10,procCountTotal); i++) {
+				double chance = binomial(procCountTotal, i).doubleValue() * Math.pow(viralProcRate, i) * Math.pow(1 - viralProcRate, procCountTotal - i);
+				double mult = 1 + (i-1) * 0.25;
+				totalChance += chance;
 				viralMult += chance * mult;
-				if (Double.isNaN(viralMult) || viralMult > 4.25) { // ugh
-					viralMult = 4.25;
-					break;
-				}
 			}
+			if(procCountTotal > 10)
+				viralMult += (1 - totalChance) * 3.25;
 		}
 
 		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * averageStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
