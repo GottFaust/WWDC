@@ -180,7 +180,10 @@ public class Maximizer {
 			} else {
 				simulatedMods.remove(8);
 			}
+		} else {
+			simulatedMods.remove(8);
 		}
+		
 
 		for (int g = modCount - hasExilus; g > ((modCount - hasExilus) - (emptyMods- hasExilus)); g--) {
 			totalIterations *= g;
