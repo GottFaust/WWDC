@@ -1478,11 +1478,6 @@ public class TTKTarget implements Comparable {
 			rampMult += nextEvent;
 			shotTimer -= nextEvent;
 			timeToKill += nextEvent;
-			
-			if (name.equals("Crewman") && timeToKill > 20000) {
-				int debug = 0;
-			}
-
 		}
 		return timeToKill / 10000.0;
 	}
