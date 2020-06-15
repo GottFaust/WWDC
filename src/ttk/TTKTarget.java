@@ -1342,16 +1342,13 @@ public class TTKTarget implements Comparable {
 					statusStacks.get(j).timer -= 1000;
 					if (statusStacks.get(j).timer <= 0 && statusStacks.get(j).duration >= 0) {
 						double mult = statusStacks.get(j).healthMult;
-						if (targetCurrentShields > 0.0) {
-							if (!statusStacks.get(j).tox) {
-								mult = statusStacks.get(j).shieldMult;
-								targetCurrentShields -= statusStacks.get(j).damage * mult * magMult;
-							} else { // tox bypasses shields
-								mult = ((statusStacks.get(j).healthMult * statusStacks.get(j).armorMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - statusStacks.get(j).armorMult)) / 300)));
-								targetCurrentHealth -= statusStacks.get(j).damage * mult * viralDamageBuff;
-							}
-						} else if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
+						if (targetCurrentShields > 0.0 && !statusStacks.get(j).tox) { // Shields
+							mult = statusStacks.get(j).shieldMult;
+							targetCurrentShields -= statusStacks.get(j).damage * mult * magMult;
+						} else if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) { // Armor
 							mult = ((statusStacks.get(j).healthMult * statusStacks.get(j).armorMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - statusStacks.get(j).armorMult)) / 300)));
+							targetCurrentHealth -= statusStacks.get(j).damage * (statusStacks.get(j).slash ? 1 : mult) * viralDamageBuff;
+						} else { // No armor
 							targetCurrentHealth -= statusStacks.get(j).damage * (statusStacks.get(j).slash ? 1 : mult) * viralDamageBuff;
 						}
 						statusStacks.get(j).timer = 10000;
@@ -1481,6 +1478,10 @@ public class TTKTarget implements Comparable {
 			rampMult += nextEvent;
 			shotTimer -= nextEvent;
 			timeToKill += nextEvent;
+			
+			if (name.equals("Crewman") && timeToKill > 20000) {
+				int debug = 0;
+			}
 
 		}
 		return timeToKill / 10000.0;
