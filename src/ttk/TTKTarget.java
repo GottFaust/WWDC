@@ -102,6 +102,7 @@ public class TTKTarget implements Comparable {
 	protected double iceProc;
 	protected double blastProc;
 	protected double radiationProc;
+	protected String forcedProc;
 
 	protected double corrosiveProjectionMult = 0.0;
 	protected double shieldDisruptionMult = 0.0;
@@ -185,10 +186,10 @@ public class TTKTarget implements Comparable {
 			maxHealth = (int) (baseHealth * (1 + Math.pow(currentLevel - baseLevel, 0.5) * 10.75));
 		} else { // Blended
 			double x = ((currentLevel - baseLevel) - 70) / 10;
-			double s = 3*Math.pow(x, 2) - 2*Math.pow(x, 3);
-			maxArmor= (int) ((1-s) * (baseArmor * (1 + Math.pow(currentLevel - baseLevel, 1.75) * 0.005)) + s * (baseArmor * (1 + Math.pow(currentLevel - baseLevel, 0.75) * 0.4)));
-			maxShields = (int) ((1-s) * (baseShields * (1 + Math.pow(currentLevel - baseLevel, 1.75) * 0.02)) + s * (baseShields * (1 + Math.pow(currentLevel - baseLevel, 0.75) * 1.6)));
-			maxHealth = (int) ((1-s) * (baseHealth * (1 + Math.pow(currentLevel - baseLevel, 2) * 0.015)) + s * (baseHealth * (1 + Math.pow(currentLevel - baseLevel, 0.5) * 10.75)));
+			double s = 3 * Math.pow(x, 2) - 2 * Math.pow(x, 3);
+			maxArmor = (int) ((1 - s) * (baseArmor * (1 + Math.pow(currentLevel - baseLevel, 1.75) * 0.005)) + s * (baseArmor * (1 + Math.pow(currentLevel - baseLevel, 0.75) * 0.4)));
+			maxShields = (int) ((1 - s) * (baseShields * (1 + Math.pow(currentLevel - baseLevel, 1.75) * 0.02)) + s * (baseShields * (1 + Math.pow(currentLevel - baseLevel, 0.75) * 1.6)));
+			maxHealth = (int) ((1 - s) * (baseHealth * (1 + Math.pow(currentLevel - baseLevel, 2) * 0.015)) + s * (baseHealth * (1 + Math.pow(currentLevel - baseLevel, 0.5) * 10.75)));
 		}
 		// Health Mults
 		switch (surfaceType) {
@@ -415,6 +416,8 @@ public class TTKTarget implements Comparable {
 		iceProc = Main.iceProcRate;
 		blastProc = Main.blastProcRate;
 		radiationProc = Main.radiationProcRate;
+
+		forcedProc = Main.forcedProc;
 
 		// Pre-calculate damage
 		shieldDamage = 0;
@@ -804,8 +807,8 @@ public class TTKTarget implements Comparable {
 				if (Main.weaponMode.equals(Constants.FULL_AUTO_BULLET_RAMP)) {
 					localProjectileCount *= Math.min(1, ((iterations + 1) / Main.projectileCount));
 
-					 // Rough approximation of kohm status
-					localStatus = (1 - Math.pow(1 - Main.finalStatusChance/3, Math.min(Main.projectileCount, 1 / ((double) iterations + 1)))) * 3;
+					// Rough approximation of kohm status
+					localStatus = (1 - Math.pow(1 - Main.finalStatusChance / 3, Math.min(Main.projectileCount, 1 / ((double) iterations + 1)))) * 3;
 				}
 
 				for (int b = 0; b < bursts; b++) {
@@ -938,19 +941,61 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Status effects
-						
+
 						// Forced procs
+
 						// Forced slash proc?
-						boolean forcedSlashProc = false;
 						if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
 							statusEffects[0] = slashDuration;
-							forcedSlashProc = true;
 						}
-						// Forced poison proc?
-						if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
+
+						// Forced elemental proc?
+						switch (forcedProc) { // Copy-paste vomit code
+						case (Constants.FIRE_WEAPON_DAMAGE):
+							double localFireMult = fireMult;
+							if (targetCurrentShields > 0.0) {
+								localFireMult = shieldFireMult;
+							} else if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
+								localFireMult = (fireMult * armorFireMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorFireMult)) / 300));
+							}
+							double heatDamage = DoTBase * (1 + Main.globalFire) * totalMult * typeMult * 0.5;
+							int heatDuration = (int) (6 * Main.finalStatusDuration * 10000);
+							if (statusStacks.get(0).duration <= 0) { // if we need a new stack, set timer
+								statusStacks.get(0).timer = 10000;
+							}
+							statusStacks.get(0).damage += heatDamage;
+							statusStacks.get(0).duration = heatDuration;
+							statusEffects[1] = heatDuration;
+							break;
+						
+						case (Constants.ELECTRIC_WEAPON_DAMAGE):
+							double localElectricMult = electricMult;
+							if (targetCurrentShields > 0.0) {
+								localElectricMult = shieldElectricMult;
+							} else if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
+								localElectricMult = (electricMult * armorElectricMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorElectricMult)) / 300));
+							}
+							double elecHeadMult = 1;
+							if (headShotMult > 1) {
+								elecHeadMult = 2 * Main.headShotBonus;
+							}
+							double electricProcDamage = DoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
+
+							int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
+							statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
+
+							if (targetCurrentShields > 0) {
+								targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
+							} else {
+								targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+							}
+							statusEffects[2] = electricDuration;
+							break;
+						
+						case (Constants.TOXIN_WEAPON_DAMAGE):
 							double localToxinMult = toxinMult;
 							if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
 								localToxinMult = (toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
@@ -958,8 +1003,66 @@ public class TTKTarget implements Comparable {
 							double poisonDamage = (DoTBase * (1 + Main.globalToxin) * typeMult) * totalMult * 0.5;
 							int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-						}
+							statusEffects[3] = toxinDuration;						
+							break;
+							
+						case (Constants.GAS_WEAPON_DAMAGE):
+							double localGasMult = toxinMult;
+							if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
+								localGasMult = ((toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300)));
+							}
+							double GoisonDamage = DoTBase * typeMult * totalMult * 0.5;
+							int gasDuration = (int) (6 * Main.finalStatusDuration * 10000);
+							statusStacks.add(new DoTPair(GoisonDamage, gasDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, false));
+							statusEffects[4] = gasDuration;
+							break;
+							
+						case (Constants.MAGNETIC_WEAPON_DAMAGE):
+							magStacks.add(60000 * Main.finalStatusDuration);
+							statusEffects[5] = (int) (60000 * Main.finalStatusDuration);
+							break;
+							
+						case (Constants.VIRAL_WEAPON_DAMAGE):
+							if (viralDamageBuff == 1) { // first effect
+								viralDamageBuff = 2;
+							} else { // subsequent effects
+								viralDamageBuff += 0.25;
+							}
+							if (viralDamageBuff > 4.25) { // Capped at +325% damage
+								viralDamageBuff = 4.25;
+							}
+							viralStacks.add(60000 * Main.finalStatusDuration);
+							statusEffects[6] = (int) (60000 * Main.finalStatusDuration);
+							break;
+							
+						case (Constants.CORROSIVE_WEAPON_DAMAGE):
+							if (corroMult == 1) { // first effect
+								corroMult = 0.74;
+							} else { // subsequent effects
+								corroMult -= 0.06;
+							}
+							if (corroMult < 0.2) { // Capped at 80% reduction
+								corroMult = 0.2;
+							}
+							corroStacks.add(80000 * Main.finalStatusDuration);
+							statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
+							break;
 						
+						case (Constants.ICE_WEAPON_DAMAGE):
+							coldStacks.add(60000 * Main.finalStatusDuration);
+							statusEffects[10] = (int) (60000 * Main.finalStatusDuration);
+							break;
+						
+						case (Constants.BLAST_WEAPON_DAMAGE):
+							statusEffects[11] = (int) (60000 * Main.finalStatusDuration);
+							statusEffects[12] = (int) (60000 * Main.finalStatusDuration);
+							break;
+						
+						case (Constants.RADIATION_WEAPON_DAMAGE):
+							statusEffects[13] = (int) (120000 * Main.finalStatusDuration);
+							break;
+						}
+
 						// Find number of status effects
 						int statuses = (int) (localStatus * comboStatusMult);
 						if (rng.nextDouble() <= (localStatus * comboStatusMult - statuses)) {
@@ -973,12 +1076,11 @@ public class TTKTarget implements Comparable {
 
 							// Slash Proc
 							if ((proc -= slashProc) < 0) {
-								if (forcedSlashProc == false) {
-									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
-									int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
-									statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
-									statusEffects[0] = slashDuration;
-								}
+								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
+								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
+								statusEffects[0] = slashDuration;
+
 								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 
@@ -1071,7 +1173,7 @@ public class TTKTarget implements Comparable {
 								if (corroMult < 0.2) { // Capped at 80% reduction
 									corroMult = 0.2;
 								}
-								corroStacks.add(80000 * Main.finalStatusDuration);	
+								corroStacks.add(80000 * Main.finalStatusDuration);
 								statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
 							} else if ((proc -= impactProc) < 0) {
 								statusEffects[8] = (int) (60000 * Main.finalStatusDuration);
@@ -1095,8 +1197,7 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Explosive part of the shot
-						// This CANNOT be how I should do this but I'm too stupid to do it in a
-						// different way without breaking multithreading.
+						// This CANNOT be how I should do this but I'm too stupid to do it in a different way without breaking multithreading.
 						if (Main.explosiveRaw.finalBase > 0) {
 							// Find Crit
 							crit = (int) localCritChance;
@@ -1149,13 +1250,11 @@ public class TTKTarget implements Comparable {
 
 							// Forced procs
 							// Forced slash proc?
-							forcedSlashProc = false;
 							if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 								double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
 								int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
 								statusEffects[0] = slashDuration;
-								forcedSlashProc = true;
 							}
 							// Forced poison proc?
 							if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
@@ -1180,7 +1279,7 @@ public class TTKTarget implements Comparable {
 								double proc = rng.nextDouble();
 
 								// Slash Proc
-								if ((proc -= Main.explosiveSlashProcRate) < 0 && forcedSlashProc == false) {
+								if ((proc -= Main.explosiveSlashProcRate) < 0) {
 									double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
 									int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 									statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
@@ -1268,7 +1367,7 @@ public class TTKTarget implements Comparable {
 									statusEffects[6] = (int) (60000 * Main.finalStatusDuration);
 
 									// Corrosive Proc
-								} else if ((proc -= Main.explosiveCorrosiveProcRate) < 0) {							
+								} else if ((proc -= Main.explosiveCorrosiveProcRate) < 0) {
 									if (corroMult == 1) { // first effect
 										corroMult = 0.74;
 									} else { // subsequent effects
@@ -1277,7 +1376,7 @@ public class TTKTarget implements Comparable {
 									if (corroMult < 0.2) { // Capped at 80% reduction
 										corroMult = 0.2;
 									}
-									corroStacks.add(80000 * Main.finalStatusDuration);	
+									corroStacks.add(80000 * Main.finalStatusDuration);
 									statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
 								} else if ((proc -= Main.explosiveImpactProcRate) < 0) {
 									statusEffects[8] = (int) (60000 * Main.finalStatusDuration);
@@ -1338,7 +1437,7 @@ public class TTKTarget implements Comparable {
 
 				// DoTs
 				for (int j = 0; j < statusStacks.size(); j++) {
-					statusStacks.get(j).duration -= (1000 / coldProcMult);
+					statusStacks.get(j).duration -= (1000 * coldProcMult);
 					statusStacks.get(j).timer -= 1000;
 					if (statusStacks.get(j).timer <= 0 && statusStacks.get(j).duration >= 0) {
 						double mult = statusStacks.get(j).healthMult;
@@ -1367,13 +1466,13 @@ public class TTKTarget implements Comparable {
 
 				// Others
 				for (int j = 0; j < 14; j++) {
-					statusEffects[j] -= (1000 / coldProcMult);
+					statusEffects[j] -= (1000 * coldProcMult);
 				}
 
 				// Corrosive
 				corroMult = 1;
 				for (int j = 0; j < corroStacks.size(); j++) {
-					corroStacks.set(j, corroStacks.get(j) - (1000 / coldProcMult));
+					corroStacks.set(j, corroStacks.get(j) - (1000 * coldProcMult));
 					if (corroMult == 1) { // first effect
 						corroMult = 0.74;
 					} else { // subsequent effects
@@ -1395,7 +1494,7 @@ public class TTKTarget implements Comparable {
 				// Cold
 				coldProcMult = 1;
 				for (int j = 0; j < coldStacks.size(); j++) {
-					coldStacks.set(j, coldStacks.get(j) - (1000 / coldProcMult));
+					coldStacks.set(j, coldStacks.get(j) - (1000 * coldProcMult));
 					if (coldProcMult == 1) { // first effect
 						coldProcMult = 0.75;
 					} else { // subsequent effects
@@ -1417,7 +1516,7 @@ public class TTKTarget implements Comparable {
 				// Viral
 				viralDamageBuff = 1;
 				for (int j = 0; j < viralStacks.size(); j++) {
-					viralStacks.set(j, viralStacks.get(j) - (1000 / coldProcMult));
+					viralStacks.set(j, viralStacks.get(j) - (1000 * coldProcMult));
 					if (viralDamageBuff == 1) { // first effect
 						viralDamageBuff = 2;
 					} else { // subsequent effects
@@ -1440,7 +1539,7 @@ public class TTKTarget implements Comparable {
 				// Magnetic
 				magMult = 1;
 				for (int j = 0; j < magStacks.size(); j++) {
-					magStacks.set(j, magStacks.get(j) - (1000 / coldProcMult));
+					magStacks.set(j, magStacks.get(j) - (1000 * coldProcMult));
 					if (magMult == 1) { // first effect
 						magMult = 2;
 					} else { // subsequent effects

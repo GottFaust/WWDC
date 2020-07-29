@@ -206,6 +206,7 @@ public class Main {
 	public static int burstCount = 0;
 	public static double drain = 1;
 	public static int shatteringImpact = 0;
+	public static String forcedProc = "";
 
 	/** Calculated Values **/
 	public static int finalMag = 0;
@@ -255,6 +256,8 @@ public class Main {
 	protected static double explosiveBurstGasStacks = 0;
 	protected static double explosiveElectricStacks = 0;
 	protected static double explosiveBurstElectricStacks = 0;
+	protected static double explosiveFireStacks = 0;
+	protected static double explosiveBurstFireStacks = 0;
 
 	public static Damage raw = new Damage();
 	public static Damage impact = new Damage();
@@ -866,6 +869,7 @@ public class Main {
 		finalComboCrit = 0.0;
 		averageStatusChance = 0;
 		viralMult = 1;
+		forcedProc = "";
 	}
 
 	/**
@@ -906,6 +910,8 @@ public class Main {
 		explosiveDamage1Type = selectedWeapon.getExplosiveDamage1Type();
 		explosiveDamage2Type = selectedWeapon.getExplosiveDamage2Type();
 
+		forcedProc = selectedWeapon.getForcedProcType();
+		
 		switch (damageType) {
 		case Constants.FIRE_WEAPON_DAMAGE:
 			fire.base = selectedWeapon.getBaseDamage();
@@ -1893,6 +1899,7 @@ public class Main {
 	 * Calculates miscellaneous values
 	 */
 	protected static void calculateMiscValues() {
+		
 		// Status Ratios
 		double totalprocWeight = raw.finalBase;
 		slashProcRate = slash.finalBase / raw.finalBase;
@@ -1985,6 +1992,9 @@ public class Main {
 		procsPerSecond = ((averageProjectileCount * finalMag) * averageStatusChance) * (1 / finalIterationTime);
 		burstProcsPerSecond = averageProjectileCount * averageStatusChance * (finalFireRate / avgDelay);
 
+		double potentialProcs = ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
+		double potentialBurstProcs = (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
+		
 		// viral multiplier
 		if (viralProcRate > 0) {
 			viralMult = 1;
@@ -2000,32 +2010,29 @@ public class Main {
 				viralMult += (1 - totalChance) * 3.25;
 		}
 
-		double slashProcsPerPellet = 1 - ((1 - (slashProcRate * averageStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
-		slashStacks = slashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
-		burstSlashStacks = slashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
-		double explosiveSlashProcsPerPellet = 1 - ((1 - (explosiveSlashProcRate * averageStatusChance)) * (1 - (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit)))) * (1 - forcedSlashProcs));
-		explosiveSlashStacks = explosiveSlashProcsPerPellet * ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
-		explosiveBurstSlashStacks = explosiveSlashProcsPerPellet * (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
-
 		// non-stacking fire stacks
 		if (DPSPanel.fireProcLabel.isSelected()) {
 			fireStacks = procsPerSecond * fireProcRate * 6;
 			burstFireStacks = burstProcsPerSecond * fireProcRate * 6;
+			explosiveFireStacks = procsPerSecond * explosiveFireProcRate * (6 * finalStatusDuration);
+			explosiveBurstFireStacks = burstProcsPerSecond * explosiveFireProcRate * (6 * finalStatusDuration);
 		} else if (fireProcRate > 0) {
-			fireStacks = 1 / Math.pow((1 - fireProcRate * averageStatusChance), (averageProjectileCount * finalMag) * (1 / finalIterationTime * 6 * finalStatusDuration));
-			burstFireStacks = 1 / Math.pow((1 - fireProcRate * averageStatusChance), (averageProjectileCount * (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			fireStacks = 1 / Math.pow((1 - fireProcRate * averageStatusChance), potentialProcs);
+			burstFireStacks = 1 / Math.pow((1 - fireProcRate * averageStatusChance), potentialBurstProcs);
+			explosiveFireStacks = 1 / Math.pow((1 - explosiveFireProcRate * averageStatusChance), potentialProcs);
+			explosiveBurstFireStacks = 1 / Math.pow((1 - explosiveFireProcRate * averageStatusChance), potentialBurstProcs);
 		}
+		
+		slashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		burstSlashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
+		explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		explosiveBurstSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
 
 		toxinStacks = procsPerSecond * toxinProcRate * (6 * finalStatusDuration);
 		burstToxinStacks = burstProcsPerSecond * toxinProcRate * (6 * finalStatusDuration);
 		explosiveToxinStacks = procsPerSecond * explosiveToxinProcRate * (6 * finalStatusDuration);
 		explosiveBurstToxinStacks = burstProcsPerSecond * explosiveToxinProcRate * (6 * finalStatusDuration);
-
-		if (weaponName.equals("Hystrix (Poison)") || weaponName.equals("Acrid")) {
-			toxinStacks += ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
-			burstToxinStacks += (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
-		}
-
+		
 		gasStacks = procsPerSecond * gasProcRate * (6 * finalStatusDuration);
 		burstGasStacks = burstProcsPerSecond * gasProcRate * (6 * finalStatusDuration);
 		explosiveGasStacks = procsPerSecond * explosiveGasProcRate * (6 * finalStatusDuration);
@@ -2035,6 +2042,25 @@ public class Main {
 		burstElectricStacks = burstProcsPerSecond * electricProcRate * (6 * finalStatusDuration);
 		explosiveElectricStacks = procsPerSecond * explosiveElectricProcRate * (6 * finalStatusDuration);
 		explosiveBurstElectricStacks = burstProcsPerSecond * explosiveElectricProcRate * (6 * finalStatusDuration);
+		
+		switch (forcedProc) {
+		case Constants.FIRE_WEAPON_DAMAGE:
+			fireStacks += potentialProcs;
+			burstFireStacks += potentialBurstProcs;
+			break;
+		case Constants.ELECTRIC_WEAPON_DAMAGE:
+			electricStacks += potentialProcs;
+			burstElectricStacks += potentialBurstProcs;
+			break;
+		case Constants.TOXIN_WEAPON_DAMAGE:
+			toxinStacks += potentialProcs;
+			burstToxinStacks += potentialBurstProcs;
+			break;
+		case Constants.GAS_WEAPON_DAMAGE:
+			gasStacks += potentialProcs;
+			burstGasStacks += potentialBurstProcs;
+			break;
+		}	
 
 		// Final Damage values
 		impact.finalBase *= finalDamageMult;
@@ -2520,7 +2546,9 @@ public class Main {
 		burstPoisonDoTDPS += explosiveBurstToxinStacks * explosivePoisonDamage;
 
 		heatDoTDPS = fireStacks * heatDamage;
+		heatDoTDPS += explosiveFireStacks * explosiveHeatDamage;
 		burstHeatDoTDPS = burstFireStacks * heatDamage;
+		burstHeatDoTDPS += explosiveBurstFireStacks * explosiveHeatDamage;
 
 		cloudDoTDPS = gasStacks * cloudDamage;
 		cloudDoTDPS += explosiveGasStacks * explosiveCloudDamage;

@@ -419,6 +419,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		wap.meleeTypeBox.addActionListener(this);
 		wap.stanceBox.addActionListener(this);
 		wap.stanceComboBox.addActionListener(this);
+		wap.forcedProcBox.addActionListener(this);
 
 		totalModCostField.addActionListener(this);
 		addCCField.addActionListener(this);
@@ -550,6 +551,16 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		String mode = (String) wap.weaponModeBox.getSelectedItem();
 		return mode;
 	}
+	
+	/**
+	 * Gets the weapon's forced proc type
+	 * 
+	 * @return type
+	 */
+	public String getForcedProcType() {
+		String type = (String) wap.forcedProcBox.getSelectedItem();
+		return type;
+	}
 
 	/**
 	 * Gets the weapon's base damage type
@@ -619,7 +630,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the additive crit chance
 	 * 
-	 * @return drain
+	 * @return CC
 	 */
 	public double getAddCC() {
 		String CCstr = addCCField.getText();
@@ -637,7 +648,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the additive crit damage
 	 * 
-	 * @return drain
+	 * @return CD
 	 */
 	public double getAddCD() {
 		String CDstr = addCDField.getText();
@@ -654,7 +665,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the additive status chance
 	 * 
-	 * @return drain
+	 * @return SC
 	 */
 	public double getAddSC() {
 		String SCstr = addSCField.getText();
@@ -672,7 +683,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the additive damage
 	 * 
-	 * @return drain
+	 * @return Dam
 	 */
 	public double getAddDam() {
 		String Damstr = addDamField.getText();
@@ -690,7 +701,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the additive fire rate
 	 * 
-	 * @return drain
+	 * @return FR
 	 */
 	public double getAddFR() {
 		String FRstr = addFRField.getText();
@@ -736,7 +747,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/**
 	 * Gets the number of projectiles
 	 * 
-	 * @return projectiles
+	 * @return projectile
 	 */
 	public double getProjectiles() {
 		String projectileStr = wap.projectileField.getText();
@@ -1532,6 +1543,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			wap.damageType2Box.setSelectedItem(selectedWeapon.damageType2);
 			wap.explosiveDamageType1Box.setSelectedItem(selectedWeapon.explosiveType1);
 			wap.explosiveDamageType2Box.setSelectedItem(selectedWeapon.explosiveType2);
+			wap.forcedProcBox.setSelectedItem("None"); // temporary
 		}
 	}
 
