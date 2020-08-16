@@ -1546,6 +1546,8 @@ public class Main {
 				headShotBonus += selectedWeapon.getScopeStrength();
 			}
 		}
+		
+		headShotBonus += selectedWeapon.getAddHS();
 
 		// Mutalist Quanta: crit stuff
 		if (mQ1 > 0 || mQ2 > 0 || mQ3 > 0) {
@@ -1671,8 +1673,6 @@ public class Main {
 		}
 		finalStatusChance += selectedWeapon.getAddSC();
 		averageStatusChance = finalStatusChance;
-		// finalStatusChance = (1 - Math.pow((1 - (finalStatusChance)), (1 /
-		// projectileCount))); // Multi-projectile status (outdated)
 
 		finalStatusDuration = statusDuration;
 		for (int i = 0; i < statusDurationMods.size(); i++) {
@@ -1874,6 +1874,7 @@ public class Main {
 		} else if (weaponMode.equals(Constants.CONTINUOUS)) {
 			finalMag /= drain;
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
+			averageStatusChance *= finalProjectileCount;
 		} else if (weaponMode.equals(Constants.CHARGE) || weaponMode.equals(Constants.CHARGEBOW) || weaponMode.equals(Constants.LANKA)) {
 			finalIterationTime = ((finalMag) / finalFireRate) + finalReloadTime;
 		} else if (selectedWeapon.weaponType.equals(Constants.MELEE)) {
@@ -3043,7 +3044,6 @@ public class Main {
 			DPSPanel.CCField.setText(f.format(100 * (finalCritChance + finalComboCrit)) + "%");
 			DPSPanel.CDField.setText(f.format(finalCritMult));
 			DPSPanel.SCField.setText(f.format(100 * averageStatusChance) + "%");
-			DPSPanel.modifiedSCField.setText(f.format(100 * (1 - Math.pow(1 - averageStatusChance, finalProjectileCount))) + "%");
 			DPSPanel.magField.setText(f.format(finalMag));
 			DPSPanel.reloadField.setText(f.format(finalReloadTime));
 			DPSPanel.damageField.setText(f.format(totalmult * (raw.finalBase + explosiveRaw.finalBase)));

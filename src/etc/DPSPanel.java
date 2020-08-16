@@ -36,7 +36,6 @@ public class DPSPanel extends JPanel {
 	public JPanel CCPanel = new JPanel();
 	public JPanel CDPanel = new JPanel();
 	public JPanel SCPanel = new JPanel();
-	public JPanel modifiedSCPanel = new JPanel();
 	public JPanel magPanel = new JPanel();
 	public JPanel reloadPanel = new JPanel();
 	public JPanel damagePanel = new JPanel();
@@ -83,7 +82,6 @@ public class DPSPanel extends JPanel {
 	protected JLabel CCLabel = new JLabel("Crit Chance - ");
 	protected JLabel CDLabel = new JLabel("Crit Damage - ");
 	protected JLabel SCLabel = new JLabel("Status Chance - ");
-	protected JLabel modifiedSCLabel = new JLabel("Status (with MS) - ");
 	protected JLabel magLabel = new JLabel("Magazine - ");
 	protected JLabel reloadLabel = new JLabel("Reload Time - ");
 	protected JLabel damageLabel = new JLabel("Damage per Shot - ");
@@ -130,7 +128,6 @@ public class DPSPanel extends JPanel {
 	public JTextField CCField = new JTextField(8);
 	public JTextField CDField = new JTextField(8);
 	public JTextField SCField = new JTextField(8);
-	public JTextField modifiedSCField = new JTextField(8);
 	public JTextField magField = new JTextField(8);
 	public JTextField reloadField = new JTextField(8);
 	public JTextField damageField = new JTextField(8);
@@ -182,7 +179,6 @@ public class DPSPanel extends JPanel {
 		UIBuilder.labelInit(CCLabel);
 		UIBuilder.labelInit(CDLabel);
 		UIBuilder.labelInit(SCLabel);
-		UIBuilder.labelInit(modifiedSCLabel);
 		UIBuilder.labelInit(magLabel);
 		UIBuilder.labelInit(reloadLabel);
 		UIBuilder.labelInit(damageLabel);
@@ -229,7 +225,6 @@ public class DPSPanel extends JPanel {
 		UIBuilder.textFieldInit(CCField);
 		UIBuilder.textFieldInit(CDField);
 		UIBuilder.textFieldInit(SCField);
-		UIBuilder.textFieldInit(modifiedSCField);
 		UIBuilder.textFieldInit(magField);
 		UIBuilder.textFieldInit(reloadField);
 		UIBuilder.textFieldInit(damageField);
@@ -276,7 +271,6 @@ public class DPSPanel extends JPanel {
 		UIBuilder.createSepparationBorder(CCPanel);
 		UIBuilder.createSepparationBorder(CDPanel);
 		UIBuilder.createSepparationBorder(SCPanel);
-		UIBuilder.createSepparationBorder(modifiedSCPanel);
 		UIBuilder.createSepparationBorder(magPanel);
 		UIBuilder.createSepparationBorder(reloadPanel);
 		UIBuilder.createSepparationBorder(damagePanel);
@@ -324,7 +318,6 @@ public class DPSPanel extends JPanel {
 		UIBuilder.panelInit(CCPanel);
 		UIBuilder.panelInit(CDPanel);
 		UIBuilder.panelInit(SCPanel);
-		UIBuilder.panelInit(modifiedSCPanel);
 		UIBuilder.panelInit(magPanel);
 		UIBuilder.panelInit(reloadPanel);
 		UIBuilder.panelInit(damagePanel);
@@ -375,7 +368,6 @@ public class DPSPanel extends JPanel {
 		CCPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		CDPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		SCPanel.setLayout(new GridLayout(1, 2, 0, 0));
-		modifiedSCPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		magPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		reloadPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		damagePanel.setLayout(new GridLayout(1, 2, 0, 0));
@@ -423,7 +415,6 @@ public class DPSPanel extends JPanel {
 		CCPanel.setMaximumSize(new Dimension(250, 20));
 		CDPanel.setMaximumSize(new Dimension(250, 20));
 		SCPanel.setMaximumSize(new Dimension(250, 20));
-		modifiedSCPanel.setMaximumSize(new Dimension(250, 20));
 		magPanel.setMaximumSize(new Dimension(250, 20));
 		reloadPanel.setMaximumSize(new Dimension(250, 20));
 		damagePanel.setMaximumSize(new Dimension(250, 20));
@@ -488,8 +479,6 @@ public class DPSPanel extends JPanel {
 		CDPanel.add(CDField);
 		SCPanel.add(SCLabel);
 		SCPanel.add(SCField);
-		modifiedSCPanel.add(modifiedSCLabel);
-		modifiedSCPanel.add(modifiedSCField);
 		magPanel.add(magLabel);
 		magPanel.add(magField);
 		reloadPanel.add(reloadLabel);
@@ -565,7 +554,6 @@ public class DPSPanel extends JPanel {
 		stats.add(CCPanel);
 		stats.add(CDPanel);
 		stats.add(SCPanel);
-		stats.add(modifiedSCPanel);
 		stats.add(magPanel);
 		stats.add(reloadPanel);
 		stats.add(damagePanel);
@@ -624,7 +612,6 @@ public class DPSPanel extends JPanel {
 		CCField.setEditable(false);
 		CDField.setEditable(false);
 		SCField.setEditable(false);
-		modifiedSCField.setEditable(false);
 		magField.setEditable(false);
 		reloadField.setEditable(false);
 		damageField.setEditable(false);
@@ -667,7 +654,6 @@ public class DPSPanel extends JPanel {
 		CCField.setToolTipText("Critical chance");
 		CDField.setToolTipText("Critical Multiplier");
 		SCField.setToolTipText("Status Chance per projectile");
-		modifiedSCField.setToolTipText("Status chance per shot");
 		magField.setToolTipText("Magazine Size");
 		reloadField.setToolTipText("Reload time in seconds");
 		damageField.setToolTipText("Raw damage Per shot");

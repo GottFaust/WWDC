@@ -65,6 +65,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JPanel addSC = new JPanel();
 	protected JPanel addDam = new JPanel();
 	protected JPanel addFR = new JPanel();
+	protected JPanel addHS = new JPanel();
 	protected JPanel vigiEffects = new JPanel();
 	protected JPanel mQuantaBubbles = new JPanel();
 	protected JPanel mQuantaOptions = new JPanel();
@@ -89,6 +90,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JLabel addSClabel = new JLabel("Additive Status Chance - ");
 	protected JLabel addDamlabel = new JLabel("Additive Damage - ");
 	protected JLabel addFRlabel = new JLabel("Additive Fire Rate - ");
+	protected JLabel addHSlabel = new JLabel("Head Shot Bonus - ");
 	protected JLabel vigiLabel = new JLabel("Additional Vigilante Mods - ");
 	protected JLabel mQuantaLabel = new JLabel("Mutalist Quanta Bubbles - ");
 	protected JLabel mQ1Label = new JLabel(" 1: ");
@@ -102,6 +104,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JTextField addSCField = new JTextField(8);
 	protected JTextField addDamField = new JTextField(8);
 	protected JTextField addFRField = new JTextField(8);
+	protected JTextField addHSField = new JTextField(8);
 	public JTextField mQ1Field = new JTextField(2);
 	public JTextField mQ2Field = new JTextField(2);
 	public JTextField mQ3Field = new JTextField(2);
@@ -179,6 +182,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.labelInit(addSClabel);
 		UIBuilder.labelInit(addDamlabel);
 		UIBuilder.labelInit(addFRlabel);
+		UIBuilder.labelInit(addHSlabel);
 		UIBuilder.labelInit(vigiLabel);
 		UIBuilder.labelInit(mQuantaLabel);
 		UIBuilder.labelInit(mQ1Label);
@@ -197,6 +201,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.numberFieldInit(addSCField);
 		UIBuilder.numberFieldInit(addDamField);
 		UIBuilder.numberFieldInit(addFRField);
+		UIBuilder.numberFieldInit(addHSField);
 		UIBuilder.numberFieldInit(mQ1Field);
 		UIBuilder.numberFieldInit(mQ2Field);
 		UIBuilder.numberFieldInit(mQ3Field);
@@ -227,6 +232,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.panelInit(addSC);
 		UIBuilder.panelInit(addDam);
 		UIBuilder.panelInit(addFR);
+		UIBuilder.panelInit(addHS);
 		UIBuilder.panelInit(additiveEffects);
 		UIBuilder.panelInit(nums);
 		UIBuilder.panelInit(vigiEffects);
@@ -238,6 +244,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.createSepparationBorder(addSC);
 		UIBuilder.createSepparationBorder(addDam);
 		UIBuilder.createSepparationBorder(addFR);
+		UIBuilder.createSepparationBorder(addHS);
 		UIBuilder.createSepparationBorder(vigiEffects);
 		UIBuilder.createSepparationBorder(mQuantaBubbles);
 
@@ -269,6 +276,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addSC.setLayout(new GridLayout(1, 2, 0, 0));
 		addDam.setLayout(new GridLayout(1, 2, 0, 0));
 		addFR.setLayout(new GridLayout(1, 2, 0, 0));
+		addHS.setLayout(new GridLayout(1, 2, 0, 0));
 		vigiEffects.setLayout(new GridLayout(1, 2, 0, 0));
 		mQuantaBubbles.setLayout(new GridLayout(1, 2, 0, 0));
 		mQuantaOptions.setLayout(new BoxLayout(mQuantaOptions, BoxLayout.X_AXIS));
@@ -297,6 +305,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addDam.add(addDamField);
 		addFR.add(addFRlabel);
 		addFR.add(addFRField);
+		addHS.add(addHSlabel);
+		addHS.add(addHSField);
 		vigiEffects.add(vigiLabel);
 		vigiEffects.add(vigiSlider);
 		mQuantaBubbles.add(mQuantaLabel);
@@ -313,6 +323,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		additiveEffects.add(addSC);
 		additiveEffects.add(addDam);
 		additiveEffects.add(addFR);
+		additiveEffects.add(addHS);
 		additiveEffects.add(vigiEffects);
 		additiveEffects.add(mQuantaBubbles);
 		nums.add(attributesPanel);
@@ -327,6 +338,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addSCField.setToolTipText("Additive status chance as a percent");
 		addDamField.setToolTipText("Additive damage as a percent (Chroma)");
 		addFRField.setToolTipText("Additive fire rate as a percent (Toxocyst's is multiplicative)");
+		addHSField.setToolTipText("Headshot Bonus not accounted for by sniper scopes (As a percent. eg: enter 20 for Synapse)");
 		vigiSlider.setToolTipText("Vigilante mods attached to your Warframe and/or sentinel weapon");
 		hideAdd.setToolTipText("Optinal attributes that are added after normal calculation. IE: Knell, Arcanes, Warframe buffs, etc");
 		mQuantaBubbles.setToolTipText("Mutalist Quanta bubbles you are shooting through and how many of each stack level. ie if shooting through one bubble that has been stacked 3 times, but 1 into the 3: textbox.");
@@ -427,6 +439,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		addSCField.addActionListener(this);
 		addDamField.addActionListener(this);
 		addFRField.addActionListener(this);
+		addHSField.addActionListener(this);
 		mQ1Field.addActionListener(this);
 		mQ2Field.addActionListener(this);
 		mQ3Field.addActionListener(this);
@@ -714,6 +727,22 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		return (FR);
 	}
 
+	/**
+	 * Gets the headshot bonus
+	 * 
+	 * @return FR
+	 */
+	public double getAddHS() {
+		String HSstr = addHSField.getText();
+		if (HSstr == null || HSstr.equals("")) {
+			HSstr = "0";
+		}
+		double HS = Double.parseDouble(HSstr);
+		HS /= 100.0;
+
+		return (HS);
+	}
+	
 	/**
 	 * Gets the weapon's burst count
 	 * 

@@ -759,6 +759,8 @@ public class TTKTarget implements Comparable {
 		double rampMult = 0;
 		int millisecondMult = 5;
 		statusStacks.add(new DoTPair(0, 0, 0, fireMult, armorFireMult, shieldFireMult, false, false)); // Dedicated fire stack
+		statusStacks.add(new DoTPair(0, 0, 0, electricMult, armorElectricMult, shieldElectricMult, false, false)); // Dedicated electric stack
+		Vector<DoTPair> electricStacks = new Vector<DoTPair>();
 		Random rng = new Random();
 		double coldProcMult = 1;
 		double heatProcMult = 1;
@@ -819,11 +821,12 @@ public class TTKTarget implements Comparable {
 						multishot++;
 					}
 
-					// Beam weapon ramp-up damage 20% to 100% in 0.6 seconds
+					// Beam weapon ramp-up damage 30% to 100% in 0.6 seconds
 					double beamMult = 1;
 					if (Main.weaponMode.equals(Constants.CONTINUOUS)) {
 						beamMult = Math.min(1, 0.3 + (rampMult / 6000) * 0.7);
 						beamMult *= multishot;
+						localStatus = Main.finalStatusChance * multishot;
 						multishot = 1;
 					}
 
@@ -945,7 +948,7 @@ public class TTKTarget implements Comparable {
 						// Forced procs
 
 						// Forced slash proc?
-						if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
+						if ((crit > 0 && rng.nextDouble() < Main.hunterMunitions) || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							int slashDuration = (int) (6 * Main.finalStatusDuration * 10000);
 							statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
@@ -983,15 +986,19 @@ public class TTKTarget implements Comparable {
 								elecHeadMult = 2 * Main.headShotBonus;
 							}
 							double electricProcDamage = DoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
-
 							int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
-							statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
-
-							if (targetCurrentShields > 0) {
-								targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
-							} else {
-								targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+							
+							electricStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
+							if (statusStacks.get(1).duration <= 0) { // if we need a new stack, set timer and deal damage
+								statusStacks.get(1).timer = 10000;							
+								if (targetCurrentShields > 0) {
+									targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
+								} else {
+									targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+								}
 							}
+							statusStacks.get(1).damage += electricProcDamage;
+
 							statusEffects[2] = electricDuration;
 							break;
 						
@@ -1112,15 +1119,19 @@ public class TTKTarget implements Comparable {
 									elecHeadMult = 2 * Main.headShotBonus;
 								}
 								double electricProcDamage = DoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
-
 								int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
-								statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
-
-								if (targetCurrentShields > 0) {
-									targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
-								} else {
-									targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+								
+								electricStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
+								if (statusStacks.get(1).damage <= 0) { // if we need a new stack, set timer and deal damage
+									statusStacks.get(1).timer = 10000;
+									if (targetCurrentShields > 0) {
+										targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
+									} else {
+										targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+									}
 								}
+								statusStacks.get(1).damage += electricProcDamage;
+
 								statusEffects[2] = electricDuration;
 
 								// Toxin Proc
@@ -1256,16 +1267,6 @@ public class TTKTarget implements Comparable {
 								statusStacks.add(new DoTPair(bleedDamage, slashDuration, 10000, 1, 1, 1, true, false));
 								statusEffects[0] = slashDuration;
 							}
-							// Forced poison proc?
-							if (Main.weaponName.equals("Hystrix (Poison)") || Main.weaponName.equals("Acrid")) {
-								double localToxinMult = toxinMult;
-								if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) {
-									localToxinMult = (toxinMult * armorToxinMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - armorToxinMult)) / 300));
-								}
-								double poisonDamage = (explosiveDoTBase * (1 + Main.globalToxin) * typeMult) * totalMult * 0.5;
-								int toxinDuration = (int) (6 * Main.finalStatusDuration * 10000);
-								statusStacks.add(new DoTPair(poisonDamage, toxinDuration, 10000, toxinMult, armorToxinMult, shieldToxinMult, false, true));
-							}
 
 							// Find number of status effects
 							statuses = (int) (localStatus * comboStatusMult);
@@ -1315,15 +1316,19 @@ public class TTKTarget implements Comparable {
 										elecHeadMult = 2 * Main.headShotBonus;
 									}
 									double electricProcDamage = explosiveDoTBase * (1 + Main.globalElectric) * typeMult * totalMult * 0.5 * elecHeadMult;
-
 									int electricDuration = (int) (6 * Main.finalStatusDuration * 10000);
-									statusStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
-
-									if (targetCurrentShields > 0) {
-										targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
-									} else {
-										targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+									
+									electricStacks.add(new DoTPair(electricProcDamage, electricDuration, 10000, electricMult, armorElectricMult, shieldElectricMult, false, false));
+									if (statusStacks.get(1).damage <= 0) { // if we need a new stack, set timer and deal damage
+										statusStacks.get(1).timer = 10000;							
+										if (targetCurrentShields > 0) {
+											targetCurrentShields -= electricProcDamage * magMult * localElectricMult;
+										} else {
+											targetCurrentHealth -= electricProcDamage * localElectricMult * viralDamageBuff;
+										}
 									}
+									statusStacks.get(1).damage += electricProcDamage;
+
 									statusEffects[2] = electricDuration;
 
 									// Toxin Proc
@@ -1428,18 +1433,18 @@ public class TTKTarget implements Comparable {
 
 				// Heat proc stuff
 				if (statusEffects[1] > 0) {
-					if (statusStacks.get(0).timer == 0) {
-						heatProcMult = Math.max(heatProcMult - 0.1, 0.5);
+					if (statusStacks.get(0).timer == 0 || statusStacks.get(0).timer == 5000) {
+						heatProcMult = Math.max(heatProcMult - 0.125, 0.5); // Estimate
 					}
 				} else {
 					statusStacks.get(0).damage = 0;
 				}
-
+			
 				// DoTs
 				for (int j = 0; j < statusStacks.size(); j++) {
 					statusStacks.get(j).duration -= (1000 * coldProcMult);
 					statusStacks.get(j).timer -= 1000;
-					if (statusStacks.get(j).timer <= 0 && statusStacks.get(j).duration >= 0) {
+					if (statusStacks.get(j).timer <= 0) {
 						double mult = statusStacks.get(j).healthMult;
 						if (targetCurrentShields > 0.0 && !statusStacks.get(j).tox) { // Shields
 							mult = statusStacks.get(j).shieldMult;
@@ -1447,7 +1452,7 @@ public class TTKTarget implements Comparable {
 						} else if (shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor > 0.0) { // Armor
 							mult = ((statusStacks.get(j).healthMult * statusStacks.get(j).armorMult) / (1 + ((shatteringImpactMult * corroMult * heatProcMult * targetAdjustedMaxArmor * (2 - statusStacks.get(j).armorMult)) / 300)));
 							targetCurrentHealth -= statusStacks.get(j).damage * (statusStacks.get(j).slash ? 1 : mult) * viralDamageBuff;
-						} else { // No armor
+						} else { // No armor or shields
 							targetCurrentHealth -= statusStacks.get(j).damage * (statusStacks.get(j).slash ? 1 : mult) * viralDamageBuff;
 						}
 						statusStacks.get(j).timer = 10000;
@@ -1457,11 +1462,25 @@ public class TTKTarget implements Comparable {
 				// Remove Expired DoTs
 				Vector<DoTPair> tempStacks = (Vector<DoTPair>) statusStacks.clone();
 				int p = 0;
-				for (int i = 1; i < tempStacks.size(); i++) {
-					if (tempStacks.get(i).duration <= 0) { // && i > 0
+				for (int i = 2; i < tempStacks.size(); i++) {
+					if (tempStacks.get(i).duration <= 0) {
 						statusStacks.remove(i - p);
 						p++;
 					}
+				}
+				
+				// Remove Expired electric DoTs
+				Vector<DoTPair> tempElectricStacks = (Vector<DoTPair>) electricStacks.clone();
+				int l = 0;
+				for (int i = 0; i < tempElectricStacks.size(); i++) {
+					if (tempElectricStacks.get(i).duration <= 0) {
+						statusStacks.get(1).damage -= electricStacks.get(i-l).damage;
+						electricStacks.remove(i - l);
+						l++;
+					}
+				}
+				if(statusStacks.get(1).damage < 0) { // Just in case
+					statusStacks.get(1).damage = 0;
 				}
 
 				// Others
