@@ -1,7 +1,6 @@
-[Download the latest .jar file here](https://github.com/GottFaust/WWDC/releases)
-
 # WWDC
 Warframe Weapon DPS Calculator
+[Download the latest .jar file here](https://github.com/GottFaust/WWDC/releases)
 
 ## Basic DPS calculations
 This will show you:
