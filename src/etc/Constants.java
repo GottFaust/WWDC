@@ -784,7 +784,7 @@ RIFLE+","+BURST+","+TOXIN_WEAPON_DAMAGE+",Paracyst,0.0,3,DEPRECIATED,33,0,0,0,11
 RIFLE+","+CHARGEBOW+","+PHYSICAL_WEAPON_DAMAGE+",Paris,0.5,0,DEPRECIATED,0,9,144,27,0,1,72,0.65,30,2,10,1,1",
 RIFLE+","+CHARGEBOW+","+PHYSICAL_WEAPON_DAMAGE+",Paris Prime,0.5,0,DEPRECIATED,0,6.5,208,45.5,0,1,72,0.7,45,2,20,1,1",
 RIFLE+","+SEMI_AUTO+","+BLAST_WEAPON_DAMAGE+",Penta,0,0,DEPRECIATED,350,0,0,0,1,5,20,2.5,10,2,10,1,1",
-SHOTGUN+","+CONTINUOUS+","+VIRAL_WEAPON_DAMAGE+",Phage,0,0,Blade and Whip,30,0,0,0,12,90,720,2,19,2,15.5,7,0.5,null,null,null,null,0.0,0.0,0.0,0.0,No Element,0.0,No Element,No Element,0.0",
+SHOTGUN+","+CONTINUOUS+","+VIRAL_WEAPON_DAMAGE+",Phage,0,0,Blade and Whip,35,0,0,0,12,90,720,2,19,2,15.5,7,0.5,null,null,null,null,0.0,0.0,0.0,0.0,No Element,0.0,No Element,No Element,0.0",
 PISTOL+","+FULL_AUTO+","+TOXIN_WEAPON_DAMAGE+",Pox (Poison Cloud),0.0,0,DEPRECIATED,100,0,0,0,2.08,4,20,1,1,2,35,1,1",
 PISTOL+","+CHARGE+","+BLAST_WEAPON_DAMAGE+",Prisma Angstrum (Charged),0.6,0,Blade and Whip,750,0.0,0.0,0.0,2,1,6,1.8,18,2.2,26,3,1,null,null,null,null,0.0,0.0,0.0,0.0,No Element,0.0,No Element,No Element,0.0",
 PISTOL+","+SEMI_AUTO+","+BLAST_WEAPON_DAMAGE+",Prisma Angstrum (Uncharged),0.0,0,DEPRECIATED,250,0.0,0.0,0.0,2,3,18,2,18,2.2,26,1,1",

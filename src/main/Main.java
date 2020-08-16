@@ -1988,11 +1988,17 @@ public class Main {
 				double tempstatus = (1 - Math.pow((1 - finalStatusChance / 3), (1 / i))) * 3;
 				averageStatusChance += tempstatus / finalMag;
 			}
-
 		}
-		procsPerSecond = ((averageProjectileCount * finalMag) * averageStatusChance) * (1 / finalIterationTime);
-		burstProcsPerSecond = averageProjectileCount * averageStatusChance * (finalFireRate / avgDelay);
-
+		
+		if (weaponMode.equals(Constants.CONTINUOUS)) {
+			procsPerSecond = (finalMag * averageStatusChance) * (1 / finalIterationTime);
+			burstProcsPerSecond = averageStatusChance * (finalFireRate / avgDelay);
+		} else {
+			procsPerSecond = ((averageProjectileCount * finalMag) * averageStatusChance) * (1 / finalIterationTime);
+			burstProcsPerSecond = averageProjectileCount * averageStatusChance * (finalFireRate / avgDelay);
+		}
+		
+		
 		double potentialProcs = ((averageProjectileCount * finalMag) * (1 / finalIterationTime)) * (6 * finalStatusDuration);
 		double potentialBurstProcs = (averageProjectileCount * (finalFireRate / avgDelay)) * (6 * finalStatusDuration);
 		
@@ -3038,7 +3044,7 @@ public class Main {
 			DPSPanel.viralField.setText(f.format(totalmult * (viral.finalBase + explosiveViral.finalBase)));
 			DPSPanel.projectilesField.setText(f.format(finalProjectileCount));
 			if (weaponMode.equals(Constants.CONTINUOUS)) {
-				DPSPanel.projectilesField.setText(f.format(projectileCount));
+				DPSPanel.projectilesField.setText(f.format(1));
 			}
 			DPSPanel.FRField.setText(f.format(finalFireRate));
 			DPSPanel.CCField.setText(f.format(100 * (finalCritChance + finalComboCrit)) + "%");
