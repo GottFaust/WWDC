@@ -3739,26 +3739,4 @@ public class Main {
 		}
 		return n;
 	}
-
-	public static class DoTPair {
-		public double damage = 0.0;
-		public int duration = 0;
-		public int timer = 0;
-		public double healthMult = 0;
-		public double armorMult = 0;
-		public double shieldMult = 0;
-		public boolean slash = false;
-		public boolean tox = false;
-
-		public DoTPair(double damage, int duration, int timer, double healthMult, double armorMult, double shieldMult, boolean slash, boolean tox) {
-			this.damage = damage;
-			this.duration = duration;
-			this.timer = timer;
-			this.healthMult = healthMult;
-			this.armorMult = armorMult;
-			this.shieldMult = shieldMult;
-			this.slash = slash;
-			this.tox = tox;
-		}
-	}
 }

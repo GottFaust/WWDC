@@ -66,6 +66,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JPanel addDam = new JPanel();
 	protected JPanel addFR = new JPanel();
 	protected JPanel addHS = new JPanel();
+	protected JPanel forcedProcPanel = new JPanel();
 	protected JPanel vigiEffects = new JPanel();
 	protected JPanel mQuantaBubbles = new JPanel();
 	protected JPanel mQuantaOptions = new JPanel();
@@ -73,12 +74,13 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 	/** JComboBoxes **/
 	protected JComboBox<String> weaponBox = new JComboBox<String>();
+	protected JComboBox<String> forcedProcBox = new JComboBox<String>();
 
 	/** JCheckBoxes **/
 	protected JCheckBox refireCancel = new JCheckBox();
 	protected JCheckBox potato = new JCheckBox("Catalyst Installed");
 	public JCheckBox mQCombineElement = new JCheckBox("Hitscan");
-	
+
 	public JCheckBox showExilus = new JCheckBox("Show Exilus Slot");
 
 	/** JLabels **/
@@ -96,6 +98,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JLabel mQ1Label = new JLabel(" 1: ");
 	protected JLabel mQ2Label = new JLabel(" 2: ");
 	protected JLabel mQ3Label = new JLabel(" 3: ");
+	protected JLabel forcedProcLabel = new JLabel("Forced proc - ");
 
 	/** JTextFields **/
 	protected JTextField totalModCostField = new JTextField(8);
@@ -134,7 +137,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 	public String weaponType = "";
 	public String weaponName = "";
-	
+
 	public Combo stanceCombo;
 
 	protected boolean updatingDropDowns = false;
@@ -173,6 +176,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 */
 	public void buildUI() {
 		UIBuilder.comboBoxInit(weaponBox);
+	    UIBuilder.comboBoxInit(forcedProcBox);
 
 		UIBuilder.labelInit(totalModCostLabel);
 		UIBuilder.labelInit(weaponLabel);
@@ -188,7 +192,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.labelInit(mQ1Label);
 		UIBuilder.labelInit(mQ2Label);
 		UIBuilder.labelInit(mQ3Label);
-
+	    UIBuilder.labelInit(forcedProcLabel);
+	    
 		UIBuilder.checkBoxInit(refireCancel);
 		UIBuilder.checkBoxInit(potato);
 		UIBuilder.checkBoxInit(showExilus);
@@ -213,6 +218,15 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 		UIBuilder.createSepparationBorder(savedWeaponPanel);
 		UIBuilder.createSepparationBorder(refireCancelPanel);
+		UIBuilder.createSepparationBorder(addCC);
+		UIBuilder.createSepparationBorder(addCD);
+		UIBuilder.createSepparationBorder(addSC);
+		UIBuilder.createSepparationBorder(addDam);
+		UIBuilder.createSepparationBorder(addFR);
+		UIBuilder.createSepparationBorder(addHS);
+		UIBuilder.createSepparationBorder(vigiEffects);
+		UIBuilder.createSepparationBorder(mQuantaBubbles);
+	    UIBuilder.createSepparationBorder(forcedProcPanel);
 
 		UIBuilder.panelInit(attributesPanel);
 		UIBuilder.panelInit(modsPanel);
@@ -238,15 +252,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.panelInit(vigiEffects);
 		UIBuilder.panelInit(mQuantaBubbles);
 		UIBuilder.panelInit(mQuantaOptions);
-
-		UIBuilder.createSepparationBorder(addCC);
-		UIBuilder.createSepparationBorder(addCD);
-		UIBuilder.createSepparationBorder(addSC);
-		UIBuilder.createSepparationBorder(addDam);
-		UIBuilder.createSepparationBorder(addFR);
-		UIBuilder.createSepparationBorder(addHS);
-		UIBuilder.createSepparationBorder(vigiEffects);
-		UIBuilder.createSepparationBorder(mQuantaBubbles);
+	    UIBuilder.panelInit(forcedProcPanel);
 
 		vigiSlider.setMajorTickSpacing(1);
 		vigiSlider.setPaintLabels(true);
@@ -280,6 +286,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		vigiEffects.setLayout(new GridLayout(1, 2, 0, 0));
 		mQuantaBubbles.setLayout(new GridLayout(1, 2, 0, 0));
 		mQuantaOptions.setLayout(new BoxLayout(mQuantaOptions, BoxLayout.X_AXIS));
+	    forcedProcPanel.setLayout(new GridLayout(1,2,0,0));
 
 		totalModCostField.setEditable(false);
 
@@ -292,8 +299,11 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		attributesPanel.add(savedWeaponPanel);
 		attributesPanel.add(wap);
 		attributesPanel.add(refireCancelPanel);
-		
+
 		hideAdd.setAlignmentX(CENTER_ALIGNMENT);
+
+	    forcedProcPanel.add(forcedProcLabel);
+	    forcedProcPanel.add(forcedProcBox);
 		
 		addCC.add(addCClabel);
 		addCC.add(addCCField);
@@ -326,6 +336,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		additiveEffects.add(addHS);
 		additiveEffects.add(vigiEffects);
 		additiveEffects.add(mQuantaBubbles);
+		additiveEffects.add(forcedProcPanel);
 		nums.add(attributesPanel);
 		nums.add(hideAdd);
 		nums.add(additiveEffects);
@@ -349,15 +360,17 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		mQ3Field.setToolTipText("The number of thrice-stacked bubbles");
 		mQ3Label.setToolTipText("The number of thrice-stacked bubbles");
 		mQCombineElement.setToolTipText("Whether the weapon is projectile-based or hitscan. Hitscan weapons do not combine the additional electric damage with other elements.");
-		
+	    forcedProcLabel.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
+	    forcedProcBox.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
+	    
 		JPanel modsAllPanel = new JPanel();
 		UIBuilder.panelInit(modsAllPanel);
 		modsAllPanel.setLayout(new BoxLayout(modsAllPanel, BoxLayout.X_AXIS));
-		
+
 		JPanel modsBothRowsPanel = new JPanel();
 		UIBuilder.panelInit(modsBothRowsPanel);
 		modsBothRowsPanel.setLayout(new BoxLayout(modsBothRowsPanel, BoxLayout.Y_AXIS));
-		
+
 		JPanel modsTopPanel = new JPanel();
 		UIBuilder.panelInit(modsTopPanel);
 		modsTopPanel.setLayout(new BoxLayout(modsTopPanel, BoxLayout.X_AXIS));
@@ -378,7 +391,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modsBottomPanel.add(modSixPanel);
 		modsBottomPanel.add(modSevenPanel);
 		modsBottomPanel.add(modEightPanel);
-		
+
 		modsBothRowsPanel.add(modsTopPanel);
 		modsBothRowsPanel.add(modsBottomPanel);
 		modsAllPanel.add(modsBothRowsPanel);
@@ -390,13 +403,13 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		totalModCostPanel.add(potato);
 		totalModCostPanel.add(showExilus);
 
-		//modsPanel.add(modsTopPanel);
-		//modsPanel.add(modsBottomPanel);
+		// modsPanel.add(modsTopPanel);
+		// modsPanel.add(modsBottomPanel);
 		modsPanel.add(modsAllPanel);
 		modsPanel.add(totalModCostPanel);
 
 		modNinePanel.setMaximumSize(new Dimension(200, 140));
-		
+
 		UIBuilder.panelInit(this);
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(nums);
@@ -431,7 +444,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		wap.meleeTypeBox.addActionListener(this);
 		wap.stanceBox.addActionListener(this);
 		wap.stanceComboBox.addActionListener(this);
-		wap.forcedProcBox.addActionListener(this);
+		forcedProcBox.addActionListener(this);
 
 		totalModCostField.addActionListener(this);
 		addCCField.addActionListener(this);
@@ -451,11 +464,23 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		totalModCostField.setText("60");
 		potato.setSelected(true);
 		showExilus.setSelected(false);
-		
+
 		mQ1Field.setText("0");
 		mQ2Field.setText("0");
 		mQ3Field.setText("0");
 		
+	    forcedProcBox.addItem("None");
+	    forcedProcBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.FIRE_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.ICE_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.TOXIN_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.BLAST_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.CORROSIVE_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.GAS_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
+	    forcedProcBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
+
 		modNinePanel.setVisible(false);
 	}
 
@@ -564,14 +589,14 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		String mode = (String) wap.weaponModeBox.getSelectedItem();
 		return mode;
 	}
-	
+
 	/**
 	 * Gets the weapon's forced proc type
 	 * 
 	 * @return type
 	 */
 	public String getForcedProcType() {
-		String type = (String) wap.forcedProcBox.getSelectedItem();
+		String type = (String) forcedProcBox.getSelectedItem();
 		return type;
 	}
 
@@ -584,6 +609,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		String type = (String) wap.damageTypeBox.getSelectedItem();
 		return type;
 	}
+
 	public String getDamage2Type() {
 		String type = (String) wap.damageType2Box.getSelectedItem();
 		if (type == null || type.equals("")) {
@@ -591,6 +617,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return type;
 	}
+
 	public String getExplosiveDamage1Type() {
 		String type = (String) wap.explosiveDamageType1Box.getSelectedItem();
 		if (type == null || type.equals("")) {
@@ -598,6 +625,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return type;
 	}
+
 	public String getExplosiveDamage2Type() {
 		String type = (String) wap.explosiveDamageType2Box.getSelectedItem();
 		if (type == null || type.equals("")) {
@@ -742,7 +770,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 		return (HS);
 	}
-	
+
 	/**
 	 * Gets the weapon's burst count
 	 * 
@@ -824,6 +852,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return (damage);
 	}
+
 	public double getBaseDamage2() {
 		String damageStr = wap.damage2Field.getText();
 		if (damageStr == null || damageStr.equals("")) {
@@ -886,7 +915,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return (damage);
 	}
-	
+
 	/**
 	 * Gets the explosion's base damage
 	 * 
@@ -903,6 +932,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return (damage);
 	}
+
 	public double getExplosiveBaseDamage2() {
 		String damageStr = wap.explosiveDamage2Field.getText();
 		if (damageStr == null || damageStr.equals("")) {
@@ -1133,7 +1163,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		}
 		return stanceCombo;
 	}
-	
+
 	/**
 	 * Clears all selections and text
 	 */
@@ -1155,6 +1185,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		modSevenPanel.clear();
 		modEightPanel.clear();
 		modNinePanel.clear();
+	    forcedProcBox.setSelectedItem("None");
 	}
 
 	/**
@@ -1305,7 +1336,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		selectedMods.add(modSeven);
 		selectedMods.add(modEight);
 		selectedMods.add(modNine);
-		
+
 		weaponName = wap.nameField.getText();
 
 		modOnePanel.updateDropDowns(selectedMods, modInit.mods, weaponType, weaponName);
@@ -1408,41 +1439,35 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 * @param type
 	 */
 	/*
-	protected void updateWeaponDamageOptions(String type) {
-		if (type.equals(Constants.PHYSICAL_WEAPON_DAMAGE) || type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)) {
-			wap.damagePanel.setVisible(false);
-		} else {
-			wap.damagePanel.setVisible(true);
-		}
-		
-		if( //this can't be the way i should do this
-				type.equals(Constants.EX_FIRE_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_ICE_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_ELECTRIC_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_TOXIN_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_BLAST_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_MAGNETIC_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_GAS_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_RADIATION_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_CORROSIVE_WEAPON_DAMAGE) ||
-				   type.equals(Constants.EX_VIRAL_WEAPON_DAMAGE)) {
-					
-					wap.explosiveDamagePanel.setVisible(true);
-				}else {
-					wap.explosiveDamagePanel.setVisible(false);
-				}
-				
-				if(type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)){
-					wap.explosiveImpactPanel.setVisible(true);
-					wap.explosivePuncturePanel.setVisible(true);
-					wap.explosiveSlashPanel.setVisible(true);
-				}else {
-					wap.explosiveImpactPanel.setVisible(false);
-					wap.explosivePuncturePanel.setVisible(false);
-					wap.explosiveSlashPanel.setVisible(false);
-				}
-	}
-	*/
+	 * protected void updateWeaponDamageOptions(String type) { if
+	 * (type.equals(Constants.PHYSICAL_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)) {
+	 * wap.damagePanel.setVisible(false); } else { wap.damagePanel.setVisible(true);
+	 * }
+	 * 
+	 * if( //this can't be the way i should do this
+	 * type.equals(Constants.EX_FIRE_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_ICE_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_ELECTRIC_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_TOXIN_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_BLAST_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_MAGNETIC_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_GAS_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_RADIATION_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_CORROSIVE_WEAPON_DAMAGE) ||
+	 * type.equals(Constants.EX_VIRAL_WEAPON_DAMAGE)) {
+	 * 
+	 * wap.explosiveDamagePanel.setVisible(true); }else {
+	 * wap.explosiveDamagePanel.setVisible(false); }
+	 * 
+	 * if(type.equals(Constants.EX_PHYSICAL_WEAPON_DAMAGE)){
+	 * wap.explosiveImpactPanel.setVisible(true);
+	 * wap.explosivePuncturePanel.setVisible(true);
+	 * wap.explosiveSlashPanel.setVisible(true); }else {
+	 * wap.explosiveImpactPanel.setVisible(false);
+	 * wap.explosivePuncturePanel.setVisible(false);
+	 * wap.explosiveSlashPanel.setVisible(false); } }
+	 */
 	/**
 	 * Gets the mod with the supplied name
 	 * 
@@ -1572,7 +1597,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			wap.damageType2Box.setSelectedItem(selectedWeapon.damageType2);
 			wap.explosiveDamageType1Box.setSelectedItem(selectedWeapon.explosiveType1);
 			wap.explosiveDamageType2Box.setSelectedItem(selectedWeapon.explosiveType2);
-			wap.forcedProcBox.setSelectedItem("None"); // temporary
+			forcedProcBox.setSelectedItem("None"); // temporary
 		}
 	}
 
@@ -1585,7 +1610,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		if (e.getSource().equals(wap.weaponModeBox)) {
 			updateWeaponModeOptions((String) wap.weaponModeBox.getSelectedItem());
 		} else if (e.getSource().equals(wap.damageTypeBox)) {
-			//updateWeaponDamageOptions((String) wap.damageTypeBox.getSelectedItem());
+			// updateWeaponDamageOptions((String) wap.damageTypeBox.getSelectedItem());
 		} else if (e.getSource().equals(weaponBox)) {
 			if (!updatingDropDowns) {
 				setting = true;
@@ -1601,9 +1626,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			updateDropDownContents();
 		} else if (e.getSource().equals(potato)) {
 			calculateModCosts();
-		}
-		  else if (e.getSource().equals(showExilus)) {
-			  modNinePanel.setVisible(showExilus.isSelected());
+		} else if (e.getSource().equals(showExilus)) {
+			modNinePanel.setVisible(showExilus.isSelected());
 		} else if (e.getSource().equals(hideAdd)) {
 			if (additiveEffects.isVisible()) {
 				additiveEffects.setVisible(false);
@@ -1627,22 +1651,22 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 				break;
 			case 1:
 				try {
-				wap.scopeStrengthField.setText(selectedWeapon.scope1);
+					wap.scopeStrengthField.setText(selectedWeapon.scope1);
 				} catch (Exception ex) {
 					wap.scopeStrengthField.setText("0");
 				}
 				break;
 			case 2:
 				try {
-				wap.scopeStrengthField.setText(selectedWeapon.scope2);
-				} catch (Exception ex){
+					wap.scopeStrengthField.setText(selectedWeapon.scope2);
+				} catch (Exception ex) {
 					wap.scopeStrengthField.setText("0");
 				}
 				break;
 			case 3:
 				try {
-				wap.scopeStrengthField.setText(selectedWeapon.scope3);
-				} catch (Exception ex){
+					wap.scopeStrengthField.setText(selectedWeapon.scope3);
+				} catch (Exception ex) {
 					wap.scopeStrengthField.setText("0");
 				}
 				break;
@@ -1657,8 +1681,8 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 			}
 		} else if (e.getSource().equals(wap.stanceBox)) {
 			wap.stanceComboBox.removeAllItems();
-			for (Stance s : stanceInit.stances) {			
-				if (s.stanceName.equals(wap.stanceBox.getSelectedItem())) {				
+			for (Stance s : stanceInit.stances) {
+				if (s.stanceName.equals(wap.stanceBox.getSelectedItem())) {
 					for (Combo c : s.combos) {
 						wap.stanceComboBox.addItem(c.comboName);
 					}

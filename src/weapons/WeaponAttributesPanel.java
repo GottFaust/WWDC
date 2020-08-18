@@ -55,7 +55,6 @@ public class WeaponAttributesPanel extends JPanel {
   protected JPanel ele2SubPanel = new JPanel();
   protected JPanel exEle1SubPanel = new JPanel();
   protected JPanel exEle2SubPanel = new JPanel();
-  protected JPanel forcedProcPanel = new JPanel();
   
   /** JComboBoxes **/
   protected JComboBox<String> damageTypeBox = new JComboBox<String>();
@@ -66,7 +65,6 @@ public class WeaponAttributesPanel extends JPanel {
   protected JComboBox<String> meleeTypeBox = new JComboBox<String>();
   protected JComboBox<String> stanceBox = new JComboBox<String>();
   protected JComboBox<String> stanceComboBox = new JComboBox<String>();
-  protected JComboBox<String> forcedProcBox = new JComboBox<String>();
   protected JComboBox<String> damageType2Box = new JComboBox<String>();
   protected JComboBox<String> explosiveDamageType1Box = new JComboBox<String>();
   protected JComboBox<String> explosiveDamageType2Box = new JComboBox<String>();
@@ -100,7 +98,6 @@ public class WeaponAttributesPanel extends JPanel {
   protected JLabel damageType2Label = new JLabel("Elemental Type 2 - ");
   protected JLabel explosiveDamageType1Label = new JLabel("Ex Element Type 1 - ");
   protected JLabel explosiveDamageType2Label = new JLabel("Ex Element Type 2 - ");
-  protected JLabel forcedProcLabel = new JLabel("Forced proc - ");
   
   /** JTextFields **/
   protected JTextField chargeTimeField = new JTextField(8);
@@ -156,7 +153,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.comboBoxInit(damageType2Box);
     UIBuilder.comboBoxInit(explosiveDamageType1Box);
     UIBuilder.comboBoxInit(explosiveDamageType2Box);
-    UIBuilder.comboBoxInit(forcedProcBox);
     
     UIBuilder.labelInit(nameLabel);
     UIBuilder.labelInit(impactLabel);
@@ -186,7 +182,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.labelInit(damageType2Label);
     UIBuilder.labelInit(explosiveDamageType1Label);
     UIBuilder.labelInit(explosiveDamageType2Label);
-    UIBuilder.labelInit(forcedProcLabel);
     
     UIBuilder.textFieldInit(nameField);
     
@@ -242,7 +237,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.createSepparationBorder(damageType2Panel);
     UIBuilder.createSepparationBorder(explosiveDamageType1Panel);
     UIBuilder.createSepparationBorder(explosiveDamageType2Panel);
-    UIBuilder.createSepparationBorder(forcedProcPanel);
     
     UIBuilder.panelInit(this);
     UIBuilder.panelInit(namePanel);
@@ -277,7 +271,6 @@ public class WeaponAttributesPanel extends JPanel {
     UIBuilder.panelInit(ele2SubPanel);
     UIBuilder.panelInit(exEle1SubPanel);
     UIBuilder.panelInit(exEle2SubPanel);
-    UIBuilder.panelInit(forcedProcPanel);
     
     nameLabel.setToolTipText(Constants.NAME_TOOL_TIP);
     impactLabel.setToolTipText(Constants.IMPACT_TOOL_TIP);
@@ -297,7 +290,6 @@ public class WeaponAttributesPanel extends JPanel {
     projectileLabel.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusLabel.setToolTipText(Constants.STATUS_TOOL_TIP);
     drainLabel.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
-    forcedProcLabel.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
     
     nameField.setToolTipText(Constants.NAME_TOOL_TIP);
     damageField.setToolTipText(Constants.DAMAGE_TOOL_TIP);
@@ -318,7 +310,6 @@ public class WeaponAttributesPanel extends JPanel {
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
     drainField.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
-    forcedProcBox.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
 
     for(String mode : Constants.gunModes) {
     	weaponModeBox.addItem(mode);
@@ -338,18 +329,6 @@ public class WeaponAttributesPanel extends JPanel {
     damageTypeBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
     damageTypeBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
-    
-    forcedProcBox.addItem("None");
-    forcedProcBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.FIRE_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.ICE_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.TOXIN_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.BLAST_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.CORROSIVE_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.GAS_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
-    forcedProcBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
     
     for (int i = 0; i < damageTypeBox.getItemCount(); i++){
     damageType2Box.addItem(damageTypeBox.getItemAt(i));
@@ -401,7 +380,6 @@ public class WeaponAttributesPanel extends JPanel {
     damageType2Panel.setLayout(new GridLayout(1,2,0,0));
     explosiveDamageType1Panel.setLayout(new GridLayout(1,2,0,0));
     explosiveDamageType2Panel.setLayout(new GridLayout(1,2,0,0));
-    forcedProcPanel.setLayout(new GridLayout(1,2,0,0));
     
 	GridBagConstraints gbc = new GridBagConstraints();
 	gbc.fill = GridBagConstraints.BOTH;
@@ -479,9 +457,6 @@ public class WeaponAttributesPanel extends JPanel {
     explosiveDamageType2Panel.add(explosiveDamageType2Label);
     explosiveDamageType2Panel.add(exEle2SubPanel);
     
-    forcedProcPanel.add(forcedProcLabel);
-    forcedProcPanel.add(forcedProcBox);
-    
     this.setBorder(null);
     
     this.add(namePanel);
@@ -509,7 +484,6 @@ public class WeaponAttributesPanel extends JPanel {
     this.add(reloadPanel);
     this.add(critChancePanel);
     this.add(critMultPanel);
-    this.add(forcedProcPanel);
     this.add(comboPanel);
     this.add(startingComboPanel);
     this.add(scopePanel);
@@ -553,7 +527,6 @@ public class WeaponAttributesPanel extends JPanel {
     damageType2Box.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     explosiveDamageType1Box.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
     explosiveDamageType2Box.setSelectedItem(Constants.PHYSICAL_WEAPON_DAMAGE);
-    forcedProcBox.setSelectedItem("None");
   }
   
   /**
