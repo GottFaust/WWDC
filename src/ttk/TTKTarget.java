@@ -1573,7 +1573,7 @@ public class TTKTarget implements Comparable {
 						coldProcMult = 0.3;
 					}
 				}
-				Vector<Double> tempColdStacks = (Vector<Double>) coldStacks.clone();
+				Vector<Integer> tempColdStacks = (Vector<Integer>) coldStacks.clone();
 				p = 0;
 				for (int i = 1; i < tempColdStacks.size(); i++) {
 					if (tempColdStacks.get(i) <= 0) { // && i > 0
