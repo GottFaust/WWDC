@@ -806,7 +806,7 @@ public class TTKTarget implements Comparable {
 			// is it time to shoot?
 			if (shotTimer <= 0) {
 
-				millisecondMult = Math.min(millisecondMult ++, 5);
+				millisecondMult = Math.min(millisecondMult + 1 , 5);
 
 				// Kohm Pellets
 				localProjectileCount = Main.finalProjectileCount;
