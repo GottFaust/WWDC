@@ -340,6 +340,7 @@ public class Main {
 	public static double globalIce;
 	public static double fireRateModPower;
 	public static double hunterMunitions;
+	public static double impactslash;
 	public static double vigilante;
 	public static double comboCrit;
 	public static double comboStatus;
@@ -837,6 +838,7 @@ public class Main {
 		globalElectric = 0;
 		globalIce = 0;
 		hunterMunitions = 0;
+		impactslash = 0;
 		vigilante = 0;
 		comboCrit = 0;
 		comboStatus = 0;
@@ -1210,6 +1212,9 @@ public class Main {
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_MUNITIONS)) {
 					hunterMunitions = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_MUNITIONS)) * (1.0 + modRanks.get(i));
+				}
+				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACTSLASH)) {
+					impactslash = tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACTSLASH)) * (1.0 + modRanks.get(i));
 				}
 				if (tempMod.effectTypes.contains(Constants.MOD_TYPE_IMPACT_DAMAGE)) {
 					impactDamageMods.add((tempMod.effectStrengths.get(tempMod.effectTypes.indexOf(Constants.MOD_TYPE_IMPACT_DAMAGE))) * (1.0 + modRanks.get(i)));
@@ -1639,6 +1644,10 @@ public class Main {
 			finalFireRate *= (1 + multiplicativeFireRateMods.get(i));
 		}
 		finalFireRate = Math.max(0, finalFireRate);
+		
+		if (finalFireRate < 2.5) {
+			impactslash *= 2;
+		}
 
 		finalReloadTime = reloadTime;
 		double reloadSpeedMult = 1.0;
@@ -2030,10 +2039,10 @@ public class Main {
 			explosiveBurstFireStacks = 1 / Math.pow((1 - explosiveFireProcRate * averageStatusChance), potentialBurstProcs);
 		}
 		
-		slashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
-		burstSlashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
-		explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
-		explosiveBurstSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
+		slashStacks = ((slashProcRate * averageStatusChance) + (impactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		burstSlashStacks = ((slashProcRate * averageStatusChance) + (impactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
+		explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (explosiveImpactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		explosiveBurstSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (explosiveImpactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
 
 		toxinStacks = procsPerSecond * toxinProcRate * (6 * finalStatusDuration);
 		burstToxinStacks = burstProcsPerSecond * toxinProcRate * (6 * finalStatusDuration);
@@ -2066,6 +2075,10 @@ public class Main {
 		case Constants.GAS_WEAPON_DAMAGE:
 			gasStacks += potentialProcs;
 			burstGasStacks += potentialBurstProcs;
+			break;
+		case Constants.IMPACT_WEAPON_DAMAGE:
+			slashStacks += potentialProcs * impactslash;
+			burstSlashStacks += potentialBurstProcs * impactslash;
 			break;
 		}	
 
@@ -2599,17 +2612,17 @@ public class Main {
 			infestedFlesh.perSecond = infestedFlesh.perMinute / 60.0;
 			fossilized.perSecond = fossilized.perMinute / 60.0;
 			sinew.perSecond = sinew.perMinute / 60.0;
-			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS * finalGrineerMult);
+			cloneFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.25) + cloudDoTDPS);
 			ferrite.perSecond += (bleedDoTDPS + (poisonDoTDPS) + heatDoTDPS + (cloudDoTDPS));
 			alloy.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS);
-			mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalGrineerMult));
-			corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5 * finalCorpusMult));
+			mechanical.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75));
+			corpusFlesh.perSecond += (bleedDoTDPS + (poisonDoTDPS * 1.5) + heatDoTDPS + (cloudDoTDPS * 1.5));
 			shield.perSecond += (heatDoTDPS);
 			protoShield.perSecond += ((heatDoTDPS * 0.5));
-			robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75 * finalCorpusMult));
-			infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS * finalInfestedMult);
-			fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * finalInfestedMult * 0.5));
-			sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS * finalInfestedMult);
+			robotic.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.75) + heatDoTDPS + (cloudDoTDPS * 0.75));
+			infestedFlesh.perSecond += (bleedDoTDPS + poisonDoTDPS + (heatDoTDPS * 1.5) + cloudDoTDPS);
+			fossilized.perSecond += (bleedDoTDPS + (poisonDoTDPS * 0.5) + heatDoTDPS + (cloudDoTDPS * 0.5));
+			sinew.perSecond += (bleedDoTDPS + poisonDoTDPS + heatDoTDPS + cloudDoTDPS);
 		}
 	}
 

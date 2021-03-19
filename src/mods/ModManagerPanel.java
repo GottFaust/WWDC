@@ -329,6 +329,7 @@ public class ModManagerPanel extends JPanel implements ActionListener, ListSelec
 		modEffects.add(Constants.MOD_TYPE_MULTI_RATE);
 		modEffects.add(Constants.MOD_TYPE_RANGE);
 		modEffects.add(Constants.MOD_TYPE_PFS);
+		modEffects.add(Constants.MOD_TYPE_IMPACTSLASH);
 		modEffects.add("--");
 
 		Collections.sort(modEffects);

@@ -1051,6 +1051,15 @@ public class TTKTarget implements Comparable {
 						case (Constants.RADIATION_WEAPON_DAMAGE):
 							statusEffects[13] = (int) (120000 * Main.finalStatusDuration);
 							break;
+							
+						case (Constants.IMPACT_WEAPON_DAMAGE):
+							statusEffects[8] = baseStatusDuration;
+							if (rng.nextDouble() <= Main.impactslash) { // Add a slash proc for Internal Bleeding or Hemorrhage 
+								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+								slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+								statusEffects[0] = baseStatusDuration;
+							}
+							break;
 						}
 
 						// Find number of status effects
@@ -1145,8 +1154,14 @@ public class TTKTarget implements Comparable {
 								}
 								corroStacks.add(80000 * Main.finalStatusDuration);
 								statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
+								// Impact proc
 							} else if ((proc -= impactProc) < 0) {
 								statusEffects[8] = baseStatusDuration;
+								if (rng.nextDouble() <= Main.impactslash) { // Add a slash proc for Internal Bleeding or Hemorrhage 
+									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+									slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+									statusEffects[0] = baseStatusDuration;
+								}
 							} else if ((proc -= punctureProc) < 0) {
 								statusEffects[9] = baseStatusDuration;
 
@@ -1324,6 +1339,11 @@ public class TTKTarget implements Comparable {
 									corroStacks.add(80000 * Main.finalStatusDuration);
 									statusEffects[7] = (int) (80000 * Main.finalStatusDuration);
 								} else if ((proc -= Main.explosiveImpactProcRate) < 0) {
+									if (rng.nextDouble() <= Main.impactslash) { // Add a slash proc for Internal Bleeding or Hemorrhage 
+										double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
+										slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+										statusEffects[0] = baseStatusDuration;
+									}
 									statusEffects[8] = baseStatusDuration;
 								} else if ((proc -= Main.explosivePunctureProcRate) < 0) {
 									statusEffects[9] = baseStatusDuration;

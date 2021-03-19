@@ -470,6 +470,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		mQ3Field.setText("0");
 		
 	    forcedProcBox.addItem("None");
+	    forcedProcBox.addItem(Constants.IMPACT_WEAPON_DAMAGE);
 	    forcedProcBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
 	    forcedProcBox.addItem(Constants.FIRE_WEAPON_DAMAGE);
 	    forcedProcBox.addItem(Constants.ICE_WEAPON_DAMAGE);

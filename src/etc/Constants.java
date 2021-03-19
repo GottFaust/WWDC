@@ -49,6 +49,7 @@ public class Constants {
   public static final String MOD_TYPE_MULTI_RATE = "FireRate(Multiplicative)";
   public static final String MOD_TYPE_RANGE = "Range";
   public static final String MOD_TYPE_PFS = "FlightSpeed";
+  public static final String MOD_TYPE_IMPACTSLASH = "Impact Slash Status";
   
   /** Sniper scope effects **/
   public static final String ADDITIVE_CRIT_CHANCE = "Scoped CC";
