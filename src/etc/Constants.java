@@ -49,7 +49,7 @@ public class Constants {
   public static final String MOD_TYPE_MULTI_RATE = "FireRate(Multiplicative)";
   public static final String MOD_TYPE_RANGE = "Range";
   public static final String MOD_TYPE_PFS = "FlightSpeed";
-  public static final String MOD_TYPE_IMPACTSLASH = "Impact Slash Status";
+  public static final String MOD_TYPE_IMPACTSLASH = "ImpactSlashStatus";
   
   /** Sniper scope effects **/
   public static final String ADDITIVE_CRIT_CHANCE = "Scoped CC";
@@ -478,6 +478,8 @@ public static final String[] baseModDB = {
     "Primed Bane of Infested,"+RIFLE+",10,1,"+MOD_TYPE_INFESTED_DAMAGE+",0.05,V,4,None,false",
 		"Chilling Reload,"+SHOTGUN+",3,2,"+MOD_TYPE_ICE_DAMAGE+","+MOD_TYPE_RELOAD_SPEED+",0.15,0.1,V,2,None,false",
 		"Target Acquired,"+RIFLE+",5,1,"+HEADSHOT_BONUS+",0.1,V,6,None,false",
+		"Internal Bleeding,"+RIFLE+",0,1,"+MOD_TYPE_IMPACTSLASH+",0.35,V,0,None,false",
+		"Hemorrhage,"+PISTOL+",0,1,"+MOD_TYPE_IMPACTSLASH+",0.35,V,0,None,false",
 		//Melee Mods
     "Primed Pressure Point,"+MELEE+",10,1,"+MOD_TYPE_DAMAGE_BONUS+",0.15,V,4,None,false",
     "Primed Reach,"+MELEE+",10,1,"+MOD_TYPE_RANGE+",0.15,V,4,None,false",
