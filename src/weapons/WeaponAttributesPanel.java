@@ -310,6 +310,9 @@ public class WeaponAttributesPanel extends JPanel {
     projectileField.setToolTipText(Constants.POJECTILE_TOOL_TIP);
     statusField.setToolTipText(Constants.STATUS_TOOL_TIP);
     drainField.setToolTipText("Ammo drained per tick for beam weapons. 0.5 for most");
+    
+    explosiveDamage1Field.setToolTipText("The type of elemental damage that the explosion does");
+    explosiveDamage2Field.setToolTipText("The second type of elemental damage that the explosion does");
 
     for(String mode : Constants.gunModes) {
     	weaponModeBox.addItem(mode);

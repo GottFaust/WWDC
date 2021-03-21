@@ -67,6 +67,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JPanel addFR = new JPanel();
 	protected JPanel addHS = new JPanel();
 	protected JPanel forcedProcPanel = new JPanel();
+	protected JPanel forcedProcEXPanel = new JPanel();
 	protected JPanel vigiEffects = new JPanel();
 	protected JPanel mQuantaBubbles = new JPanel();
 	protected JPanel mQuantaOptions = new JPanel();
@@ -75,6 +76,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	/** JComboBoxes **/
 	protected JComboBox<String> weaponBox = new JComboBox<String>();
 	protected JComboBox<String> forcedProcBox = new JComboBox<String>();
+	protected JComboBox<String> forcedProcEXBox = new JComboBox<String>();
 
 	/** JCheckBoxes **/
 	protected JCheckBox refireCancel = new JCheckBox();
@@ -99,6 +101,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	protected JLabel mQ2Label = new JLabel(" 2: ");
 	protected JLabel mQ3Label = new JLabel(" 3: ");
 	protected JLabel forcedProcLabel = new JLabel("Forced proc - ");
+	protected JLabel forcedProcEXLabel = new JLabel("Forced EX proc - ");
 
 	/** JTextFields **/
 	protected JTextField totalModCostField = new JTextField(8);
@@ -177,6 +180,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	public void buildUI() {
 		UIBuilder.comboBoxInit(weaponBox);
 	    UIBuilder.comboBoxInit(forcedProcBox);
+	    UIBuilder.comboBoxInit(forcedProcEXBox);
 
 		UIBuilder.labelInit(totalModCostLabel);
 		UIBuilder.labelInit(weaponLabel);
@@ -193,6 +197,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.labelInit(mQ2Label);
 		UIBuilder.labelInit(mQ3Label);
 	    UIBuilder.labelInit(forcedProcLabel);
+	    UIBuilder.labelInit(forcedProcEXLabel);
 	    
 		UIBuilder.checkBoxInit(refireCancel);
 		UIBuilder.checkBoxInit(potato);
@@ -227,6 +232,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.createSepparationBorder(vigiEffects);
 		UIBuilder.createSepparationBorder(mQuantaBubbles);
 	    UIBuilder.createSepparationBorder(forcedProcPanel);
+	    UIBuilder.createSepparationBorder(forcedProcEXPanel);
 
 		UIBuilder.panelInit(attributesPanel);
 		UIBuilder.panelInit(modsPanel);
@@ -253,6 +259,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		UIBuilder.panelInit(mQuantaBubbles);
 		UIBuilder.panelInit(mQuantaOptions);
 	    UIBuilder.panelInit(forcedProcPanel);
+	    UIBuilder.panelInit(forcedProcEXPanel);
 
 		vigiSlider.setMajorTickSpacing(1);
 		vigiSlider.setPaintLabels(true);
@@ -287,6 +294,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		mQuantaBubbles.setLayout(new GridLayout(1, 2, 0, 0));
 		mQuantaOptions.setLayout(new BoxLayout(mQuantaOptions, BoxLayout.X_AXIS));
 	    forcedProcPanel.setLayout(new GridLayout(1,2,0,0));
+	    forcedProcEXPanel.setLayout(new GridLayout(1,2,0,0));
 
 		totalModCostField.setEditable(false);
 
@@ -304,7 +312,9 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 	    forcedProcPanel.add(forcedProcLabel);
 	    forcedProcPanel.add(forcedProcBox);
-		
+	    forcedProcEXPanel.add(forcedProcEXLabel);
+	    forcedProcEXPanel.add(forcedProcEXBox);
+	    
 		addCC.add(addCClabel);
 		addCC.add(addCCField);
 		addCD.add(addCDlabel);
@@ -337,6 +347,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		additiveEffects.add(vigiEffects);
 		additiveEffects.add(mQuantaBubbles);
 		additiveEffects.add(forcedProcPanel);
+		additiveEffects.add(forcedProcEXPanel);
 		nums.add(attributesPanel);
 		nums.add(hideAdd);
 		nums.add(additiveEffects);
@@ -360,8 +371,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		mQ3Field.setToolTipText("The number of thrice-stacked bubbles");
 		mQ3Label.setToolTipText("The number of thrice-stacked bubbles");
 		mQCombineElement.setToolTipText("Whether the weapon is projectile-based or hitscan. Hitscan weapons do not combine the additional electric damage with other elements.");
-	    forcedProcLabel.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
-	    forcedProcBox.setToolTipText("For weapons that force a specific elemental proc on each shot (Acrid, Hystrix)");
+	    forcedProcLabel.setToolTipText("For weapons that force a specific proc on each shot (Acrid, Hystrix)");
+	    forcedProcBox.setToolTipText("For weapons that force a specific proc on each shot (Acrid, Hystrix)");
+	    forcedProcEXLabel.setToolTipText("For weapons that force a specific proc on each explosion (Chakkhurr)");
+	    forcedProcEXBox.setToolTipText("For weapons that force a specific proc on each explosion (Chakkhurr)");
 	    
 		JPanel modsAllPanel = new JPanel();
 		UIBuilder.panelInit(modsAllPanel);
@@ -417,6 +430,9 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 
 		wap.weaponModeBox.addActionListener(this);
 		wap.damageTypeBox.addActionListener(this);
+		wap.explosiveDamageType1Box.addActionListener(this);
+		wap.damageType2Box.addActionListener(this);
+		wap.explosiveDamageType2Box.addActionListener(this);
 		weaponBox.addActionListener(this);
 		potato.addActionListener(this);
 		showExilus.addActionListener(this);
@@ -426,9 +442,15 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		wap.chargeTimeField.addActionListener(this);
 		wap.burstCountField.addActionListener(this);
 		wap.damageField.addActionListener(this);
+		wap.damage2Field.addActionListener(this);
+		wap.explosiveDamage1Field.addActionListener(this);
+		wap.explosiveDamage2Field.addActionListener(this);
 		wap.impactField.addActionListener(this);
 		wap.punctureField.addActionListener(this);
 		wap.slashField.addActionListener(this);
+		wap.explosiveImpactField.addActionListener(this);
+		wap.explosivePunctureField.addActionListener(this);
+		wap.explosiveSlashField.addActionListener(this);
 		wap.fireRateField.addActionListener(this);
 		wap.magSizeField.addActionListener(this);
 		wap.startingComboField.addActionListener(this);
@@ -445,6 +467,7 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 		wap.stanceBox.addActionListener(this);
 		wap.stanceComboBox.addActionListener(this);
 		forcedProcBox.addActionListener(this);
+		forcedProcEXBox.addActionListener(this);
 
 		totalModCostField.addActionListener(this);
 		addCCField.addActionListener(this);
@@ -481,6 +504,19 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	    forcedProcBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
 	    forcedProcBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
 	    forcedProcBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
+	    
+	    forcedProcEXBox.addItem("None");
+	    forcedProcEXBox.addItem(Constants.IMPACT_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.ELECTRIC_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.FIRE_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.ICE_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.TOXIN_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.BLAST_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.CORROSIVE_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.GAS_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.MAGNETIC_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.RADIATION_WEAPON_DAMAGE);
+	    forcedProcEXBox.addItem(Constants.VIRAL_WEAPON_DAMAGE);
 
 		modNinePanel.setVisible(false);
 	}
@@ -598,6 +634,10 @@ public class WeaponPanel extends JPanel implements ActionListener, ChangeListene
 	 */
 	public String getForcedProcType() {
 		String type = (String) forcedProcBox.getSelectedItem();
+		return type;
+	}
+	public String getForcedProcEXType() {
+		String type = (String) forcedProcEXBox.getSelectedItem();
 		return type;
 	}
 
