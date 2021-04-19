@@ -1,5 +1,6 @@
 package Stances;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -34,9 +35,6 @@ import ttk.TTKTarget;
 
 public class StanceManagerPanel extends JPanel implements ActionListener, ListSelectionListener {
 
-	// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
-	// puncture, ice, blast, knockdown, radiation
-
 	protected JPanel leftPanel = new JPanel();
 	protected JPanel rightPanel = new JPanel();
 	protected JPanel namePanel = new JPanel();
@@ -56,6 +54,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 	protected JLabel multiLabel = new JLabel("Multiplier");
 	protected JLabel combLabel = new JLabel("Combo Increase");
 	protected JLabel procLabel = new JLabel("Status Procs");
+	protected JLabel bonusLabel = new JLabel("IPS Bonus");
 
 	protected JComboBox<String> typeBox = new JComboBox<String>();
 	protected JComboBox<String> comboBox = new JComboBox<String>();
@@ -102,6 +101,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		UIBuilder.labelInit(multiLabel);
 		UIBuilder.labelInit(combLabel);
 		UIBuilder.labelInit(procLabel);
+		UIBuilder.labelInit(bonusLabel);
 
 		UIBuilder.listInit(stanceList);
 		UIBuilder.scrollPaneInit(listScroll);
@@ -153,6 +153,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		hitLabelsPanel.add(multiLabel);
 		hitLabelsPanel.add(combLabel);
 		hitLabelsPanel.add(procLabel);
+		hitLabelsPanel.add(bonusLabel);
 
 		hitButtonsPanel.add(addHitButton);
 		hitButtonsPanel.add(delHitButton);
@@ -209,6 +210,9 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 			double delay = checkNumber(((JTextField) p.getComponent(0)).getText());
 			double multi = checkNumber(((JTextField) p.getComponent(1)).getText());
 			double comb = checkNumber(((JTextField) p.getComponent(2)).getText());
+			double impact = checkNumber(((JTextField) ((Container) p.getComponent(4)).getComponent(0)).getText());
+			double puncture = checkNumber(((JTextField) ((Container) p.getComponent(4)).getComponent(1)).getText());
+			double slash = checkNumber(((JTextField) ((Container) p.getComponent(4)).getComponent(2)).getText());
 			// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 			String[] procs = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
 			int[] selectedProcs = ((JList) p.getComponent(3)).getSelectedIndices();
@@ -223,7 +227,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 					procs[12] = "1";
 				}
 			}
-			hits.add(new Hit(delay, multi, procs, (int) comb));
+			hits.add(new Hit(delay, multi, procs, (int) comb, impact, puncture, slash));
 		}
 		Combo c = new Combo((String) comboBox.getSelectedItem(), hits);
 
@@ -247,12 +251,27 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		JTextField combs = new JTextField();
 		DefaultListModel procsModel = new DefaultListModel();
 		JList procs = new JList(procsModel);
+		
+		JPanel bonusPanel = new JPanel();
+		JTextField iBonus = new JTextField();
+		JTextField pBonus = new JTextField();
+		JTextField sBonus = new JTextField();
 
 		UIBuilder.panelInit(hitPanel);
 		UIBuilder.numberFieldInit(delay);
 		UIBuilder.numberFieldInit(multi);
 		UIBuilder.numberFieldInit(combs);
 		UIBuilder.listInit(procs);
+		
+		UIBuilder.panelInit(bonusPanel);
+		UIBuilder.numberFieldInit(iBonus);
+		UIBuilder.numberFieldInit(pBonus);
+		UIBuilder.numberFieldInit(sBonus);
+		bonusPanel.setLayout(new GridLayout(1, 3, 0, 0));
+		
+		iBonus.setToolTipText("Impact bonus on hit");
+		pBonus.setToolTipText("Puncture bonus on hit");
+		sBonus.setToolTipText("Slash bonus on hit");
 
 		procs.setSelectionModel(new DefaultListSelectionModel() {
 			@Override
@@ -278,10 +297,19 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		hitPanel.add(multi);
 		hitPanel.add(combs);
 		hitPanel.add(procs);
+		
+		bonusPanel.add(iBonus);
+		bonusPanel.add(pBonus);
+		bonusPanel.add(sBonus);
+		hitPanel.add(bonusPanel);
 
 		delay.setText(Double.toString(h.delay));
 		multi.setText(Double.toString(h.multiplier));
 		combs.setText(Double.toString(h.comboIncrease));
+		
+		iBonus.setText(Double.toString(h.iBonus));
+		pBonus.setText(Double.toString(h.pBonus));
+		sBonus.setText(Double.toString(h.sBonus));
 
 		int size = 0;
 		for (int i = 0; i < 14; i++) {
@@ -291,8 +319,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 		}
 		int[] procy = new int[size];
 
-		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact,
-		// puncture, ice, blast, knockdown, radiation
+		// slash, fire, electric, toxin, gas, magnetic, viral, corrosive, impact, puncture, ice, blast, knockdown, radiation
 
 		int k = 0;
 		for (int i = 0; i < 14; i++) {
@@ -402,7 +429,7 @@ public class StanceManagerPanel extends JPanel implements ActionListener, ListSe
 				}
 		} else if (e.getSource().equals(addHitButton)) {
 			String[] s = { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" };
-			Hit h = new Stance.Hit(0, 0, s, 0);
+			Hit h = new Stance.Hit(0, 0, s, 0, 0, 0 ,0);
 			JPanel p = hitPanel(h);
 			UIBuilder.createSepparationBorder(p);
 			hitsPanels.add(p);

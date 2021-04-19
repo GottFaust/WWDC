@@ -855,13 +855,10 @@ public class TTKTarget implements Comparable {
 						comboCount = Math.min(comboCount += Main.stanceCombo.hits.get(iterations).comboIncrease, 220);
 						int meleeComboMult = (int) (comboCount / 20);
 
-						if (meleeComboMult >= 2) {
-							localStatus = Main.statusChance;
-							comboCritMult = Main.comboCrit * (meleeComboMult);
-							comboStatusMult = (Main.comboStatus * (meleeComboMult)) + (Main.finalStatusChance / Main.statusChance);
-						}
-
-						localCritChance = (1 + comboCritMult + ((Main.finalCritChance / Main.critChance) - 1)) * Main.critChance;
+						localStatus = Main.statusChance;
+						comboCritMult = Main.comboCrit * meleeComboMult;
+						comboStatusMult = (Main.comboStatus * meleeComboMult) + (Main.finalStatusChance / Main.statusChance);
+						localCritChance = (comboCritMult + (Main.finalCritChance / Main.critChance)) * Main.critChance;
 					}
 
 					// Condition Overload

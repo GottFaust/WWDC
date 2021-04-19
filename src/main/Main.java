@@ -1845,6 +1845,8 @@ public class Main {
 			double tempCombo = startingCombo;
 			if (startingCombo < 2) {
 				tempCombo = 0;
+			} else {
+				tempCombo-=1;
 			}
 			startingCombo = 1; // Melee no long multiplies damage by combo
 			averageStatusChance += (tempCombo * comboStatus * statusChance);
@@ -1970,20 +1972,35 @@ public class Main {
 
 		// Condition overload
 		if (conditionOverload > 0) {
-			COMult += replaceNaN(1 - Math.pow((1 - slashProcRate * averageStatusChance) * (1 - forcedSlashProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - fireProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - toxinProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - gasProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - electricProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - impactProcRate * averageStatusChance) * (1 - forcedImpactProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - punctureProcRate * averageStatusChance) * (1 - forcedPunctureProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - iceProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			double statusLength = 6 * finalStatusDuration;
+			
+			/* Technically more accurate calculation, but not neccessary
+			double comboLength = (avgDelay * stanceCombo.hits.size()) / finalFireRate;			
+			COMult += forcedSlashProcs > 0 ? replaceNaN(Math.min(1, statusLength / comboLength)) : 0;
+			COMult += (forcedSlashProcs > 0 ? 1 - Math.min(1, statusLength / comboLength) : 1) * replaceNaN(1 - Math.pow((1 - slashProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));			
+			COMult += forcedImpactProcs > 0 ? replaceNaN(Math.min(1, statusLength / comboLength)) : 0;
+			COMult += (forcedImpactProcs > 0 ? 1 - Math.min(1, statusLength / comboLength) : 1) * replaceNaN(1 - Math.pow((1 - impactProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));				
+			COMult += forcedPunctureProcs > 0 ? replaceNaN(Math.min(1, statusLength / comboLength)) : 0;
+			COMult += (forcedPunctureProcs > 0 ? 1 - Math.min(1, statusLength / comboLength) : 1) * replaceNaN(1 - Math.pow((1 - punctureProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));				
+			COMult += forcedKnockdownProcs > 0 ? replaceNaN(Math.min(1, statusLength / comboLength)) : 0;
+			COMult += (forcedKnockdownProcs > 0 ? 1 - Math.min(1, statusLength / comboLength) : 1) * replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			 */
+				
+			// Assuming that forced procs are always active for the sake of CO. It would only be innacruate for builds with very low attack speed.
+			COMult += forcedSlashProcs > 0 ? 1 : replaceNaN(1 - Math.pow((1 - slashProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += forcedImpactProcs > 0 ? 1 : replaceNaN(1 - Math.pow((1 - impactProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += forcedPunctureProcs > 0 ? 1 : replaceNaN(1 - Math.pow((1 - punctureProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += forcedKnockdownProcs > 0 ? 1 : replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));			
+			COMult += replaceNaN(1 - Math.pow((1 - fireProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += replaceNaN(1 - Math.pow((1 - toxinProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += replaceNaN(1 - Math.pow((1 - gasProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += replaceNaN(1 - Math.pow((1 - electricProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += replaceNaN(1 - Math.pow((1 - iceProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
 			COMult += replaceNaN(1 - Math.pow((1 - corrosiveProcRate * averageStatusChance), (finalFireRate / avgDelay) * 8 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - viralProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance) * (1 - forcedKnockdownProcs), (finalFireRate / avgDelay) * 6 * finalStatusDuration)); // Knockdown
+			COMult += replaceNaN(1 - Math.pow((1 - viralProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
+			COMult += replaceNaN(1 - Math.pow((1 - blastProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
 			COMult += replaceNaN(1 - Math.pow((1 - radiationProcRate * averageStatusChance), (finalFireRate / avgDelay) * 12 * finalStatusDuration));
-			COMult += replaceNaN(1 - Math.pow((1 - magneticProcRate * averageStatusChance), (finalFireRate / avgDelay) * 6 * finalStatusDuration));
+			COMult += replaceNaN(1 - Math.pow((1 - magneticProcRate * averageStatusChance), (finalFireRate / avgDelay) * statusLength));
 			COMult *= conditionOverload;
 		}
 		// adjust COMult for base damage mods
