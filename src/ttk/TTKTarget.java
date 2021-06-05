@@ -952,7 +952,9 @@ public class TTKTarget implements Comparable {
 
 						// Status effects
 
-						boolean impactSlashed = false; // Slash procs from Hemorrhage or Internal Bleeding disable other sources of slash procs
+						boolean slashed = false; // Slash procs from Hemorrhage or Internal Bleeding disable other sources of
+													// slash procs
+						boolean impacted = false;
 
 						// Forced proc?
 						switch (forcedProc) { // Copy-paste vomit code
@@ -1052,12 +1054,7 @@ public class TTKTarget implements Comparable {
 
 						case (Constants.IMPACT_WEAPON_DAMAGE):
 							statusEffects[8] = baseStatusDuration;
-							if (rng.nextDouble() <= Main.impactslash) { // Add a slash proc for Internal Bleeding or Hemorrhage
-								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
-								slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-								statusEffects[0] = baseStatusDuration;
-								impactSlashed = true;
-							}
+							impacted = true;
 							break;
 						}
 
@@ -1075,19 +1072,13 @@ public class TTKTarget implements Comparable {
 							// Impact Proc
 							if ((proc -= impactProc) < 0) {
 								statusEffects[8] = baseStatusDuration;
-								if (rng.nextDouble() <= Main.impactslash && !impactSlashed) { // Add a slash proc for Internal Bleeding or Hemorrhage
-									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
-									slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-									statusEffects[0] = baseStatusDuration;
-									impactSlashed = true;
-								}
+								impacted = true;
 								// Slash Proc
 							} else if ((proc -= slashProc) < 0) {
-								if (!impactSlashed) {
-									double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
-									slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-									statusEffects[0] = baseStatusDuration;
-								}
+								double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+								slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+								statusEffects[0] = baseStatusDuration;
+								slashed = true;
 								// Fire Proc
 							} else if ((proc -= fireProc) < 0) {
 								double heatDamage = DoTBase * (1 + Main.globalFire) * totalMult * typeMult * 0.5;
@@ -1180,14 +1171,21 @@ public class TTKTarget implements Comparable {
 						}
 
 						// Forced slash proc?
-						if (((crit > 0 && rng.nextDouble() < Main.hunterMunitions) || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) && !impactSlashed) {
+						if ((crit > 0 && rng.nextDouble() < Main.hunterMunitions) || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
 							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
 							slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
 							statusEffects[0] = baseStatusDuration;
+							slashed = true;
 						}
 
 						if (Main.shatteringImpact > 0 && Main.impact.finalBase > 0) {
 							shatteringImpacts++;
+						}
+
+						if (rng.nextDouble() <= Main.impactslash && impacted && !slashed) { // Apply a slash proc for Internal Bleeding or Hemorrhage
+							double bleedDamage = DoTBase * totalMult * typeMult * 0.35;
+							slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+							statusEffects[0] = baseStatusDuration;
 						}
 
 						// Explosive part of the shot
@@ -1243,7 +1241,8 @@ public class TTKTarget implements Comparable {
 
 							// Status effects
 
-							impactSlashed = false;
+							slashed = false;
+							impacted = false;
 
 							// Forced proc?
 							switch (forcedProcEX) { // Copy-paste vomit code
@@ -1343,12 +1342,7 @@ public class TTKTarget implements Comparable {
 
 							case (Constants.IMPACT_WEAPON_DAMAGE):
 								statusEffects[8] = baseStatusDuration;
-								if (rng.nextDouble() <= Main.impactslash) { // Add a slash proc for Internal Bleeding or Hemorrhage
-									double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
-									slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-									statusEffects[0] = baseStatusDuration;
-									impactSlashed = true;
-								}
+								impacted = true;
 								break;
 							}
 
@@ -1364,21 +1358,14 @@ public class TTKTarget implements Comparable {
 								double proc = rng.nextDouble();
 								// Impact Proc
 								if ((proc -= Main.explosiveImpactProcRate) < 0) {
-									if (rng.nextDouble() <= Main.impactslash && !impactSlashed) { // Add a slash proc for Internal Bleeding or Hemorrhage
-										double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
-										slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-										statusEffects[0] = baseStatusDuration;
-										impactSlashed = true;
-									}
 									statusEffects[8] = baseStatusDuration;
+									impacted = true;
 									// Slash Proc
 								} else if ((proc -= Main.explosiveSlashProcRate) < 0) {
-									if (!impactSlashed) {
-										double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
-										slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
-										statusEffects[0] = baseStatusDuration;
-									}
-
+									double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
+									slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+									statusEffects[0] = baseStatusDuration;
+									slashed = true;
 									// Fire Proc
 								} else if ((proc -= Main.explosiveFireProcRate) < 0) {
 									double heatDamage = explosiveDoTBase * (1 + Main.globalFire) * totalMult * typeMult * 0.5;
@@ -1473,7 +1460,14 @@ public class TTKTarget implements Comparable {
 							}
 
 							// Forced slash proc?
-							if ((rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) && !impactSlashed) {
+							if (rng.nextDouble() < Main.hunterMunitions || (Main.stanceCombo != null && Main.stanceCombo.hits.get(iterations).procs[0].equals("1"))) {
+								double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
+								slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
+								statusEffects[0] = baseStatusDuration;
+							}
+							
+							// IB or Hem proc
+							if (rng.nextDouble() <= Main.impactslash && impacted && !slashed) {
 								double bleedDamage = explosiveDoTBase * totalMult * typeMult * 0.35;
 								slashStacks.add(new DoTPair(bleedDamage, baseStatusDuration, 10000, 1, 1, 1, true, false));
 								statusEffects[0] = baseStatusDuration;

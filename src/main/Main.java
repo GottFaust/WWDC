@@ -2056,11 +2056,15 @@ public class Main {
 			explosiveBurstFireStacks = 1 / Math.pow((1 - explosiveFireProcRate * averageStatusChance), potentialBurstProcs);
 		}
 
-		slashStacks = ((1 - Math.pow(1 - impactslash, impactProcRate * averageStatusChance)) + (1 - impactslash) * ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialProcs;
-		burstSlashStacks = ((1 - Math.pow(1 - impactslash, impactProcRate * averageStatusChance)) + (1 - impactslash) * ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialBurstProcs;
-		explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (explosiveImpactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
-		explosiveBurstSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (explosiveImpactProcRate * averageStatusChance * impactslash) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialBurstProcs;
+		
+		slashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		slashStacks += (1-slashProcRate)* (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - Math.pow(1 - impactslash, impactProcRate * averageStatusChance)) * potentialProcs; // IB or Hem slash procs
+		burstSlashStacks = slashStacks * potentialBurstProcs / potentialProcs;
 
+		explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+		explosiveSlashStacks += (1-explosiveSlashProcRate)* (1 - (hunterMunitions * Math.min(1, finalCritChance))) * (1 - Math.pow(1 - impactslash, explosiveImpactProcRate * averageStatusChance)) * potentialProcs; // IB or Hem slash procs
+		explosiveBurstSlashStacks = explosiveSlashStacks * potentialBurstProcs / potentialProcs;
+		
 		toxinStacks = procsPerSecond * toxinProcRate * (6 * finalStatusDuration);
 		burstToxinStacks = burstProcsPerSecond * toxinProcRate * (6 * finalStatusDuration);
 		explosiveToxinStacks = procsPerSecond * explosiveToxinProcRate * (6 * finalStatusDuration);
@@ -2094,8 +2098,9 @@ public class Main {
 			burstGasStacks += potentialBurstProcs;
 			break;
 		case Constants.IMPACT_WEAPON_DAMAGE:
-			slashStacks = ((1 - Math.pow(1 - impactslash, impactProcRate * averageStatusChance + 1)) + (1 - impactslash) * ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialProcs;
-			burstSlashStacks = ((1 - Math.pow(1 - impactslash, impactProcRate * averageStatusChance + 1)) + (1 - impactslash) * ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialBurstProcs;
+			slashStacks = ((slashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+			slashStacks += (1-slashProcRate)* (1 - (hunterMunitions * Math.min(1, finalCritChance))) * impactslash * potentialProcs; // IB or Hem slash procs
+			burstSlashStacks = slashStacks * potentialBurstProcs / potentialProcs;
 			break;
 		}
 		
@@ -2117,8 +2122,9 @@ public class Main {
 			explosiveBurstGasStacks += potentialBurstProcs;
 			break;
 		case Constants.IMPACT_WEAPON_DAMAGE:
-			explosiveSlashStacks = ((1 - Math.pow(1 - impactslash, explosiveImpactProcRate * averageStatusChance + 1)) + (1 - impactslash) * ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialProcs;
-			explosiveBurstSlashStacks = ((1 - Math.pow(1 - impactslash, explosiveImpactProcRate * averageStatusChance + 1)) + (1 - impactslash) * ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs)) * potentialBurstProcs;
+			explosiveSlashStacks = ((explosiveSlashProcRate * averageStatusChance) + (hunterMunitions * Math.min(1, (finalCritChance + finalComboCrit))) + forcedSlashProcs) * potentialProcs;
+			explosiveSlashStacks += (1-explosiveSlashProcRate)* (1 - (hunterMunitions * Math.min(1, finalCritChance))) * impactslash * potentialProcs; // IB or Hem slash procs
+			explosiveBurstSlashStacks = explosiveSlashStacks * potentialBurstProcs / potentialProcs;
 			break;
 		}
 
